@@ -1,0 +1,13 @@
+{
+  "fullMachineAccess": true,
+  "allowedDirectories": [".."],
+  "shell": {
+    "enabled": true,
+    "maxOutputChars": 120000,
+    "defaultTimeoutSeconds": 60,
+    "maxTimeoutSeconds": 600
+  },
+  "process": {
+    "maxBufferedOutputChars": 240000
+  }
+}

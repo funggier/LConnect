@@ -1,0 +1,164 @@
+# แนวทางพัฒนา LConnect
+
+## หลักการ
+
+LConnect ใช้ modular architecture
+
+กฎหลัก:
+
+> เพิ่ม capability เป็น module และ register เข้า Core เดิม แทนการเพิ่ม tunnel channel ใหม่โดยไม่มีเหตุผลด้าน transport
+
+## โครงสร้าง
+
+```text
+lconnect-mcp.mjs
+modules/
+  config.mjs
+  runtime.mjs
+  filesystem.mjs
+  shell.mjs
+  process.mjs
+  system.mjs
+tests/
+  smoke.mjs
+  execution-smoke.mjs
+```
+
+## สร้าง module ใหม่
+
+ตัวอย่าง:
+
+```js
+export function registerExampleTools(server, config) {
+  server.tool(
+    "example_tool",
+    "Description",
+    {},
+    async () => ({
+      content: [{ type: "text", text: "ok" }]
+    })
+  );
+}
+```
+
+จากนั้น import ใน `lconnect-mcp.mjs` และ register:
+
+```js
+import { registerExampleTools } from "./modules/example.mjs";
+
+registerExampleTools(server, config);
+```
+
+## Naming
+
+ชื่อ tool ควร:
+
+- สั้น
+- อธิบาย action ชัด
+- ไม่ผูกกับ version
+- ไม่ใช้ชื่อที่ทำให้ meaning เปลี่ยนเมื่อระบบโตขึ้น
+
+ตัวอย่าง:
+
+```text
+system_info
+start_process
+read_process_output
+list_listening_ports
+```
+
+## Shared runtime
+
+ถ้า module ต้อง spawn process ควรใช้ helper ใน `modules/runtime.mjs` ก่อนสร้าง implementation ซ้ำ
+
+สิ่งที่ runtime layer จัดการ:
+
+- spawn
+- stdout/stderr
+- timeout
+- output cap
+- PowerShell
+
+## Error behavior
+
+tool ที่ล้มควรคืน:
+
+```js
+{
+  content: [{ type: "text", text: "..." }],
+  isError: true
+}
+```
+
+ข้อความ error ต้องช่วย debug ได้ ไม่ควรซ่อน root cause โดยไม่จำเป็น
+
+## Test
+
+ก่อน commit:
+
+```powershell
+npm run check
+npm test
+```
+
+### smoke.mjs
+
+ตรวจ:
+
+- MCP initialize
+- tools/list
+- required tools
+- access scope
+- system_info
+- full-machine filesystem access
+
+### execution-smoke.mjs
+
+ตรวจ:
+
+- `command_run` กับ `npm.cmd`
+- listening ports
+- start process
+- kill process tree
+- read process status
+
+## เมื่อเพิ่ม tool ใหม่
+
+1. เพิ่ม implementation
+2. เพิ่มชื่อใน required tools ของ smoke test
+3. เพิ่ม test behavior ถ้ามี side effect/runtime dependency
+4. อัปเดต `docs/TOOLS_TH.md`
+5. `npm run check`
+6. `npm test`
+7. restart LConnect
+8. refresh ChatGPT connector/plugin ถ้า schema เปลี่ยน
+
+## Tunnel configuration
+
+ห้าม commit:
+
+- Tunnel ID
+- runtime profile จริง
+- API key
+- organization-specific secret/config
+
+ไฟล์ `mcp-conf.yaml` อยู่ใน `.gitignore`
+
+LConnect source กับ Tunnel ownership ต้องแยกจากกัน
+
+## แนวทาง module ในอนาคต
+
+ลำดับที่มีประโยชน์:
+
+1. services
+2. registry
+3. richer network diagnostics
+4. screen capture
+5. window management
+6. keyboard/mouse
+7. Git/dev helpers
+8. Docker/VM
+9. hardware monitoring
+10. CogentNexus/Zooid integrations
+
+การเพิ่ม GUI/control module ควรรักษา Core contract เดิมไว้

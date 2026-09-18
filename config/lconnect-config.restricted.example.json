@@ -1,0 +1,16 @@
+{
+  "fullMachineAccess": false,
+  "allowedDirectories": [
+    "..",
+    "C:\\Projects"
+  ],
+  "shell": {
+    "enabled": false,
+    "maxOutputChars": 120000,
+    "defaultTimeoutSeconds": 60,
+    "maxTimeoutSeconds": 600
+  },
+  "process": {
+    "maxBufferedOutputChars": 240000
+  }
+}

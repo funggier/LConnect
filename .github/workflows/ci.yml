@@ -1,0 +1,55 @@
+name: LConnect CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  windows:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Validate PowerShell syntax
+        shell: powershell
+        run: |
+          $files = @(
+            'Install-LConnect.ps1',
+            'Start-LConnect.ps1',
+            'Status-LConnect.ps1',
+            'Stop-LConnect.ps1',
+            'scripts\Test-LConnect.ps1'
+          )
+          foreach ($file in $files) {
+            $tokens = $null
+            $errors = $null
+            [System.Management.Automation.Language.Parser]::ParseFile(
+              (Join-Path $PWD $file),
+              [ref]$tokens,
+              [ref]$errors
+            ) | Out-Null
+            if ($errors.Count -gt 0) {
+              $errors | ForEach-Object { Write-Error $_.Message }
+              exit 1
+            }
+          }
+
+      - name: Syntax check
+        run: npm run check
+
+      - name: Runtime smoke tests
+        run: npm test
+
+      - name: Dependency audit
+        run: npm audit --audit-level=moderate

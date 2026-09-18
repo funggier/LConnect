@@ -1,0 +1,10 @@
+runtime/
+logs/
+node_modules/
+tunnel-client.exe
+mcp-conf.yaml
+mcp-conf*.yaml
+*.local.yaml
+*.secret
+.env
+.env.*
