@@ -1,5 +1,34 @@
 # การแก้ปัญหา LConnect
 
+## Timeout แล้ว Status ยัง 200 ready แต่ ChatGPT ใช้งานไม่ได้
+
+อาการ:
+
+- `Status-LConnect.cmd` แบบเก่ารายงาน process running
+- `/readyz` ตอบ `200 ready`
+- แต่ ChatGPT เรียก tool แล้วได้ internal failure หรือ tunnel log มี `502 client_internal`
+- การ reconnect plugin อย่างเดียวไม่ช่วย
+- ต้อง Stop/Start จึงกลับมา
+
+สาเหตุที่ยืนยันจาก runtime acceptance:
+
+- installation เดิมใช้ OpenAI tunnel-client `0.0.12`
+- tunnel-client รุ่นดังกล่าวมี defect ด้าน shared stdio recovery หลัง response deadline/timeout
+- OpenAI แก้ recovery เพิ่มใน `0.0.13` และ `0.0.14`
+- `/readyz` เป็น startup readiness และสำหรับ stdio อาจยังเป็น 200 แม้ MCP path จะเสีย state
+
+วิธีแก้ถาวร:
+
+```text
+Stop-LConnect.cmd
+Update-TunnelClient.cmd
+Start-LConnect.cmd
+```
+
+LConnect `1.0.1+` จะปฏิเสธการ Start หาก tunnel-client ต่ำกว่า `0.0.14`
+
+Status ใหม่จะแสดง tunnel-client version และ MCP/component health แยกจาก startup readiness
+
 ## ChatGPT เห็นแต่ filesystem tools เดิม
 
 อาการ:

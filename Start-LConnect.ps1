@@ -12,11 +12,18 @@ $Profile = Join-Path $Root 'mcp-conf.yaml'
 $Runtime = Join-Path $Root 'runtime'
 $LogDir = Join-Path $Root 'logs'
 $State = Join-Path $Runtime 'launcher.pid'
+$Maintenance = Join-Path $Root 'scripts\TunnelClientMaintenance.ps1'
+
+if (-not (Test-Path -LiteralPath $Maintenance)) { throw "Missing maintenance script: $Maintenance" }
+. $Maintenance
 
 if (-not (Test-Path -LiteralPath $Client)) { throw "Missing tunnel client: $Client. Run Install-LConnect.cmd first." }
 if (-not (Test-Path -LiteralPath $Profile)) { throw "Missing profile: $Profile. Run Install-LConnect.cmd first." }
 if (-not (Get-Command node -ErrorAction SilentlyContinue)) { throw 'node was not found. Install Node.js LTS.' }
 if (-not (Get-Command npm -ErrorAction SilentlyContinue)) { throw 'npm was not found. Install Node.js LTS.' }
+
+$TunnelClientInfo = Assert-LConnectTunnelClientVersion -ClientPath $Client
+Write-Host "Tunnel client: $($TunnelClientInfo.Raw)"
 
 if (-not (Test-Path -LiteralPath (Join-Path $Root 'node_modules\@modelcontextprotocol\sdk'))) {
     Write-Host 'Installing local MCP dependencies...'

@@ -120,7 +120,28 @@ Runtime API key ถูกใส่เป็น environment variable เฉพา
 Status-LConnect.cmd
 ```
 
-เมื่อพร้อม ควรเห็น process running และ readiness สำเร็จ
+Status รุ่นปัจจุบันแยกตรวจหลายระดับ:
+
+- tunnel-client process ยังทำงานหรือไม่
+- `/healthz` liveness
+- `/readyz` startup readiness
+- control-plane poll health
+- MCP observed state ผ่าน `/health/mcp`
+- dispatcher / response-delivery / control-plane component state เมื่อ runtime รองรับ
+
+สำคัญ: `/readyz = 200 ready` เพียงอย่างเดียวไม่ได้ยืนยันว่า stdio MCP child ยังตอบ RPC ได้จริง
+
+LConnect ต้องใช้ tunnel-client `0.0.14` หรือใหม่กว่า
+
+ถ้าเป็น installation เก่า ให้:
+
+```text
+Stop-LConnect.cmd
+Update-TunnelClient.cmd
+Start-LConnect.cmd
+```
+
+Updater ไม่สร้างหรือแก้ Tunnel ID, `mcp-conf.yaml`, Runtime API key หรือ tunnel profile ใด ๆ
 
 ## 8. เชื่อม ChatGPT
 

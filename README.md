@@ -57,10 +57,13 @@ ChatGPT
 
 ```text
 Install-LConnect.cmd
+Update-TunnelClient.cmd
 Start-LConnect.cmd
 Status-LConnect.cmd
 Stop-LConnect.cmd
 ```
+
+LConnect ต้องใช้ OpenAI tunnel-client `0.0.14` หรือใหม่กว่า เนื่องจากรุ่นเก่ามีปัญหา recovery ของ stdio หลัง response timeout/deadline ซึ่งอาจทำให้ process ยังขึ้นว่า ready แต่ MCP ใช้งานต่อไม่ได้
 
 ตรวจ source และ runtime smoke tests:
 
