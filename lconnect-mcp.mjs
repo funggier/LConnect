@@ -9,7 +9,7 @@ import { registerSystemTools } from "./modules/system.mjs";
 const config = loadLConnectConfig(import.meta.url);
 const server = new McpServer({
   name: "LConnect",
-  version: "1.0.1",
+  version: "1.0.2",
 });
 
 registerFilesystemTools(server, config);
@@ -18,7 +18,7 @@ registerProcessTools(server, config);
 registerSystemTools(server, config);
 
 console.error(
-  `LConnect 1.0.1 starting; fullMachineAccess=${config.fullMachineAccess}; allowedDirectories=${config.allowedDirectories.join(";")}`
+  `LConnect 1.0.2 starting; fullMachineAccess=${config.fullMachineAccess}; allowedDirectories=${config.allowedDirectories.join(";")}`
 );
 
 await server.connect(new StdioServerTransport());

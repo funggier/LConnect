@@ -122,8 +122,7 @@ catch {
     try { $StatusCode = [int]$_.Exception.Response.StatusCode } catch {}
 
     if ($StatusCode -eq 404) {
-        Write-Warning 'MCP component health is unavailable in this tunnel-client version.'
-        $ExitCode = [Math]::Max($ExitCode, 3)
+        Write-Host 'MCP component health: unavailable in this tunnel-client version (optional diagnostic).'
     }
     else {
         Write-Warning "MCP component health probe failed: $($_.Exception.Message)"

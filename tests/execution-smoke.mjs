@@ -14,7 +14,7 @@ const transport = new StdioClientTransport({
   env,
   stderr: "pipe",
 });
-const client = new Client({ name: "lconnect-execution-smoke", version: "1.0.1" }, { capabilities: {} });
+const client = new Client({ name: "lconnect-execution-smoke", version: "1.0.2" }, { capabilities: {} });
 
 try {
   await client.connect(transport);

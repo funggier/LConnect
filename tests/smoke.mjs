@@ -23,7 +23,7 @@ transport.stderr?.on("data", (chunk) => {
 });
 
 const client = new Client(
-  { name: "lconnect-smoke-test", version: "1.0.1" },
+  { name: "lconnect-smoke-test", version: "1.0.2" },
   { capabilities: {} }
 );
 

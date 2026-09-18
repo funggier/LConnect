@@ -126,8 +126,10 @@ Status รุ่นปัจจุบันแยกตรวจหลายร�
 - `/healthz` liveness
 - `/readyz` startup readiness
 - control-plane poll health
-- MCP observed state ผ่าน `/health/mcp`
+- MCP observed state ผ่าน `/health/mcp` เมื่อ tunnel-client รุ่นนั้นรองรับ route นี้
 - dispatcher / response-delivery / control-plane component state เมื่อ runtime รองรับ
+
+หมายเหตุ: tunnel-client `0.0.14` มี timeout-recovery fix ที่เราต้องการ แต่ binary release นี้ยังอาจตอบ 404 สำหรับ `/health/mcp`; LConnect ถือกรณีนี้เป็น optional diagnostic ไม่ใช่ failure
 
 สำคัญ: `/readyz = 200 ready` เพียงอย่างเดียวไม่ได้ยืนยันว่า stdio MCP child ยังตอบ RPC ได้จริง
 

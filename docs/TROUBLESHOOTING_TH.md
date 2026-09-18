@@ -27,7 +27,9 @@ Start-LConnect.cmd
 
 LConnect `1.0.1+` จะปฏิเสธการ Start หาก tunnel-client ต่ำกว่า `0.0.14`
 
-Status ใหม่จะแสดง tunnel-client version และ MCP/component health แยกจาก startup readiness
+Status ใหม่จะแสดง tunnel-client version และแยก startup readiness ออกจาก MCP/component diagnostics
+
+ถ้า tunnel-client รุ่นที่ใช้อยู่ยังไม่มี `/health/mcp` (เช่น binary `0.0.14` ที่ทดสอบบน Windows) Status จะแสดงว่า diagnostic นี้ unavailable แต่จะไม่ถือเป็น failure ตราบใดที่ version gate, liveness, readiness และ control-plane health ผ่าน
 
 ## ChatGPT เห็นแต่ filesystem tools เดิม
 
