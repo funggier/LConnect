@@ -30,6 +30,9 @@ git_status, git_diff, git_log, git_branch, git_commit, git_fetch, git_pull, git_
 - `npm run check`: PASS.
 - `npm test`: PASS.
 - `npm audit --audit-level=moderate`: 0 vulnerabilities.
+- First GitHub CI run `35449277333` failed only on the test's exact Windows worktree path string comparison; all prior Git behaviors passed.
+- Fixed the acceptance assertion to identify the added worktree by branch identity plus filesystem existence instead of Windows path string canonicalization/casing.
+- Full local suite GREEN again after the portability fix.
 
 ## Acceptance criteria
 

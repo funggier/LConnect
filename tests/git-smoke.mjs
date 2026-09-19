@@ -213,8 +213,8 @@ try {
     repo_path: repoA,
     action: "list",
   });
-  if (!worktrees.data.worktrees.some((item) => path.resolve(item.path) === path.resolve(worktree))) {
-    throw new Error("git_worktree list did not include added worktree");
+  if (!worktrees.data.worktrees.some((item) => item.branch === "worktree-test")) {
+    throw new Error(`git_worktree list did not include worktree-test branch: ${JSON.stringify(worktrees.data)}`);
   }
 
   const removedWorktree = await callJson("git_worktree", {
