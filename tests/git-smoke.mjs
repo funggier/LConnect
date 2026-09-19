@@ -1,4 +1,4 @@
-import fs from "node:fs";
+﻿import fs from "node:fs";
 import fsp from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
@@ -30,7 +30,7 @@ transport.stderr?.on("data", (chunk) => {
 });
 
 const client = new Client(
-  { name: "lconnect-git-smoke", version: "1.0.2" },
+  { name: "lconnect-git-smoke", version: "1.1.0" },
   { capabilities: {} }
 );
 

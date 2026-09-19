@@ -1,4 +1,4 @@
-import fsp from "node:fs/promises";
+﻿import fsp from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -22,7 +22,7 @@ let stderr = "";
 transport.stderr?.on("data", (chunk) => { stderr += chunk.toString("utf8"); });
 
 const client = new Client(
-  { name: "lconnect-log-tail-smoke", version: "1.0.2" },
+  { name: "lconnect-log-tail-smoke", version: "1.1.0" },
   { capabilities: {} }
 );
 

@@ -10,6 +10,10 @@
 
 ## สถานะปัจจุบัน
 
+- Source version: **1.1.0**
+- MCP catalog: **91 tools**
+- OpenAI tunnel-client minimum: **0.0.14**
+
 LConnect Core ผ่าน runtime acceptance บน Windows 10 แล้ว โดย MCP discovery ปัจจุบันแสดง 91 tools และทดสอบจริงทั้ง filesystem, PowerShell, process/session, stdin, process-tree termination และ listening ports
 
 ## โครงสร้าง
@@ -29,19 +33,22 @@ ChatGPT
 
 ## เริ่มต้นใช้งาน
 
-1. ติดตั้ง Node.js
-2. Clone repo
-3. รัน `Install-LConnect.cmd`
-4. ตั้งค่า OpenAI Tunnel ของคุณเองบนเครื่อง local
-5. ให้ tunnel profile local ชี้ MCP command มาที่ `node "lconnect-mcp.mjs"`
-6. รัน `Start-LConnect.cmd`
-7. เชื่อม Tunnel ใน ChatGPT Connector
-8. Refresh connector/plugin เพื่อให้ ChatGPT discover tools
+สำหรับการติดตั้งครั้งแรก แนะนำให้อ่าน **[คู่มือติดตั้งแบบจับมือทำ](docs/INSTALLATION_TH.md)** ตั้งแต่ต้นจนจบ
+
+คู่มือครอบคลุม:
+
+1. Release ZIP vs Git clone
+2. การรัน `Install-LConnect.cmd`
+3. การหา Tunnel ID, Runtime API key และ Organization ID
+4. การสร้าง `mcp-conf.yaml` ด้วย `tunnel-client init`
+5. การเปิดไฟล์ตรวจ/แก้ค่า `tunnel_id`, `api_key`, `health.url_file` และ `main` MCP command
+6. การตรวจ `lconnect-config.json` และ Full-machine access
+7. การ Start / Status / อ่าน expected output
+8. การเชื่อม ChatGPT Connector และ refresh tool catalog
+9. First-run checklist และ troubleshooting
 
 **LConnect ไม่เก็บ Tunnel ID, tunnel profile หรือ Runtime API key ไว้ใน GitHub**
-ไฟล์ `mcp-conf.yaml` ถูก ignore โดย Git และผู้ใช้ต้องสร้าง/ดูแลเองในเครื่อง
-
-อ่านขั้นตอนละเอียด: [docs/INSTALLATION_TH.md](docs/INSTALLATION_TH.md)
+ไฟล์ `mcp-conf.yaml` ถูก ignore โดย Git และผู้ใช้ต้องสร้าง/ดูแลเองในเครื่อง local
 
 ## เอกสารภาษาไทย
 

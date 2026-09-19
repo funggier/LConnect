@@ -42,3 +42,8 @@ Write-Host 'No tunnel configuration was created or changed.'
 Write-Host 'Create and maintain your tunnel configuration locally; mcp-conf.yaml is intentionally ignored by Git.'
 Write-Host "Required tunnel-client: $script:LConnectMinimumTunnelClientVersion or newer."
 Write-Host 'Default LConnect access mode is full-machine access with shell/process execution enabled.'
+Write-Host ''
+Write-Host 'FIRST-RUN NEXT STEP:'
+Write-Host '  Open docs\INSTALLATION_TH.md and follow Step 4 onward.'
+Write-Host '  You must create mcp-conf.yaml locally before Start-LConnect.cmd can run.'
+Write-Host '  The guide explains Tunnel ID, Runtime API key, Organization ID and every profile/config value.'

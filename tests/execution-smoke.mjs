@@ -1,4 +1,4 @@
-import path from "node:path";
+﻿import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { StdioClientTransport } from "@modelcontextprotocol/sdk/client/stdio.js";
@@ -14,7 +14,7 @@ const transport = new StdioClientTransport({
   env,
   stderr: "pipe",
 });
-const client = new Client({ name: "lconnect-execution-smoke", version: "1.0.2" }, { capabilities: {} });
+const client = new Client({ name: "lconnect-execution-smoke", version: "1.1.0" }, { capabilities: {} });
 
 try {
   await client.connect(transport);

@@ -2,32 +2,29 @@
 
 Last updated: 2026-09-19
 
-## Current state
+## Current baseline
 
 - Repository: `funggier/LConnect`
 - Branch: `main`
-- Final implementation HEAD before coordination closure: `50d10ee3be2c76c76a6494f7bdfbba77c9775f51`
-- Current tested catalog: 91 tools
-- System Foundation LCN-007–011: COMPLETE
-- Developer Foundation LCN-012–014: COMPLETE
-- Observation LCN-015–017: COMPLETE
+- Starting HEAD: `2169aa1a4ad2a9b3ca61e95d00c6e0b4605b8c82`
+- Tested catalog: 91 tools
+- LCN-007–017: COMPLETE
+- LCN-018–023: remain PLANNED; not started by this maintenance task
 
-## Stop boundary reached
+## Active task
 
-**NO ACTIVE DEVELOPMENT TASK**
+### LCN-024 — First-run Installation Guide + v1.1.0 Release
 
-Operator instruction for this run was to complete through LCN-017 only.
+Status: **ACTIVE**
 
-LCN-018 — Clipboard remains **PLANNED** and must not be started as part of this run.
+Task: [tasks/LCN-024-first-run-installation-guide-v1.1.0-release.md](tasks/LCN-024-first-run-installation-guide-v1.1.0-release.md)
 
-## Latest completed task
+## Immediate work
 
-### LCN-017 — Scheduled Tasks
-
-Status: **COMPLETE**
-
-Task: [tasks/LCN-017-scheduled-tasks.md](tasks/LCN-017-scheduled-tasks.md)
-
-Report: [reports/LCN-20260919-017-scheduled-tasks-completion.md](reports/LCN-20260919-017-scheduled-tasks-completion.md)
-
-Passing CI run: `35453726763`
+1. Rewrite first-run installation guide.
+2. Fix launcher copy that incorrectly implies installer creates `mcp-conf.yaml`.
+3. Bump version to 1.1.0.
+4. Validate locally.
+5. Push and require CI PASS.
+6. Tag, package, and publish v1.1.0.
+7. Close LCN-024 with release evidence.

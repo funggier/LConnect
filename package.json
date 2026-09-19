@@ -1,7 +1,7 @@
 {
   "name": "lconnect-mcp",
   "private": true,
-  "version": "1.0.2",
+  "version": "1.1.0",
   "description": "Modular local Windows MCP server for ChatGPT with full-machine access by default.",
   "type": "module",
   "engines": {

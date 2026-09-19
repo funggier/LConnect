@@ -18,7 +18,9 @@ if (-not (Test-Path -LiteralPath $Maintenance)) { throw "Missing maintenance scr
 . $Maintenance
 
 if (-not (Test-Path -LiteralPath $Client)) { throw "Missing tunnel client: $Client. Run Install-LConnect.cmd first." }
-if (-not (Test-Path -LiteralPath $Profile)) { throw "Missing profile: $Profile. Run Install-LConnect.cmd first." }
+if (-not (Test-Path -LiteralPath $Profile)) {
+    throw "Missing local tunnel profile: $Profile. The installer intentionally does not create this file. Follow docs\INSTALLATION_TH.md (Step 5) to create mcp-conf.yaml locally."
+}
 if (-not (Get-Command node -ErrorAction SilentlyContinue)) { throw 'node was not found. Install Node.js LTS.' }
 if (-not (Get-Command npm -ErrorAction SilentlyContinue)) { throw 'npm was not found. Install Node.js LTS.' }
 

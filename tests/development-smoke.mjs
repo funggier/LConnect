@@ -1,4 +1,4 @@
-import fsp from "node:fs/promises";
+﻿import fsp from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -25,7 +25,7 @@ transport.stderr?.on("data", (chunk) => {
 });
 
 const client = new Client(
-  { name: "lconnect-development-smoke", version: "1.0.2" },
+  { name: "lconnect-development-smoke", version: "1.1.0" },
   { capabilities: {} }
 );
 

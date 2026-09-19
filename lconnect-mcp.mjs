@@ -1,4 +1,4 @@
-import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
+﻿import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { loadLConnectConfig } from "./modules/config.mjs";
 import { registerFilesystemTools } from "./modules/filesystem.mjs";
@@ -20,7 +20,7 @@ import { registerEnvironmentTools } from "./modules/environment.mjs";
 const config = loadLConnectConfig(import.meta.url);
 const server = new McpServer({
   name: "LConnect",
-  version: "1.0.2",
+  version: "1.1.0",
 });
 
 registerFilesystemTools(server, config);
@@ -40,7 +40,7 @@ registerScheduledTaskTools(server, config);
 registerEnvironmentTools(server, config);
 
 console.error(
-  `LConnect 1.0.2 starting; fullMachineAccess=${config.fullMachineAccess}; allowedDirectories=${config.allowedDirectories.join(";")}`
+  `LConnect 1.1.0 starting; fullMachineAccess=${config.fullMachineAccess}; allowedDirectories=${config.allowedDirectories.join(";")}`
 );
 
 await server.connect(new StdioServerTransport());

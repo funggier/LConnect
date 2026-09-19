@@ -1,4 +1,4 @@
-import http from "node:http";
+﻿import http from "node:http";
 import fsp from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
@@ -23,7 +23,7 @@ let stderr = "";
 transport.stderr?.on("data", (chunk) => { stderr += chunk.toString("utf8"); });
 
 const client = new Client(
-  { name: "lconnect-http-smoke", version: "1.0.2" },
+  { name: "lconnect-http-smoke", version: "1.1.0" },
   { capabilities: {} }
 );
 
