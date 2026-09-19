@@ -13,19 +13,18 @@ Last updated: 2026-09-19
 
 ## Active task
 
-### LCN-015 — Log Tail
+### LCN-016 — File Watcher
 
 Status: **ACTIVE**
 
-Task: [tasks/LCN-015-log-tail.md](tasks/LCN-015-log-tail.md)
+Task: [tasks/LCN-016-file-watcher.md](tasks/LCN-016-file-watcher.md)
 
 Planned capabilities:
 
-- `tail_file`
-- `follow_log`
-- `read_log_events`
-- `search_log`
-- `stop_log_follow`
+- `watch_path`
+- `watch_events`
+- `watch_status`
+- `stop_watch`
 
 ## Stop boundary for this development run
 

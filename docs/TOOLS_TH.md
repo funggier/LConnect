@@ -1,6 +1,6 @@
 # รายการ Tools ของ LConnect
 
-LConnect Core ปัจจุบัน expose 79 tools ผ่าน MCP `main` channel เดียว
+LConnect Core ปัจจุบัน expose 83 tools ผ่าน MCP `main` channel เดียว
 
 ## Filesystem
 
@@ -718,6 +718,34 @@ search ใน bounded tail region แบบ literal หรือ regex พร้
 หยุด timer และลบ follower session
 
 Follower state อยู่ใน memory ของ LConnect และหายเมื่อ runtime restart
+
+## File Watcher
+
+### watch_path
+
+เริ่ม filesystem watcher แล้วคืน `watcher_id` ทันที
+
+รองรับ:
+
+- file/directory
+- recursive mode เมื่อ platform รองรับ
+- bounded event buffer
+
+### watch_events
+
+อ่าน events หลัง sequence cursor โดยไม่รอ event ใหม่
+
+รายงาน overflow เมื่อ consumer ช้าจน event เก่าถูก drop
+
+### watch_status
+
+อ่านสถานะ watcher และ buffered-event metadata
+
+### stop_watch
+
+ปิด watcher และลบ session
+
+หมายเหตุ: `fs.watch` เป็น OS notification source ซึ่งอาจ coalesce หรือ omit events ได้ จึงไม่ควรถูกใช้เป็น lossless audit log
 
 ## Environment
 

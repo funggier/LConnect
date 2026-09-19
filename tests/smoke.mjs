@@ -101,6 +101,10 @@ const requiredTools = [
   "read_log_events",
   "search_log",
   "stop_log_follow",
+  "watch_path",
+  "watch_events",
+  "watch_status",
+  "stop_watch",
 ];
 
 try {

@@ -13,6 +13,7 @@ import { registerGitTools } from "./modules/git.mjs";
 import { registerDevelopmentTools } from "./modules/development.mjs";
 import { registerHttpTools } from "./modules/http.mjs";
 import { registerLogTailTools } from "./modules/log-tail.mjs";
+import { registerFileWatcherTools } from "./modules/file-watcher.mjs";
 import { registerEnvironmentTools } from "./modules/environment.mjs";
 
 const config = loadLConnectConfig(import.meta.url);
@@ -33,6 +34,7 @@ registerGitTools(server, config);
 registerDevelopmentTools(server, config);
 registerHttpTools(server, config);
 registerLogTailTools(server, config);
+registerFileWatcherTools(server, config);
 registerEnvironmentTools(server, config);
 
 console.error(

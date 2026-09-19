@@ -35,6 +35,7 @@ lconnect-mcp.mjs
    +-- modules/development.mjs
    +-- modules/http.mjs
    +-- modules/log-tail.mjs
+   +-- modules/file-watcher.mjs
    +-- modules/system.mjs
    +-- modules/environment.mjs
 ```
@@ -232,6 +233,12 @@ log-tail module ใช้ background bounded polling พร้อม sequence cu
 ไม่มี MCP call ใดถูก hold ไว้เพื่อรอ log ใหม่
 
 Follower แยก append, truncate และ file replacement/rotation และเก็บ event buffer แบบ bounded พร้อม overflow evidence
+
+## File Watcher
+
+file-watcher module wrap `fs.watch` ด้วย bounded in-memory session/cursor contract
+
+event source อาจ coalesce events ตาม semantics ของ OS/Node จึงรายงานเป็น notification stream ไม่ใช่ lossless filesystem audit
 
 ## System
 

@@ -1,6 +1,6 @@
 # LCN-016 — File Watcher
 
-Status: **READY**
+Status: **ACTIVE**
 
 ## Goal
 
@@ -13,6 +13,21 @@ watch_path, watch_events, watch_status, stop_watch
 ## Design notes
 
 ไม่ hold MCP call; explicit overflow/coalescing semantics
+
+## Progress
+
+- 2026-09-19: Started from coordination HEAD `24a6571d31c3a1f20dbed6b37be71af7748306f3`.
+- RED established: smoke catalog expected four File Watcher tools and failed because implementation was absent.
+- Added `modules/file-watcher.mjs` and `tests/file-watcher-smoke.mjs`.
+- Watchers return immediately with a watcher ID; event reads use sequence cursors.
+- Event buffers are bounded and report overflow.
+- `fs.watch` events are treated as OS notifications that may be coalesced; they are not presented as a lossless audit log.
+- Recursive capability is requested explicitly and platform errors remain visible.
+- Disposable directory acceptance PASS: create/change, recursive nested file, rename/delete, cursor stability and cleanup.
+- Local catalog: 83 tools.
+- `npm run check`: PASS.
+- `npm test`: PASS.
+- `npm audit --audit-level=moderate`: 0 vulnerabilities.
 
 ## Acceptance criteria
 
