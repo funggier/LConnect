@@ -1,6 +1,6 @@
 # LCN-009 — Windows Services
 
-Status: **ACTIVE**
+Status: **COMPLETE**
 
 ## Goal
 
@@ -27,6 +27,17 @@ list_services, get_service, start_service, stop_service, restart_service, set_se
 - `npm run check`: PASS.
 - `npm test`: PASS locally.
 - `npm audit --audit-level=moderate`: 0 vulnerabilities.
+
+## Completion evidence
+
+- Implementation commit: `bddad237d913db60a6afd8703654181b6bef0a43`
+- GitHub Actions run: `35448002152` — PASS
+- Windows CI runtime smoke: catalog = 41 tools
+- read-only service inspection: PASS
+- exact-name lookup: PASS
+- disposable CI service startup-mode mutation: PASS
+- disposable CI service start/restart/stop lifecycle: PASS
+- dependency audit: 0 vulnerabilities
 
 ## Acceptance criteria
 

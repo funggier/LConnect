@@ -137,3 +137,15 @@ This file records decisions that future sessions should preserve unless there is
 **Decision:** `wait_process` is bounded per call instead of waiting indefinitely.
 
 **Why:** Windows can reuse PIDs, original command lines are not safely reversible into argv in a generic way, and long blocking MCP calls are vulnerable to upstream caller timeouts.
+
+---
+
+## D-016 — Windows service mutations use exact service Name
+
+**Decision:** Service lifecycle/startup mutations resolve one exact Windows service `Name` before acting.
+
+**Decision:** Display-name and wildcard matching are not accepted as destructive identities.
+
+**Why:** Windows service display names are user-facing and wildcard-capable APIs can unintentionally target more than one service.
+
+**Testing rule:** Local development remains read-only for service lifecycle; mutation acceptance uses a disposable service on CI with cleanup.

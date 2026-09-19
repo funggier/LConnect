@@ -1,6 +1,6 @@
 # LCN-010 — Port / Network
 
-Status: **PLANNED**
+Status: **READY**
 
 ## Goal
 

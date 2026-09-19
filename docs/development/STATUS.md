@@ -26,7 +26,7 @@ Expansion phase ถัดไปมุ่งไปที่ System, Development, 
 | Workstream | Status | Task range | Notes |
 |---|---|---:|---|
 | Core / Tunnel | COMPLETE | LCN-001–006 | Baseline + recovery + coordination |
-| System Foundation | ACTIVE | LCN-007–011 | Environment + Process Advanced complete; Windows Services next |
+| System Foundation | ACTIVE | LCN-007–011 | Environment + Process + Services complete; Port/Network next |
 | Developer Foundation | PLANNED | LCN-012–014 | Git / Development / HTTP |
 | Observation | PLANNED | LCN-015–017 | Log / Watcher / Scheduled Tasks |
 | Desktop Control | PLANNED | LCN-018–020 | Clipboard / Window / Input |
@@ -90,6 +90,20 @@ Added 5 structured process lifecycle tools:
 
 Tool catalog increased from 30 to 35. PID + creation-time identity guards and disposable-process restart/wait tests passed CI.
 
+### LCN-009 — Windows Services
+**COMPLETE**
+
+Added 6 structured service tools:
+
+- `list_services`
+- `get_service`
+- `start_service`
+- `stop_service`
+- `restart_service`
+- `set_service_startup`
+
+Tool catalog increased from 35 to 41. Disposable Windows Service lifecycle/startup-mode tests passed CI.
+
 ## Next sequence
 
 ```text
@@ -97,9 +111,9 @@ LCN-007 Environment — COMPLETE
   ↓
 LCN-008 Process Advanced — COMPLETE
   ↓
-LCN-009 Windows Services — READY
+LCN-009 Windows Services — COMPLETE
   ↓
-LCN-010 Port / Network
+LCN-010 Port / Network — READY
   ↓
 LCN-011 Hardware
   ↓
