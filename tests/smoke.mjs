@@ -70,6 +70,12 @@ const requiredTools = [
   "dns_lookup",
   "network_interfaces",
   "ping_host",
+  "cpu_info",
+  "memory_info",
+  "disk_info",
+  "gpu_info",
+  "storage_health",
+  "battery_info",
 ];
 
 try {

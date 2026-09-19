@@ -1,6 +1,6 @@
 # รายการ Tools ของ LConnect
 
-LConnect Core ปัจจุบัน expose 48 tools ผ่าน MCP `main` channel เดียว
+LConnect Core ปัจจุบัน expose 54 tools ผ่าน MCP `main` channel เดียว
 
 ## Filesystem
 
@@ -383,6 +383,100 @@ arguments:
 - timeout ต่อ reply สูงสุด 5000 ms
 
 คืน structured replies และ average RTT เมื่อสำเร็จ
+
+## Hardware
+
+Hardware tools เป็น read-only diagnostics ไม่มีการปรับ clock, fan, power limit หรือ firmware
+
+### cpu_info
+
+รายงาน CPU topology/identity:
+
+- processor name/manufacturer
+- core count
+- logical processor count
+- current/max clock
+- load percentage เมื่อ Windows expose ค่า
+- socket / architecture / processor ID
+
+บน Windows ใช้ `Win32_Processor` และเก็บ Node logical processor count เป็น cross-check
+
+### memory_info
+
+รายงาน:
+
+- total/free physical memory
+- total/free virtual memory
+- RAM modules
+- capacity
+- speed/configured clock
+- manufacturer/part/serial
+- SMBIOS memory type
+
+ใช้ `Win32_OperatingSystem` + `Win32_PhysicalMemory`
+
+### disk_info
+
+inventory ทั้ง logical volumes และ physical disks:
+
+logical:
+
+- drive
+- type
+- label
+- filesystem
+- size/free space
+
+physical:
+
+- model
+- interface/media type
+- serial
+- size/status
+- partition count
+
+### gpu_info
+
+รายงาน graphics adapters จาก `Win32_VideoController`:
+
+- name/vendor
+- reported adapter RAM
+- driver version/date
+- PNP ID
+- video processor
+- current resolution/refresh rate เมื่อ expose
+- status
+
+หาก runtime/VM ไม่ expose GPU จะคืน `available: false` พร้อมเหตุผล แทนการเดา
+
+### storage_health
+
+พยายามใช้ `Get-PhysicalDisk` ก่อนเพื่ออ่าน:
+
+- media/bus type
+- health status
+- operational status
+- size
+- serial
+- poolability
+
+ถ้า detailed storage health ใช้ไม่ได้ จะ fallback เป็น `Win32_DiskDrive.Status` และระบุ source/note ชัดเจน ไม่เรียก fallback ว่า SMART health
+
+### battery_info
+
+อ่าน `Win32_Battery`
+
+บน desktop ที่ไม่มี battery จะคืน:
+
+```json
+{
+  "available": false,
+  "count": 0,
+  "batteries": []
+}
+```
+
+พร้อม note อธิบาย ไม่ถือว่าเป็น tool error
 
 ## Environment
 

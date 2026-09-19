@@ -30,6 +30,7 @@ lconnect-mcp.mjs
    +-- modules/process-advanced.mjs
    +-- modules/services.mjs
    +-- modules/network.mjs
+   +-- modules/hardware.mjs
    +-- modules/system.mjs
    +-- modules/environment.mjs
 ```
@@ -165,6 +166,18 @@ network module ใช้หลาย primitive ตามความเหมา
 ตั้งใจไม่ใช้ `Get-NetTCPConnection` เป็น enumeration baseline เพราะเคยพบ memory pressure/OOM บน runtime จริง
 
 Acceptance ใช้ local TCP/UDP fixtures และ loopback เท่านั้น จึงไม่ต้องพึ่ง external internet
+
+## Hardware
+
+hardware module เป็น read-only diagnostics layer ใช้ Node OS APIs และ Windows CIM/Storage APIs ตามความเหมาะสม
+
+หลักการสำคัญ:
+
+- observed telemetry กับ unavailable telemetry ต้องแยกชัด
+- ไม่ fabricate sensor/SMART/battery data
+- storage health ระบุ source ว่าเป็น `Get-PhysicalDisk` หรือ fallback
+- ไม่มี hardware mutation/control ใน module นี้
+- desktop ที่ไม่มี battery เป็น valid `available=false` state
 
 ## System
 

@@ -1,6 +1,6 @@
 # LCN-011 — Hardware
 
-Status: **READY**
+Status: **ACTIVE**
 
 ## Goal
 
@@ -13,6 +13,22 @@ cpu_info, memory_info, disk_info, gpu_info, storage_health, battery_info
 ## Design notes
 
 unsupported sensors ต้องคืน unavailable ไม่เดาค่า
+
+## Progress
+
+- 2026-09-19: Started from coordination HEAD `df0d239fb6779cef5cfc2371207fcd991c208597`.
+- RED established: smoke catalog expected six hardware tools and failed because implementation was absent.
+- Hardware telemetry distinguishes observed values from unsupported/unavailable values.
+- Added `modules/hardware.mjs` and `tests/hardware-smoke.mjs`.
+- Read-only implementation only; no hardware mutation/control.
+- CPU/Memory/Disk local acceptance: PASS.
+- GPU local acceptance: PASS (`available=true`).
+- Storage health local acceptance: PASS using `Get-PhysicalDisk`.
+- Battery local acceptance: PASS with `available=false`, `count=0` on desktop.
+- Local catalog: 54 tools.
+- `npm run check`: PASS.
+- `npm test`: PASS.
+- `npm audit --audit-level=moderate`: 0 vulnerabilities.
 
 ## Acceptance criteria
 

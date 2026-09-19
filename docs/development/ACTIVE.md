@@ -19,7 +19,7 @@ Last updated: 2026-09-19
 
 ### LCN-011 — Hardware
 
-Status: **READY**
+Status: **ACTIVE**
 
 Task: [tasks/LCN-011-hardware.md](tasks/LCN-011-hardware.md)
 
