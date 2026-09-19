@@ -1,6 +1,6 @@
 # รายการ Tools ของ LConnect
 
-LConnect Core ปัจจุบัน expose 41 tools ผ่าน MCP `main` channel เดียว
+LConnect Core ปัจจุบัน expose 48 tools ผ่าน MCP `main` channel เดียว
 
 ## Filesystem
 
@@ -296,6 +296,93 @@ options:
 ใช้ Service Control Manager ผ่าน `sc.exe` โดย target มาจาก exact service object ที่ resolve ก่อนหน้า
 
 การเปลี่ยน service/startup mode ยังถูกจำกัดด้วยสิทธิ์ของ Windows account ที่รัน LConnect
+
+## Port / Network
+
+### tcp_connections
+
+อ่าน TCP connections แบบ structured โดยใช้ `netstat.exe -ano -p tcp` แล้ว parse ภายใน LConnect
+
+รองรับ filters:
+
+- state
+- local/remote address
+- local/remote port
+- PID
+- limit
+
+เหตุผลที่ไม่ใช้ `Get-NetTCPConnection`: runtime acceptance บนเครื่องจริงเคยพบ memory pressure/OOM จาก path นี้
+
+### udp_endpoints
+
+อ่าน UDP endpoints ผ่าน `netstat.exe -ano -p udp`
+
+filters:
+
+- local address
+- local port
+- PID
+- limit
+
+### port_owner
+
+ค้นหา local port ownership แล้ว correlate กับ process metadata
+
+arguments:
+
+- `port`
+- `protocol`: `tcp`, `udp`, `both`
+- `local_address`
+
+คืน PID/process name/path เมื่ออ่านได้
+
+### port_test
+
+ทดสอบ TCP connect แบบ bounded timeout ด้วย Node socket
+
+คืน:
+
+- reachable
+- elapsed time
+- local/remote endpoint
+- error code/message เมื่อเชื่อมไม่ได้
+
+### dns_lookup
+
+resolve hostname ผ่าน OS resolver
+
+family:
+
+- `any`
+- `ipv4`
+- `ipv6`
+
+failure เช่น NXDOMAIN เป็น structured diagnostic result ไม่ใช่ exception ที่ซ่อนรายละเอียด
+
+### network_interfaces
+
+อ่าน local interfaces จาก Node/OS API
+
+ข้อมูล:
+
+- interface name
+- address/family/netmask
+- MAC
+- internal
+- CIDR
+- scope ID
+
+### ping_host
+
+ส่ง ICMP echo แบบ bounded ด้วย .NET `System.Net.NetworkInformation.Ping`
+
+arguments:
+
+- host
+- count สูงสุด 5
+- timeout ต่อ reply สูงสุด 5000 ms
+
+คืน structured replies และ average RTT เมื่อสำเร็จ
 
 ## Environment
 

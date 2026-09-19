@@ -7,6 +7,7 @@ import { registerProcessTools } from "./modules/process.mjs";
 import { registerProcessAdvancedTools } from "./modules/process-advanced.mjs";
 import { registerSystemTools } from "./modules/system.mjs";
 import { registerServiceTools } from "./modules/services.mjs";
+import { registerNetworkTools } from "./modules/network.mjs";
 import { registerEnvironmentTools } from "./modules/environment.mjs";
 
 const config = loadLConnectConfig(import.meta.url);
@@ -21,6 +22,7 @@ registerProcessTools(server, config);
 registerProcessAdvancedTools(server, config);
 registerSystemTools(server, config);
 registerServiceTools(server, config);
+registerNetworkTools(server, config);
 registerEnvironmentTools(server, config);
 
 console.error(

@@ -29,6 +29,7 @@ lconnect-mcp.mjs
    +-- modules/process.mjs
    +-- modules/process-advanced.mjs
    +-- modules/services.mjs
+   +-- modules/network.mjs
    +-- modules/system.mjs
    +-- modules/environment.mjs
 ```
@@ -150,6 +151,20 @@ services module เป็น structured wrapper เหนือ Windows Service 
 - startup mode รองรับ automatic/delayed/manual/disabled
 - permission/SCM failures ไม่ถูกซ่อน
 - local tests เป็น read-only; mutation acceptance ใช้ disposable service บน CI
+
+## Network
+
+network module ใช้หลาย primitive ตามความเหมาะสม:
+
+- TCP/UDP endpoint enumeration: `netstat.exe` + structured parser
+- TCP connectivity: Node `net.Socket`
+- DNS: Node OS resolver
+- interfaces: Node `os.networkInterfaces()`
+- ICMP: .NET Ping
+
+ตั้งใจไม่ใช้ `Get-NetTCPConnection` เป็น enumeration baseline เพราะเคยพบ memory pressure/OOM บน runtime จริง
+
+Acceptance ใช้ local TCP/UDP fixtures และ loopback เท่านั้น จึงไม่ต้องพึ่ง external internet
 
 ## System
 

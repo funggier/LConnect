@@ -63,6 +63,13 @@ const requiredTools = [
   "stop_service",
   "restart_service",
   "set_service_startup",
+  "tcp_connections",
+  "udp_endpoints",
+  "port_owner",
+  "port_test",
+  "dns_lookup",
+  "network_interfaces",
+  "ping_host",
 ];
 
 try {

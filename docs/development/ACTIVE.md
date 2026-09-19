@@ -19,7 +19,7 @@ Last updated: 2026-09-19
 
 ### LCN-010 — Port / Network
 
-Status: **READY**
+Status: **ACTIVE**
 
 Task: [tasks/LCN-010-port-network.md](tasks/LCN-010-port-network.md)
 
