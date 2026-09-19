@@ -34,6 +34,7 @@ lconnect-mcp.mjs
    +-- modules/git.mjs
    +-- modules/development.mjs
    +-- modules/http.mjs
+   +-- modules/log-tail.mjs
    +-- modules/system.mjs
    +-- modules/environment.mjs
 ```
@@ -223,6 +224,14 @@ response ที่ใหญ่ไม่ถูกอ่านแบบ unbounded
 downloads ใช้ temporary file + rename และเคารพ filesystem access policy เดียวกับ LConnect
 
 acceptance ใช้ local HTTP fixture เพื่อไม่พึ่ง external internet
+
+## Log Tail
+
+log-tail module ใช้ background bounded polling พร้อม sequence cursor
+
+ไม่มี MCP call ใดถูก hold ไว้เพื่อรอ log ใหม่
+
+Follower แยก append, truncate และ file replacement/rotation และเก็บ event buffer แบบ bounded พร้อม overflow evidence
 
 ## System
 

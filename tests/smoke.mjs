@@ -96,6 +96,11 @@ const requiredTools = [
   "http_probe",
   "http_headers",
   "http_download",
+  "tail_file",
+  "follow_log",
+  "read_log_events",
+  "search_log",
+  "stop_log_follow",
 ];
 
 try {

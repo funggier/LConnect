@@ -13,18 +13,19 @@ Last updated: 2026-09-19
 
 ## Active task
 
-### LCN-014 — HTTP Client
+### LCN-015 — Log Tail
 
 Status: **ACTIVE**
 
-Task: [tasks/LCN-014-http-client.md](tasks/LCN-014-http-client.md)
+Task: [tasks/LCN-015-log-tail.md](tasks/LCN-015-log-tail.md)
 
 Planned capabilities:
 
-- `http_request`
-- `http_probe`
-- `http_headers`
-- `http_download`
+- `tail_file`
+- `follow_log`
+- `read_log_events`
+- `search_log`
+- `stop_log_follow`
 
 ## Stop boundary for this development run
 

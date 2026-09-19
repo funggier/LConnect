@@ -1,6 +1,6 @@
 # LCN-015 — Log Tail
 
-Status: **READY**
+Status: **ACTIVE**
 
 ## Goal
 
@@ -13,6 +13,21 @@ tail_file, follow_log, read_log_events, search_log, stop_log_follow
 ## Design notes
 
 session IDs + bounded buffers/cursors; handle rotation/truncate
+
+## Progress
+
+- 2026-09-19: Started from coordination HEAD `2ab5f61b4f2231a908ae0e185d3424feaaf03f2b`.
+- RED established: smoke catalog expected five Log Tail tools and failed because implementation was absent.
+- Added `modules/log-tail.mjs` and `tests/log-tail-smoke.mjs`.
+- Followers use background bounded polling and return a follower ID immediately.
+- Event consumption uses sequence cursors; no MCP call waits for new log data.
+- Append, truncate and file replacement/rotation are distinct events.
+- Event buffers and per-poll reads are bounded.
+- Disposable log acceptance PASS: tail, append, truncate, rotation, cursor stability, regex search, stop cleanup.
+- Local catalog: 79 tools.
+- `npm run check`: PASS.
+- `npm test`: PASS.
+- `npm audit --audit-level=moderate`: 0 vulnerabilities.
 
 ## Acceptance criteria
 

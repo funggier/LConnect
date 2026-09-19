@@ -10,7 +10,7 @@
 
 ## สถานะปัจจุบัน
 
-LConnect Core ผ่าน runtime acceptance บน Windows 10 แล้ว โดย MCP discovery ปัจจุบันแสดง 74 tools และทดสอบจริงทั้ง filesystem, PowerShell, process/session, stdin, process-tree termination และ listening ports
+LConnect Core ผ่าน runtime acceptance บน Windows 10 แล้ว โดย MCP discovery ปัจจุบันแสดง 79 tools และทดสอบจริงทั้ง filesystem, PowerShell, process/session, stdin, process-tree termination และ listening ports
 
 ## โครงสร้าง
 
@@ -156,6 +156,13 @@ npm test
 - `http_probe`
 - `http_headers`
 - `http_download`
+
+### Log Tail
+- `tail_file`
+- `follow_log`
+- `read_log_events`
+- `search_log`
+- `stop_log_follow`
 
 ### System
 - `system_info`

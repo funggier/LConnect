@@ -1,6 +1,6 @@
 # รายการ Tools ของ LConnect
 
-LConnect Core ปัจจุบัน expose 74 tools ผ่าน MCP `main` channel เดียว
+LConnect Core ปัจจุบัน expose 79 tools ผ่าน MCP `main` channel เดียว
 
 ## Filesystem
 
@@ -677,6 +677,47 @@ probe endpoint แบบ HEAD และสามารถ fallback เป็น 
 - temp-file แล้ว rename เมื่อสำเร็จ
 - ลบ temp file เมื่อ failure
 - เคารพ full-machine/restricted path policy ของ LConnect
+
+## Log Tail
+
+### tail_file
+
+อ่านท้าย text log แบบ bounded byte scan และคืน last N lines
+
+### follow_log
+
+สร้าง background log follower แล้วคืน `follower_id` ทันที
+
+options:
+
+- from end หรืออ่านจากต้น
+- poll interval
+- bounded event buffer
+- bounded bytes ต่อ poll
+
+### read_log_events
+
+อ่าน follower events หลัง sequence cursor โดยไม่รอ event ใหม่
+
+event types หลัก:
+
+- append
+- truncate
+- rotate
+- missing/reappear
+- error
+
+ถ้า consumer ช้าจน event เก่าถูก drop จะรายงาน `overflowed` และ `dropped_through_seq`
+
+### search_log
+
+search ใน bounded tail region แบบ literal หรือ regex พร้อม max matches
+
+### stop_log_follow
+
+หยุด timer และลบ follower session
+
+Follower state อยู่ใน memory ของ LConnect และหายเมื่อ runtime restart
 
 ## Environment
 
