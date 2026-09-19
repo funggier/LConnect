@@ -246,7 +246,7 @@ async function mutateTask(name, taskPath, action, config) {
 
   const confirm = action === "delete" ? " -Confirm:$false" : "";
   const script = [
-    `${cmd} -TaskName ${psLiteral(name)} -TaskPath ${psLiteral(normalized)}${confirm} -ErrorAction Stop`,
+    `${cmd} -TaskName ${psLiteral(name)} -TaskPath ${psLiteral(normalized)}${confirm} -ErrorAction Stop | Out-Null`,
     action === "delete"
       ? `[pscustomobject]@{ ok = $true; action = 'delete'; task_name = ${psLiteral(name)}; task_path = ${psLiteral(normalized)}; deleted = $true } | ConvertTo-Json -Compress`
       : [

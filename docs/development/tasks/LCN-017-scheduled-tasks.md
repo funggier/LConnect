@@ -29,6 +29,9 @@ structured Task Scheduler wrapper; exact task identity for destructive action
 - `npm run check`: PASS.
 - `npm test`: PASS.
 - `npm audit --audit-level=moderate`: 0 vulnerabilities.
+- First GitHub CI run `35453528934` reached the disposable task lifecycle and failed at `disable_scheduled_task` because Windows ScheduledTasks lifecycle cmdlets emitted a formatted task object before the JSON contract.
+- Root cause: unsuppressed PowerShell pipeline output, not lifecycle failure.
+- Fixed all lifecycle cmdlet invocations to pipe their native output to `Out-Null`; LConnect stdout is reserved for the structured JSON result.
 
 ## Acceptance criteria
 
