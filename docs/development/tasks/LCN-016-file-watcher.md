@@ -1,6 +1,6 @@
 # LCN-016 — File Watcher
 
-Status: **ACTIVE**
+Status: **COMPLETE**
 
 ## Goal
 
@@ -35,6 +35,20 @@ watch_path, watch_events, watch_status, stop_watch
 - Initial .NET loop exposed PowerShell pipeline buffering; event JSON is now written directly with `[Console]::Out.WriteLine()` so events stream immediately instead of waiting for process exit.
 - The cursor/buffer MCP contract remains unchanged; non-Windows platforms retain the Node watcher fallback.
 - Final local targeted + full suite GREEN after the .NET streaming fix.
+
+## Completion evidence
+
+- Final implementation commit: `34c1e50100e0535d684f8b1ae7bd2e42b93d2718`
+- Passing GitHub Actions run: `35452158275`
+- Windows CI runtime smoke: catalog = 83 tools
+- recursive directory watch: PASS
+- watcher status: PASS
+- create/change events: PASS
+- nested recursive file events: PASS
+- rename/delete events: PASS
+- cursor stability: PASS
+- watcher cleanup: PASS
+- dependency audit: 0 vulnerabilities
 
 ## Acceptance criteria
 

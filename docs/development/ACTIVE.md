@@ -6,33 +6,30 @@ Last updated: 2026-09-19
 
 - Repository: `funggier/LConnect`
 - Branch: `main`
-- Current implementation HEAD: `57042e29e531461b5a3a4764f637c0ec284fe539`
-- Runtime acceptance after refresh: 70 tools exposed from `T:\Sanbox\openclawspace\tunnel-mcp-ok`
-- Latest released baseline: `v1.0.2 — Basic Recovery`
-- OpenAI tunnel-client minimum: `0.0.14`
+- Current implementation HEAD: `34c1e50100e0535d684f8b1ae7bd2e42b93d2718`
+- Current tested catalog: 83 tools
+- Runtime source: `T:\Sanbox\openclawspace\tunnel-mcp-ok`
+- Stop boundary: complete LCN-017 and stop before LCN-018
 
 ## Active task
 
-### LCN-016 — File Watcher
+### LCN-017 — Scheduled Tasks
 
-Status: **ACTIVE**
+Status: **READY**
 
-Task: [tasks/LCN-016-file-watcher.md](tasks/LCN-016-file-watcher.md)
+Task: [tasks/LCN-017-scheduled-tasks.md](tasks/LCN-017-scheduled-tasks.md)
 
 Planned capabilities:
 
-- `watch_path`
-- `watch_events`
-- `watch_status`
-- `stop_watch`
+- `list_scheduled_tasks`
+- `get_scheduled_task`
+- `create_scheduled_task`
+- `run_scheduled_task`
+- `stop_scheduled_task`
+- `enable_scheduled_task`
+- `disable_scheduled_task`
+- `delete_scheduled_task`
 
-## Stop boundary for this development run
+## Stop boundary
 
-Continue sequentially through:
-
-- LCN-014 HTTP Client
-- LCN-015 Log Tail
-- LCN-016 File Watcher
-- LCN-017 Scheduled Tasks
-
-Stop after LCN-017 is complete. Do not begin LCN-018 in this run.
+After LCN-017 reaches COMPLETE with tests/CI/report/coordination state updated, stop. Do not begin LCN-018.

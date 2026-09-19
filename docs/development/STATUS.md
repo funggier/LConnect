@@ -28,7 +28,7 @@ Expansion phase ถัดไปมุ่งไปที่ System, Development, 
 | Core / Tunnel | COMPLETE | LCN-001–006 | Baseline + recovery + coordination |
 | System Foundation | COMPLETE | LCN-007–011 | Environment + Process + Services + Network + Hardware complete |
 | Developer Foundation | COMPLETE | LCN-012–014 | Git + Development + HTTP complete |
-| Observation | ACTIVE | LCN-015–017 | Log Tail complete; File Watcher next |
+| Observation | ACTIVE | LCN-015–017 | Log Tail + File Watcher complete; Scheduled Tasks next |
 | Desktop Control | PLANNED | LCN-018–020 | Clipboard / Window / Input |
 | Browser Automation | PLANNED | LCN-021–023 | Common browser layer + Firefox + Chrome |
 
@@ -190,6 +190,18 @@ Added 5 bounded log tools:
 
 Tool catalog increased from 74 to 79. Cursor-based append/truncate/rotation fixture tests passed CI.
 
+### LCN-016 — File Watcher
+**COMPLETE**
+
+Added 4 bounded file watcher tools:
+
+- `watch_path`
+- `watch_events`
+- `watch_status`
+- `stop_watch`
+
+Tool catalog increased from 79 to 83. Windows backend uses .NET `System.IO.FileSystemWatcher` after native Node/libuv watcher crashes were reproduced on CI; final watcher fixture suite passed.
+
 ## Next sequence
 
 ```text
@@ -211,9 +223,9 @@ LCN-014 HTTP Client — COMPLETE
   ↓
 LCN-015 Log Tail — COMPLETE
   ↓
-LCN-016 File Watcher — READY
+LCN-016 File Watcher — COMPLETE
   ↓
-LCN-017 Scheduled Tasks
+LCN-017 Scheduled Tasks — READY
   ↓
 LCN-018 Clipboard
   ↓

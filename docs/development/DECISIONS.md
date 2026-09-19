@@ -223,3 +223,15 @@ This file records decisions that future sessions should preserve unless there is
 **Decision:** Log following distinguishes append, truncate and file replacement/rotation rather than assuming one monotonically growing file.
 
 **Why:** Observation must not hold MCP calls open, consume unbounded memory, or silently pretend that lost buffered history is complete.
+
+---
+
+## D-023 — Windows file watching uses .NET FileSystemWatcher, not Node fs.watch
+
+**Decision:** Windows file-watcher sessions use a PowerShell child hosting .NET `System.IO.FileSystemWatcher`.
+
+**Decision:** Native Node `fs.watch` is not the Windows baseline for this module.
+
+**Why:** Two independent GitHub Windows CI runs reproduced libuv assertion crashes, including with non-recursive Node watcher handles. The .NET backend passed the same recursive/cursor/cleanup acceptance suite.
+
+**Semantics:** File watcher events remain OS notifications that may be coalesced and are not presented as a lossless audit log.

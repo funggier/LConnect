@@ -1,6 +1,6 @@
 # LCN-017 — Scheduled Tasks
 
-Status: **PLANNED**
+Status: **READY**
 
 ## Goal
 
