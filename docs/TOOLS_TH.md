@@ -1,6 +1,6 @@
 # รายการ Tools ของ LConnect
 
-LConnect Core ปัจจุบัน expose 63 tools ผ่าน MCP `main` channel เดียว
+LConnect Core ปัจจุบัน expose 70 tools ผ่าน MCP `main` channel เดียว
 
 ## Filesystem
 
@@ -587,6 +587,65 @@ actions:
 add รองรับ existing branch หรือ `new_branch`
 
 remove ไม่ force โดย default
+
+## Development
+
+### detect_project
+
+ตรวจ project type จากไฟล์ evidence ใน project root เช่น:
+
+- Node: `package.json`
+- Python: `pyproject.toml`, `requirements.txt`
+- Rust: `Cargo.toml`
+- Go: `go.mod`
+- .NET, Maven, Gradle, CMake, Make
+
+ไม่เดา project type จากชื่อ folder
+
+### detect_build_system
+
+รายงาน build/package system และ execution support
+
+รุ่นปัจจุบัน execute Node projects ก่อนเป็น baseline
+
+Node package manager ตรวจจาก:
+
+1. `packageManager` ใน package.json
+2. lockfile
+3. default npm
+
+### project_info
+
+รวม project evidence + build systems + Node package metadata เช่น scripts, engines และ dependency counts
+
+### install_dependencies
+
+เริ่ม dependency install แล้วคืน process `session_id` ทันที
+
+Node managers:
+
+- npm
+- pnpm
+- yarn
+- bun
+
+รองรับ frozen/ignore scripts/extra args
+
+งานยาวอ่านผลต่อผ่าน `read_process_output`
+
+### run_build / run_tests / run_lint
+
+เริ่ม package script เป็น managed process session
+
+ค่า default script:
+
+- build
+- test
+- lint
+
+รองรับเลือก script/manager/extra args/env
+
+ถ้า project ecosystem ตรวจพบแต่ execution contract ยังไม่รองรับ จะคืน error ชัดเจนแทนการเดาคำสั่ง
 
 ## Environment
 

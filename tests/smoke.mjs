@@ -85,6 +85,13 @@ const requiredTools = [
   "git_pull",
   "git_push",
   "git_worktree",
+  "detect_project",
+  "detect_build_system",
+  "project_info",
+  "install_dependencies",
+  "run_build",
+  "run_tests",
+  "run_lint",
 ];
 
 try {

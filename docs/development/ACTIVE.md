@@ -19,7 +19,7 @@ Last updated: 2026-09-19
 
 ### LCN-013 — Development Module
 
-Status: **READY**
+Status: **ACTIVE**
 
 Task: [tasks/LCN-013-development-module.md](tasks/LCN-013-development-module.md)
 

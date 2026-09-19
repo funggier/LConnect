@@ -32,6 +32,7 @@ lconnect-mcp.mjs
    +-- modules/network.mjs
    +-- modules/hardware.mjs
    +-- modules/git.mjs
+   +-- modules/development.mjs
    +-- modules/system.mjs
    +-- modules/environment.mjs
 ```
@@ -193,6 +194,24 @@ git module เป็น structured wrapper เหนือ Git CLI โดยใ�
 - force push ไม่อยู่ใน first contract
 - commit staging ต้อง explicit
 - acceptance ใช้ disposable repositories/local bare remote เท่านั้น
+
+## Development
+
+development module ทำ project/build/test abstraction โดยไม่สร้าง job registry ซ้ำ
+
+`modules/process.mjs` export shared managed-process session helpers เพื่อให้:
+
+- `start_process`
+- `install_dependencies`
+- `run_build`
+- `run_tests`
+- `run_lint`
+
+ใช้ session registry เดียวกัน
+
+ดังนั้นงานยาวคืน `session_id` แล้วใช้ `read_process_output` / `terminate_process` เดิมได้
+
+Node/npm เป็น executable baseline แรก ส่วน ecosystem ที่ detect ได้แต่ยังไม่มี execution contract จะรายงาน unsupported ชัดเจน
 
 ## System
 
