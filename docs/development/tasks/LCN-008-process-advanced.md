@@ -1,6 +1,6 @@
 # LCN-008 — Process Advanced
 
-Status: **ACTIVE**
+Status: **COMPLETE**
 
 ## Goal
 
@@ -33,6 +33,14 @@ PID identity check; parent/child tree; wait แบบไม่แขวน RPC
 - `restart_process` PID-reuse guard: PASS.
 - `restart_process` explicit relaunch: PASS.
 - `npm audit --audit-level=moderate`: 0 vulnerabilities.
+
+## Completion evidence
+
+- Implementation commit: `092f3d8ae2dd4fce9bb38cc366431cc49d400569`
+- GitHub Actions run: `35447697883` — PASS
+- Windows CI runtime smoke: catalog = 35 tools
+- Process identity, tree, find, bounded wait, natural exit, PID-reuse guards and explicit restart fixture: PASS
+- dependency audit: 0 vulnerabilities
 
 ## Acceptance criteria
 

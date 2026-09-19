@@ -123,3 +123,17 @@ This file records decisions that future sessions should preserve unless there is
 **Why:** Scope ambiguity can cause persistent machine changes when only temporary process changes were intended, and bulk environment values often contain credentials/tokens.
 
 **Persistence rule:** User/machine changes apply to future processes; existing processes are not treated as automatically updated.
+
+---
+
+## D-015 — Process identity uses PID + creation time
+
+**Decision:** PID alone is insufficient for destructive or waiting process operations.
+
+**Rule:** `wait_process` and `restart_process` use `PID + creation_time` as identity evidence and report PID reuse as an identity mismatch.
+
+**Decision:** `restart_process` requires explicit relaunch `program + args`; it does not parse or guess the original Windows command line.
+
+**Decision:** `wait_process` is bounded per call instead of waiting indefinitely.
+
+**Why:** Windows can reuse PIDs, original command lines are not safely reversible into argv in a generic way, and long blocking MCP calls are vulnerable to upstream caller timeouts.

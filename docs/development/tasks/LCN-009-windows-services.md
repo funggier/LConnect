@@ -1,6 +1,6 @@
 # LCN-009 — Windows Services
 
-Status: **PLANNED**
+Status: **READY**
 
 ## Goal
 
