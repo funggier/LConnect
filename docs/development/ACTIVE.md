@@ -15,7 +15,7 @@ Last updated: 2026-09-19
 
 ### LCN-014 — HTTP Client
 
-Status: **READY**
+Status: **ACTIVE**
 
 Task: [tasks/LCN-014-http-client.md](tasks/LCN-014-http-client.md)
 

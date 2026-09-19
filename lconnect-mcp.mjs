@@ -11,6 +11,7 @@ import { registerNetworkTools } from "./modules/network.mjs";
 import { registerHardwareTools } from "./modules/hardware.mjs";
 import { registerGitTools } from "./modules/git.mjs";
 import { registerDevelopmentTools } from "./modules/development.mjs";
+import { registerHttpTools } from "./modules/http.mjs";
 import { registerEnvironmentTools } from "./modules/environment.mjs";
 
 const config = loadLConnectConfig(import.meta.url);
@@ -29,6 +30,7 @@ registerNetworkTools(server, config);
 registerHardwareTools(server, config);
 registerGitTools(server, config);
 registerDevelopmentTools(server, config);
+registerHttpTools(server, config);
 registerEnvironmentTools(server, config);
 
 console.error(

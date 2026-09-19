@@ -92,6 +92,10 @@ const requiredTools = [
   "run_build",
   "run_tests",
   "run_lint",
+  "http_request",
+  "http_probe",
+  "http_headers",
+  "http_download",
 ];
 
 try {

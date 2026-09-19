@@ -33,6 +33,7 @@ lconnect-mcp.mjs
    +-- modules/hardware.mjs
    +-- modules/git.mjs
    +-- modules/development.mjs
+   +-- modules/http.mjs
    +-- modules/system.mjs
    +-- modules/environment.mjs
 ```
@@ -212,6 +213,16 @@ development module ทำ project/build/test abstraction โดยไม่ส�
 ดังนั้นงานยาวคืน `session_id` แล้วใช้ `read_process_output` / `terminate_process` เดิมได้
 
 Node/npm เป็น executable baseline แรก ส่วน ecosystem ที่ detect ได้แต่ยังไม่มี execution contract จะรายงาน unsupported ชัดเจน
+
+## HTTP
+
+HTTP module ใช้ Node Fetch API และกำหนด timeout/redirect/body bounds อย่าง explicit
+
+response ที่ใหญ่ไม่ถูกอ่านแบบ unbounded
+
+downloads ใช้ temporary file + rename และเคารพ filesystem access policy เดียวกับ LConnect
+
+acceptance ใช้ local HTTP fixture เพื่อไม่พึ่ง external internet
 
 ## System
 

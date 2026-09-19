@@ -1,6 +1,6 @@
 # รายการ Tools ของ LConnect
 
-LConnect Core ปัจจุบัน expose 70 tools ผ่าน MCP `main` channel เดียว
+LConnect Core ปัจจุบัน expose 74 tools ผ่าน MCP `main` channel เดียว
 
 ## Filesystem
 
@@ -646,6 +646,37 @@ Node managers:
 รองรับเลือก script/manager/extra args/env
 
 ถ้า project ecosystem ตรวจพบแต่ execution contract ยังไม่รองรับ จะคืน error ชัดเจนแทนการเดาคำสั่ง
+
+## HTTP
+
+### http_request
+
+ส่ง HTTP request แบบ bounded
+
+รองรับ method GET/POST/PUT/PATCH/DELETE/HEAD/OPTIONS, custom headers, text/JSON body, timeout, redirect policy และ response body mode
+
+response body ถูกจำกัดด้วย `max_body_bytes` และรายงาน `truncated` ชัดเจน
+
+### http_probe
+
+probe endpoint แบบ HEAD และสามารถ fallback เป็น GET เมื่อ server ตอบ 405/501
+
+เหมาะกับ health/readiness endpoint
+
+### http_headers
+
+อ่าน status + response headers ด้วย bounded HEAD request
+
+### http_download
+
+ดาวน์โหลด resource ไปยังไฟล์โดย:
+
+- timeout/redirect explicit
+- `max_bytes`
+- default ไม่ overwrite
+- temp-file แล้ว rename เมื่อสำเร็จ
+- ลบ temp file เมื่อ failure
+- เคารพ full-machine/restricted path policy ของ LConnect
 
 ## Environment
 
