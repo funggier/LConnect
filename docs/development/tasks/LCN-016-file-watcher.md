@@ -28,6 +28,9 @@ watch_path, watch_events, watch_status, stop_watch
 - `npm run check`: PASS.
 - `npm test`: PASS.
 - `npm audit --audit-level=moderate`: 0 vulnerabilities.
+- First GitHub CI run `35451668817` exposed a Node/libuv Windows crash when using native `fs.watch(..., { recursive: true })`: assertion failure in `src\\win\\fs-event.c`.
+- Replaced native recursive mode with one non-recursive watcher handle per directory plus bounded directory-tree refresh on rename/create/delete notifications.
+- The revised design avoids the libuv recursive-watch crash class and keeps the same cursor/buffer contract.
 
 ## Acceptance criteria
 

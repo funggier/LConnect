@@ -44,8 +44,9 @@ function snapshot(session) {
     dropped_through_seq: session.droppedThroughSeq,
     buffered_event_count: session.events.length,
     max_buffer_events: session.maxBufferEvents,
+    watched_directory_count: session.directoryWatchers?.size ?? 0,
     last_error: session.lastError,
-    note: "fs.watch notifications may be coalesced or omitted by the operating system and are not a lossless audit log.",
+    note: "Filesystem notifications may be coalesced or omitted by the operating system and are not a lossless audit log.",
   };
 }
 
@@ -55,7 +56,6 @@ function addEvent(session, event) {
     timestamp: new Date().toISOString(),
     ...event,
   };
-
   session.events.push(full);
   while (session.events.length > session.maxBufferEvents) {
     const dropped = session.events.shift();
@@ -64,14 +64,182 @@ function addEvent(session, event) {
   return full;
 }
 
-function eventPath(session, filename) {
+function eventPathFor(session, watchedDirectory, filename) {
   if (session.kind === "file") return session.path;
-  if (!filename) return session.path;
-  return path.resolve(session.path, filename);
+  if (!filename) return watchedDirectory;
+  return path.resolve(watchedDirectory, filename);
+}
+
+async function listDirectoriesRecursive(root) {
+  const found = [root];
+  const queue = [root];
+
+  while (queue.length) {
+    const current = queue.shift();
+    let entries;
+    try {
+      entries = await fsp.readdir(current, { withFileTypes: true });
+    } catch {
+      continue;
+    }
+
+    for (const entry of entries) {
+      if (!entry.isDirectory() || entry.isSymbolicLink()) continue;
+      const child = path.join(current, entry.name);
+      found.push(child);
+      queue.push(child);
+    }
+  }
+
+  return found;
+}
+
+function attachDirectoryWatcher(session, directory) {
+  if (session.directoryWatchers.has(directory) || session.stopped) return;
+
+  const watcher = fs.watch(
+    directory,
+    { recursive: false, persistent: false, encoding: "utf8" },
+    (eventType, filename) => {
+      const name = filename == null ? null : String(filename);
+      const eventPath = eventPathFor(session, directory, name);
+      const relativePath = session.kind === "directory"
+        ? path.relative(session.path, eventPath)
+        : path.basename(eventPath);
+
+      addEvent(session, {
+        type: "fs",
+        event_type: eventType,
+        filename: name,
+        relative_path: relativePath || ".",
+        path: eventPath,
+      });
+
+      if (session.recursive && eventType === "rename") {
+        scheduleDirectoryRefresh(session);
+      }
+    }
+  );
+
+  watcher.on("error", (error) => {
+    session.lastError = error.message;
+    addEvent(session, {
+      type: "error",
+      error_code: error.code ?? null,
+      error_message: error.message,
+      path: directory,
+    });
+  });
+
+  session.directoryWatchers.set(directory, watcher);
+}
+
+async function refreshDirectoryWatchers(session) {
+  if (session.stopped || session.kind !== "directory" || !session.recursive) return;
+
+  let directories;
+  try {
+    directories = await listDirectoriesRecursive(session.path);
+  } catch (error) {
+    session.lastError = error.message;
+    addEvent(session, {
+      type: "error",
+      error_code: error.code ?? null,
+      error_message: error.message,
+      path: session.path,
+    });
+    return;
+  }
+
+  const wanted = new Set(directories.map((dir) => path.resolve(dir)));
+
+  for (const directory of wanted) {
+    try {
+      attachDirectoryWatcher(session, directory);
+    } catch (error) {
+      session.lastError = error.message;
+      addEvent(session, {
+        type: "error",
+        error_code: error.code ?? null,
+        error_message: error.message,
+        path: directory,
+      });
+    }
+  }
+
+  for (const [directory, watcher] of [...session.directoryWatchers.entries()]) {
+    if (!wanted.has(path.resolve(directory))) {
+      try { watcher.close(); } catch {}
+      session.directoryWatchers.delete(directory);
+    }
+  }
+
+  session.lastError = null;
+}
+
+function scheduleDirectoryRefresh(session) {
+  if (session.stopped || session.refreshScheduled) return;
+  session.refreshScheduled = true;
+  const timer = setTimeout(async () => {
+    session.refreshScheduled = false;
+    await refreshDirectoryWatchers(session);
+  }, 25);
+  timer.unref?.();
+}
+
+function attachFileWatcher(session) {
+  const watcher = fs.watch(
+    session.path,
+    { recursive: false, persistent: false, encoding: "utf8" },
+    (eventType, filename) => {
+      const name = filename == null ? null : String(filename);
+      addEvent(session, {
+        type: "fs",
+        event_type: eventType,
+        filename: name,
+        relative_path: path.basename(session.path),
+        path: session.path,
+      });
+    }
+  );
+
+  watcher.on("error", (error) => {
+    session.lastError = error.message;
+    addEvent(session, {
+      type: "error",
+      error_code: error.code ?? null,
+      error_message: error.message,
+      path: session.path,
+    });
+  });
+
+  session.fileWatcher = watcher;
+}
+
+async function initializeWatchers(session) {
+  if (session.kind === "file") {
+    attachFileWatcher(session);
+    return;
+  }
+
+  if (session.recursive) {
+    await refreshDirectoryWatchers(session);
+  } else {
+    attachDirectoryWatcher(session, session.path);
+  }
+}
+
+function closeSession(session) {
+  session.stopped = true;
+  try { session.fileWatcher?.close(); } catch {}
+  for (const watcher of session.directoryWatchers.values()) {
+    try { watcher.close(); } catch {}
+  }
+  session.directoryWatchers.clear();
 }
 
 export function registerFileWatcherTools(server, config) {
-  server.tool("watch_path", "Start a bounded fs.watch session and return a watcher ID immediately.", {
+  server.tool("watch_path", "Start a bounded filesystem watcher session and return a watcher ID immediately.", {
     path: z.string().min(1),
     recursive: z.boolean().optional(),
     max_buffer_events: z.number().int().min(10).max(10000).optional(),
@@ -81,6 +249,7 @@ export function registerFileWatcherTools(server, config) {
       const stat = await fsp.stat(watchPath);
       const kind = stat.isDirectory() ? "directory" : stat.isFile() ? "file" : "other";
       if (kind === "other") throw new Error(`Unsupported watch target type: ${watchPath}`);
+      if (kind === "file" && recursive) throw new Error("recursive=true is valid only for directory targets.");
 
       const id = `watch-${Date.now()}-${++watcherCounter}`;
       const session = {
@@ -95,38 +264,12 @@ export function registerFileWatcherTools(server, config) {
         stopped: false,
         startedAt: new Date().toISOString(),
         lastError: null,
-        watcher: null,
+        fileWatcher: null,
+        directoryWatchers: new Map(),
+        refreshScheduled: false,
       };
 
-      const watcher = fs.watch(
-        watchPath,
-        { recursive, persistent: false, encoding: "utf8" },
-        (eventType, filename) => {
-          const name = filename == null ? null : String(filename);
-          addEvent(session, {
-            type: "fs",
-            event_type: eventType,
-            filename: name,
-            path: eventPath(session, name),
-          });
-        }
-      );
-
-      watcher.on("error", (error) => {
-        session.lastError = error.message;
-        addEvent(session, {
-          type: "error",
-          error_code: error.code ?? null,
-          error_message: error.message,
-          path: session.path,
-        });
-      });
-
-      watcher.on("close", () => {
-        session.stopped = true;
-      });
-
-      session.watcher = watcher;
+      await initializeWatchers(session);
       watchers.set(id, session);
       return textResult(snapshot(session));
     } catch (error) {
@@ -172,8 +315,7 @@ export function registerFileWatcherTools(server, config) {
     const session = watchers.get(watcher_id);
     if (!session) return textResult(`Unknown watcher: ${watcher_id}`, true);
 
-    session.stopped = true;
-    try { session.watcher?.close(); } catch {}
+    closeSession(session);
     const final = snapshot(session);
     watchers.delete(watcher_id);
     return textResult({ stopped: true, watcher: final });
