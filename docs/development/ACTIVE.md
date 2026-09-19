@@ -6,56 +6,50 @@ Last updated: 2026-09-19
 
 - Repository: `funggier/LConnect`
 - Branch: `main`
-- Current implementation HEAD: `bddad237d913db60a6afd8703654181b6bef0a43`
+- Current implementation HEAD: `54708082b1e3f91abf32a26900d4c263e1837314`
 - Latest released baseline: `v1.0.2 — Basic Recovery`
 - Platform validated: Windows 10 x64 / Node.js 24 / Windows PowerShell 5.1
 - OpenAI tunnel-client minimum: `0.0.14`
 - MCP topology: one `main` channel, modular Core
-- Current discovered tool catalog in tests: 41 tools
+- Current discovered tool catalog in tests: 48 tools
 
 > Before modifying source, verify live GitHub/local HEAD.
 
 ## Active task
 
-### LCN-010 — Port / Network
+### LCN-011 — Hardware
 
-Status: **ACTIVE**
+Status: **READY**
 
-Task: [tasks/LCN-010-port-network.md](tasks/LCN-010-port-network.md)
+Task: [tasks/LCN-011-hardware.md](tasks/LCN-011-hardware.md)
 
 Purpose:
 
-เพิ่ม structured network diagnostics สำหรับ TCP/UDP, port ownership, connectivity, DNS, interfaces และ ping โดยหลีกเลี่ยง path ที่เคยทำให้ `Get-NetTCPConnection` ใช้ memory สูงผิดปกติบนเครื่องจริง
+เพิ่ม structured hardware/resource evidence สำหรับ CPU, memory, disks, GPU, storage health และ battery โดยต้อง report unsupported/unavailable อย่างตรงไปตรงมา ไม่เดาค่า
 
 Planned capabilities:
 
-- `tcp_connections`
-- `udp_endpoints`
-- `port_owner`
-- `port_test`
-- `dns_lookup`
-- `network_interfaces`
-- `ping_host`
-
-## Why this task is next
-
-Network evidence เป็น dependency สำคัญของ tunnels, local servers, Ollama, browser automation, dashboards และ future HTTP/Development modules
+- `cpu_info`
+- `memory_info`
+- `disk_info`
+- `gpu_info`
+- `storage_health`
+- `battery_info`
 
 ## Immediate next steps
 
 1. Establish RED catalog tests.
-2. Prefer native lightweight sources over `Get-NetTCPConnection`.
-3. Define structured TCP/UDP parsing and PID correlation.
-4. Add connectivity/DNS/interface tools.
-5. Use disposable local TCP server fixtures for acceptance.
-6. Update docs/tests.
-7. Push and use GitHub CI as acceptance gate.
+2. Prefer Node/WMI/CIM sources with bounded output.
+3. Keep unavailable/vendor-specific telemetry explicit.
+4. Validate on the operator's Windows 10 machine and GitHub Windows runner.
+5. Update docs/tests.
+6. Push and use GitHub CI as acceptance gate.
 
 ## Recently completed
 
-### LCN-009 — Windows Services
+### LCN-010 — Port / Network
 
-- implementation commit: `bddad237d913db60a6afd8703654181b6bef0a43`
-- CI run: `35448002152`
+- implementation commit: `54708082b1e3f91abf32a26900d4c263e1837314`
+- CI run: `35448325044`
 - result: PASS
-- catalog: 41 tools
+- catalog: 48 tools

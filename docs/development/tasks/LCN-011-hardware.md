@@ -1,6 +1,6 @@
 # LCN-011 — Hardware
 
-Status: **PLANNED**
+Status: **READY**
 
 ## Goal
 

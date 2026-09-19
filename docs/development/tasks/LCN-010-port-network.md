@@ -1,6 +1,6 @@
 # LCN-010 — Port / Network
 
-Status: **ACTIVE**
+Status: **COMPLETE**
 
 ## Goal
 
@@ -28,6 +28,18 @@ structured network evidence; bounded output; avoid heavy Get-NetTCPConnection pa
 - `npm run check`: PASS.
 - `npm test`: PASS.
 - `npm audit --audit-level=moderate`: 0 vulnerabilities.
+
+## Completion evidence
+
+- Implementation commit: `54708082b1e3f91abf32a26900d4c263e1837314`
+- GitHub Actions run: `35448325044` — PASS
+- Windows CI runtime smoke: catalog = 48 tools
+- TCP listener enumeration + PID: PASS
+- port owner correlation: PASS
+- bounded TCP connect test: PASS
+- UDP endpoint enumeration: PASS
+- localhost DNS/interfaces/loopback ping: PASS
+- dependency audit: 0 vulnerabilities
 
 ## Acceptance criteria
 

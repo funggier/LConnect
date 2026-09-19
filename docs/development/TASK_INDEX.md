@@ -11,8 +11,8 @@
 | [LCN-007](tasks/LCN-007-environment-module.md) | COMPLETE | Environment Module |
 | [LCN-008](tasks/LCN-008-process-advanced.md) | COMPLETE | Process Advanced |
 | [LCN-009](tasks/LCN-009-windows-services.md) | COMPLETE | Windows Services |
-| [LCN-010](tasks/LCN-010-port-network.md) | READY | Port / Network |
-| [LCN-011](tasks/LCN-011-hardware.md) | PLANNED | Hardware |
+| [LCN-010](tasks/LCN-010-port-network.md) | COMPLETE | Port / Network |
+| [LCN-011](tasks/LCN-011-hardware.md) | READY | Hardware |
 | [LCN-012](tasks/LCN-012-git-module.md) | PLANNED | Git Module |
 | [LCN-013](tasks/LCN-013-development-module.md) | PLANNED | Development Module |
 | [LCN-014](tasks/LCN-014-http-client.md) | PLANNED | HTTP Client |

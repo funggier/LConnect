@@ -149,3 +149,15 @@ This file records decisions that future sessions should preserve unless there is
 **Why:** Windows service display names are user-facing and wildcard-capable APIs can unintentionally target more than one service.
 
 **Testing rule:** Local development remains read-only for service lifecycle; mutation acceptance uses a disposable service on CI with cleanup.
+
+---
+
+## D-017 — Network endpoint enumeration uses lightweight netstat parsing
+
+**Decision:** TCP/UDP endpoint enumeration uses `netstat.exe -ano` plus a structured parser as the Windows baseline.
+
+**Decision:** `Get-NetTCPConnection` is not the default enumeration path.
+
+**Why:** Runtime acceptance on the operator machine previously observed excessive memory pressure/OOM from `Get-NetTCPConnection`. The netstat path has proven lightweight and reliable in LConnect acceptance tests.
+
+**Testing rule:** Network smoke tests use local TCP/UDP fixtures and loopback/DNS localhost so CI does not depend on external internet.
