@@ -1,6 +1,6 @@
 # LCN-011 — Hardware
 
-Status: **ACTIVE**
+Status: **COMPLETE**
 
 ## Goal
 
@@ -29,6 +29,16 @@ unsupported sensors ต้องคืน unavailable ไม่เดาค่�
 - `npm run check`: PASS.
 - `npm test`: PASS.
 - `npm audit --audit-level=moderate`: 0 vulnerabilities.
+
+## Completion evidence
+
+- Implementation commit: `d4740d159a180f72034bd34f9dd89c555470ee88`
+- GitHub Actions run: `35448844056` — PASS
+- Windows CI runtime smoke: catalog = 54 tools
+- CPU/Memory/Disk/GPU diagnostics: PASS
+- Storage health: PASS using `Get-PhysicalDisk`
+- Battery unavailable contract: PASS
+- dependency audit: 0 vulnerabilities
 
 ## Acceptance criteria
 

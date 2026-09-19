@@ -161,3 +161,15 @@ This file records decisions that future sessions should preserve unless there is
 **Why:** Runtime acceptance on the operator machine previously observed excessive memory pressure/OOM from `Get-NetTCPConnection`. The netstat path has proven lightweight and reliable in LConnect acceptance tests.
 
 **Testing rule:** Network smoke tests use local TCP/UDP fixtures and loopback/DNS localhost so CI does not depend on external internet.
+
+---
+
+## D-018 — Hardware diagnostics never fabricate unavailable telemetry
+
+**Decision:** Hardware tools are read-only diagnostics and must distinguish observed, fallback and unavailable telemetry.
+
+**Decision:** Missing GPU/battery/storage-health data is represented explicitly rather than inferred.
+
+**Decision:** `storage_health` reports its evidence source; `Win32_DiskDrive.Status` fallback is not presented as detailed SMART telemetry.
+
+**Why:** Hardware data availability varies by firmware, driver, VM, storage controller and device class. Unknown is preferable to a misleading value.

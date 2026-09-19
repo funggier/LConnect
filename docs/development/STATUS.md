@@ -26,8 +26,8 @@ Expansion phase ถัดไปมุ่งไปที่ System, Development, 
 | Workstream | Status | Task range | Notes |
 |---|---|---:|---|
 | Core / Tunnel | COMPLETE | LCN-001–006 | Baseline + recovery + coordination |
-| System Foundation | ACTIVE | LCN-007–011 | Environment + Process + Services + Network complete; Hardware next |
-| Developer Foundation | PLANNED | LCN-012–014 | Git / Development / HTTP |
+| System Foundation | COMPLETE | LCN-007–011 | Environment + Process + Services + Network + Hardware complete |
+| Developer Foundation | READY | LCN-012–014 | Git next |
 | Observation | PLANNED | LCN-015–017 | Log / Watcher / Scheduled Tasks |
 | Desktop Control | PLANNED | LCN-018–020 | Clipboard / Window / Input |
 | Browser Automation | PLANNED | LCN-021–023 | Common browser layer + Firefox + Chrome |
@@ -119,6 +119,20 @@ Added 7 structured network tools:
 
 Tool catalog increased from 41 to 48. Local TCP/UDP fixture tests passed without external internet dependencies.
 
+### LCN-011 — Hardware
+**COMPLETE**
+
+Added 6 structured hardware diagnostic tools:
+
+- `cpu_info`
+- `memory_info`
+- `disk_info`
+- `gpu_info`
+- `storage_health`
+- `battery_info`
+
+Tool catalog increased from 48 to 54. Hardware telemetry explicitly distinguishes observed data from unavailable data and passed both local and CI acceptance.
+
 ## Next sequence
 
 ```text
@@ -130,9 +144,9 @@ LCN-009 Windows Services — COMPLETE
   ↓
 LCN-010 Port / Network — COMPLETE
   ↓
-LCN-011 Hardware — READY
+LCN-011 Hardware — COMPLETE
   ↓
-LCN-012 Git
+LCN-012 Git — READY
   ↓
 LCN-013 Development
   ↓

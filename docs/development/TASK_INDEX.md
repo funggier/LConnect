@@ -12,8 +12,8 @@
 | [LCN-008](tasks/LCN-008-process-advanced.md) | COMPLETE | Process Advanced |
 | [LCN-009](tasks/LCN-009-windows-services.md) | COMPLETE | Windows Services |
 | [LCN-010](tasks/LCN-010-port-network.md) | COMPLETE | Port / Network |
-| [LCN-011](tasks/LCN-011-hardware.md) | READY | Hardware |
-| [LCN-012](tasks/LCN-012-git-module.md) | PLANNED | Git Module |
+| [LCN-011](tasks/LCN-011-hardware.md) | COMPLETE | Hardware |
+| [LCN-012](tasks/LCN-012-git-module.md) | READY | Git Module |
 | [LCN-013](tasks/LCN-013-development-module.md) | PLANNED | Development Module |
 | [LCN-014](tasks/LCN-014-http-client.md) | PLANNED | HTTP Client |
 | [LCN-015](tasks/LCN-015-log-tail.md) | PLANNED | Log Tail |

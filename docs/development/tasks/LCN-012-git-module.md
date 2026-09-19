@@ -1,6 +1,6 @@
 # LCN-012 — Git Module
 
-Status: **PLANNED**
+Status: **READY**
 
 ## Goal
 
