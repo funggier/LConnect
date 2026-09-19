@@ -1,5 +1,7 @@
 # แนวทางพัฒนา LConnect
 
+> สำหรับสถานะงานปัจจุบัน roadmap, numbered tasks, decisions และ session handoff ให้เริ่มที่ [development/README.md](development/README.md)
+
 ## หลักการ
 
 LConnect ใช้ modular architecture
@@ -146,19 +148,21 @@ npm test
 
 LConnect source กับ Tunnel ownership ต้องแยกจากกัน
 
-## แนวทาง module ในอนาคต
+## Roadmap และ Task Tracking
 
-ลำดับที่มีประโยชน์:
+Roadmap expansion รุ่นปัจจุบันอยู่ที่:
 
-1. services
-2. registry
-3. richer network diagnostics
-4. screen capture
-5. window management
-6. keyboard/mouse
-7. Git/dev helpers
-8. Docker/VM
-9. hardware monitoring
-10. CogentNexus/Zooid integrations
+- [development/ROADMAP.md](development/ROADMAP.md)
+- [development/ACTIVE.md](development/ACTIVE.md)
+- [development/STATUS.md](development/STATUS.md)
+- [development/TASK_INDEX.md](development/TASK_INDEX.md)
 
-การเพิ่ม GUI/control module ควรรักษา Core contract เดิมไว้
+ลำดับหลักที่อนุมัติแล้วคือ System Foundation → Developer Foundation → Observation → Desktop Control → Browser Automation
+
+Browser direction:
+
+- Firefox เป็น primary backend
+- Chrome เป็น secondary backend
+- Edge ไม่ใช่ dependency ของ phase แรก
+
+การเพิ่ม GUI/control module ต้องรักษา Core contract และ `main` MCP topology เดิมไว้

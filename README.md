@@ -52,6 +52,10 @@ ChatGPT
 - [รูปแบบสิทธิ์และ Full-machine access](docs/ACCESS_MODEL_TH.md)
 - [การแก้ปัญหา](docs/TROUBLESHOOTING_TH.md)
 - [แนวทางพัฒนา Module](docs/DEVELOPMENT_TH.md)
+- [Development Coordination / งานปัจจุบัน](docs/development/README.md)
+- [Active Task](docs/development/ACTIVE.md)
+- [Roadmap](docs/development/ROADMAP.md)
+- [Task Index](docs/development/TASK_INDEX.md)
 
 ## คำสั่งหลัก
 

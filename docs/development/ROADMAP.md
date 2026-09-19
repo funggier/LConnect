@@ -1,0 +1,342 @@
+# LConnect Expansion Roadmap
+
+## Vision
+
+LConnect should evolve from a local MCP filesystem/shell bridge into a modular Windows execution and automation substrate for AI agents.
+
+The target is not merely "more commands." The target is:
+
+> structured, observable, recoverable local capabilities that let an AI inspect, act, wait, verify, and continue without requiring the user to manually bridge every step.
+
+## Architecture invariant
+
+```text
+ChatGPT
+  |
+OpenAI Tunnel
+  |
+main MCP channel
+  |
+LConnect Core
+  |
+  +-- System modules
+  +-- Development modules
+  +-- Observation modules
+  +-- Desktop modules
+  +-- Browser modules
+```
+
+Ordinary capability growth should happen by registering modules into the existing Core, not by creating new tunnel channels.
+
+---
+
+# Phase 1 — System Foundation
+
+## LCN-007 Environment Module
+
+Primary tools:
+
+- `env_get`
+- `env_list`
+- `env_set`
+- `path_list`
+- `which`
+
+Reason:
+
+Environment inspection underpins almost every development/runtime diagnostic.
+
+## LCN-008 Process Advanced
+
+Primary tools:
+
+- `process_details`
+- `process_tree`
+- `find_process`
+- `wait_process`
+- `restart_process`
+
+Reason:
+
+Current process tools are functional but PID/session oriented. Advanced structured process introspection is needed for service/runtime repair.
+
+## LCN-009 Windows Services
+
+Primary tools:
+
+- `list_services`
+- `get_service`
+- `start_service`
+- `stop_service`
+- `restart_service`
+- `set_service_startup`
+
+Reason:
+
+Direct Windows service lifecycle control is important for local runtimes and persistent infrastructure.
+
+## LCN-010 Port / Network
+
+Primary tools:
+
+- `tcp_connections`
+- `udp_endpoints`
+- `port_owner`
+- `port_test`
+- `dns_lookup`
+- `network_interfaces`
+- `ping_host`
+
+Reason:
+
+Ports and local networking are frequent root causes in tunnels, dashboards, local AI servers, development servers, and IPC.
+
+## LCN-011 Hardware
+
+Primary tools:
+
+- `cpu_info`
+- `memory_info`
+- `disk_info`
+- `gpu_info`
+- `storage_health`
+- `battery_info` when applicable
+
+Reason:
+
+Structured resource/hardware evidence improves debugging and workload decisions.
+
+---
+
+# Phase 2 — Developer Foundation
+
+## LCN-012 Git Module
+
+Primary tools:
+
+- `git_status`
+- `git_diff`
+- `git_log`
+- `git_branch`
+- `git_commit`
+- `git_fetch`
+- `git_pull`
+- `git_push`
+- `git_worktree`
+
+Design principle:
+
+Prefer stable machine-readable Git formats such as porcelain output instead of parsing human-formatted text.
+
+## LCN-013 Development Module
+
+Primary tools:
+
+- `detect_project`
+- `detect_build_system`
+- `project_info`
+- `install_dependencies`
+- `run_build`
+- `run_tests`
+- `run_lint`
+
+Long operations should return sessions/jobs rather than block one MCP call.
+
+## LCN-014 HTTP Client
+
+Primary tools:
+
+- `http_request`
+- `http_probe`
+- `http_headers`
+- `http_download`
+
+Reason:
+
+Needed for local API validation, dashboards, service health and integration testing.
+
+---
+
+# Phase 3 — Observation and Persistence
+
+## LCN-015 Log Tail
+
+Primary tools:
+
+- `tail_file`
+- `follow_log`
+- `read_log_events`
+- `search_log`
+- `stop_log_follow`
+
+Use session IDs and incremental cursors.
+
+## LCN-016 File Watcher
+
+Primary tools:
+
+- `watch_path`
+- `watch_events`
+- `watch_status`
+- `stop_watch`
+
+Do not hold an MCP call open while waiting for filesystem events.
+
+## LCN-017 Scheduled Tasks
+
+Primary tools:
+
+- `list_scheduled_tasks`
+- `get_scheduled_task`
+- `create_scheduled_task`
+- `run_scheduled_task`
+- `stop_scheduled_task`
+- `enable_scheduled_task`
+- `disable_scheduled_task`
+- `delete_scheduled_task`
+
+Reason:
+
+Provides durable Windows automation across reboot/session boundaries.
+
+---
+
+# Phase 4 — Desktop Control
+
+## LCN-018 Clipboard
+
+Primary tools:
+
+- `clipboard_get`
+- `clipboard_set`
+- `clipboard_clear`
+
+Small implementation surface with high practical value.
+
+## LCN-019 Window Control
+
+Primary tools:
+
+- `list_windows`
+- `get_window`
+- `focus_window`
+- `move_window`
+- `resize_window`
+- `minimize_window`
+- `maximize_window`
+- `close_window`
+
+Prefer HWND-based addressing over coordinate heuristics.
+
+## LCN-020 Keyboard / Mouse
+
+Primary tools:
+
+- `key_press`
+- `key_combo`
+- `type_text`
+- `mouse_move`
+- `mouse_click`
+- `mouse_scroll`
+
+Input automation is a fallback/control layer, not the preferred way to interact with browser DOM.
+
+---
+
+# Phase 5 — Browser Automation
+
+## LCN-021 Common Browser Layer
+
+Create browser session abstraction independent of backend.
+
+Example:
+
+```text
+browser_start(browser="firefox")
+ -> browser_session_id
+
+browser_tabs(session_id)
+browser_navigate(session_id, url)
+browser_snapshot(session_id)
+browser_click(session_id, target)
+browser_type(session_id, target, text)
+```
+
+Common capabilities:
+
+- start / attach / stop
+- tabs
+- navigation
+- DOM snapshot/query
+- click/type/select/scroll
+- text/attribute retrieval
+- screenshot
+- console/network events
+
+## LCN-022 Firefox Adapter — Primary
+
+Primary backend:
+
+- WebDriver BiDi
+- geckodriver / Marionette where useful
+
+Firefox is the preferred browser for the project owner and is first-class, not fallback.
+
+Support both:
+
+- LConnect-managed Firefox instance
+- attaching to an automation-enabled existing Firefox where technically appropriate
+
+Do not use Firefox CDP as architecture baseline.
+
+## LCN-023 Chrome Adapter — Secondary
+
+Primary backend:
+
+- Chrome DevTools Protocol (CDP)
+
+Chrome should support the same common Browser API while retaining optional Chrome-specific deep diagnostics.
+
+## Explicit non-goal for first browser phase
+
+Microsoft Edge is not required.
+
+The adapter architecture should allow Chromium-family support later without making Edge a dependency.
+
+---
+
+# Cross-cutting design requirements
+
+Every module should define:
+
+1. structured input schema
+2. structured output where practical
+3. bounded output
+4. timeout semantics
+5. cancellation/session behavior for long operations
+6. validation tests
+7. failure messages that preserve root cause
+8. documentation
+9. minimal external dependencies
+10. compatibility with relocatable installation
+
+## Long-running execution rule
+
+Do not solve upstream timeout by only increasing timeout values.
+
+Prefer:
+
+```text
+start operation
+ -> session/job id
+ -> poll/read incremental state
+ -> cancel/terminate
+```
+
+This pattern should be reused by:
+
+- builds/tests
+- file watchers
+- log followers
+- browser sessions
+- future automation jobs
