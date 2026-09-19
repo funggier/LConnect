@@ -1,6 +1,6 @@
 # LCN-017 — Scheduled Tasks
 
-Status: **ACTIVE**
+Status: **COMPLETE**
 
 ## Goal
 
@@ -32,6 +32,20 @@ structured Task Scheduler wrapper; exact task identity for destructive action
 - First GitHub CI run `35453528934` reached the disposable task lifecycle and failed at `disable_scheduled_task` because Windows ScheduledTasks lifecycle cmdlets emitted a formatted task object before the JSON contract.
 - Root cause: unsuppressed PowerShell pipeline output, not lifecycle failure.
 - Fixed all lifecycle cmdlet invocations to pipe their native output to `Out-Null`; LConnect stdout is reserved for the structured JSON result.
+
+## Completion evidence
+
+- Implementation commit: `bfd1dc0ca68323bcfd8f08e11c544cf476e3ee05`
+- Structured-output fix commit: `50d10ee3be2c76c76a6494f7bdfbba77c9775f51`
+- Passing GitHub Actions run: `35453726763`
+- Windows CI runtime smoke: catalog = 91 tools
+- list/exact lookup: PASS
+- disposable task create: PASS
+- disable/enable: PASS
+- run marker action: PASS
+- stop: PASS
+- delete + cleanup: PASS
+- dependency audit: 0 vulnerabilities
 
 ## Acceptance criteria
 

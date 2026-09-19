@@ -235,3 +235,17 @@ This file records decisions that future sessions should preserve unless there is
 **Why:** Two independent GitHub Windows CI runs reproduced libuv assertion crashes, including with non-recursive Node watcher handles. The .NET backend passed the same recursive/cursor/cleanup acceptance suite.
 
 **Semantics:** File watcher events remain OS notifications that may be coalesced and are not presented as a lossless audit log.
+
+---
+
+## D-024 — Scheduled Task mutations use exact task path + name
+
+**Decision:** Scheduled Task lifecycle/destructive operations require exact `task_path + task_name`.
+
+**Decision:** Wildcard mutation is not supported.
+
+**Decision:** Task creation uses the Windows user running LConnect without storing a password; default run level is Limited.
+
+**Decision:** Native ScheduledTasks cmdlet objects are suppressed from stdout so MCP output remains one structured JSON contract.
+
+**Why:** Task Scheduler is persistent system state. Exact identity and deterministic output reduce accidental cross-task mutation and parser ambiguity.

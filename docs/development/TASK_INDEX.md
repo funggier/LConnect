@@ -18,7 +18,7 @@
 | [LCN-014](tasks/LCN-014-http-client.md) | COMPLETE | HTTP Client |
 | [LCN-015](tasks/LCN-015-log-tail.md) | COMPLETE | Log Tail |
 | [LCN-016](tasks/LCN-016-file-watcher.md) | COMPLETE | File Watcher |
-| [LCN-017](tasks/LCN-017-scheduled-tasks.md) | READY | Scheduled Tasks |
+| [LCN-017](tasks/LCN-017-scheduled-tasks.md) | COMPLETE | Scheduled Tasks |
 | [LCN-018](tasks/LCN-018-clipboard.md) | PLANNED | Clipboard |
 | [LCN-019](tasks/LCN-019-window-control.md) | PLANNED | Window Control |
 | [LCN-020](tasks/LCN-020-keyboard-mouse.md) | PLANNED | Keyboard / Mouse |

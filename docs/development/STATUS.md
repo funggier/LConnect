@@ -28,7 +28,7 @@ Expansion phase ถัดไปมุ่งไปที่ System, Development, 
 | Core / Tunnel | COMPLETE | LCN-001–006 | Baseline + recovery + coordination |
 | System Foundation | COMPLETE | LCN-007–011 | Environment + Process + Services + Network + Hardware complete |
 | Developer Foundation | COMPLETE | LCN-012–014 | Git + Development + HTTP complete |
-| Observation | ACTIVE | LCN-015–017 | Log Tail + File Watcher complete; Scheduled Tasks next |
+| Observation | COMPLETE | LCN-015–017 | Log Tail + File Watcher + Scheduled Tasks complete |
 | Desktop Control | PLANNED | LCN-018–020 | Clipboard / Window / Input |
 | Browser Automation | PLANNED | LCN-021–023 | Common browser layer + Firefox + Chrome |
 
@@ -202,6 +202,22 @@ Added 4 bounded file watcher tools:
 
 Tool catalog increased from 79 to 83. Windows backend uses .NET `System.IO.FileSystemWatcher` after native Node/libuv watcher crashes were reproduced on CI; final watcher fixture suite passed.
 
+### LCN-017 — Scheduled Tasks
+**COMPLETE**
+
+Added 8 structured Windows Scheduled Task tools:
+
+- `list_scheduled_tasks`
+- `get_scheduled_task`
+- `create_scheduled_task`
+- `run_scheduled_task`
+- `stop_scheduled_task`
+- `enable_scheduled_task`
+- `disable_scheduled_task`
+- `delete_scheduled_task`
+
+Tool catalog increased from 83 to 91. Disposable Task Scheduler lifecycle acceptance passed on Windows CI.
+
 ## Next sequence
 
 ```text
@@ -225,9 +241,9 @@ LCN-015 Log Tail — COMPLETE
   ↓
 LCN-016 File Watcher — COMPLETE
   ↓
-LCN-017 Scheduled Tasks — READY
+LCN-017 Scheduled Tasks — COMPLETE
   ↓
-LCN-018 Clipboard
+LCN-018 Clipboard — PLANNED
   ↓
 LCN-019 Window Control
   ↓
