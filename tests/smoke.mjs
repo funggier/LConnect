@@ -47,6 +47,11 @@ const requiredTools = [
   "list_processes",
   "kill_process",
   "list_listening_ports",
+  "env_get",
+  "env_list",
+  "env_set",
+  "path_list",
+  "which",
 ];
 
 try {

@@ -1,6 +1,6 @@
 # รายการ Tools ของ LConnect
 
-LConnect Core ปัจจุบัน expose 25 tools ผ่าน MCP `main` channel เดียว
+LConnect Core ปัจจุบัน expose 30 tools ผ่าน MCP `main` channel เดียว
 
 ## Filesystem
 
@@ -127,6 +127,71 @@ arguments:
 list process sessions ที่ LConnect instance ปัจจุบันรู้จัก
 
 session อยู่ใน memory และหายเมื่อ restart LConnect
+
+## Environment
+
+### env_get
+
+อ่าน environment variable หนึ่งตัวจาก scope ที่ระบุ
+
+scope:
+
+- `process` — environment ของ LConnect process ปัจจุบัน
+- `user` — persistent environment ของ Windows user
+- `machine` — persistent machine environment
+
+คืนค่าเป็น structured JSON พร้อม `exists` และ `value`
+
+### env_list
+
+list environment variables ตาม scope
+
+ค่าเริ่มต้น `include_values: false` เพื่อไม่ให้ environment values เช่น token หรือ secret ถูกแสดงโดยไม่ตั้งใจ
+
+arguments:
+
+- `scope`
+- `include_values`
+
+### env_set
+
+ตั้งหรือลบ environment variable
+
+arguments:
+
+- `name`
+- `value` — ใช้ `null` เพื่อลบ
+- `scope`
+
+semantics:
+
+- `process` เปลี่ยน environment ของ LConnect instance ปัจจุบันและ child process ที่เปิดหลังจากนั้น
+- `user` / `machine` เป็น persistent Windows environment สำหรับ process ที่เปิดภายหลัง
+- process ที่เปิดอยู่ก่อนแล้วจะไม่ได้รับ environment block ใหม่อัตโนมัติ
+- machine scope อาจต้องใช้สิทธิ์ Windows ที่สูงพอ
+
+### path_list
+
+อ่าน PATH ตาม scope แล้วแยกเป็น entries พร้อมข้อมูล:
+
+- index
+- raw path
+- expanded path เมื่อมี `%VARIABLE%`
+- exists
+- type
+- duplicate
+
+### which
+
+ค้นหา executable/file command จาก current working directory และ PATH ของ LConnect process
+
+บน Windows ใช้ `PATHEXT` เพื่อ resolve เช่น `.EXE`, `.CMD`, `.BAT`
+
+arguments:
+
+- `command`
+- `all`
+- `cwd`
 
 ## System
 

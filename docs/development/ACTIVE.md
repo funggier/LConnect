@@ -18,7 +18,7 @@ Last updated: 2026-09-19
 
 ### LCN-007 — Environment Module
 
-Status: **READY**
+Status: **ACTIVE**
 
 Task: [tasks/LCN-007-environment-module.md](tasks/LCN-007-environment-module.md)
 

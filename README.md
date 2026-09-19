@@ -10,7 +10,7 @@
 
 ## สถานะปัจจุบัน
 
-LConnect Core รุ่นเริ่มต้นผ่าน runtime acceptance บน Windows 10 แล้ว โดย MCP discovery แสดง 25 tools และทดสอบจริงทั้ง filesystem, PowerShell, process/session, stdin, process-tree termination และ listening ports
+LConnect Core ผ่าน runtime acceptance บน Windows 10 แล้ว โดย MCP discovery ปัจจุบันแสดง 30 tools และทดสอบจริงทั้ง filesystem, PowerShell, process/session, stdin, process-tree termination และ listening ports
 
 ## โครงสร้าง
 
@@ -91,6 +91,13 @@ npm test
 - `write_process_input`
 - `terminate_process`
 - `list_sessions`
+
+### Environment
+- `env_get`
+- `env_list`
+- `env_set`
+- `path_list`
+- `which`
 
 ### System
 - `system_info`

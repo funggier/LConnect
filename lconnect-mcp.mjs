@@ -5,6 +5,7 @@ import { registerFilesystemTools } from "./modules/filesystem.mjs";
 import { registerShellTools } from "./modules/shell.mjs";
 import { registerProcessTools } from "./modules/process.mjs";
 import { registerSystemTools } from "./modules/system.mjs";
+import { registerEnvironmentTools } from "./modules/environment.mjs";
 
 const config = loadLConnectConfig(import.meta.url);
 const server = new McpServer({
@@ -16,6 +17,7 @@ registerFilesystemTools(server, config);
 registerShellTools(server, config);
 registerProcessTools(server, config);
 registerSystemTools(server, config);
+registerEnvironmentTools(server, config);
 
 console.error(
   `LConnect 1.0.2 starting; fullMachineAccess=${config.fullMachineAccess}; allowedDirectories=${config.allowedDirectories.join(";")}`

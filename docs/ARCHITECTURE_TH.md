@@ -28,6 +28,7 @@ lconnect-mcp.mjs
    +-- modules/shell.mjs
    +-- modules/process.mjs
    +-- modules/system.mjs
+   +-- modules/environment.mjs
 ```
 
 ## เหตุผลที่ใช้ main channel เดียว
@@ -124,6 +125,16 @@ process module เก็บ session ใน memory
 ## System
 
 system module ใช้ Node + PowerShell + Windows executables สำหรับ host diagnostics/process/network
+
+## Environment
+
+environment module ให้ structured contract สำหรับ:
+
+- process/user/machine environment variables
+- PATH inspection
+- Windows PATHEXT executable resolution
+
+process scope ใช้ Node environment โดยตรง ส่วน persistent user/machine scope ใช้ Windows environment API ผ่าน PowerShell โดยยังเคารพ execution setting ของ LConnect
 
 ## การเพิ่ม module ในอนาคต
 
