@@ -109,3 +109,17 @@ This file records decisions that future sessions should preserve unless there is
 **Decision:** Browser DOM interaction should prefer browser protocols. Keyboard/mouse coordinates are for desktop interaction and fallback cases.
 
 **Why:** DOM/protocol automation is more deterministic than screen-coordinate automation.
+
+---
+
+## D-014 — Environment scope and secret-safe defaults
+
+**Decision:** Environment tools distinguish `process`, `user`, and `machine` scopes explicitly.
+
+**Decision:** `env_list` hides values by default; callers must request `include_values: true` to bulk-read values.
+
+**Decision:** `env_set(..., value=null)` means delete.
+
+**Why:** Scope ambiguity can cause persistent machine changes when only temporary process changes were intended, and bulk environment values often contain credentials/tokens.
+
+**Persistence rule:** User/machine changes apply to future processes; existing processes are not treated as automatically updated.

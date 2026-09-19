@@ -8,8 +8,8 @@
 | [LCN-004](tasks/LCN-004-timeout-recovery-root-cause.md) | COMPLETE | Timeout recovery root-cause analysis |
 | [LCN-005](tasks/LCN-005-tunnel-client-recovery.md) | COMPLETE | tunnel-client recovery and v1.0.1 |
 | [LCN-006](tasks/LCN-006-status-diagnostics.md) | COMPLETE | Status diagnostics and v1.0.2 |
-| [LCN-007](tasks/LCN-007-environment-module.md) | READY | Environment Module |
-| [LCN-008](tasks/LCN-008-process-advanced.md) | PLANNED | Process Advanced |
+| [LCN-007](tasks/LCN-007-environment-module.md) | COMPLETE | Environment Module |
+| [LCN-008](tasks/LCN-008-process-advanced.md) | READY | Process Advanced |
 | [LCN-009](tasks/LCN-009-windows-services.md) | PLANNED | Windows Services |
 | [LCN-010](tasks/LCN-010-port-network.md) | PLANNED | Port / Network |
 | [LCN-011](tasks/LCN-011-hardware.md) | PLANNED | Hardware |

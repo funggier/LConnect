@@ -6,57 +6,63 @@ Last updated: 2026-09-19
 
 - Repository: `funggier/LConnect`
 - Branch: `main`
-- Current development baseline when this coordination set was created: `7ff74f486b754578662bb821518df5f660a2883f`
-- Latest released baseline at that point: `v1.0.2 — Basic Recovery`
+- Current implementation HEAD: `faf32054ecf916b85f3d8583659fbc2f5128e8dc`
+- Latest released baseline: `v1.0.2 — Basic Recovery`
 - Platform validated: Windows 10 x64 / Node.js 24 / Windows PowerShell 5.1
 - OpenAI tunnel-client minimum: `0.0.14`
 - MCP topology: one `main` channel, modular Core
+- Current discovered tool catalog in tests: 30 tools
 
-> Before modifying source, always verify the live GitHub/local HEAD. Do not assume the SHA above is still current.
+> Before modifying source, verify live GitHub/local HEAD. Do not assume the SHA above is still current.
 
 ## Active task
 
-### LCN-007 — Environment Module
+### LCN-008 — Process Advanced
 
-Status: **ACTIVE**
+Status: **READY**
 
-Task: [tasks/LCN-007-environment-module.md](tasks/LCN-007-environment-module.md)
+Task: [tasks/LCN-008-process-advanced.md](tasks/LCN-008-process-advanced.md)
 
 Purpose:
 
-สร้าง structured environment tools เป็น module ใหม่ตัวแรกของ expansion roadmap เพื่อให้ AI ตรวจ environment/PATH/executable resolution ได้โดยไม่ต้องพึ่ง raw PowerShell ทุกครั้ง
+ยกระดับ process support จาก basic list/kill/session tools ไปเป็น structured inspection และ lifecycle control ที่ใช้เป็นฐานให้ Services, Development jobs และ Desktop/Browser process coordination
 
-Planned first tools:
+Planned capabilities:
 
-- `env_get`
-- `env_list`
-- `env_set`
-- `path_list`
-- `which`
+- `process_details`
+- `process_tree`
+- `find_process`
+- `wait_process`
+- `restart_process`
 
-## Why this task is first
+## Why this task is next
 
-Environment module:
+Process Advanced เป็น dependency ที่มีประโยชน์ต่อ:
 
-- implementation risk ต่ำ
-- dependency ต่ำ
-- ใช้เป็นฐานให้ Development, Git, Services, Browser และ tool discovery อื่น
-- ช่วยวินิจฉัย PATH/provider/runtime problems ที่เจอบ่อย
-- เป็น task ที่เหมาะใช้พิสูจน์ module conventions สำหรับชุด expansion ใหม่
+- Windows Services
+- Development builds/tests
+- browser lifecycle
+- local server diagnostics
+- PID ownership correlation
+- future job/session abstraction
 
 ## Immediate next steps
 
 1. Verify current `main` and CI status.
-2. Read `DECISIONS.md`.
-3. Define exact schemas and mutation semantics.
-4. Add `modules/environment.mjs`.
-5. Register tools in Core.
-6. Add tests.
-7. Update `docs/TOOLS_TH.md`.
-8. Run `npm run check`, `npm test`, audit.
-9. Push and use GitHub CI as acceptance gate.
-10. Update this coordination state.
+2. Define stable process identity fields and PID-reuse safeguards.
+3. Establish RED tests for the five tools.
+4. Implement structured process inspection first.
+5. Implement wait/restart semantics without holding one RPC indefinitely.
+6. Update docs/tests.
+7. Run local validation.
+8. Push and use GitHub CI as acceptance gate.
+9. Close LCN-008 with evidence and advance ACTIVE.
 
-## Do not start in parallel yet
+## Recently completed
 
-ยังไม่ควรเริ่ม Desktop/Browser modules ก่อน System/Development foundation อย่างน้อยชุดแรกผ่าน เพราะ Window/Input/Browser มี dependency และ failure modes ซับซ้อนกว่า
+LCN-007 — Environment Module
+
+- implementation commit: `faf32054ecf916b85f3d8583659fbc2f5128e8dc`
+- CI run: `35447312363`
+- result: PASS
+- catalog: 30 tools

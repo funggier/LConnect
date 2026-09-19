@@ -1,6 +1,6 @@
 # LCN-007 — Environment Module
 
-Status: **ACTIVE**
+Status: **COMPLETE**
 
 ## Goal
 
@@ -27,6 +27,18 @@ env_get, env_list, env_set, path_list, which
 - Environment tests PASS: process get/list/set/delete, process PATH, user environment read, Node resolution, PATHEXT npm resolution.
 - `npm audit --audit-level=moderate`: 0 vulnerabilities.
 - Persistent user mutation is intentionally exercised only on CI and cleaned up in `finally` so local development does not alter the operator's persistent environment.
+
+## Completion evidence
+
+- Implementation commit: `faf32054ecf916b85f3d8583659fbc2f5128e8dc`
+- GitHub Actions run: `35447312363` — PASS
+- Windows CI runtime smoke: `PASS tools=30`
+- `env_get process`: PASS
+- `env_set process set/delete`: PASS
+- `which PATHEXT npm`: PASS
+- user environment read: PASS
+- user persistent mutation on CI: PASS
+- dependency audit: 0 vulnerabilities
 
 ## Acceptance criteria
 

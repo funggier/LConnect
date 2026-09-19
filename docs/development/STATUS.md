@@ -26,7 +26,7 @@ Expansion phase ถัดไปมุ่งไปที่ System, Development, 
 | Workstream | Status | Task range | Notes |
 |---|---|---:|---|
 | Core / Tunnel | COMPLETE | LCN-001–006 | Baseline + recovery + coordination |
-| System Foundation | READY | LCN-007–011 | Environment first |
+| System Foundation | ACTIVE | LCN-007–011 | Environment complete; Process Advanced next |
 | Developer Foundation | PLANNED | LCN-012–014 | Git / Development / HTTP |
 | Observation | PLANNED | LCN-015–017 | Log / Watcher / Scheduled Tasks |
 | Desktop Control | PLANNED | LCN-018–020 | Clipboard / Window / Input |
@@ -64,12 +64,25 @@ Added tunnel-client updater and minimum version gate `>=0.0.14`.
 
 Separated liveness/readiness/control-plane health; optional MCP health route no longer causes false failure.
 
+### LCN-007 — Environment Module
+**COMPLETE**
+
+Added 5 structured environment tools:
+
+- `env_get`
+- `env_list`
+- `env_set`
+- `path_list`
+- `which`
+
+Tool catalog increased from 25 to 30. Windows PATH/PATHEXT resolution and persistent user environment mutation passed CI.
+
 ## Next sequence
 
 ```text
-LCN-007 Environment
+LCN-007 Environment — COMPLETE
   ↓
-LCN-008 Process Advanced
+LCN-008 Process Advanced — READY
   ↓
 LCN-009 Windows Services
   ↓

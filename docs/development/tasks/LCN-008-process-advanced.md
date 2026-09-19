@@ -1,6 +1,6 @@
 # LCN-008 — Process Advanced
 
-Status: **PLANNED**
+Status: **READY**
 
 ## Goal
 
