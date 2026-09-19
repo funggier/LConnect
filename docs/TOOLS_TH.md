@@ -1,6 +1,6 @@
 # รายการ Tools ของ LConnect
 
-LConnect Core ปัจจุบัน expose 35 tools ผ่าน MCP `main` channel เดียว
+LConnect Core ปัจจุบัน expose 41 tools ผ่าน MCP `main` channel เดียว
 
 ## Filesystem
 
@@ -213,6 +213,89 @@ LConnect จะตรวจ creation time ก่อน terminate เพื่อ
 หลัง terminate จะ relaunch จาก `program + args` ที่ caller ระบุอย่างชัดเจน แทนการพยายาม parse/เดา original Windows command line
 
 เพื่อหลีกเลี่ยง self-disconnect เครื่องมือนี้จะไม่ restart LConnect MCP process ของตัวเองจาก request ภายใน
+
+## Windows Services
+
+### list_services
+
+list Windows services แบบ structured
+
+filters:
+
+- `name_contains`
+- `state`
+- `start_mode`
+- `limit`
+
+ข้อมูลหลัก:
+
+- service `name`
+- display name
+- state
+- start mode
+- process ID
+- service type
+- account/start name
+- exit code
+
+### get_service
+
+อ่าน service หนึ่งตัวด้วย exact Windows service `Name`
+
+ไม่ใช้ wildcard/display name เป็น identity
+
+ข้อมูลเพิ่มเติม:
+
+- delayed automatic start
+- `can_stop`
+- `can_pause_and_continue`
+- dependencies
+- dependent services
+
+### start_service
+
+start service ตาม exact service `Name` และรอจนถึง Running
+
+options:
+
+- `wait_timeout_seconds` สูงสุด 60 วินาที
+
+ถ้า service ทำงานอยู่แล้วจะเป็น idempotent และรายงาน `changed: false`
+
+### stop_service
+
+stop service ตาม exact service `Name`
+
+options:
+
+- `force`
+- `wait_timeout_seconds`
+
+ค่า default `force: false`
+
+### restart_service
+
+restart exact service `Name`
+
+ถ้า service เดิม Stopped จะ start ให้แทน
+
+options:
+
+- `force`
+- `wait_timeout_seconds`
+
+### set_service_startup
+
+ตั้ง startup mode:
+
+- `automatic`
+- `automatic_delayed`
+- `manual`
+- `disabled`
+
+ใช้ Service Control Manager ผ่าน `sc.exe` โดย target มาจาก exact service object ที่ resolve ก่อนหน้า
+
+การเปลี่ยน service/startup mode ยังถูกจำกัดด้วยสิทธิ์ของ Windows account ที่รัน LConnect
 
 ## Environment
 

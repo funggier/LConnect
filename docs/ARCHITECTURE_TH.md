@@ -28,6 +28,7 @@ lconnect-mcp.mjs
    +-- modules/shell.mjs
    +-- modules/process.mjs
    +-- modules/process-advanced.mjs
+   +-- modules/services.mjs
    +-- modules/system.mjs
    +-- modules/environment.mjs
 ```
@@ -136,6 +137,19 @@ process-advanced module ทำ structured OS process inspection/lifecycle contro
 - module ไม่ parse/เดา original Windows command line เพื่อ restart
 
 แนวทางนี้ลดความเสี่ยงจาก PID reuse และสอดคล้องกับ long-running/session design ของ LConnect
+
+## Windows Services
+
+services module เป็น structured wrapper เหนือ Windows Service Control Manager และ service APIs
+
+หลักการ:
+
+- read/mutation ใช้ exact service `Name`
+- ไม่ใช้ wildcard/display name สำหรับ lifecycle mutation
+- start/stop/restart มี bounded wait
+- startup mode รองรับ automatic/delayed/manual/disabled
+- permission/SCM failures ไม่ถูกซ่อน
+- local tests เป็น read-only; mutation acceptance ใช้ disposable service บน CI
 
 ## System
 

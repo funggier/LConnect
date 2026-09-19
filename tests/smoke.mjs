@@ -57,6 +57,12 @@ const requiredTools = [
   "find_process",
   "wait_process",
   "restart_process",
+  "list_services",
+  "get_service",
+  "start_service",
+  "stop_service",
+  "restart_service",
+  "set_service_startup",
 ];
 
 try {

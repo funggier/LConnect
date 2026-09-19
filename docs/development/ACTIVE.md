@@ -19,7 +19,7 @@ Last updated: 2026-09-19
 
 ### LCN-009 — Windows Services
 
-Status: **READY**
+Status: **ACTIVE**
 
 Task: [tasks/LCN-009-windows-services.md](tasks/LCN-009-windows-services.md)
 
