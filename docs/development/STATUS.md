@@ -27,7 +27,7 @@ Expansion phase ถัดไปมุ่งไปที่ System, Development, 
 |---|---|---:|---|
 | Core / Tunnel | COMPLETE | LCN-001–006 | Baseline + recovery + coordination |
 | System Foundation | COMPLETE | LCN-007–011 | Environment + Process + Services + Network + Hardware complete |
-| Developer Foundation | READY | LCN-012–014 | Git next |
+| Developer Foundation | ACTIVE | LCN-012–014 | Git complete; Development Module next |
 | Observation | PLANNED | LCN-015–017 | Log / Watcher / Scheduled Tasks |
 | Desktop Control | PLANNED | LCN-018–020 | Clipboard / Window / Input |
 | Browser Automation | PLANNED | LCN-021–023 | Common browser layer + Firefox + Chrome |
@@ -133,6 +133,23 @@ Added 6 structured hardware diagnostic tools:
 
 Tool catalog increased from 48 to 54. Hardware telemetry explicitly distinguishes observed data from unavailable data and passed both local and CI acceptance.
 
+### LCN-012 — Git Module
+**COMPLETE**
+
+Added 9 structured Git tools:
+
+- `git_status`
+- `git_diff`
+- `git_log`
+- `git_branch`
+- `git_commit`
+- `git_fetch`
+- `git_pull`
+- `git_push`
+- `git_worktree`
+
+Tool catalog increased from 54 to 63. End-to-end disposable repository + local bare remote tests passed CI.
+
 ## Next sequence
 
 ```text
@@ -146,9 +163,9 @@ LCN-010 Port / Network — COMPLETE
   ↓
 LCN-011 Hardware — COMPLETE
   ↓
-LCN-012 Git — READY
+LCN-012 Git — COMPLETE
   ↓
-LCN-013 Development
+LCN-013 Development — READY
   ↓
 LCN-014 HTTP Client
   ↓

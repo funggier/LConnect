@@ -173,3 +173,17 @@ This file records decisions that future sessions should preserve unless there is
 **Decision:** `storage_health` reports its evidence source; `Win32_DiskDrive.Status` fallback is not presented as detailed SMART telemetry.
 
 **Why:** Hardware data availability varies by firmware, driver, VM, storage controller and device class. Unknown is preferable to a misleading value.
+
+---
+
+## D-019 — Git mutations are explicit and non-force by default
+
+**Decision:** Git tools require an explicit repository path and use direct argv execution.
+
+**Decision:** Commit staging is explicit (`paths`, `all`, or pre-staged index).
+
+**Decision:** Pull is fast-forward-only by default.
+
+**Decision:** Force push is intentionally absent from the first Git contract; destructive branch/worktree force behavior requires an explicit force option where supported.
+
+**Why:** Repository automation should preserve exact intent and make mutation boundaries visible rather than relying on hidden CLI state or aggressive defaults.

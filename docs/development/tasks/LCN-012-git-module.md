@@ -1,6 +1,6 @@
 # LCN-012 — Git Module
 
-Status: **ACTIVE**
+Status: **COMPLETE**
 
 ## Goal
 
@@ -33,6 +33,15 @@ git_status, git_diff, git_log, git_branch, git_commit, git_fetch, git_pull, git_
 - First GitHub CI run `35449277333` failed only on the test's exact Windows worktree path string comparison; all prior Git behaviors passed.
 - Fixed the acceptance assertion to identify the added worktree by branch identity plus filesystem existence instead of Windows path string canonicalization/casing.
 - Full local suite GREEN again after the portability fix.
+
+## Completion evidence
+
+- Implementation commit: `b7ea5b99871385e031580de3ddec55d1ab1112d8`
+- Portability test-fix commit: `df47b37ac497064ab47dde65d13911829d5f76ac`
+- Passing GitHub Actions run: `35449417945`
+- Windows CI runtime smoke: catalog = 63 tools
+- status/diff/log/branch/commit/push/fetch/pull/worktree: PASS
+- dependency audit: 0 vulnerabilities
 
 ## Acceptance criteria
 

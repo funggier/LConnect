@@ -1,6 +1,6 @@
 # LCN-013 — Development Module
 
-Status: **PLANNED**
+Status: **READY**
 
 ## Goal
 
