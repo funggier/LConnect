@@ -25,4 +25,4 @@
 | [LCN-021](tasks/LCN-021-browser-common-layer.md) | PLANNED | Browser Common Layer |
 | [LCN-022](tasks/LCN-022-firefox-adapter.md) | PLANNED | Firefox Adapter |
 | [LCN-023](tasks/LCN-023-chrome-adapter.md) | PLANNED | Chrome Adapter |
-| [LCN-024](tasks/LCN-024-first-run-installation-guide-v1.1.0-release.md) | ACTIVE | First-run Installation Guide + v1.1.0 Release |
+| [LCN-024](tasks/LCN-024-first-run-installation-guide-v1.1.0-release.md) | COMPLETE | First-run Installation Guide + v1.1.0 Release |

@@ -249,3 +249,15 @@ This file records decisions that future sessions should preserve unless there is
 **Decision:** Native ScheduledTasks cmdlet objects are suppressed from stdout so MCP output remains one structured JSON contract.
 
 **Why:** Task Scheduler is persistent system state. Exact identity and deterministic output reduce accidental cross-task mutation and parser ambiguity.
+
+---
+
+## D-025 — First-run tunnel configuration remains local-only even when documentation is explicit
+
+**Decision:** The repository may document a sanitized placeholder profile shape and exact first-run steps, but it does not ship a real `mcp-conf.yaml` or a populated tunnel profile template.
+
+**Decision:** Runtime API keys remain environment references (`env:CONTROL_PLANE_API_KEY`) and are entered at Start time rather than persisted by LConnect.
+
+**Decision:** Release archives are built from tracked tag content so ignored local runtime/profile/secret files cannot be included accidentally.
+
+**Why:** First-run documentation must be explicit enough to eliminate guessing without weakening the existing local-only tunnel identity and secret boundary.

@@ -1,6 +1,6 @@
 # LCN-024 — First-run Installation Guide + v1.1.0 Release
 
-Status: **ACTIVE**
+Status: **COMPLETE**
 
 ## Goal
 
@@ -56,6 +56,21 @@ Status: **ACTIVE**
 - `npm run check`: PASS.
 - `npm test`: PASS / 91 tools.
 - `npm audit --audit-level=moderate`: 0 vulnerabilities.
+
+## Completion evidence
+
+- Release candidate commit: `1078a9a8d6e21a390327c06941475ccea40fa6d4`
+- Tag: `v1.1.0`
+- Tag target: `1078a9a8d6e21a390327c06941475ccea40fa6d4`
+- GitHub Actions run: `35454810096` — PASS
+- Release: `https://github.com/funggier/LConnect/releases/tag/v1.1.0`
+- Asset: `LConnect-v1.1.0-Expanded-Tools.zip`
+- Asset size: `189559` bytes
+- SHA-256: `0176C08D5FF1005559A7AD38943162133657A9A2FA8D5484E21D77BAFE81AA4A`
+- GitHub asset digest matched local SHA-256
+- Release is marked Latest
+- ZIP audit: 112 entries, 0 forbidden local-only hits
+- `mcp-conf.yaml`, `tunnel-client.exe`, `runtime/`, `logs/`, `node_modules/` are absent from the release asset
 
 ## Acceptance criteria
 

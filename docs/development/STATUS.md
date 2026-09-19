@@ -4,7 +4,7 @@ Last updated: 2026-09-19
 
 ## Overall
 
-Current project state: **BASIC CORE STABLE / EXPANSION ROADMAP READY**
+Current project state: **BASIC CORE STABLE / EXPANSION ROADMAP READY**\n\nCurrent published release: **v1.1.0 — Expanded Tools & First-Run Guide**\n\nCurrent tested MCP catalog: **91 tools**
 
 LConnect มี Core ที่ใช้งานจริงแล้วและผ่าน runtime acceptance บน Windows:
 
@@ -263,3 +263,14 @@ LCN-023 Chrome Adapter
 - tunnel configuration remains local-only and must never be committed.
 - Browser automation must not depend on Edge.
 - Firefox is the primary browser target; Chrome is secondary.
+
+### LCN-024 — First-run Installation Guide + v1.1.0 Release
+**COMPLETE**
+
+Rewrote the Thai first-run installation guide as a detailed step-by-step walkthrough, corrected installer/launcher onboarding copy, bumped LConnect to 1.1.0 and published the 91-tool feature release.
+
+- candidate: `1078a9a8d6e21a390327c06941475ccea40fa6d4`
+- CI: `35454810096` PASS
+- tag: `v1.1.0`
+- release asset: `LConnect-v1.1.0-Expanded-Tools.zip`
+- SHA-256: `0176C08D5FF1005559A7AD38943162133657A9A2FA8D5484E21D77BAFE81AA4A`
