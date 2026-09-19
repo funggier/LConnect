@@ -14,8 +14,8 @@
 | [LCN-010](tasks/LCN-010-port-network.md) | COMPLETE | Port / Network |
 | [LCN-011](tasks/LCN-011-hardware.md) | COMPLETE | Hardware |
 | [LCN-012](tasks/LCN-012-git-module.md) | COMPLETE | Git Module |
-| [LCN-013](tasks/LCN-013-development-module.md) | READY | Development Module |
-| [LCN-014](tasks/LCN-014-http-client.md) | PLANNED | HTTP Client |
+| [LCN-013](tasks/LCN-013-development-module.md) | COMPLETE | Development Module |
+| [LCN-014](tasks/LCN-014-http-client.md) | READY | HTTP Client |
 | [LCN-015](tasks/LCN-015-log-tail.md) | PLANNED | Log Tail |
 | [LCN-016](tasks/LCN-016-file-watcher.md) | PLANNED | File Watcher |
 | [LCN-017](tasks/LCN-017-scheduled-tasks.md) | PLANNED | Scheduled Tasks |

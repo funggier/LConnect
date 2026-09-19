@@ -1,6 +1,6 @@
 # LCN-014 — HTTP Client
 
-Status: **PLANNED**
+Status: **READY**
 
 ## Goal
 

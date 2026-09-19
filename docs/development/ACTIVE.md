@@ -6,54 +6,33 @@ Last updated: 2026-09-19
 
 - Repository: `funggier/LConnect`
 - Branch: `main`
-- Current implementation HEAD: `df47b37ac497064ab47dde65d13911829d5f76ac`
+- Current implementation HEAD: `57042e29e531461b5a3a4764f637c0ec284fe539`
+- Runtime acceptance after refresh: 70 tools exposed from `T:\Sanbox\openclawspace\tunnel-mcp-ok`
 - Latest released baseline: `v1.0.2 — Basic Recovery`
-- Platform validated: Windows 10 x64 / Node.js 24 / Windows PowerShell 5.1
 - OpenAI tunnel-client minimum: `0.0.14`
-- MCP topology: one `main` channel, modular Core
-- Current discovered tool catalog in tests: 63 tools
-
-> Before modifying source, verify live GitHub/local HEAD.
 
 ## Active task
 
-### LCN-013 — Development Module
+### LCN-014 — HTTP Client
 
-Status: **ACTIVE**
+Status: **READY**
 
-Task: [tasks/LCN-013-development-module.md](tasks/LCN-013-development-module.md)
-
-Purpose:
-
-เพิ่ม project/build/test abstraction ที่ตรวจ project จาก evidence และเริ่มงานยาวผ่าน process session แทนการ block MCP call
+Task: [tasks/LCN-014-http-client.md](tasks/LCN-014-http-client.md)
 
 Planned capabilities:
 
-- `detect_project`
-- `detect_build_system`
-- `project_info`
-- `install_dependencies`
-- `run_build`
-- `run_tests`
-- `run_lint`
+- `http_request`
+- `http_probe`
+- `http_headers`
+- `http_download`
 
-## Design direction
+## Stop boundary for this development run
 
-Execution tools should return the same process `session_id` contract already consumed by:
+Continue sequentially through:
 
-- `read_process_output`
-- `write_process_input`
-- `terminate_process`
-- `list_sessions`
+- LCN-014 HTTP Client
+- LCN-015 Log Tail
+- LCN-016 File Watcher
+- LCN-017 Scheduled Tasks
 
-This avoids creating a second job registry.
-
-## Recently completed
-
-### LCN-012 — Git Module
-
-- implementation: `b7ea5b99871385e031580de3ddec55d1ab1112d8`
-- portability fix: `df47b37ac497064ab47dde65d13911829d5f76ac`
-- passing CI: `35449417945`
-- result: PASS
-- catalog: 63 tools
+Stop after LCN-017 is complete. Do not begin LCN-018 in this run.

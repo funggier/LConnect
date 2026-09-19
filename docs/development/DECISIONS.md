@@ -187,3 +187,15 @@ This file records decisions that future sessions should preserve unless there is
 **Decision:** Force push is intentionally absent from the first Git contract; destructive branch/worktree force behavior requires an explicit force option where supported.
 
 **Why:** Repository automation should preserve exact intent and make mutation boundaries visible rather than relying on hidden CLI state or aggressive defaults.
+
+---
+
+## D-020 — Development operations reuse the managed process-session registry
+
+**Decision:** Long-running development actions reuse the same managed process-session registry as `start_process`.
+
+**Decision:** Development tools return a `session_id` rather than blocking one MCP call until build/test/install completes.
+
+**Decision:** Ecosystem detection may be broader than execution support; unsupported ecosystems are reported explicitly instead of guessing commands.
+
+**Why:** This preserves one lifecycle model for long-running work, avoids duplicate job registries, and reduces exposure to upstream caller timeouts.
