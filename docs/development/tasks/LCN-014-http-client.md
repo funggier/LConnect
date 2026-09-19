@@ -1,6 +1,6 @@
 # LCN-014 — HTTP Client
 
-Status: **ACTIVE**
+Status: **COMPLETE**
 
 ## Goal
 
@@ -27,6 +27,14 @@ bounded body; explicit timeout/redirect; downloads to file
 - `npm run check`: PASS.
 - `npm test`: PASS.
 - `npm audit --audit-level=moderate`: 0 vulnerabilities.
+
+## Completion evidence
+
+- Implementation commit: `cb37d229ff90542b737f4a18197eddc869aae815`
+- GitHub Actions run: `35451084759` — PASS
+- Windows CI runtime smoke: catalog = 74 tools
+- HTTP request/probe/headers/download local fixture suite: PASS
+- dependency audit: 0 vulnerabilities
 
 ## Acceptance criteria
 

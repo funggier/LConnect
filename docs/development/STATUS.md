@@ -27,8 +27,8 @@ Expansion phase ถัดไปมุ่งไปที่ System, Development, 
 |---|---|---:|---|
 | Core / Tunnel | COMPLETE | LCN-001–006 | Baseline + recovery + coordination |
 | System Foundation | COMPLETE | LCN-007–011 | Environment + Process + Services + Network + Hardware complete |
-| Developer Foundation | ACTIVE | LCN-012–014 | Git + Development complete; HTTP next |
-| Observation | PLANNED | LCN-015–017 | Log / Watcher / Scheduled Tasks |
+| Developer Foundation | COMPLETE | LCN-012–014 | Git + Development + HTTP complete |
+| Observation | READY | LCN-015–017 | Log Tail next |
 | Desktop Control | PLANNED | LCN-018–020 | Clipboard / Window / Input |
 | Browser Automation | PLANNED | LCN-021–023 | Common browser layer + Firefox + Chrome |
 
@@ -165,6 +165,18 @@ Added 7 structured development tools:
 
 Tool catalog increased from 63 to 70. Long-running development actions reuse the existing managed process-session registry and passed disposable Node project tests on CI.
 
+### LCN-014 — HTTP Client
+**COMPLETE**
+
+Added 4 bounded HTTP tools:
+
+- `http_request`
+- `http_probe`
+- `http_headers`
+- `http_download`
+
+Tool catalog increased from 70 to 74. Local HTTP fixture tests and Windows CI passed.
+
 ## Next sequence
 
 ```text
@@ -182,9 +194,9 @@ LCN-012 Git — COMPLETE
   ↓
 LCN-013 Development — COMPLETE
   ↓
-LCN-014 HTTP Client — READY
+LCN-014 HTTP Client — COMPLETE
   ↓
-LCN-015 Log Tail
+LCN-015 Log Tail — READY
   ↓
 LCN-016 File Watcher
   ↓

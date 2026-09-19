@@ -1,6 +1,6 @@
 # LCN-015 — Log Tail
 
-Status: **PLANNED**
+Status: **READY**
 
 ## Goal
 

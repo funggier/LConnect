@@ -199,3 +199,15 @@ This file records decisions that future sessions should preserve unless there is
 **Decision:** Ecosystem detection may be broader than execution support; unsupported ecosystems are reported explicitly instead of guessing commands.
 
 **Why:** This preserves one lifecycle model for long-running work, avoids duplicate job registries, and reduces exposure to upstream caller timeouts.
+
+---
+
+## D-021 — HTTP bodies and downloads are bounded
+
+**Decision:** HTTP response bodies are bounded and report truncation explicitly.
+
+**Decision:** Timeout and redirect behavior are explicit request parameters.
+
+**Decision:** Downloads use a temporary file followed by rename, enforce a maximum byte count, do not overwrite by default, and obey LConnect filesystem scope.
+
+**Why:** Remote endpoints can be slow, redirect unexpectedly, or return arbitrarily large data. HTTP tooling must not turn those conditions into unbounded MCP memory/output or partial destination files.
