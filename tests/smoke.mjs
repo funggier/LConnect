@@ -105,6 +105,14 @@ const requiredTools = [
   "watch_events",
   "watch_status",
   "stop_watch",
+  "list_scheduled_tasks",
+  "get_scheduled_task",
+  "create_scheduled_task",
+  "run_scheduled_task",
+  "stop_scheduled_task",
+  "enable_scheduled_task",
+  "disable_scheduled_task",
+  "delete_scheduled_task",
 ];
 
 try {

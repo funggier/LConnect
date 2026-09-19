@@ -15,7 +15,7 @@ Last updated: 2026-09-19
 
 ### LCN-017 — Scheduled Tasks
 
-Status: **READY**
+Status: **ACTIVE**
 
 Task: [tasks/LCN-017-scheduled-tasks.md](tasks/LCN-017-scheduled-tasks.md)
 

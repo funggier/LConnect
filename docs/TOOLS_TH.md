@@ -1,6 +1,6 @@
 # รายการ Tools ของ LConnect
 
-LConnect Core ปัจจุบัน expose 83 tools ผ่าน MCP `main` channel เดียว
+LConnect Core ปัจจุบัน expose 91 tools ผ่าน MCP `main` channel เดียว
 
 ## Filesystem
 
@@ -746,6 +746,78 @@ Follower state อยู่ใน memory ของ LConnect และหาย�
 ปิด watcher และลบ session
 
 หมายเหตุ: `fs.watch` เป็น OS notification source ซึ่งอาจ coalesce หรือ omit events ได้ จึงไม่ควรถูกใช้เป็น lossless audit log
+
+## Scheduled Tasks
+
+Scheduled Task tools เป็น structured wrapper เหนือ Windows Task Scheduler
+
+task identity สำหรับ lifecycle/destructive operations คือ:
+
+```text
+task_path + task_name
+```
+
+ไม่มี wildcard matching สำหรับ run/stop/enable/disable/delete
+
+### list_scheduled_tasks
+
+list tasks แบบ bounded พร้อม filter:
+
+- `task_path`
+- `name_contains`
+- `state`
+- `limit`
+
+คืน task name/path/state, principal และ settings หลัก
+
+### get_scheduled_task
+
+อ่าน task หนึ่งตัวด้วย exact identity พร้อม:
+
+- actions
+- triggers
+- last/next run time
+- last task result
+- missed runs
+- principal
+- state/settings
+
+### create_scheduled_task
+
+สร้าง task สำหรับ Windows user ที่กำลังรัน LConnect โดยไม่เก็บ password
+
+action:
+
+- executable
+- arguments
+- working directory
+
+trigger รุ่นแรก:
+
+- `once`
+- `daily`
+- `at_startup`
+- `at_logon`
+
+ค่า default run level คือ `limited`; ต้องระบุ `highest` เองหากต้องการระดับสูงกว่า
+
+ถ้า task folder ยังไม่มี LConnect จะสร้างผ่าน Task Scheduler COM
+
+default ไม่ overwrite task เดิม; ต้องระบุ `force: true`
+
+### run_scheduled_task / stop_scheduled_task
+
+run/stop task ตาม exact `task_path + task_name`
+
+### enable_scheduled_task / disable_scheduled_task
+
+เปิด/ปิด task ตาม exact identity
+
+### delete_scheduled_task
+
+ลบ task ตาม exact identity โดยใช้ non-interactive confirmation
+
+การทดสอบ mutation ใช้ disposable task/folder บน CI และ cleanup หลังจบ
 
 ## Environment
 

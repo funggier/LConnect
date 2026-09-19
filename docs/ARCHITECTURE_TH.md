@@ -36,6 +36,7 @@ lconnect-mcp.mjs
    +-- modules/http.mjs
    +-- modules/log-tail.mjs
    +-- modules/file-watcher.mjs
+   +-- modules/scheduled-tasks.mjs
    +-- modules/system.mjs
    +-- modules/environment.mjs
 ```
@@ -239,6 +240,22 @@ Follower แยก append, truncate และ file replacement/rotation แล�
 file-watcher module wrap `fs.watch` ด้วย bounded in-memory session/cursor contract
 
 event source อาจ coalesce events ตาม semantics ของ OS/Node จึงรายงานเป็น notification stream ไม่ใช่ lossless filesystem audit
+
+## Scheduled Tasks
+
+scheduled-tasks module เป็น structured wrapper เหนือ Windows Task Scheduler / ScheduledTasks cmdlets
+
+หลักการ:
+
+- lifecycle/destructive identity ใช้ exact `task_path + task_name`
+- no wildcard mutation
+- create action/trigger/principal แบบ structured
+- current Windows user principal โดยไม่เก็บ password
+- default run level = Limited
+- task folder สามารถสร้างผ่าน Task Scheduler COM
+- mutation acceptance ใช้ disposable CI tasks
+
+Scheduled Tasks เป็น persistence layer ที่อยู่ข้าม LConnect process/restart ได้ จึงแยกจาก in-memory process/watch sessions อย่างชัดเจน
 
 ## System
 

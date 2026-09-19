@@ -10,7 +10,7 @@
 
 ## สถานะปัจจุบัน
 
-LConnect Core ผ่าน runtime acceptance บน Windows 10 แล้ว โดย MCP discovery ปัจจุบันแสดง 83 tools และทดสอบจริงทั้ง filesystem, PowerShell, process/session, stdin, process-tree termination และ listening ports
+LConnect Core ผ่าน runtime acceptance บน Windows 10 แล้ว โดย MCP discovery ปัจจุบันแสดง 91 tools และทดสอบจริงทั้ง filesystem, PowerShell, process/session, stdin, process-tree termination และ listening ports
 
 ## โครงสร้าง
 
@@ -169,6 +169,16 @@ npm test
 - `watch_events`
 - `watch_status`
 - `stop_watch`
+
+### Scheduled Tasks
+- `list_scheduled_tasks`
+- `get_scheduled_task`
+- `create_scheduled_task`
+- `run_scheduled_task`
+- `stop_scheduled_task`
+- `enable_scheduled_task`
+- `disable_scheduled_task`
+- `delete_scheduled_task`
 
 ### System
 - `system_info`
