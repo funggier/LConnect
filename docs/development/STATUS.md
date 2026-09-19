@@ -28,7 +28,7 @@ Expansion phase ถัดไปมุ่งไปที่ System, Development, 
 | Core / Tunnel | COMPLETE | LCN-001–006 | Baseline + recovery + coordination |
 | System Foundation | COMPLETE | LCN-007–011 | Environment + Process + Services + Network + Hardware complete |
 | Developer Foundation | COMPLETE | LCN-012–014 | Git + Development + HTTP complete |
-| Observation | READY | LCN-015–017 | Log Tail next |
+| Observation | ACTIVE | LCN-015–017 | Log Tail complete; File Watcher next |
 | Desktop Control | PLANNED | LCN-018–020 | Clipboard / Window / Input |
 | Browser Automation | PLANNED | LCN-021–023 | Common browser layer + Firefox + Chrome |
 
@@ -177,6 +177,19 @@ Added 4 bounded HTTP tools:
 
 Tool catalog increased from 70 to 74. Local HTTP fixture tests and Windows CI passed.
 
+### LCN-015 — Log Tail
+**COMPLETE**
+
+Added 5 bounded log tools:
+
+- `tail_file`
+- `follow_log`
+- `read_log_events`
+- `search_log`
+- `stop_log_follow`
+
+Tool catalog increased from 74 to 79. Cursor-based append/truncate/rotation fixture tests passed CI.
+
 ## Next sequence
 
 ```text
@@ -196,9 +209,9 @@ LCN-013 Development — COMPLETE
   ↓
 LCN-014 HTTP Client — COMPLETE
   ↓
-LCN-015 Log Tail — READY
+LCN-015 Log Tail — COMPLETE
   ↓
-LCN-016 File Watcher
+LCN-016 File Watcher — READY
   ↓
 LCN-017 Scheduled Tasks
   ↓

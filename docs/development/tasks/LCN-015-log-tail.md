@@ -1,6 +1,6 @@
 # LCN-015 — Log Tail
 
-Status: **ACTIVE**
+Status: **COMPLETE**
 
 ## Goal
 
@@ -28,6 +28,14 @@ session IDs + bounded buffers/cursors; handle rotation/truncate
 - `npm run check`: PASS.
 - `npm test`: PASS.
 - `npm audit --audit-level=moderate`: 0 vulnerabilities.
+
+## Completion evidence
+
+- Implementation commit: `ab44fe8cfe9065d23dd79f9d49d0e93f280695f6`
+- GitHub Actions run: `35451399444` — PASS
+- Windows CI runtime smoke: catalog = 79 tools
+- append/truncate/rotate/cursor/search/cleanup fixture suite: PASS
+- dependency audit: 0 vulnerabilities
 
 ## Acceptance criteria
 

@@ -1,6 +1,6 @@
 # LCN-016 — File Watcher
 
-Status: **PLANNED**
+Status: **READY**
 
 ## Goal
 

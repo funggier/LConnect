@@ -211,3 +211,15 @@ This file records decisions that future sessions should preserve unless there is
 **Decision:** Downloads use a temporary file followed by rename, enforce a maximum byte count, do not overwrite by default, and obey LConnect filesystem scope.
 
 **Why:** Remote endpoints can be slow, redirect unexpectedly, or return arbitrarily large data. HTTP tooling must not turn those conditions into unbounded MCP memory/output or partial destination files.
+
+---
+
+## D-022 — Observation sessions use cursors and bounded buffers
+
+**Decision:** Long-lived observation tools return session IDs immediately and expose events through cursor-based reads.
+
+**Decision:** Observation buffers and per-iteration reads are bounded, and overflow is reported explicitly.
+
+**Decision:** Log following distinguishes append, truncate and file replacement/rotation rather than assuming one monotonically growing file.
+
+**Why:** Observation must not hold MCP calls open, consume unbounded memory, or silently pretend that lost buffered history is complete.
