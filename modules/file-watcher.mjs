@@ -1,6 +1,7 @@
 import fs from "node:fs";
 import fsp from "node:fs/promises";
 import path from "node:path";
+import { spawn } from "node:child_process";
 import { z } from "zod";
 
 const watchers = new Map();
@@ -32,20 +33,25 @@ function resolveAllowed(inputPath, config) {
   return resolved;
 }
 
+function psLiteral(value) {
+  return "'" + String(value).replace(/'/g, "''") + "'";
+}
+
 function snapshot(session) {
   return {
     watcher_id: session.id,
     path: session.path,
     kind: session.kind,
     recursive: session.recursive,
+    backend: session.backend,
     running: !session.stopped,
     started_at: session.startedAt,
     next_seq: session.nextSeq,
     dropped_through_seq: session.droppedThroughSeq,
     buffered_event_count: session.events.length,
     max_buffer_events: session.maxBufferEvents,
-    watched_directory_count: session.directoryWatchers?.size ?? 0,
     last_error: session.lastError,
+    backend_pid: session.child?.pid ?? null,
     note: "Filesystem notifications may be coalesced or omitted by the operating system and are not a lossless audit log.",
   };
 }
@@ -64,141 +70,179 @@ function addEvent(session, event) {
   return full;
 }
 
-function eventPathFor(session, watchedDirectory, filename) {
+function windowsWatcherScript(session) {
+  const watchDirectory = session.kind === "file" ? path.dirname(session.path) : session.path;
+  const filter = session.kind === "file" ? path.basename(session.path) : "*";
+
+  return [
+    "$ErrorActionPreference = 'Stop'",
+    "$watcher = New-Object System.IO.FileSystemWatcher",
+    `$watcher.Path = ${psLiteral(watchDirectory)}`,
+    `$watcher.Filter = ${psLiteral(filter)}`,
+    `$watcher.IncludeSubdirectories = ${session.recursive ? "$true" : "$false"}`,
+    "$watcher.NotifyFilter = [System.IO.NotifyFilters]'FileName, DirectoryName, LastWrite, Size, CreationTime'",
+    "$watcher.EnableRaisingEvents = $true",
+    "$readyJson = [pscustomobject]@{ type = 'ready' } | ConvertTo-Json -Compress",
+    "[Console]::Out.WriteLine($readyJson)",
+    "[Console]::Out.Flush()",
+    "try {",
+    "  while ($true) {",
+    "    $r = $watcher.WaitForChanged([System.IO.WatcherChangeTypes]::All, 1000)",
+    "    if ($r.TimedOut) { continue }",
+    "    $eventJson = [pscustomobject]@{",
+    "      type = 'fs'",
+    "      change_type = [string]$r.ChangeType",
+    "      name = if ($null -eq $r.Name) { $null } else { [string]$r.Name }",
+    "      old_name = if ($null -eq $r.OldName) { $null } else { [string]$r.OldName }",
+    "    } | ConvertTo-Json -Compress",
+    "    [Console]::Out.WriteLine($eventJson)",
+    "    [Console]::Out.Flush()",
+    "  }",
+    "} finally {",
+    "  $watcher.Dispose()",
+    "}",
+  ].join("\n");
+}
+
+function normalizedEventPath(session, name) {
   if (session.kind === "file") return session.path;
-  if (!filename) return watchedDirectory;
-  return path.resolve(watchedDirectory, filename);
+  if (!name) return session.path;
+  return path.resolve(session.path, name);
 }
 
-async function listDirectoriesRecursive(root) {
-  const found = [root];
-  const queue = [root];
+function processBackendLine(session, line) {
+  const trimmed = line.trim();
+  if (!trimmed) return;
 
-  while (queue.length) {
-    const current = queue.shift();
-    let entries;
-    try {
-      entries = await fsp.readdir(current, { withFileTypes: true });
-    } catch {
-      continue;
-    }
-
-    for (const entry of entries) {
-      if (!entry.isDirectory() || entry.isSymbolicLink()) continue;
-      const child = path.join(current, entry.name);
-      found.push(child);
-      queue.push(child);
-    }
-  }
-
-  return found;
-}
-
-function attachDirectoryWatcher(session, directory) {
-  if (session.directoryWatchers.has(directory) || session.stopped) return;
-
-  const watcher = fs.watch(
-    directory,
-    { recursive: false, persistent: false, encoding: "utf8" },
-    (eventType, filename) => {
-      const name = filename == null ? null : String(filename);
-      const eventPath = eventPathFor(session, directory, name);
-      const relativePath = session.kind === "directory"
-        ? path.relative(session.path, eventPath)
-        : path.basename(eventPath);
-
-      addEvent(session, {
-        type: "fs",
-        event_type: eventType,
-        filename: name,
-        relative_path: relativePath || ".",
-        path: eventPath,
-      });
-
-      if (session.recursive && eventType === "rename") {
-        scheduleDirectoryRefresh(session);
-      }
-    }
-  );
-
-  watcher.on("error", (error) => {
-    session.lastError = error.message;
-    addEvent(session, {
-      type: "error",
-      error_code: error.code ?? null,
-      error_message: error.message,
-      path: directory,
-    });
-  });
-
-  session.directoryWatchers.set(directory, watcher);
-}
-
-async function refreshDirectoryWatchers(session) {
-  if (session.stopped || session.kind !== "directory" || !session.recursive) return;
-
-  let directories;
+  let parsed;
   try {
-    directories = await listDirectoriesRecursive(session.path);
-  } catch (error) {
-    session.lastError = error.message;
+    parsed = JSON.parse(trimmed);
+  } catch {
+    session.lastError = `Watcher backend emitted non-JSON output: ${trimmed}`;
     addEvent(session, {
       type: "error",
-      error_code: error.code ?? null,
-      error_message: error.message,
+      error_message: session.lastError,
       path: session.path,
     });
     return;
   }
 
-  const wanted = new Set(directories.map((dir) => path.resolve(dir)));
+  if (parsed.type === "ready") {
+    session.ready = true;
+    session.readyResolve?.();
+    session.readyResolve = null;
+    session.readyReject = null;
+    return;
+  }
 
-  for (const directory of wanted) {
-    try {
-      attachDirectoryWatcher(session, directory);
-    } catch (error) {
-      session.lastError = error.message;
+  if (parsed.type === "fs") {
+    const eventPath = normalizedEventPath(session, parsed.name);
+    const oldPath = parsed.old_name ? normalizedEventPath(session, parsed.old_name) : null;
+    addEvent(session, {
+      type: "fs",
+      event_type: String(parsed.change_type || "").toLowerCase(),
+      filename: parsed.name ?? null,
+      old_filename: parsed.old_name ?? null,
+      relative_path: session.kind === "directory"
+        ? (parsed.name ?? ".")
+        : path.basename(session.path),
+      path: eventPath,
+      old_path: oldPath,
+    });
+  }
+}
+
+async function startWindowsBackend(session) {
+  const script = windowsWatcherScript(session);
+  const child = spawn("powershell.exe", [
+    "-NoLogo",
+    "-NoProfile",
+    "-NonInteractive",
+    "-ExecutionPolicy",
+    "Bypass",
+    "-Command",
+    script,
+  ], {
+    windowsHide: true,
+    stdio: ["ignore", "pipe", "pipe"],
+  });
+
+  session.child = child;
+  let stdoutBuffer = "";
+  let stderrBuffer = "";
+
+  const readyPromise = new Promise((resolve, reject) => {
+    session.readyResolve = resolve;
+    session.readyReject = reject;
+  });
+
+  child.stdout.setEncoding("utf8");
+  child.stdout.on("data", (chunk) => {
+    stdoutBuffer += chunk;
+    while (true) {
+      const newline = stdoutBuffer.indexOf("\n");
+      if (newline < 0) break;
+      const line = stdoutBuffer.slice(0, newline).replace(/\r$/, "");
+      stdoutBuffer = stdoutBuffer.slice(newline + 1);
+      processBackendLine(session, line);
+    }
+  });
+
+  child.stderr.setEncoding("utf8");
+  child.stderr.on("data", (chunk) => {
+    stderrBuffer = (stderrBuffer + chunk).slice(-16000);
+  });
+
+  child.once("error", (error) => {
+    session.lastError = error.message;
+    session.readyReject?.(error);
+    session.readyResolve = null;
+    session.readyReject = null;
+  });
+
+  child.once("exit", (code, signal) => {
+    if (!session.stopped) {
+      session.stopped = true;
+      const detail = stderrBuffer.trim();
+      session.lastError = `Watcher backend exited unexpectedly (code=${code}, signal=${signal})${detail ? `: ${detail}` : ""}`;
       addEvent(session, {
         type: "error",
-        error_code: error.code ?? null,
-        error_message: error.message,
-        path: directory,
+        error_message: session.lastError,
+        path: session.path,
       });
+      session.readyReject?.(new Error(session.lastError));
+      session.readyResolve = null;
+      session.readyReject = null;
     }
-  }
+  });
 
-  for (const [directory, watcher] of [...session.directoryWatchers.entries()]) {
-    if (!wanted.has(path.resolve(directory))) {
-      try { watcher.close(); } catch {}
-      session.directoryWatchers.delete(directory);
-    }
-  }
+  const timeout = new Promise((_, reject) => {
+    const timer = setTimeout(() => reject(new Error("Watcher backend readiness timed out.")), 5000);
+    timer.unref?.();
+  });
 
-  session.lastError = null;
+  try {
+    await Promise.race([readyPromise, timeout]);
+  } catch (error) {
+    try { child.kill(); } catch {}
+    throw error;
+  }
 }
 
-function scheduleDirectoryRefresh(session) {
-  if (session.stopped || session.refreshScheduled) return;
-  session.refreshScheduled = true;
-  const timer = setTimeout(async () => {
-    session.refreshScheduled = false;
-    await refreshDirectoryWatchers(session);
-  }, 25);
-  timer.unref?.();
-}
-
-function attachFileWatcher(session) {
+function startNativeBackend(session) {
   const watcher = fs.watch(
     session.path,
-    { recursive: false, persistent: false, encoding: "utf8" },
+    { recursive: session.recursive, persistent: false, encoding: "utf8" },
     (eventType, filename) => {
       const name = filename == null ? null : String(filename);
       addEvent(session, {
         type: "fs",
         event_type: eventType,
         filename: name,
-        relative_path: path.basename(session.path),
-        path: session.path,
+        old_filename: null,
+        relative_path: session.kind === "directory" ? (name ?? ".") : path.basename(session.path),
+        path: normalizedEventPath(session, name),
+        old_path: null,
       });
     }
   );
@@ -213,33 +257,28 @@ function attachFileWatcher(session) {
     });
   });
 
-  session.fileWatcher = watcher;
+  session.nativeWatcher = watcher;
+  session.ready = true;
 }
 
-async function initializeWatchers(session) {
-  if (session.kind === "file") {
-    attachFileWatcher(session);
-    return;
-  }
-
-  if (session.recursive) {
-    await refreshDirectoryWatchers(session);
+async function initializeBackend(session) {
+  if (process.platform === "win32") {
+    session.backend = "dotnet-filesystemwatcher";
+    await startWindowsBackend(session);
   } else {
-    attachDirectoryWatcher(session, session.path);
+    session.backend = "node-fs-watch";
+    startNativeBackend(session);
   }
 }
 
 function closeSession(session) {
   session.stopped = true;
-  try { session.fileWatcher?.close(); } catch {}
-  for (const watcher of session.directoryWatchers.values()) {
-    try { watcher.close(); } catch {}
-  }
-  session.directoryWatchers.clear();
+  try { session.nativeWatcher?.close(); } catch {}
+  try { session.child?.kill(); } catch {}
 }
 
 export function registerFileWatcherTools(server, config) {
-  server.tool("watch_path", "Start a bounded filesystem watcher session and return a watcher ID immediately.", {
+  server.tool("watch_path", "Start a bounded filesystem watcher session and return a watcher ID after backend readiness.", {
     path: z.string().min(1),
     recursive: z.boolean().optional(),
     max_buffer_events: z.number().int().min(10).max(10000).optional(),
@@ -257,6 +296,7 @@ export function registerFileWatcherTools(server, config) {
         path: watchPath,
         kind,
         recursive,
+        backend: null,
         maxBufferEvents: max_buffer_events,
         events: [],
         nextSeq: 1,
@@ -264,12 +304,14 @@ export function registerFileWatcherTools(server, config) {
         stopped: false,
         startedAt: new Date().toISOString(),
         lastError: null,
-        fileWatcher: null,
-        directoryWatchers: new Map(),
-        refreshScheduled: false,
+        ready: false,
+        child: null,
+        nativeWatcher: null,
+        readyResolve: null,
+        readyReject: null,
       };
 
-      await initializeWatchers(session);
+      await initializeBackend(session);
       watchers.set(id, session);
       return textResult(snapshot(session));
     } catch (error) {

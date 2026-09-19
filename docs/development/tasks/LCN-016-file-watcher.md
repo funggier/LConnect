@@ -30,7 +30,11 @@ watch_path, watch_events, watch_status, stop_watch
 - `npm audit --audit-level=moderate`: 0 vulnerabilities.
 - First GitHub CI run `35451668817` exposed a Node/libuv Windows crash when using native `fs.watch(..., { recursive: true })`: assertion failure in `src\\win\\fs-event.c`.
 - Replaced native recursive mode with one non-recursive watcher handle per directory plus bounded directory-tree refresh on rename/create/delete notifications.
-- The revised design avoids the libuv recursive-watch crash class and keeps the same cursor/buffer contract.
+- A second CI run `35451876067` showed the libuv assertion can still occur even after replacing recursive mode with multiple non-recursive Node `fs.watch` handles.
+- Final Windows backend therefore removes Node `fs.watch` entirely and uses a PowerShell child hosting .NET `System.IO.FileSystemWatcher`, with a JSON-line event stream and readiness handshake.
+- Initial .NET loop exposed PowerShell pipeline buffering; event JSON is now written directly with `[Console]::Out.WriteLine()` so events stream immediately instead of waiting for process exit.
+- The cursor/buffer MCP contract remains unchanged; non-Windows platforms retain the Node watcher fallback.
+- Final local targeted + full suite GREEN after the .NET streaming fix.
 
 ## Acceptance criteria
 

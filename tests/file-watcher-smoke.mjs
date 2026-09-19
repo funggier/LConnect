@@ -83,6 +83,9 @@ try {
   if (!watcherId || !started.data.running || started.data.kind !== "directory") {
     throw new Error(`watch_path did not create directory watcher: ${JSON.stringify(started.data)}`);
   }
+  if (process.platform === "win32" && started.data.backend !== "dotnet-filesystemwatcher") {
+    throw new Error(`Windows watcher did not use .NET backend: ${JSON.stringify(started.data)}`);
+  }
 
   const status = await callJson("watch_status", { watcher_id: watcherId });
   if (!status.data.running || status.data.recursive !== true) {
@@ -115,17 +118,6 @@ try {
     (event) => event.type === "fs" && path.basename(event.path).toLowerCase() === "nested"
   );
   cursor = nestedDirectoryEvent.cursor;
-
-  const refreshStarted = Date.now();
-  while (Date.now() - refreshStarted < 3000) {
-    const current = await callJson("watch_status", { watcher_id: watcherId });
-    if (current.data.watched_directory_count >= 2) break;
-    await new Promise((resolve) => setTimeout(resolve, 50));
-  }
-  const refreshedStatus = await callJson("watch_status", { watcher_id: watcherId });
-  if (refreshedStatus.data.watched_directory_count < 2) {
-    throw new Error("recursive watcher did not attach to the new nested directory");
-  }
 
   const nestedFile = path.join(nestedDir, "child.txt");
   await fsp.writeFile(nestedFile, "nested\n", "utf8");
