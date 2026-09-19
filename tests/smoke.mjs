@@ -76,6 +76,15 @@ const requiredTools = [
   "gpu_info",
   "storage_health",
   "battery_info",
+  "git_status",
+  "git_diff",
+  "git_log",
+  "git_branch",
+  "git_commit",
+  "git_fetch",
+  "git_pull",
+  "git_push",
+  "git_worktree",
 ];
 
 try {

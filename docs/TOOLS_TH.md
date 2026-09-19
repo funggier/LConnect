@@ -1,6 +1,6 @@
 # รายการ Tools ของ LConnect
 
-LConnect Core ปัจจุบัน expose 54 tools ผ่าน MCP `main` channel เดียว
+LConnect Core ปัจจุบัน expose 63 tools ผ่าน MCP `main` channel เดียว
 
 ## Filesystem
 
@@ -477,6 +477,116 @@ physical:
 ```
 
 พร้อม note อธิบาย ไม่ถือว่าเป็น tool error
+
+## Git
+
+Git tools ใช้ direct `git` argv ผ่าน process execution ไม่มี shell interpolation และทุก tool รับ `repo_path` ชัดเจน
+
+### git_status
+
+คืน structured repository status:
+
+- repo root
+- HEAD SHA
+- branch/detached/unborn
+- upstream
+- ahead/behind
+- clean
+- staged/unstaged/untracked/conflict counts
+- file entries
+
+working-tree parsing ใช้ stable Git porcelain format
+
+### git_diff
+
+อ่าน bounded diff
+
+options:
+
+- `staged`
+- `name_only`
+- `paths`
+- `max_chars`
+
+คืน `truncated` และ original character count เมื่อ output เกิน limit
+
+### git_log
+
+structured commit history:
+
+- full/short SHA
+- author
+- authored time
+- parents
+- subject
+
+รองรับ ref, limit และ path filters
+
+### git_branch
+
+actions:
+
+- `list`
+- `create`
+- `switch`
+- `delete`
+
+delete ใช้ safe `-d` เป็น default; `force: true` จึงใช้ `-D`
+
+### git_commit
+
+สร้าง commit พร้อม exact SHA evidence
+
+staging behavior ต้อง explicit:
+
+- `paths` — stage เฉพาะ paths
+- `all: true` — `git add -A`
+- ถ้าไม่ระบุทั้งสอง ใช้ index ที่ stage อยู่ก่อนแล้ว
+
+ไม่สามารถใช้ `all` และ `paths` พร้อมกัน
+
+### git_fetch
+
+fetch remote/refspec พร้อม options:
+
+- prune
+- tags
+
+ไม่มี force behavior แฝง
+
+### git_pull
+
+ค่า default ใช้ `--ff-only`
+
+สามารถระบุ remote/branch explicit ได้
+
+คืน before/after SHA และ changed state
+
+### git_push
+
+push branch ไป remote
+
+รองรับ:
+
+- remote
+- branch
+- set upstream
+- tags
+
+**force push ไม่รองรับใน first contract นี้โดยตั้งใจ**
+
+### git_worktree
+
+actions:
+
+- list
+- add
+- remove
+- prune
+
+add รองรับ existing branch หรือ `new_branch`
+
+remove ไม่ force โดย default
 
 ## Environment
 

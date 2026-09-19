@@ -31,6 +31,7 @@ lconnect-mcp.mjs
    +-- modules/services.mjs
    +-- modules/network.mjs
    +-- modules/hardware.mjs
+   +-- modules/git.mjs
    +-- modules/system.mjs
    +-- modules/environment.mjs
 ```
@@ -178,6 +179,20 @@ hardware module เป็น read-only diagnostics layer ใช้ Node OS APIs 
 - storage health ระบุ source ว่าเป็น `Get-PhysicalDisk` หรือ fallback
 - ไม่มี hardware mutation/control ใน module นี้
 - desktop ที่ไม่มี battery เป็น valid `available=false` state
+
+## Git
+
+git module เป็น structured wrapper เหนือ Git CLI โดยใช้ direct argv execution ไม่ผ่าน shell
+
+หลักการ:
+
+- ทุก operation มี explicit `repo_path`
+- read operations ใช้ stable porcelain/ref formats
+- mutations คืน exact SHA/ref evidence
+- `git_pull` เป็น fast-forward-only โดย default
+- force push ไม่อยู่ใน first contract
+- commit staging ต้อง explicit
+- acceptance ใช้ disposable repositories/local bare remote เท่านั้น
 
 ## System
 

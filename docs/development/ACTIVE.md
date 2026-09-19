@@ -19,7 +19,7 @@ Last updated: 2026-09-19
 
 ### LCN-012 — Git Module
 
-Status: **READY**
+Status: **ACTIVE**
 
 Task: [tasks/LCN-012-git-module.md](tasks/LCN-012-git-module.md)
 
