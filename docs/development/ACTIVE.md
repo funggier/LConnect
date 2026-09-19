@@ -19,7 +19,7 @@ Last updated: 2026-09-19
 
 ### LCN-008 — Process Advanced
 
-Status: **READY**
+Status: **ACTIVE**
 
 Task: [tasks/LCN-008-process-advanced.md](tasks/LCN-008-process-advanced.md)
 

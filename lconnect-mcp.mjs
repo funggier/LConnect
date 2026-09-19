@@ -4,6 +4,7 @@ import { loadLConnectConfig } from "./modules/config.mjs";
 import { registerFilesystemTools } from "./modules/filesystem.mjs";
 import { registerShellTools } from "./modules/shell.mjs";
 import { registerProcessTools } from "./modules/process.mjs";
+import { registerProcessAdvancedTools } from "./modules/process-advanced.mjs";
 import { registerSystemTools } from "./modules/system.mjs";
 import { registerEnvironmentTools } from "./modules/environment.mjs";
 
@@ -16,6 +17,7 @@ const server = new McpServer({
 registerFilesystemTools(server, config);
 registerShellTools(server, config);
 registerProcessTools(server, config);
+registerProcessAdvancedTools(server, config);
 registerSystemTools(server, config);
 registerEnvironmentTools(server, config);
 

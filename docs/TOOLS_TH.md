@@ -1,6 +1,6 @@
 # รายการ Tools ของ LConnect
 
-LConnect Core ปัจจุบัน expose 30 tools ผ่าน MCP `main` channel เดียว
+LConnect Core ปัจจุบัน expose 35 tools ผ่าน MCP `main` channel เดียว
 
 ## Filesystem
 
@@ -127,6 +127,92 @@ arguments:
 list process sessions ที่ LConnect instance ปัจจุบันรู้จัก
 
 session อยู่ใน memory และหายเมื่อ restart LConnect
+
+## Process Advanced
+
+### process_details
+
+อ่านข้อมูล process ตาม PID แบบ structured พร้อม identity ที่ใช้ตรวจ PID reuse
+
+ข้อมูลหลัก:
+
+- PID / parent PID
+- process name
+- executable path
+- command line
+- creation time
+- session ID
+- working set
+- handle/thread count
+
+`creation_time` เป็นส่วนสำคัญของ process identity
+
+### process_tree
+
+สร้าง subtree ของ process จาก parent/child PID relationships พร้อม ancestor chain
+
+arguments:
+
+- `pid`
+- `max_depth` (0–32)
+
+ถ้าเกิน depth จะรายงาน `children_truncated`
+
+### find_process
+
+ค้นหา process ด้วย filter แบบ structured:
+
+- `pid`
+- `name`
+- `executable_path`
+- `command_line_contains`
+- `limit`
+
+ต้องระบุอย่างน้อยหนึ่ง filter
+
+### wait_process
+
+รอ process identity ที่ระบุให้ออกจากระบบแบบ bounded wait
+
+arguments:
+
+- `pid`
+- `expected_creation_time`
+- `timeout_seconds` สูงสุด 30 วินาที
+- `poll_interval_ms`
+
+การบังคับ `expected_creation_time` ป้องกันกรณี PID ถูก reuse โดย process ใหม่
+
+ถ้า PID เดิมหายจะคืน `exited: true`
+
+ถ้า PID ถูก reuse จะคืน:
+
+- `reason: "pid_reused"`
+- `identity_mismatch: true`
+
+### restart_process
+
+restart process ที่ระบุตัวตนชัดเจน
+
+ต้องให้:
+
+- `pid`
+- `expected_creation_time`
+- `program`
+
+options:
+
+- `args`
+- `cwd`
+- `force`
+- `tree`
+- `wait_timeout_seconds`
+
+LConnect จะตรวจ creation time ก่อน terminate เพื่อป้องกันการ kill process คนละตัวที่ reuse PID
+
+หลัง terminate จะ relaunch จาก `program + args` ที่ caller ระบุอย่างชัดเจน แทนการพยายาม parse/เดา original Windows command line
+
+เพื่อหลีกเลี่ยง self-disconnect เครื่องมือนี้จะไม่ restart LConnect MCP process ของตัวเองจาก request ภายใน
 
 ## Environment
 

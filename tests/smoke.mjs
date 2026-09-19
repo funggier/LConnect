@@ -52,6 +52,11 @@ const requiredTools = [
   "env_set",
   "path_list",
   "which",
+  "process_details",
+  "process_tree",
+  "find_process",
+  "wait_process",
+  "restart_process",
 ];
 
 try {

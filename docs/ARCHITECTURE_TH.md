@@ -27,6 +27,7 @@ lconnect-mcp.mjs
    +-- modules/filesystem.mjs
    +-- modules/shell.mjs
    +-- modules/process.mjs
+   +-- modules/process-advanced.mjs
    +-- modules/system.mjs
    +-- modules/environment.mjs
 ```
@@ -121,6 +122,20 @@ process module เก็บ session ใน memory
 - อ่าน output หลายรอบ
 - รับ stdin
 - terminate ภายหลัง
+
+## Process Advanced
+
+process-advanced module ทำ structured OS process inspection/lifecycle control แยกจาก in-memory process sessions
+
+หลักการสำคัญ:
+
+- PID อย่างเดียวไม่ใช่ identity ที่ปลอดภัย
+- destructive/wait operations ใช้ `PID + creation_time`
+- `wait_process` จำกัดเวลาต่อ call และเรียกซ้ำได้
+- `restart_process` ต้องได้รับ relaunch command แบบ explicit
+- module ไม่ parse/เดา original Windows command line เพื่อ restart
+
+แนวทางนี้ลดความเสี่ยงจาก PID reuse และสอดคล้องกับ long-running/session design ของ LConnect
 
 ## System
 
