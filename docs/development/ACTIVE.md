@@ -7,8 +7,8 @@ Last updated: 2026-09-19
 - Repository: `funggier/LConnect`
 - Branch: `main`
 - Published release: `v1.1.0 — Expanded Tools & First-Run Guide`
-- Release candidate/tag target: `1078a9a8d6e21a390327c06941475ccea40fa6d4`
-- Passing CI: `35454810096`
+- Release candidate/tag target: `0cefe3beede022f7477fa6ab54740571c7e92b8c`
+- Passing CI: `35518059146`
 - Tested MCP catalog: 91 tools
 - LCN-007–017: COMPLETE
 - LCN-024: COMPLETE

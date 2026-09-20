@@ -59,14 +59,14 @@ Status: **COMPLETE**
 
 ## Completion evidence
 
-- Release candidate commit: `1078a9a8d6e21a390327c06941475ccea40fa6d4`
+- Release candidate commit: `0cefe3beede022f7477fa6ab54740571c7e92b8c`
 - Tag: `v1.1.0`
-- Tag target: `1078a9a8d6e21a390327c06941475ccea40fa6d4`
-- GitHub Actions run: `35454810096` — PASS
+- Tag target: `0cefe3beede022f7477fa6ab54740571c7e92b8c`
+- GitHub Actions run: `35518059146` — PASS
 - Release: `https://github.com/funggier/LConnect/releases/tag/v1.1.0`
 - Asset: `LConnect-v1.1.0-Expanded-Tools.zip`
-- Asset size: `189559` bytes
-- SHA-256: `0176C08D5FF1005559A7AD38943162133657A9A2FA8D5484E21D77BAFE81AA4A`
+- Asset size: `193193` bytes
+- SHA-256: `A91DEADAB210C3B9E5D346D0A015407317042B747CDE43B2519612217BAC7C31`
 - GitHub asset digest matched local SHA-256
 - Release is marked Latest
 - ZIP audit: 112 entries, 0 forbidden local-only hits

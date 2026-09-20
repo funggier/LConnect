@@ -269,8 +269,8 @@ LCN-023 Chrome Adapter
 
 Rewrote the Thai first-run installation guide as a detailed step-by-step walkthrough, corrected installer/launcher onboarding copy, bumped LConnect to 1.1.0 and published the 91-tool feature release.
 
-- candidate: `1078a9a8d6e21a390327c06941475ccea40fa6d4`
-- CI: `35454810096` PASS
+- candidate: `0cefe3beede022f7477fa6ab54740571c7e92b8c`
+- CI: `35518059146` PASS
 - tag: `v1.1.0`
 - release asset: `LConnect-v1.1.0-Expanded-Tools.zip`
-- SHA-256: `0176C08D5FF1005559A7AD38943162133657A9A2FA8D5484E21D77BAFE81AA4A`
+- SHA-256: `A91DEADAB210C3B9E5D346D0A015407317042B747CDE43B2519612217BAC7C31`
