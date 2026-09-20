@@ -233,3 +233,11 @@ Repo นี้ตั้งใจ **ไม่เก็บการกำหนด
 - ChatGPT Connector ผ่าน Tunnel
 
 โครงสร้างถูกออกแบบให้เพิ่ม module ใหม่ภายหลังได้โดยไม่ต้องเปลี่ยน tunnel-facing architecture
+
+## License
+
+LConnect เผยแพร่ภายใต้ **MIT License**
+
+ดูข้อความสิทธิ์ฉบับเต็มที่ [LICENSE](LICENSE)
+
+Copyright © 2026 funggier
