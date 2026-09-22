@@ -177,6 +177,41 @@ LConnect process หนึ่งตัวอาจถูกใช้ต่อโ
 
 เป้าหมายคือป้องกัน “งานเก่าปะปนกับงานใหม่” โดยไม่ผูก resource ownership เข้ากับ ChatGPT conversation ID ที่ LConnect อาจไม่ได้รับจาก MCP transport
 
+### Refresh/reconcile command
+
+A direct `refresh_state` capability should provide one housekeeping entry point for an AI session that reconnects to an already-running LConnect instance.
+
+It should:
+
+- reconcile managed process sessions with current completion state
+- summarize active log followers and file watchers
+- expose stale/stopped/error transient handles
+- optionally prune only safe terminal/stopped transient handles
+- return before/after counts and exact IDs
+
+It must not:
+
+- restart LConnect
+- refresh the ChatGPT connector UI
+- terminate running processes
+- silently stop active observers
+- delete Scheduled Tasks
+- stop Services
+- delete files
+- change Git state
+- perform autonomous workflow continuation
+
+Recommended new-session pattern:
+
+```text
+refresh_state
+  -> inspect active transient handles
+  -> preserve/continue relevant running work
+  -> explicitly stop stale active handles if desired
+  -> prune completed/stopped transient handles
+  -> begin new work
+```
+
 ## Exact identity before mutation
 
 ตัวอย่าง identity ที่มีอยู่แล้ว:

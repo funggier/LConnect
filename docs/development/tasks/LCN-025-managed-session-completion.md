@@ -24,6 +24,7 @@ Primary tools:
 - `wait_session`
 - `release_session`
 - `prune_sessions`
+- `refresh_state`
 
 Existing:
 
@@ -93,6 +94,60 @@ Output:
 - released session IDs
 - skipped running session IDs
 
+Suggested `refresh_state`:
+
+Purpose:
+
+- reconcile LConnect transient registries with current local reality
+- provide one clean entry-point when a new AI/chat session starts using an already-running LConnect instance
+- optionally clean only safe stale/terminal handles
+
+Default semantics:
+
+- refresh process-session snapshots
+- detect sessions that reached terminal state
+- inventory active log followers
+- inventory active file watchers
+- report stopped/dead/error observer handles
+- never terminate a running process
+- never stop a running follower/watcher unless explicitly requested by a separate lifecycle command
+- never modify Windows Scheduled Tasks, Services, files, Git state, or other persistent OS state
+- optional safe pruning applies only to terminal/stopped transient handles
+
+Suggested input:
+
+```json
+{
+  "scope": "all",
+  "prune_terminal": true,
+  "older_than_seconds": 3600,
+  "dry_run": false
+}
+```
+
+Suggested result:
+
+```json
+{
+  "process_sessions": {
+    "running": [],
+    "terminal": [],
+    "released": []
+  },
+  "log_followers": {
+    "active": [],
+    "stopped_or_error": []
+  },
+  "file_watchers": {
+    "active": [],
+    "stopped_or_error": []
+  },
+  "persistent_os_state_modified": false
+}
+```
+
+`refresh_state` is reconciliation/housekeeping only. It is not an LConnect restart command and does not refresh the ChatGPT connector itself.
+
 ## Tests
 
 - exit 0
@@ -106,6 +161,10 @@ Output:
 - prune dry-run
 - prune terminal sessions by age
 - running sessions never silently pruned
+- refresh state after a process completed while caller was away
+- refresh inventory with active process/log/watch handles preserved
+- refresh safe-prune path removes only eligible terminal/stopped transient handles
+- refresh never mutates Scheduled Tasks/Services/persistent filesystem state
 - session cleanup/unknown session behavior
 
 ## Acceptance criteria
