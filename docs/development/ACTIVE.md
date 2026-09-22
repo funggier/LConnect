@@ -2,44 +2,60 @@
 
 Last updated: 2026-09-22
 
-## Current state
+## Current baseline
 
 - Repository: `funggier/LConnect`
 - Branch: `main`
+- Starting HEAD for this implementation: `807460fab8a8514101b01fe8cfdeec0c6e663dcd`
 - Published release: `v1.1.0 — Expanded Tools & First-Run Guide`
-- Release candidate/tag target: `0cefe3beede022f7477fa6ab54740571c7e92b8c`
-- Passing CI: `35518059146`
-- Tested MCP catalog: 91 tools
+- Published v1.1.0 catalog: 91 tools
+- Current local candidate catalog: 96 tools
 - LCN-007–017: COMPLETE
 - LCN-024: COMPLETE
-- LCN-025: READY
-- LCN-026–030: PLANNED
+- LCN-025: ACTIVE
+- LCN-026: ACTIVE
+- LCN-027–030: PLANNED
 - LCN-018–023: PLANNED after reliability phase
 
-## Active task
-
-**NO ACTIVE DEVELOPMENT TASK**
-
-## Latest completed task
-
-### LCN-024 — First-run Installation Guide + v1.1.0 Release
-
-Status: **COMPLETE**
-
-Task: [tasks/LCN-024-first-run-installation-guide-v1.1.0-release.md](tasks/LCN-024-first-run-installation-guide-v1.1.0-release.md)
-
-Report: [reports/LCN-20260919-024-v1.1.0-first-run-installation-release.md](reports/LCN-20260919-024-v1.1.0-first-run-installation-release.md)
-
-Release: https://github.com/funggier/LConnect/releases/tag/v1.1.0
-
-## Next planned roadmap task
+## Active tasks
 
 ### LCN-025 — Managed Session Completion
 
-Status: **READY**
+Status: **ACTIVE**
 
 Task: [tasks/LCN-025-managed-session-completion.md](tasks/LCN-025-managed-session-completion.md)
 
-Phase plan: [AGENT_OPERATIONS_RELIABILITY_PLAN.md](AGENT_OPERATIONS_RELIABILITY_PLAN.md)
+Primary additions:
 
-LCN-025–030 are intentionally prioritized before LCN-018–023. No implementation task has been started yet.
+- `wait_session`
+- `release_session`
+- `prune_sessions`
+- `refresh_state`
+- optional `start_process.label`
+- `Refresh-LConnect.cmd` / `Refresh-LConnect.ps1`
+
+### LCN-026 — Incremental Process Output Cursor
+
+Status: **ACTIVE**
+
+Task: [tasks/LCN-026-process-output-cursor.md](tasks/LCN-026-process-output-cursor.md)
+
+Primary addition:
+
+- `read_process_events`
+
+## Current acceptance state
+
+Targeted tests are GREEN.
+
+Important lifecycle finding:
+
+- process `exit` is terminal lifecycle evidence
+- stdio `close` may occur later when descendants retain inherited handles
+- `streams_closed` is therefore explicit and separate
+
+Full repository validation and GitHub CI are still required before both tasks can close.
+
+## Next planned task after this pair
+
+LCN-027 — Structured Text Search remains **PLANNED** until LCN-025/026 are closed.

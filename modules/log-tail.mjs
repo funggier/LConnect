@@ -199,7 +199,23 @@ function followerSnapshot(session) {
     buffered_event_count: session.events.length,
     last_error: session.lastError,
     started_at: session.startedAt,
+    stopped_at: session.stoppedAt ?? null,
   };
+}
+
+export function listLogFollowerSnapshots() {
+  return [...followers.values()].map(followerSnapshot);
+}
+
+export function pruneStoppedLogFollowers() {
+  const released = [];
+  for (const [id, session] of followers.entries()) {
+    if (!session.stopped) continue;
+    if (session.timer) clearInterval(session.timer);
+    followers.delete(id);
+    released.push(id);
+  }
+  return released;
 }
 
 export function registerLogTailTools(server, config) {
@@ -262,6 +278,7 @@ export function registerLogTailTools(server, config) {
         nextSeq: 1,
         droppedThroughSeq: 0,
         stopped: false,
+        stoppedAt: null,
         polling: false,
         lastError: null,
         startedAt: new Date().toISOString(),
@@ -370,6 +387,7 @@ export function registerLogTailTools(server, config) {
     if (!session) return textResult(`Unknown log follower: ${follower_id}`, true);
 
     session.stopped = true;
+    session.stoppedAt ??= new Date().toISOString();
     if (session.timer) clearInterval(session.timer);
     const summary = followerSnapshot(session);
     followers.delete(follower_id);

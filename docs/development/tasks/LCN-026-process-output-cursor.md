@@ -1,6 +1,6 @@
 # LCN-026 — Incremental Process Output Cursor
 
-Status: **PLANNED**
+Status: **ACTIVE**
 
 ## Goal
 
@@ -52,6 +52,22 @@ Prefer extending shared session runtime instead of adding a separate process obs
 - large output
 - process exit
 - old API regression coverage
+
+## Implementation progress
+
+- Extended the existing managed process registry; no separate observation registry was created.
+- Added `read_process_events`.
+- Output events preserve `stdout` vs `stderr`.
+- Lifecycle events include `exit`, `streams_closed` and launch errors.
+- Sequence numbers are monotonic per process session.
+- Reads use `after_seq` and return `next_cursor`, `has_more`, `earliest_available_seq` and explicit `overflowed` metadata.
+- Event memory is bounded by the configured process buffer budget; old history is dropped with `dropped_through_seq` evidence.
+- Existing `read_process_output` remains supported. Clearing its legacy stdout/stderr buffer does not clear cursor event history.
+- Targeted tests passed for interleaved streams, no-repeat cursor reads, terminal exit, explicit overflow and exit-vs-pipe-close behavior.
+- PowerShell syntax: PASS.
+- `npm run check`: PASS.
+- Full local `npm test`: PASS / catalog = 96 tools.
+- `npm audit --audit-level=moderate`: 0 vulnerabilities.
 
 ## Acceptance criteria
 

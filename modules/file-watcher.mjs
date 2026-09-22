@@ -46,6 +46,7 @@ function snapshot(session) {
     backend: session.backend,
     running: !session.stopped,
     started_at: session.startedAt,
+    stopped_at: session.stoppedAt ?? null,
     next_seq: session.nextSeq,
     dropped_through_seq: session.droppedThroughSeq,
     buffered_event_count: session.events.length,
@@ -54,6 +55,21 @@ function snapshot(session) {
     backend_pid: session.child?.pid ?? null,
     note: "Filesystem notifications may be coalesced or omitted by the operating system and are not a lossless audit log.",
   };
+}
+
+export function listFileWatcherSnapshots() {
+  return [...watchers.values()].map(snapshot);
+}
+
+export function pruneStoppedFileWatchers() {
+  const released = [];
+  for (const [id, session] of watchers.entries()) {
+    if (!session.stopped) continue;
+    closeSession(session);
+    watchers.delete(id);
+    released.push(id);
+  }
+  return released;
 }
 
 function addEvent(session, event) {
@@ -203,6 +219,7 @@ async function startWindowsBackend(session) {
   child.once("exit", (code, signal) => {
     if (!session.stopped) {
       session.stopped = true;
+      session.stoppedAt ??= new Date().toISOString();
       const detail = stderrBuffer.trim();
       session.lastError = `Watcher backend exited unexpectedly (code=${code}, signal=${signal})${detail ? `: ${detail}` : ""}`;
       addEvent(session, {
@@ -273,6 +290,7 @@ async function initializeBackend(session) {
 
 function closeSession(session) {
   session.stopped = true;
+  session.stoppedAt ??= new Date().toISOString();
   try { session.nativeWatcher?.close(); } catch {}
   try { session.child?.kill(); } catch {}
 }
@@ -302,6 +320,7 @@ export function registerFileWatcherTools(server, config) {
         nextSeq: 1,
         droppedThroughSeq: 0,
         stopped: false,
+        stoppedAt: null,
         startedAt: new Date().toISOString(),
         lastError: null,
         ready: false,

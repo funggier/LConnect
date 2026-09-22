@@ -15,6 +15,7 @@ import { registerHttpTools } from "./modules/http.mjs";
 import { registerLogTailTools } from "./modules/log-tail.mjs";
 import { registerFileWatcherTools } from "./modules/file-watcher.mjs";
 import { registerScheduledTaskTools } from "./modules/scheduled-tasks.mjs";
+import { registerTransientStateTools } from "./modules/transient-state.mjs";
 import { registerEnvironmentTools } from "./modules/environment.mjs";
 
 const config = loadLConnectConfig(import.meta.url);
@@ -37,6 +38,7 @@ registerHttpTools(server, config);
 registerLogTailTools(server, config);
 registerFileWatcherTools(server, config);
 registerScheduledTaskTools(server, config);
+registerTransientStateTools(server);
 registerEnvironmentTools(server, config);
 
 console.error(

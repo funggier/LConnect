@@ -1,6 +1,6 @@
 # รายการ Tools ของ LConnect
 
-LConnect Core ปัจจุบัน expose 91 tools ผ่าน MCP `main` channel เดียว
+LConnect Core บน current `main` expose 96 tools ผ่าน MCP `main` channel เดียว (published v1.1.0 มี 91 tools)
 
 ## Filesystem
 
@@ -94,23 +94,119 @@ arguments:
 
 ### start_process
 
-เปิด process แบบ long-running
+เปิด process แบบ long-running และคืน control กลับเร็ว
+
+รับ optional `label` เพื่อช่วยให้ AI session ใหม่ระบุงานเดิมได้ง่ายขึ้น
 
 คืนค่า:
 
 - `session_id`
+- `label`
 - PID
 - program
 - args
 - cwd
-- status
+- running/exit status
+- `started_at`
+- `completed_at`
+- `streams_closed`
+- sequence cursor metadata
 - buffered stdout/stderr
 
 ### read_process_output
 
-อ่าน status และ output ของ session
+อ่าน status และ legacy stdout/stderr buffer ของ session
 
-สามารถ `clear` buffer ได้
+สามารถ `clear` legacy buffer ได้
+
+การ clear legacy buffer **ไม่ล้าง** process event cursor history
+
+### read_process_events
+
+อ่าน process output/lifecycle แบบ incremental ด้วย sequence cursor
+
+arguments:
+
+- `session_id`
+- `after_seq`
+- `max_events`
+
+event หลัก:
+
+- `output` พร้อม `stream: stdout|stderr`
+- `exit`
+- `streams_closed`
+- `launch_error`
+
+คืน:
+
+- monotonic `seq`
+- `next_cursor`
+- `overflowed`
+- `earliest_available_seq`
+- `has_more`
+
+event buffer มีขอบเขตและเมื่อ history เก่าถูก drop จะรายงาน overflow ชัดเจน
+
+### wait_session
+
+รอ managed process session แบบ bounded โดยไม่ kill process เมื่อ timeout
+
+arguments:
+
+- `session_id`
+- `timeout_seconds` สูงสุด 30 วินาทีต่อ call
+- `poll_interval_ms`
+- `include_output_tail`
+- `output_tail_chars`
+
+สำคัญ:
+
+- process `exit` ถือเป็น terminal lifecycle
+- `streams_closed` แยกต่างหาก เพราะ descendant อาจถือ stdout/stderr handle ต่อหลัง parent exit
+- repeated terminal wait เป็น idempotent
+- timeout ไม่ terminate child
+
+### release_session
+
+ลบ metadata/output buffers ของ **terminal session** ออกจาก memory
+
+ถ้า session ยัง running จะ refuse และไม่ kill
+
+ถ้าต้องการหยุด process จริงต้องใช้ `terminate_process` แยก
+
+### prune_sessions
+
+ล้าง terminal sessions แบบ explicit/bounded
+
+arguments:
+
+- `older_than_seconds`
+- `dry_run` ค่า default `true`
+
+running sessions ไม่ถูก prune อัตโนมัติ
+
+### refresh_state
+
+soft reconcile สำหรับ transient state ของ LConnect ที่กำลังรัน
+
+ตรวจ:
+
+- managed process sessions
+- log followers
+- file watchers
+
+สามารถ safe-prune terminal/stopped transient handles ได้เมื่อระบุ
+
+**ไม่ทำ:**
+
+- restart LConnect
+- kill running process
+- stop active follower/watcher
+- ลบ Scheduled Tasks
+- stop Services
+- ลบไฟล์
+- แก้ Git state
 
 ### write_process_input
 

@@ -11,10 +11,11 @@
 ## สถานะปัจจุบัน
 
 - Source version: **1.1.0**
-- MCP catalog: **91 tools**
+- MCP catalog on current `main`: **96 tools**
+- Latest published release `v1.1.0`: **91 tools**
 - OpenAI tunnel-client minimum: **0.0.14**
 
-LConnect Core ผ่าน runtime acceptance บน Windows 10 แล้ว โดย MCP discovery ปัจจุบันแสดง 91 tools และทดสอบจริงทั้ง filesystem, PowerShell, process/session, stdin, process-tree termination และ listening ports
+LConnect Core ผ่าน runtime acceptance บน Windows 10 แล้ว โดย current `main` แสดง 96 tools และทดสอบจริงทั้ง filesystem, PowerShell, process/session, stdin, process-tree termination และ listening ports
 
 ## โครงสร้าง
 
@@ -73,6 +74,7 @@ Update-TunnelClient.cmd
 Start-LConnect.cmd
 Status-LConnect.cmd
 Stop-LConnect.cmd
+Refresh-LConnect.cmd
 ```
 
 LConnect ต้องใช้ OpenAI tunnel-client `0.0.14` หรือใหม่กว่า เนื่องจากรุ่นเก่ามีปัญหา recovery ของ stdio หลัง response timeout/deadline ซึ่งอาจทำให้ process ยังขึ้นว่า ready แต่ MCP ใช้งานต่อไม่ได้
@@ -96,9 +98,14 @@ npm test
 ### Process / Session
 - `start_process`
 - `read_process_output`
+- `read_process_events`
+- `wait_session`
+- `release_session`
+- `prune_sessions`
 - `write_process_input`
 - `terminate_process`
 - `list_sessions`
+- `refresh_state`
 
 ### Environment
 - `env_get`

@@ -1,6 +1,6 @@
 # LCN-025 — Managed Session Completion
 
-Status: **READY**
+Status: **ACTIVE**
 
 ## Goal
 
@@ -167,6 +167,29 @@ Suggested result:
 - refresh never mutates Scheduled Tasks/Services/persistent filesystem state
 - session cleanup/unknown session behavior
 
+## Implementation progress
+
+- Started from main HEAD `807460fab8a8514101b01fe8cfdeec0c6e663dcd`.
+- Added managed process metadata: `label`, `completed_at`, `streams_closed`, `closed_at`, elapsed time and process event cursor metadata.
+- Added `wait_session` with bounded wait (max 30 seconds per call), repeatable terminal observation and optional bounded stdout/stderr tails.
+- Added `release_session`; running sessions are refused and must be terminated explicitly if that is intended.
+- Added `prune_sessions` with dry-run default and terminal-only cleanup.
+- Added `refresh_state` through a shared transient-state module. It inventories process sessions, log followers and file watchers, optionally pruning only safe terminal/stopped handles.
+- Added optional `label` to `start_process` for AI/session handoff identification.
+- Added offline `Refresh-LConnect.ps1` + `Refresh-LConnect.cmd`:
+  - refuses while recorded LConnect tunnel-client is running
+  - clears `runtime/*`
+  - clears `logs/*` by default
+  - supports `-KeepLogs`
+  - preserves local config, tunnel-client, dependencies, source, Scheduled Tasks, Services, Git and user files
+- TDD caught a Windows PowerShell collision with built-in read-only `$PID`; refresh script now uses a non-reserved variable.
+- Full-suite investigation found an important lifecycle distinction: a parent process can exit while descendants retain inherited stdio handles. Managed session terminal state now follows child `exit`; `close` is a fallback/output-drain signal.
+- Targeted LCN-025 tests: PASS.
+- PowerShell syntax: PASS.
+- `npm run check`: PASS.
+- Full local `npm test`: PASS / catalog = 96 tools.
+- `npm audit --audit-level=moderate`: 0 vulnerabilities.
+
 ## Acceptance criteria
 
 - implementation reuses managed session registry
@@ -189,6 +212,36 @@ Recommended protocol when a new ChatGPT/AI session starts using an already-runni
 6. then start new work
 
 This keeps LConnect stateless at the workflow level while preventing stale in-memory handles from accumulating or confusing a new caller.
+
+## User offline refresh
+
+Add:
+
+- `Refresh-LConnect.cmd`
+- `Refresh-LConnect.ps1`
+
+This is intentionally different from MCP `refresh_state`.
+
+Required semantics:
+
+1. user stops LConnect first
+2. Refresh refuses if the recorded LConnect tunnel process is still running
+3. clear generated transient disk state:
+   - `runtime/*`
+   - `logs/*`
+4. recreate empty `runtime/` and `logs/`
+5. preserve:
+   - `mcp-conf.yaml`
+   - `lconnect-config.json`
+   - `tunnel-client.exe`
+   - `node_modules/`
+   - source/docs
+6. do not modify Windows Scheduled Tasks, Services, Git state or user files
+7. support `-KeepLogs` on the PowerShell script / passthrough CMD arguments for evidence-preserving refresh
+
+Rationale:
+
+Once LConnect is stopped, in-memory process/log/watch registries no longer exist. Offline refresh therefore cleans persisted launcher/health/log artifacts so the next Start begins from clean generated state without deleting user configuration.
 
 ## Scope rule
 

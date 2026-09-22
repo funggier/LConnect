@@ -113,6 +113,11 @@ const requiredTools = [
   "enable_scheduled_task",
   "disable_scheduled_task",
   "delete_scheduled_task",
+  "wait_session",
+  "release_session",
+  "prune_sessions",
+  "refresh_state",
+  "read_process_events",
 ];
 
 try {

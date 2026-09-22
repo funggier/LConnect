@@ -28,7 +28,8 @@ LConnect\
 ├─ Install-LConnect.cmd
 ├─ Start-LConnect.cmd
 ├─ Status-LConnect.cmd
-└─ Stop-LConnect.cmd
+├─ Stop-LConnect.cmd
+└─ Refresh-LConnect.cmd
 ```
 
 ข้อมูลต่อไปนี้ **ไม่ควรถูกเก็บใน GitHub**:
@@ -740,17 +741,23 @@ npm test
 
 `npm test` เปิด child MCP server จริงและทดสอบ integration fixtures
 
-สำหรับ LConnect v1.1.0 baseline คาดว่าจะเห็น:
+สำหรับ published LConnect v1.1.0 baseline คาดว่าจะเห็น:
 
 ```text
 PASS tools=91
+```
+
+สำหรับ current `main` หลัง LCN-025/026 คาดว่าจะเห็น:
+
+```text
+PASS tools=96
 ```
 
 หมายเหตุ: destructive/system mutation บางประเภทถูกทดสอบเต็มรูปแบบบน disposable CI environment ส่วน local tests จะหลีกเลี่ยงการเปลี่ยน service/task จริงโดยไม่จำเป็น
 
 ---
 
-# ขั้นที่ 15 — Stop / Restart
+# ขั้นที่ 15 — Stop / Restart / Refresh
 
 หยุด:
 
@@ -769,6 +776,45 @@ Start-LConnect.cmd
 ```text
 Status-LConnect.cmd
 ```
+
+## Offline clean refresh
+
+ถ้าคุณหยุดใช้งานกลางคัน, เปลี่ยน AI/ChatGPT session แล้วต้องการเริ่ม LConnect ใหม่จาก generated state ที่สะอาด ให้ใช้:
+
+```text
+Stop-LConnect.cmd
+Refresh-LConnect.cmd
+Start-LConnect.cmd
+```
+
+`Refresh-LConnect.cmd` ใช้ตอน LConnect **หยุดแล้วเท่านั้น**
+
+ค่า default จะล้าง:
+
+- `runtime/*`
+- `logs/*`
+
+จากนั้นสร้าง `runtime/` และ `logs/` เปล่ากลับมา
+
+สิ่งที่ **ไม่ล้าง**:
+
+- `mcp-conf.yaml`
+- `lconnect-config.json`
+- `tunnel-client.exe`
+- `node_modules/`
+- source/docs
+- Windows Scheduled Tasks
+- Windows Services
+- user files
+- Git state
+
+ถ้ายังต้องการเก็บ logs เป็นหลักฐาน:
+
+```text
+Refresh-LConnect.cmd -KeepLogs
+```
+
+ถ้า LConnect tunnel process ยังทำงานอยู่ Refresh จะ refuse และบอกให้ Stop ก่อน เพื่อไม่ให้ล้าง state ขณะ runtime ยัง active
 
 ---
 

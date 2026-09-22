@@ -37,6 +37,7 @@ lconnect-mcp.mjs
    +-- modules/log-tail.mjs
    +-- modules/file-watcher.mjs
    +-- modules/scheduled-tasks.mjs
+   +-- modules/transient-state.mjs
    +-- modules/system.mjs
    +-- modules/environment.mjs
 ```
@@ -123,14 +124,38 @@ shell module เปิด:
 
 ## Process/session
 
-process module เก็บ session ใน memory
+process module เก็บ transient session ใน memory และยังคงเป็น direct Plugin operation handle ไม่ใช่ workflow/job engine
 
 เหมาะกับ CLI/server ที่ต้อง:
 
-- ทำงานนาน
+- ทำงานนานเกินหนึ่ง MCP request
+- รอแบบ bounded ด้วย `wait_session`
 - อ่าน output หลายรอบ
+- อ่าน incremental events ด้วย sequence cursor
 - รับ stdin
 - terminate ภายหลัง
+- release/prune terminal handles เมื่อไม่ใช้แล้ว
+
+Process lifecycle ใช้ `exit` เป็น terminal state ส่วน stdout/stderr drain แยกด้วย `streams_closed` เพราะ descendant process อาจถือ pipe ต่อหลัง parent exit
+
+`read_process_output` ยังคงอยู่เพื่อ compatibility ขณะที่ `read_process_events` ให้ cursor semantics แบบ monotonic/bounded/overflow-visible
+
+### Transient state refresh
+
+`modules/transient-state.mjs` รวม inventory/reconcile ของ:
+
+- managed process sessions
+- log followers
+- file watchers
+
+`refresh_state` เป็น soft online housekeeping เท่านั้น:
+
+- ไม่ restart LConnect
+- ไม่ kill running process
+- ไม่ stop active observer
+- ไม่แก้ Scheduled Tasks/Services/files/Git
+
+สำหรับการล้าง generated disk state หลังหยุด LConnect ใช้ `Refresh-LConnect.cmd` ซึ่งเป็น offline reset คนละระดับกับ MCP `refresh_state`
 
 ## Process Advanced
 
