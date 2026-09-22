@@ -4,7 +4,12 @@ Status: **READY**
 
 ## Goal
 
-เพิ่ม `wait_session` เพื่อให้ agent รอ managed process session แบบ bounded ได้โดยไม่ต้องประกอบ sleep/poll loop ซ้ำเอง
+เพิ่ม managed-session completion + hygiene primitives เพื่อให้ agent:
+
+- รอ process session แบบ bounded ได้โดยไม่ต้องประกอบ sleep/poll loop ซ้ำเอง
+- แยก running/completed session ได้ชัด
+- ปล่อย completed session ที่ไม่ใช้แล้วออกจาก LConnect memory
+- เริ่ม ChatGPT/AI session ใหม่โดยตรวจและ cleanup state เก่าได้อย่าง explicit โดยไม่ฆ่างานที่ยังรันอยู่โดยไม่ตั้งใจ
 
 ## Why
 
@@ -14,9 +19,18 @@ Status: **READY**
 
 ## Planned capability
 
-Primary tool:
+Primary tools:
 
 - `wait_session`
+- `release_session`
+- `prune_sessions`
+
+Existing:
+
+- `list_sessions`
+- `terminate_process`
+
+ควรถูกใช้ร่วมกันเป็น lifecycle contract เดียว
 
 ## Required behavior
 
@@ -29,6 +43,13 @@ Primary tool:
 - unknown/expired session diagnostic clear
 - compatible with stdin and current session registry
 - `read_process_output` remains supported
+- session snapshot adds `completed_at` when terminal
+- optional human/agent supplied `label` may be added to `start_process` for easier handoff identification
+- `release_session` only forgets a terminal session; it must refuse a running session
+- killing a running process remains the separate explicit `terminate_process` action
+- `prune_sessions` defaults to terminal sessions only
+- prune criteria must be explicit and bounded, such as older-than age
+- no implicit cleanup of running sessions
 
 ## Suggested schema
 
@@ -40,12 +61,37 @@ Inputs:
 - `include_output_tail`
 - `output_tail_chars`
 
-Outputs:
+Outputs for `wait_session`:
 
 - running/completed/timed_out
 - exit_code/signal
 - elapsed time
 - bounded stdout/stderr tail
+
+Suggested `release_session`:
+
+Inputs:
+
+- `session_id`
+
+Semantics:
+
+- terminal session -> remove session metadata/output buffers from LConnect memory
+- running session -> refuse with clear diagnostic; caller must explicitly terminate first if that is intended
+
+Suggested `prune_sessions`:
+
+Inputs:
+
+- `state` default `terminal`
+- `older_than_seconds`
+- `dry_run` default `true`
+
+Output:
+
+- matched session IDs
+- released session IDs
+- skipped running session IDs
 
 ## Tests
 
@@ -55,6 +101,11 @@ Outputs:
 - subsequent wait observes completion
 - repeated terminal query
 - stdin process compatibility
+- terminal session release
+- release-running refusal
+- prune dry-run
+- prune terminal sessions by age
+- running sessions never silently pruned
 - session cleanup/unknown session behavior
 
 ## Acceptance criteria
@@ -67,6 +118,21 @@ Outputs:
 - GitHub CI PASS
 - docs/status/report updated
 
+## AI session-switch hygiene
+
+Recommended protocol when a new ChatGPT/AI session starts using an already-running LConnect instance:
+
+1. call `list_sessions`
+2. identify any `running=true` operations by command/cwd/start time/label
+3. never auto-kill an unknown running operation
+4. inspect or explicitly terminate it only when the AI/user decides it is stale
+5. release/prune terminal sessions after evidence is no longer needed
+6. then start new work
+
+This keeps LConnect stateless at the workflow level while preventing stale in-memory handles from accumulating or confusing a new caller.
+
 ## Scope rule
 
 Do not add process output cursor semantics here except minimum internal work needed for `wait_session`; cursor work belongs to LCN-026.
+
+Do not add persistent workflow state, autonomous continuation, or cross-restart task memory.

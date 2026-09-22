@@ -161,6 +161,22 @@ Session identity เป็น handle ของ direct Plugin operation ไม่
 
 LConnect ไม่เลือกขั้นตอนถัดไปเอง และไม่ต้องมี planner หรือ durable task memory เพื่อให้ AI ทำงานยาวขึ้น
 
+## Transient state hygiene across AI sessions
+
+LConnect process หนึ่งตัวอาจถูกใช้ต่อโดย ChatGPT/AI หลาย conversation sessions ดังนั้น transient handles เก่าอาจยังอยู่แม้ caller เปลี่ยน session แล้ว
+
+หลักการ:
+
+- running process session เป็น active OS work และห้ามถูก cleanup อัตโนมัติ
+- terminal process session สามารถ release/prune จาก in-memory registry ได้
+- cleanup ต้องแยกจาก terminate อย่างชัดเจน
+- new caller ควร inspect current transient state ก่อนเริ่มงานยาวใหม่
+- completed output/evidence ควรเก็บจน caller explicitly release หรือ bounded retention policy ที่กำหนดชัด
+- log followers/file watchers ต้องมี explicit stop lifecycle และควรมี inventory semantics ที่ caller ตรวจได้
+- Windows Scheduled Tasks เป็น persistent OS state ไม่ใช่ transient LConnect session และห้ามถูกล้างตาม chat-session cleanup
+
+เป้าหมายคือป้องกัน “งานเก่าปะปนกับงานใหม่” โดยไม่ผูก resource ownership เข้ากับ ChatGPT conversation ID ที่ LConnect อาจไม่ได้รับจาก MCP transport
+
 ## Exact identity before mutation
 
 ตัวอย่าง identity ที่มีอยู่แล้ว:
