@@ -1,6 +1,6 @@
 # LCN-026 — Incremental Process Output Cursor
 
-Status: **ACTIVE**
+Status: **COMPLETE**
 
 ## Goal
 
@@ -68,6 +68,17 @@ Prefer extending shared session runtime instead of adding a separate process obs
 - `npm run check`: PASS.
 - Full local `npm test`: PASS / catalog = 96 tools.
 - `npm audit --audit-level=moderate`: 0 vulnerabilities.
+
+## Completion evidence
+
+- Implementation commit: `9fcf3ea170dfed04d5233376505102a6501d606b`
+- GitHub Actions run: `35754500025` — PASS
+- Windows CI catalog: 96 tools
+- cursor/stream/exit semantics: PASS
+- explicit overflow metadata: PASS
+- no-repeat reads: PASS
+- legacy `read_process_output` compatibility: PASS
+- dependency audit: 0 vulnerabilities
 
 ## Acceptance criteria
 

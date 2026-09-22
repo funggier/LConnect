@@ -1,6 +1,6 @@
 # LCN-027 — Structured Text Search
 
-Status: **PLANNED**
+Status: **READY**
 
 ## Goal
 

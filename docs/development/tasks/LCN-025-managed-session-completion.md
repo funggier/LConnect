@@ -1,6 +1,6 @@
 # LCN-025 — Managed Session Completion
 
-Status: **ACTIVE**
+Status: **COMPLETE**
 
 ## Goal
 
@@ -189,6 +189,19 @@ Suggested result:
 - `npm run check`: PASS.
 - Full local `npm test`: PASS / catalog = 96 tools.
 - `npm audit --audit-level=moderate`: 0 vulnerabilities.
+
+## Completion evidence
+
+- Implementation commit: `9fcf3ea170dfed04d5233376505102a6501d606b`
+- GitHub Actions run: `35754500025` — PASS
+- Windows CI catalog: 96 tools
+- `wait_session`: PASS
+- exit-vs-pipe-close lifecycle: PASS
+- `release_session` running guard/terminal release: PASS
+- `prune_sessions` dry-run/terminal cleanup: PASS
+- `refresh_state` active-state preservation + safe terminal prune: PASS
+- `Refresh-LConnect.cmd/.ps1` running guard/runtime+log cleanup/preservation/`-KeepLogs`: PASS
+- dependency audit: 0 vulnerabilities
 
 ## Acceptance criteria
 

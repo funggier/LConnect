@@ -309,3 +309,42 @@ This file records decisions that future sessions should preserve unless there is
 **Long-running rule:** Long operations should still outlive one MCP request when the underlying OS process can continue, but the caller/controller remains responsible for deciding what to do next.
 
 **Why:** Keeping LConnect as a thin, direct Plugin preserves clear responsibility boundaries and makes it reusable by ChatGPT, CogentNexus, Zooid or other agents without embedding one orchestration model inside the capability layer.
+
+---
+
+## D-028 — Process exit is terminal; stream close is separate evidence
+
+**Decision:** Managed process session lifecycle becomes terminal when the child process emits `exit`.
+
+**Decision:** stdout/stderr pipe closure is exposed separately through `streams_closed` / `closed_at`.
+
+**Why:** A descendant process may inherit stdout/stderr handles after the parent process exits. Waiting only for Node child `close` can therefore make a completed parent appear to run indefinitely.
+
+**Consequence:** `wait_session` can report completion promptly while callers can still inspect whether output pipes have fully drained.
+
+
+---
+
+## D-029 — Soft transient refresh and offline user refresh are separate operations
+
+**Decision:** MCP `refresh_state` is an online soft reconciliation/housekeeping operation.
+
+**Decision:** `Refresh-LConnect.cmd/.ps1` is an offline user reset used only after LConnect is stopped.
+
+**Soft refresh preserves:**
+
+- running process sessions
+- active log followers
+- active file watchers
+- all persistent OS state
+
+It may explicitly prune only safe terminal/stopped transient handles.
+
+**Offline refresh clears:**
+
+- `runtime/*`
+- `logs/*` by default
+
+It preserves local configuration, tunnel client, dependencies, source, Scheduled Tasks, Services, Git state and user files.
+
+**Why:** AI sessions need a safe way to reconcile stale transient handles without killing active work, while users also need a deterministic way to restart LConnect from clean generated disk state after stopping it.

@@ -2,60 +2,51 @@
 
 Last updated: 2026-09-22
 
-## Current baseline
+## Current state
 
 - Repository: `funggier/LConnect`
 - Branch: `main`
-- Starting HEAD for this implementation: `807460fab8a8514101b01fe8cfdeec0c6e663dcd`
 - Published release: `v1.1.0 — Expanded Tools & First-Run Guide`
 - Published v1.1.0 catalog: 91 tools
-- Current local candidate catalog: 96 tools
+- Current main implementation commit: `9fcf3ea170dfed04d5233376505102a6501d606b`
+- Passing CI: `35754500025`
+- Current main MCP catalog: 96 tools
 - LCN-007–017: COMPLETE
 - LCN-024: COMPLETE
-- LCN-025: ACTIVE
-- LCN-026: ACTIVE
-- LCN-027–030: PLANNED
+- LCN-025: COMPLETE
+- LCN-026: COMPLETE
+- LCN-027: READY
+- LCN-028–030: PLANNED
 - LCN-018–023: PLANNED after reliability phase
 
-## Active tasks
+## Active task
+
+**NO ACTIVE DEVELOPMENT TASK**
+
+## Latest completed tasks
 
 ### LCN-025 — Managed Session Completion
 
-Status: **ACTIVE**
+Status: **COMPLETE**
 
 Task: [tasks/LCN-025-managed-session-completion.md](tasks/LCN-025-managed-session-completion.md)
 
-Primary additions:
-
-- `wait_session`
-- `release_session`
-- `prune_sessions`
-- `refresh_state`
-- optional `start_process.label`
-- `Refresh-LConnect.cmd` / `Refresh-LConnect.ps1`
+Report: [reports/LCN-20260922-025-managed-session-completion.md](reports/LCN-20260922-025-managed-session-completion.md)
 
 ### LCN-026 — Incremental Process Output Cursor
 
-Status: **ACTIVE**
+Status: **COMPLETE**
 
 Task: [tasks/LCN-026-process-output-cursor.md](tasks/LCN-026-process-output-cursor.md)
 
-Primary addition:
+Report: [reports/LCN-20260922-026-process-output-cursor-completion.md](reports/LCN-20260922-026-process-output-cursor-completion.md)
 
-- `read_process_events`
+## Next planned task
 
-## Current acceptance state
+### LCN-027 — Structured Text Search
 
-Targeted tests are GREEN.
+Status: **READY**
 
-Important lifecycle finding:
+Task: [tasks/LCN-027-structured-text-search.md](tasks/LCN-027-structured-text-search.md)
 
-- process `exit` is terminal lifecycle evidence
-- stdio `close` may occur later when descendants retain inherited handles
-- `streams_closed` is therefore explicit and separate
-
-Full repository validation and GitHub CI are still required before both tasks can close.
-
-## Next planned task after this pair
-
-LCN-027 — Structured Text Search remains **PLANNED** until LCN-025/026 are closed.
+LCN-027 has not been started.

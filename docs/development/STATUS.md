@@ -4,7 +4,11 @@ Last updated: 2026-09-22
 
 ## Overall
 
-Current project state: **BASIC CORE STABLE / AGENT OPERATIONS RELIABILITY READY**\n\nCurrent published release: **v1.1.0 — Expanded Tools & First-Run Guide**\n\nCurrent tested MCP catalog: **91 tools**
+Current project state: **BASIC CORE STABLE / AGENT OPERATIONS RELIABILITY ACTIVE**
+
+Current published release: **v1.1.0 — Expanded Tools & First-Run Guide**
+
+Current main MCP catalog: **96 tools**
 
 LConnect มี Core ที่ใช้งานจริงแล้วและผ่าน runtime acceptance บน Windows:
 
@@ -29,7 +33,7 @@ Expansion phase ถัดไปเน้น Agent Operations Reliability ชุ�
 | System Foundation | COMPLETE | LCN-007–011 | Environment + Process + Services + Network + Hardware complete |
 | Developer Foundation | COMPLETE | LCN-012–014 | Git + Development + HTTP complete |
 | Observation | COMPLETE | LCN-015–017 | Log Tail + File Watcher + Scheduled Tasks complete |
-| Agent Operations Reliability | READY | LCN-025–030 | wait/session cursor/search/integrity/exact Git/GitHub release |
+| Agent Operations Reliability | ACTIVE | LCN-025–030 | LCN-025/026 complete; Structured Text Search next |
 | Desktop Control | PLANNED | LCN-018–020 | Deferred until LCN-025–030 complete |
 | Browser Automation | PLANNED | LCN-021–023 | Common browser layer + Firefox + Chrome |
 
@@ -219,6 +223,31 @@ Added 8 structured Windows Scheduled Task tools:
 
 Tool catalog increased from 83 to 91. Disposable Task Scheduler lifecycle acceptance passed on Windows CI.
 
+### LCN-025 — Managed Session Completion
+**COMPLETE**
+
+Added long-running AI operation lifecycle/hygiene primitives:
+
+- `wait_session`
+- `release_session`
+- `prune_sessions`
+- `refresh_state`
+- optional `start_process.label`
+- offline `Refresh-LConnect.cmd/.ps1`
+
+Process terminal state now follows process exit, while `streams_closed` reports output-pipe drain separately. Soft refresh preserves active work; offline Refresh requires LConnect stopped and clears generated runtime/log state only.
+
+### LCN-026 — Incremental Process Output Cursor
+**COMPLETE**
+
+Added:
+
+- `read_process_events`
+
+Process stdout/stderr/lifecycle evidence now has monotonic cursor semantics, bounded memory and explicit overflow reporting. Existing `read_process_output` remains compatible.
+
+Tool catalog increased from 91 to 96. GitHub Actions run `35754500025` passed.
+
 ## Next sequence
 
 ```text
@@ -244,11 +273,11 @@ LCN-016 File Watcher — COMPLETE
   ↓
 LCN-017 Scheduled Tasks — COMPLETE
   ↓
-LCN-025 Managed Session Completion — READY
+LCN-025 Managed Session Completion — COMPLETE
   ↓
-LCN-026 Incremental Process Output Cursor — PLANNED
+LCN-026 Incremental Process Output Cursor — COMPLETE
   ↓
-LCN-027 Structured Text Search — PLANNED
+LCN-027 Structured Text Search — READY
   ↓
 LCN-028 File Integrity — PLANNED
   ↓
