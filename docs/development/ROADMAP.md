@@ -6,7 +6,7 @@ LConnect should evolve from a local MCP filesystem/shell bridge into a modular W
 
 The target is not merely "more commands." The target is:
 
-> structured, observable, recoverable local capabilities that let an AI inspect, act, wait, verify, and continue without requiring the user to manually bridge every step.
+> a direct MCP Plugin with structured local capabilities that let an external AI start long-running work, regain control quickly, wait/read incrementally, verify results, and decide the next action without turning LConnect itself into an autonomous workflow runtime.
 
 ## Architecture invariant
 
@@ -402,13 +402,15 @@ Every module should define:
 
 Do not solve upstream timeout by only increasing timeout values.
 
-Prefer:
+Prefer direct-operation sessions:
 
 ```text
-start operation
- -> session/job id
- -> poll/read incremental state
- -> cancel/terminate
+AI starts operation
+ -> LConnect returns session id
+ -> local work continues after that MCP request returns
+ -> AI uses bounded wait/read incremental state
+ -> AI cancels/terminates when needed
+ -> AI decides what happens next
 ```
 
 This pattern should be reused by:
@@ -417,4 +419,5 @@ This pattern should be reused by:
 - file watchers
 - log followers
 - browser sessions
-- future automation jobs
+
+These sessions exist to help the external AI work continuously for longer periods. They are not persistent workflows: LConnect does not plan the next step, keep a workflow graph, or autonomously continue a task after the caller disappears.

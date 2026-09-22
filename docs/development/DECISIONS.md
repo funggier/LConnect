@@ -277,3 +277,35 @@ This file records decisions that future sessions should preserve unless there is
 **Compatibility:** Existing 91 tools remain supported; raw PowerShell/command execution remains an escape hatch.
 
 ---
+
+---
+
+## D-027 — LConnect remains a direct plugin capability layer
+
+**Decision:** LConnect remains a direct MCP Plugin / local capability layer.
+
+**LConnect does:**
+
+- expose structured local-computer capabilities
+- execute explicit commands/actions
+- return structured state/evidence
+- use bounded transient sessions where an operating-system operation cannot complete in one MCP request
+- observe processes/files/logs/browser sessions that the caller explicitly asks about
+
+**LConnect does not become:**
+
+- an autonomous agent runtime
+- a workflow/ticket orchestrator
+- a planner
+- a persistent job database
+- a continuation engine
+- a project/task memory system
+- a replacement for CogentNexus, Zooid, ChatGPT or another agent/controller
+
+**Session boundary:** Managed process/log/file/browser sessions are implementation handles for direct tool operations. They are not durable workflows and do not imply autonomous continuation.
+
+**Restart boundary:** LConnect is not required to preserve its in-memory session registry across an LConnect process restart. Where useful, callers may recover externally observable state through direct capabilities such as PID + creation time, files/logs, Git state, ports/services or Windows Scheduled Tasks.
+
+**Long-running rule:** Long operations should still outlive one MCP request when the underlying OS process can continue, but the caller/controller remains responsible for deciding what to do next.
+
+**Why:** Keeping LConnect as a thin, direct Plugin preserves clear responsibility boundaries and makes it reusable by ChatGPT, CogentNexus, Zooid or other agents without embedding one orchestration model inside the capability layer.

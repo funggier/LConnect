@@ -57,16 +57,32 @@ LConnect v1.1.0 มีพื้นฐานที่ใช้ทำงานจ�
 
 LConnect ควรทำหน้าที่เป็น:
 
-> general local-computer capability layer สำหรับ AI agents ที่ช่วยให้ inspect, act, wait, verify, recover และ continue ได้อย่างมีโครงสร้าง
+> direct MCP Plugin / general local-computer capability layer ที่ช่วยให้ AI ภายนอก เช่น ChatGPT, CogentNexus หรือ Zooid สามารถ inspect, act, wait, verify และติดตาม local operation ที่ใช้เวลานานได้อย่างมีโครงสร้าง
+
+LConnect ควรช่วยให้ AI ทำงานยาวต่อเนื่องได้ โดยทำให้ operation ที่ AI สั่ง:
+
+- เริ่มแล้วคืน control กลับได้เร็ว
+- ทำงานต่อได้แม้ MCP request นั้นจบ
+- รอผลแบบ bounded ได้
+- อ่าน output ใหม่แบบ incremental ได้
+- ตรวจสถานะซ้ำได้โดยไม่เสีย evidence
+- terminate/cancel ได้อย่าง explicit
 
 LConnect ไม่ควรกลายเป็น:
 
+- autonomous agent runtime
+- workflow/ticket orchestrator
+- planner
+- persistent task memory
+- continuation engine ที่เลือกงานถัดไปเอง
 - wrapper เฉพาะ CogentNexus
 - wrapper เฉพาะ OpenClaw
 - command collection ที่ duplicate shell โดยไม่มี structured semantics เพิ่ม
 - secret store
 - system ที่ซ่อน destructive behavior หลัง convenience API
 - GUI automation stack ที่เพิ่มก่อน execution foundation เสถียรพอ
+
+AI/caller เป็นผู้ตัดสินใจว่า “ทำอะไรต่อ” ส่วน LConnect มีหน้าที่ทำให้ operation ที่ถูกสั่งมี lifecycle/evidence ที่เชื่อถือได้
 
 Raw shell ยังคงอยู่เป็น escape hatch แต่ operation ที่ใช้ซ้ำบ่อยและมี contract ที่ชัดควรมี structured tool
 
@@ -133,12 +149,17 @@ MCP request lifetime ไม่ใช่ lifecycle authority ของ local proc
 รูปแบบที่ต้องการคือ:
 
 ```text
-start
-  -> session/job identity
-  -> bounded wait/read
-  -> terminal status
-  -> explicit cancel/terminate when necessary
+AI starts explicit local operation
+  -> LConnect returns session identity quickly
+  -> local process continues independently of that one MCP request
+  -> AI calls bounded wait/read again when useful
+  -> LConnect returns terminal status/evidence
+  -> AI decides the next action
 ```
+
+Session identity เป็น handle ของ direct Plugin operation ไม่ใช่ autonomous workflow/job graph
+
+LConnect ไม่เลือกขั้นตอนถัดไปเอง และไม่ต้องมี planner หรือ durable task memory เพื่อให้ AI ทำงานยาวขึ้น
 
 ## Exact identity before mutation
 
@@ -767,6 +788,8 @@ LCN-023 Chrome Adapter
 
 ก่อนเพิ่ม capability ใน phase นี้ ให้ถามว่า:
 
-> สิ่งนี้ช่วยให้ agent ทำงานยาวได้ต่อเนื่องขึ้น, รักษาหลักฐานได้ดีขึ้น, หรือลด raw-shell orchestration ที่เกิดซ้ำจริงหรือไม่?
+> สิ่งนี้ช่วยให้ AI ที่ใช้ LConnect ทำ operation ยาวได้ต่อเนื่องขึ้น รอ/อ่านผลได้ดีขึ้น รักษาหลักฐานได้ดีขึ้น หรือ reduce raw-shell orchestration โดยที่ LConnect ยังเป็น direct Plugin อยู่หรือไม่?
 
-ถ้าไม่ใช่ และไม่ใช่ dependency ของ LCN-025–030 ให้แยกเป็น future task แทนการขยาย scope ของ phase นี้
+ถ้าความสามารถนั้นต้องการให้ LConnect วางแผนงาน, เลือก next step, เก็บ workflow graph หรือ resume task autonomously ให้ย้าย responsibility นั้นไป caller/controller layer แทน
+
+ถ้าไม่ใช่ dependency ของ LCN-025–030 ให้แยกเป็น future task แทนการขยาย scope ของ phase นี้
