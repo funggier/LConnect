@@ -18,9 +18,10 @@
 1. [ACTIVE.md](ACTIVE.md) — งานที่ควรหยิบทำต่อทันที
 2. [STATUS.md](STATUS.md) — ภาพรวมทุก workstream
 3. [ROADMAP.md](ROADMAP.md) — ลำดับการพัฒนาระยะยาว
-4. [DECISIONS.md](DECISIONS.md) — decision/invariant ที่อนุมัติแล้ว
-5. Task file ที่ ACTIVE.md อ้างถึง
-6. รายงานล่าสุดใน [reports/](reports/)
+4. [AGENT_OPERATIONS_RELIABILITY_PLAN.md](AGENT_OPERATIONS_RELIABILITY_PLAN.md) — แผนชุดเล็ก LCN-025–030 ที่เป็น priority ปัจจุบัน
+5. [DECISIONS.md](DECISIONS.md) — decision/invariant ที่อนุมัติแล้ว
+6. Task file ที่ ACTIVE.md อ้างถึง
+7. รายงานล่าสุดใน [reports/](reports/)
 
 ถ้าต้องการดูประวัติ ให้เปิด [TASK_INDEX.md](TASK_INDEX.md)
 

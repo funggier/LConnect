@@ -1,10 +1,10 @@
 # STATUS — LConnect Development
 
-Last updated: 2026-09-19
+Last updated: 2026-09-22
 
 ## Overall
 
-Current project state: **BASIC CORE STABLE / EXPANSION ROADMAP READY**\n\nCurrent published release: **v1.1.0 — Expanded Tools & First-Run Guide**\n\nCurrent tested MCP catalog: **91 tools**
+Current project state: **BASIC CORE STABLE / AGENT OPERATIONS RELIABILITY READY**\n\nCurrent published release: **v1.1.0 — Expanded Tools & First-Run Guide**\n\nCurrent tested MCP catalog: **91 tools**
 
 LConnect มี Core ที่ใช้งานจริงแล้วและผ่าน runtime acceptance บน Windows:
 
@@ -19,7 +19,7 @@ LConnect มี Core ที่ใช้งานจริงแล้วแล�
 - Thai documentation
 - GitHub releases
 
-Expansion phase ถัดไปมุ่งไปที่ System, Development, Observation และ Desktop/Browser automation
+Expansion phase ถัดไปเน้น Agent Operations Reliability ชุดเล็ก LCN-025–030 ก่อน Desktop/Browser automation เพื่อให้ long-running process, evidence, Git และ release workflow มี structured semantics ที่ครบขึ้น
 
 ## Workstream status
 
@@ -29,7 +29,8 @@ Expansion phase ถัดไปมุ่งไปที่ System, Development, 
 | System Foundation | COMPLETE | LCN-007–011 | Environment + Process + Services + Network + Hardware complete |
 | Developer Foundation | COMPLETE | LCN-012–014 | Git + Development + HTTP complete |
 | Observation | COMPLETE | LCN-015–017 | Log Tail + File Watcher + Scheduled Tasks complete |
-| Desktop Control | PLANNED | LCN-018–020 | Clipboard / Window / Input |
+| Agent Operations Reliability | READY | LCN-025–030 | wait/session cursor/search/integrity/exact Git/GitHub release |
+| Desktop Control | PLANNED | LCN-018–020 | Deferred until LCN-025–030 complete |
 | Browser Automation | PLANNED | LCN-021–023 | Common browser layer + Firefox + Chrome |
 
 ## Completed baseline
@@ -243,6 +244,18 @@ LCN-016 File Watcher — COMPLETE
   ↓
 LCN-017 Scheduled Tasks — COMPLETE
   ↓
+LCN-025 Managed Session Completion — READY
+  ↓
+LCN-026 Incremental Process Output Cursor — PLANNED
+  ↓
+LCN-027 Structured Text Search — PLANNED
+  ↓
+LCN-028 File Integrity — PLANNED
+  ↓
+LCN-029 Exact Git Ref / Ancestry Safety — PLANNED
+  ↓
+LCN-030 GitHub Actions / Release Integration — PLANNED
+  ↓
 LCN-018 Clipboard — PLANNED
   ↓
 LCN-019 Window Control
@@ -255,6 +268,14 @@ LCN-022 Firefox Adapter
   ↓
 LCN-023 Chrome Adapter
 ```
+
+## Planned reliability phase
+
+Detailed plan:
+
+[AGENT_OPERATIONS_RELIABILITY_PLAN.md](AGENT_OPERATIONS_RELIABILITY_PLAN.md)
+
+Scope is intentionally limited to six capability groups: LCN-025–030. Event Log, archive, registry and additional desktop/system extras are not part of this phase.
 
 ## Current known constraints
 

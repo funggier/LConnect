@@ -59,6 +59,12 @@ HTTP
 Log Tail
 File Watcher
 Scheduled Tasks
+Managed Session Completion
+Incremental Process Output Cursor
+Structured Text Search
+File Integrity
+Exact Git Ref / Ancestry Safety
+GitHub Actions / Release Integration
 Clipboard
 Window Control
 Keyboard / Mouse
@@ -67,7 +73,9 @@ Firefox
 Chrome
 ```
 
-Firefox is primary browser. Chrome is secondary. Edge is not required.
+The immediate priority is the six-task Agent Operations Reliability phase LCN-025–030. Detailed plan: `docs/development/AGENT_OPERATIONS_RELIABILITY_PLAN.md`.
+
+Firefox remains the primary browser target after that phase. Chrome is secondary. Edge is not required.
 
 ## Development expectations
 

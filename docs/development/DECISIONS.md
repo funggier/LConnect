@@ -261,3 +261,19 @@ This file records decisions that future sessions should preserve unless there is
 **Decision:** Release archives are built from tracked tag content so ignored local runtime/profile/secret files cannot be included accidentally.
 
 **Why:** First-run documentation must be explicit enough to eliminate guessing without weakening the existing local-only tunnel identity and secret boundary.
+
+---
+
+## D-026 — Agent operations reliability before Desktop/Browser expansion
+
+**Decision:** Complete the six-task Agent Operations Reliability phase (LCN-025–030) before starting LCN-018–023 Desktop/Browser implementation.
+
+**Scope:** The phase is intentionally limited to managed session completion, incremental process output, structured text search, file integrity, exact Git ref/ancestry safety, and GitHub Actions/Release integration.
+
+**Why:** Real long-running development/release use showed that LConnect already has sufficient execution power, but agents still need repeated raw-shell orchestration for waiting, evidence collection, integrity proof and release control. Strengthening these reusable primitives first provides greater reliability/value and reduces ambiguity before GUI/browser automation adds another large stateful layer.
+
+**Non-goal:** This decision does not cancel LCN-018–023. It only changes execution priority. Event Log, archive, registry and other adjacent capabilities are not included in this six-task phase.
+
+**Compatibility:** Existing 91 tools remain supported; raw PowerShell/command execution remains an escape hatch.
+
+---

@@ -1,6 +1,6 @@
 # ACTIVE — LConnect Development
 
-Last updated: 2026-09-19
+Last updated: 2026-09-22
 
 ## Current state
 
@@ -12,7 +12,9 @@ Last updated: 2026-09-19
 - Tested MCP catalog: 91 tools
 - LCN-007–017: COMPLETE
 - LCN-024: COMPLETE
-- LCN-018–023: PLANNED
+- LCN-025: READY
+- LCN-026–030: PLANNED
+- LCN-018–023: PLANNED after reliability phase
 
 ## Active task
 
@@ -32,4 +34,12 @@ Release: https://github.com/funggier/LConnect/releases/tag/v1.1.0
 
 ## Next planned roadmap task
 
-LCN-018 — Clipboard remains **PLANNED**.
+### LCN-025 — Managed Session Completion
+
+Status: **READY**
+
+Task: [tasks/LCN-025-managed-session-completion.md](tasks/LCN-025-managed-session-completion.md)
+
+Phase plan: [AGENT_OPERATIONS_RELIABILITY_PLAN.md](AGENT_OPERATIONS_RELIABILITY_PLAN.md)
+
+LCN-025–030 are intentionally prioritized before LCN-018–023. No implementation task has been started yet.

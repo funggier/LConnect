@@ -157,7 +157,13 @@ Roadmap expansion รุ่นปัจจุบันอยู่ที่:
 - [development/STATUS.md](development/STATUS.md)
 - [development/TASK_INDEX.md](development/TASK_INDEX.md)
 
-ลำดับหลักที่อนุมัติแล้วคือ System Foundation → Developer Foundation → Observation → Desktop Control → Browser Automation
+ลำดับหลักที่อนุมัติแล้วคือ System Foundation → Developer Foundation → Observation → Agent Operations Reliability (LCN-025–030) → Desktop Control → Browser Automation
+
+Agent Operations Reliability plan:
+
+- [development/AGENT_OPERATIONS_RELIABILITY_PLAN.md](development/AGENT_OPERATIONS_RELIABILITY_PLAN.md)
+- เน้น 6 กลุ่มเท่านั้น: wait session, process output cursor, text search, file integrity, exact Git refs/ancestry, GitHub Actions/Release
+- ทำชุดนี้ให้ complete ก่อนเริ่ม Desktop/Browser implementation
 
 Browser direction:
 

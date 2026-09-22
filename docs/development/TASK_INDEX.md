@@ -26,3 +26,9 @@
 | [LCN-022](tasks/LCN-022-firefox-adapter.md) | PLANNED | Firefox Adapter |
 | [LCN-023](tasks/LCN-023-chrome-adapter.md) | PLANNED | Chrome Adapter |
 | [LCN-024](tasks/LCN-024-first-run-installation-guide-v1.1.0-release.md) | COMPLETE | First-run Installation Guide + v1.1.0 Release |
+| [LCN-025](tasks/LCN-025-managed-session-completion.md) | READY | Managed Session Completion |
+| [LCN-026](tasks/LCN-026-process-output-cursor.md) | PLANNED | Incremental Process Output Cursor |
+| [LCN-027](tasks/LCN-027-structured-text-search.md) | PLANNED | Structured Text Search |
+| [LCN-028](tasks/LCN-028-file-integrity.md) | PLANNED | File Integrity |
+| [LCN-029](tasks/LCN-029-exact-git-ref-ancestry.md) | PLANNED | Exact Git Ref / Ancestry Safety |
+| [LCN-030](tasks/LCN-030-github-actions-release.md) | PLANNED | GitHub Actions / Release Integration |

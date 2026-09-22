@@ -62,6 +62,7 @@ ChatGPT
 - [Development Coordination / งานปัจจุบัน](docs/development/README.md)
 - [Active Task](docs/development/ACTIVE.md)
 - [Roadmap](docs/development/ROADMAP.md)
+- [Agent Operations Reliability Plan — LCN-025–030](docs/development/AGENT_OPERATIONS_RELIABILITY_PLAN.md)
 - [Task Index](docs/development/TASK_INDEX.md)
 
 ## คำสั่งหลัก

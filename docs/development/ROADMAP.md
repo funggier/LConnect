@@ -201,7 +201,85 @@ Provides durable Windows automation across reboot/session boundaries.
 
 ---
 
-# Phase 4 — Desktop Control
+# Phase 4 — Agent Operations Reliability
+
+Detailed plan:
+
+[AGENT_OPERATIONS_RELIABILITY_PLAN.md](AGENT_OPERATIONS_RELIABILITY_PLAN.md)
+
+This phase is intentionally small and contains only six capability groups derived from real long-running development/release use:
+
+## LCN-025 Managed Session Completion
+
+Primary tool:
+
+- `wait_session`
+
+Reason:
+
+Remove repeated sleep/poll orchestration while keeping long-running local process lifetime independent from one MCP request.
+
+## LCN-026 Incremental Process Output Cursor
+
+Primary tool:
+
+- `read_process_events`
+
+Reason:
+
+Bring managed process output to the same cursor/sequence model already proven by Log Tail and File Watcher.
+
+## LCN-027 Structured Text Search
+
+Primary tool:
+
+- `search_text`
+
+Reason:
+
+Common source/config diagnosis should not require shell-specific `Select-String`, `findstr` or `rg` parsing.
+
+## LCN-028 File Integrity
+
+Primary tools:
+
+- `file_hash`
+- `compare_files`
+
+Reason:
+
+Source/installed parity and release artifact verification are frequent operations and should return exact structured SHA-256 evidence.
+
+## LCN-029 Exact Git Ref / Ancestry Safety
+
+Primary tools:
+
+- `git_remote_ref`
+- `git_is_ancestor`
+- `git_push_ref`
+
+Reason:
+
+Exact-SHA release/ref workflows should not require raw Git while preserving the existing non-force safety model.
+
+## LCN-030 GitHub Actions / Release Integration
+
+Primary scope:
+
+- Actions run list/view/wait/failed logs
+- workflow dispatch
+- release metadata
+- release asset download
+
+Reason:
+
+Common GitHub CI/release workflows currently require raw `gh` orchestration and parsing.
+
+The phase is complete only after LCN-025–030 pass local runtime acceptance and GitHub CI.
+
+---
+
+# Phase 5 — Desktop Control
 
 ## LCN-018 Clipboard
 
@@ -243,7 +321,7 @@ Input automation is a fallback/control layer, not the preferred way to interact 
 
 ---
 
-# Phase 5 — Browser Automation
+# Phase 6 — Browser Automation
 
 ## LCN-021 Common Browser Layer
 
