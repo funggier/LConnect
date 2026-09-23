@@ -103,6 +103,7 @@ try {
   // HTTP budget must cover body wait, not only receipt of response headers.
   server = http.createServer((_req, res) => {
     res.writeHead(200, { "content-type": "text/plain" });
+    res.flushHeaders?.();
     setTimeout(() => res.end("late-body"), 3000);
   });
   await new Promise((resolve) => server.listen(0, "127.0.0.1", resolve));
