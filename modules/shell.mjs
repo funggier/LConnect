@@ -14,7 +14,7 @@ export function registerShellTools(server, config) {
       config.shell.maxTimeoutSeconds
     );
 
-  server.tool("powershell_run", "Run a PowerShell command on the local Windows computer.", {
+  server.tool("powershell_run", "Run a short PowerShell command on the local Windows computer. Synchronous execution is capped by the LConnect MCP request budget; use start_process for long-running work.", {
     command: z.string().min(1).max(50000),
     timeout_seconds: z.number().int().min(1).optional(),
     cwd: z.string().min(1).optional(),
@@ -28,7 +28,7 @@ export function registerShellTools(server, config) {
     return textResult(formatRunResult(result), Boolean(result.error || result.timedOut || result.code));
   });
 
-  server.tool("command_run", "Run an executable with an argument array. On Windows, launch failures are retried through PowerShell.", {
+  server.tool("command_run", "Run a short executable command with an argument array. Synchronous execution is capped by the LConnect MCP request budget; use start_process for long-running work. On Windows, launch failures are retried through PowerShell.", {
     program: z.string().min(1),
     args: z.array(z.string()).optional(),
     timeout_seconds: z.number().int().min(1).optional(),

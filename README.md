@@ -79,6 +79,41 @@ Refresh-LConnect.cmd
 
 LConnect ต้องใช้ OpenAI tunnel-client `0.0.14` หรือใหม่กว่า เนื่องจากรุ่นเก่ามีปัญหา recovery ของ stdio หลัง response timeout/deadline ซึ่งอาจทำให้ process ยังขึ้นว่า ready แต่ MCP ใช้งานต่อไม่ได้
 
+## Timeout containment
+
+LConnect แยกงาน synchronous สั้นออกจากงาน local ที่ใช้เวลานาน เพื่อไม่ให้ MCP request หนึ่งรอบต้องค้างรอโดยไม่จำเป็น
+
+ค่าเริ่มต้นใน `lconnect-config.json`:
+
+```json
+{
+  "mcp": {
+    "maxSynchronousRequestSeconds": 15
+  }
+}
+```
+
+ค่านี้เป็น **LConnect-side containment budget** ไม่ใช่ timeout ที่ OpenAI/ChatGPT รับประกันหรือเปิดเผย และสามารถ override ได้ด้วย environment variable `LCONNECT_MAX_SYNCHRONOUS_REQUEST_SECONDS`.
+
+หลักการใช้งาน:
+
+- `powershell_run`, `command_run` และ synchronous child-process helpers ถูกจำกัดด้วย budget นี้
+- `wait_session` ใช้ short bounded wait; timeout ของการรอไม่ terminate process
+- งานที่คาดว่าจะใช้เวลานานควรเริ่มด้วย `start_process` แล้วติดตามด้วย `wait_session`, `read_process_events` หรือ `read_process_output`
+- HTTP timeout ครอบทั้งการรอ response และการอ่าน body/download
+- ถ้า ChatGPT UI/connection timeout เอง LConnect ไม่สามารถป้องกันเหตุการณ์นั้นได้ทั้งหมด แต่ managed local process ที่เริ่มไว้แล้วจะไม่ถูกถือว่าต้องหยุดเพียงเพราะ short wait หมดเวลา
+
+```text
+short synchronous work
+  -> bounded response
+
+long local work
+  -> start_process
+  -> session_id
+  -> process continues independently
+  -> short wait/read calls
+```
+
 ตรวจ source และ runtime smoke tests:
 
 ```powershell

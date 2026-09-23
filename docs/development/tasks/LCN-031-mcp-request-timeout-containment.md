@@ -1,6 +1,6 @@
 # LCN-031 — MCP Request Timeout Containment
 
-Status: **ACTIVE**
+Status: **COMPLETE**
 
 ## Goal
 
@@ -77,3 +77,23 @@ A ChatGPT/UI timeout must not be treated as authority to terminate a managed loc
 - `npm run check` PASS
 - `npm test` PASS on Windows CI
 - dependency audit PASS
+
+## Completion evidence
+
+- RED candidate: `d46ceeb81fd09a6bbee7585e4d84b649faed1db1`
+- RED GitHub Actions: `35881634042` — **FAIL** at Runtime smoke tests as expected
+- GREEN implementation candidate: `77592106c5d60ba5ff426df8ab1b4ae855195191`
+- GREEN GitHub Actions: `35881996747` — **PASS**
+- Windows PowerShell syntax: PASS
+- Node syntax check: PASS
+- full Runtime smoke tests: PASS
+- dependency audit: PASS
+
+### Verified timeout contracts
+
+- synchronous PowerShell request asking for 5 seconds was contained by a 1-second test budget
+- `start_process` returned a managed session promptly and the process remained alive after a short `wait_session` timeout
+- `wait_session` returned explicit `waited_ms` and `return_reason`
+- HTTP delayed-body fixture proved the deadline remains active after response headers and covers body consumption
+- existing single-`main` MCP architecture remains unchanged
+- no LCN-027 implementation was included

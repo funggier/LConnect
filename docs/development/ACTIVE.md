@@ -5,36 +5,45 @@ Last updated: 2026-09-23
 ## Current state
 
 - Repository: `funggier/LConnect`
-- Working branch: `lcn-031-timeout-containment`
-- Baseline main HEAD: `b187207c8ad3fea6e8c27c453bf038a9b0432932`
+- Branch: `main` after merge of the validated LCN-031 candidate
 - Published release: `v1.1.0 — Expanded Tools & First-Run Guide`
 - Published v1.1.0 catalog: 91 tools
-- Current main MCP catalog: 96 tools
+- Current source MCP catalog: 96 tools
 - LCN-025: COMPLETE
 - LCN-026: COMPLETE
-- LCN-031: ACTIVE — timeout containment priority
-- LCN-027: READY but intentionally paused
+- LCN-031: COMPLETE — MCP request timeout containment
+- LCN-027: READY
 - LCN-028–030: PLANNED
 - LCN-018–023: PLANNED after reliability phase
 
 ## Active task
 
+**NO ACTIVE DEVELOPMENT TASK**
+
+## Latest completed task
+
 ### LCN-031 — MCP Request Timeout Containment
 
-Status: **ACTIVE**
+Status: **COMPLETE**
 
 Task: [tasks/LCN-031-mcp-request-timeout-containment.md](tasks/LCN-031-mcp-request-timeout-containment.md)
 
-Focus only:
+Report: [reports/LCN-20260923-031-mcp-request-timeout-containment.md](reports/LCN-20260923-031-mcp-request-timeout-containment.md)
 
-- bound synchronous MCP waits below a configurable request budget
-- preserve managed-process execution across request/UI timeout
-- make wait/result timeout evidence explicit
-- add regression coverage
+Validated:
 
-No LCN-027 implementation should be mixed into this task.
+- configurable synchronous request containment budget
+- short bounded `wait_session` with explicit return evidence
+- managed processes outlive short wait/request timeouts
+- child-process timeout no longer waits indefinitely for inherited stdio `close`
+- HTTP deadline covers response body/download
+- single `main` MCP channel unchanged
+- Windows CI GREEN
 
-## Previous completed tasks
+## Next planned task
 
-- [LCN-025 — Managed Session Completion](tasks/LCN-025-managed-session-completion.md)
-- [LCN-026 — Incremental Process Output Cursor](tasks/LCN-026-process-output-cursor.md)
+### LCN-027 — Structured Text Search
+
+Status: **READY**
+
+LCN-027 remains ready but was intentionally not started during timeout work.

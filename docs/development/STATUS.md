@@ -1,6 +1,6 @@
 # STATUS — LConnect Development
 
-Last updated: 2026-09-22
+Last updated: 2026-09-23
 
 ## Overall
 
@@ -33,7 +33,7 @@ Expansion phase ถัดไปเน้น Agent Operations Reliability ชุ�
 | System Foundation | COMPLETE | LCN-007–011 | Environment + Process + Services + Network + Hardware complete |
 | Developer Foundation | COMPLETE | LCN-012–014 | Git + Development + HTTP complete |
 | Observation | COMPLETE | LCN-015–017 | Log Tail + File Watcher + Scheduled Tasks complete |
-| Agent Operations Reliability | ACTIVE | LCN-025–030 | LCN-025/026 complete; Structured Text Search next |
+| Agent Operations Reliability | ACTIVE | LCN-025–031 | LCN-025/026 and timeout-containment LCN-031 complete; Structured Text Search next |
 | Desktop Control | PLANNED | LCN-018–020 | Deferred until LCN-025–030 complete |
 | Browser Automation | PLANNED | LCN-021–023 | Common browser layer + Firefox + Chrome |
 
@@ -248,6 +248,27 @@ Process stdout/stderr/lifecycle evidence now has monotonic cursor semantics, bou
 
 Tool catalog increased from 91 to 96. GitHub Actions run `35754500025` passed.
 
+### LCN-031 — MCP Request Timeout Containment
+**COMPLETE**
+
+Added transport-facing timeout containment without adding a new MCP channel or autonomous runtime:
+
+- configurable `mcp.maxSynchronousRequestSeconds` (default 15 seconds)
+- `LCONNECT_MAX_SYNCHRONOUS_REQUEST_SECONDS` override
+- synchronous child-process operations capped to the configured budget
+- timeout returns no longer depend on child `close` after the deadline
+- `wait_session` defaults to a short bounded wait and reports `waited_ms` / `return_reason`
+- managed `start_process` work continues independently of a short wait timeout
+- HTTP deadlines cover body/download consumption, not only response headers
+- shell tool descriptions direct long-running work to managed sessions
+
+TDD evidence:
+
+- RED run `35881634042`: FAIL at Runtime smoke tests before implementation
+- GREEN run `35881996747`: PASS for syntax, full Runtime smoke tests and dependency audit
+
+This reduces LConnect-originated long response stalls. It does not claim to control or eliminate ChatGPT frontend/backend message-delivery timeouts.
+
 ## Next sequence
 
 ```text
@@ -276,6 +297,8 @@ LCN-017 Scheduled Tasks — COMPLETE
 LCN-025 Managed Session Completion — COMPLETE
   ↓
 LCN-026 Incremental Process Output Cursor — COMPLETE
+  ↓
+LCN-031 MCP Request Timeout Containment — COMPLETE (priority repair)
   ↓
 LCN-027 Structured Text Search — READY
   ↓
