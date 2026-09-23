@@ -1,6 +1,6 @@
 # LCN-032 — HTTP Hard-Settle Timeout + Delivery Evidence
 
-Status: **ACTIVE**
+Status: **COMPLETE**
 
 ## Goal
 
@@ -30,6 +30,15 @@ This proves the current LConnect core can meet the deadline, but also exposed tw
 - no change to MCP channel architecture
 - no workflow/orchestration behavior
 - no modification to tunnel-client binary
+
+## Completion evidence
+
+- Implementation commit: `06a246be0ac41855344504288ab64e7a7f5e2a0c`
+- GitHub Actions run: `35888912101` — PASS
+- Full local suite: PASS / 96 tools
+- Dependency audit: 0 vulnerabilities
+- Strict delayed-body timeout test: PASS
+- HTTP local completion evidence: PASS
 
 ## Acceptance
 

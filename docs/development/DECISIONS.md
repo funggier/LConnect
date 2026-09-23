@@ -348,3 +348,15 @@ It may explicitly prune only safe terminal/stopped transient handles.
 It preserves local configuration, tunnel client, dependencies, source, Scheduled Tasks, Services, Git state and user files.
 
 **Why:** AI sessions need a safe way to reconcile stale transient handles without killing active work, while users also need a deterministic way to restart LConnect from clean generated disk state after stopping it.
+
+---
+
+## D-030 — HTTP deadlines hard-settle locally and expose completion evidence
+
+**Decision:** HTTP deadline expiry settles the LConnect MCP-facing operation directly rather than depending on downstream fetch/body cancellation propagation to complete first.
+
+**Decision:** The underlying HTTP operation is still aborted and late rejection is contained.
+
+**Decision:** HTTP results expose safe LConnect-local timing/completion evidence so callers can distinguish local execution latency from later Tunnel/ChatGPT delivery latency.
+
+**Why:** Live connector testing proved that LConnect direct stdio can complete near the requested timeout while the result may reach the ChatGPT caller later. LConnect should guarantee its own deadline boundary and make the external delivery tail measurable instead of conflating the two.

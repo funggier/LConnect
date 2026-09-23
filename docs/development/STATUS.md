@@ -33,7 +33,7 @@ Expansion phase ถัดไปเน้น Agent Operations Reliability ชุ�
 | System Foundation | COMPLETE | LCN-007–011 | Environment + Process + Services + Network + Hardware complete |
 | Developer Foundation | COMPLETE | LCN-012–014 | Git + Development + HTTP complete |
 | Observation | COMPLETE | LCN-015–017 | Log Tail + File Watcher + Scheduled Tasks complete |
-| Agent Operations Reliability | ACTIVE | LCN-025–031 | LCN-025/026 and timeout-containment LCN-031 complete; Structured Text Search next |
+| Agent Operations Reliability | ACTIVE | LCN-025–032 | LCN-025/026, LCN-031 and LCN-032 complete; Structured Text Search next |
 | Desktop Control | PLANNED | LCN-018–020 | Deferred until LCN-025–030 complete |
 | Browser Automation | PLANNED | LCN-021–023 | Common browser layer + Firefox + Chrome |
 
@@ -269,6 +269,31 @@ TDD evidence:
 
 This reduces LConnect-originated long response stalls. It does not claim to control or eliminate ChatGPT frontend/backend message-delivery timeouts.
 
+### LCN-032 — HTTP Hard-Settle Timeout + Delivery Evidence
+**COMPLETE**
+
+Strengthened HTTP timeout containment after live connector testing revealed that ChatGPT/Tunnel delivery could arrive later than the LConnect-local timeout result.
+
+Changes:
+
+- HTTP deadline now hard-settles the MCP-facing handler through an outer timeout race
+- underlying fetch/body work is still aborted
+- late abort rejection is contained
+- timeout/error results expose:
+  - `timeout_requested_ms`
+  - `timeout_effective_ms`
+  - `timeout_capped`
+  - `handler_elapsed_ms`
+  - `deadline_elapsed_ms`
+  - `completed_at`
+- timeout regression threshold was tightened so a 1-second budget cannot pass by waiting for the full 3-second delayed body
+
+Implementation commit: `06a246be0ac41855344504288ab64e7a7f5e2a0c`
+
+GitHub Actions run `35888912101`: PASS.
+
+The remaining observed delay between LConnect-local completion and live ChatGPT receipt is downstream transport/tool-delivery latency rather than LConnect HTTP execution.
+
 ## Next sequence
 
 ```text
@@ -299,6 +324,8 @@ LCN-025 Managed Session Completion — COMPLETE
 LCN-026 Incremental Process Output Cursor — COMPLETE
   ↓
 LCN-031 MCP Request Timeout Containment — COMPLETE (priority repair)
+  ↓
+LCN-032 HTTP Hard-Settle Timeout + Delivery Evidence — COMPLETE
   ↓
 LCN-027 Structured Text Search — READY
   ↓
