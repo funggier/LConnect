@@ -40,17 +40,26 @@ function redirectMode(value) {
   return "follow";
 }
 
-async function fetchWithTimeout(url, options, timeoutMs) {
+function httpTimeoutError(timeoutMs) {
+  const wrapped = new Error(`HTTP request timed out after ${timeoutMs} ms`);
+  wrapped.code = "ETIMEDOUT";
+  return wrapped;
+}
+
+async function withFetchDeadline(url, options, timeoutMs, consume) {
   const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), timeoutMs);
+  let deadlineExpired = false;
+  const timer = setTimeout(() => {
+    deadlineExpired = true;
+    controller.abort();
+  }, timeoutMs);
+
   try {
     const response = await fetch(url, { ...options, signal: controller.signal });
-    return response;
+    return await consume(response);
   } catch (error) {
-    if (error?.name === "AbortError") {
-      const wrapped = new Error(`HTTP request timed out after ${timeoutMs} ms`);
-      wrapped.code = "ETIMEDOUT";
-      throw wrapped;
+    if (deadlineExpired || error?.name === "AbortError") {
+      throw httpTimeoutError(timeoutMs);
     }
     throw error;
   } finally {
@@ -148,29 +157,30 @@ async function requestData(args) {
   } = args;
   const built = buildRequestBody(body_text, body_json, headers);
   const started = performance.now();
-  const response = await fetchWithTimeout(url, {
+  return withFetchDeadline(url, {
     method,
     headers: built.headers,
     body: ["GET", "HEAD"].includes(method) ? undefined : built.body,
     redirect: redirectMode(redirect),
-  }, timeout_ms);
-  const bounded = method === "HEAD"
-    ? { bytes: Buffer.alloc(0), truncated: false, original_bytes_at_least: 0 }
-    : await readBoundedBody(response, max_body_bytes);
-  const decoded = decodeBody(bounded.bytes, response.headers.get("content-type"), body_mode);
-  return {
-    ok: response.ok,
-    status: response.status,
-    status_text: response.statusText,
-    url: response.url,
-    redirected: response.redirected,
-    elapsed_ms: Math.round(performance.now() - started),
-    headers: headersObject(response.headers),
-    bytes_returned: bounded.bytes.length,
-    truncated: bounded.truncated,
-    original_bytes_at_least: bounded.original_bytes_at_least,
-    ...decoded,
-  };
+  }, timeout_ms, async (response) => {
+    const bounded = method === "HEAD"
+      ? { bytes: Buffer.alloc(0), truncated: false, original_bytes_at_least: 0 }
+      : await readBoundedBody(response, max_body_bytes);
+    const decoded = decodeBody(bounded.bytes, response.headers.get("content-type"), body_mode);
+    return {
+      ok: response.ok,
+      status: response.status,
+      status_text: response.statusText,
+      url: response.url,
+      redirected: response.redirected,
+      elapsed_ms: Math.round(performance.now() - started),
+      headers: headersObject(response.headers),
+      bytes_returned: bounded.bytes.length,
+      truncated: bounded.truncated,
+      original_bytes_at_least: bounded.original_bytes_at_least,
+      ...decoded,
+    };
+  });
 }
 
 async function streamDownload(url, destination, options, config) {
@@ -187,49 +197,50 @@ async function streamDownload(url, destination, options, config) {
   let handle;
   let written = 0;
   try {
-    response = await fetchWithTimeout(url, {
+    return await withFetchDeadline(url, {
       method: "GET",
       headers: options.headers || {},
       redirect: redirectMode(options.redirect || "follow"),
-    }, timeoutMs);
-
-    if (!response.ok) {
-      throw new Error(`HTTP download failed: ${response.status} ${response.statusText}`);
-    }
-
-    handle = await fsp.open(temp, "w");
-    if (response.body) {
-      const reader = response.body.getReader();
-      try {
-        while (true) {
-          const { done, value } = await reader.read();
-          if (done) break;
-          const chunk = Buffer.from(value);
-          written += chunk.length;
-          if (written > maxBytes) {
-            try { await reader.cancel(); } catch {}
-            throw new Error(`Download exceeded max_bytes=${maxBytes}`);
-          }
-          await handle.write(chunk);
-        }
-      } finally {
-        try { reader.releaseLock(); } catch {}
+    }, timeoutMs, async (activeResponse) => {
+      response = activeResponse;
+      if (!response.ok) {
+        throw new Error(`HTTP download failed: ${response.status} ${response.statusText}`);
       }
-    }
-    await handle.close();
-    handle = null;
 
-    if (overwrite && fs.existsSync(dest)) await fsp.rm(dest, { force: true });
-    await fsp.rename(temp, dest);
+      handle = await fsp.open(temp, "w");
+      if (response.body) {
+        const reader = response.body.getReader();
+        try {
+          while (true) {
+            const { done, value } = await reader.read();
+            if (done) break;
+            const chunk = Buffer.from(value);
+            written += chunk.length;
+            if (written > maxBytes) {
+              try { await reader.cancel(); } catch {}
+              throw new Error(`Download exceeded max_bytes=${maxBytes}`);
+            }
+            await handle.write(chunk);
+          }
+        } finally {
+          try { reader.releaseLock(); } catch {}
+        }
+      }
+      await handle.close();
+      handle = null;
 
-    return {
-      downloaded: true,
-      url: response.url,
-      destination: dest,
-      bytes_written: written,
-      status: response.status,
-      headers: headersObject(response.headers),
-    };
+      if (overwrite && fs.existsSync(dest)) await fsp.rm(dest, { force: true });
+      await fsp.rename(temp, dest);
+
+      return {
+        downloaded: true,
+        url: response.url,
+        destination: dest,
+        bytes_written: written,
+        status: response.status,
+        headers: headersObject(response.headers),
+      };
+    });
   } catch (error) {
     try { if (handle) await handle.close(); } catch {}
     try { await fsp.rm(temp, { force: true }); } catch {}
@@ -238,6 +249,13 @@ async function streamDownload(url, destination, options, config) {
 }
 
 export function registerHttpTools(server, config) {
+  const maxRequestMs = Math.max(
+    100,
+    Math.floor(config.mcp.maxSynchronousRequestSeconds * 1000)
+  );
+  const boundedTimeoutMs = (value, fallback) =>
+    Math.min(Number(value ?? fallback), maxRequestMs);
+
   const common = {
     url: z.string().url(),
     timeout_ms: z.number().int().min(100).max(60000).optional(),
@@ -254,7 +272,10 @@ export function registerHttpTools(server, config) {
     body_mode: z.enum(["auto","text","json","base64"]).optional(),
   }, async (args) => {
     try {
-      return textResult(await requestData(args));
+      return textResult(await requestData({
+        ...args,
+        timeout_ms: boundedTimeoutMs(args.timeout_ms, 10000),
+      }));
     } catch (error) {
       return textResult({ ok: false, error_code: error.code ?? null, error_message: error.message }, true);
     }
@@ -267,11 +288,11 @@ export function registerHttpTools(server, config) {
   }, async ({ url, timeout_ms = 5000, redirect = "follow", headers = {}, fallback_get = true }) => {
     try {
       let result = await requestData({
-        url, method: "HEAD", timeout_ms, redirect, headers, max_body_bytes: 0, body_mode: "text"
+        url, method: "HEAD", timeout_ms: boundedTimeoutMs(timeout_ms, 5000), redirect, headers, max_body_bytes: 0, body_mode: "text"
       });
       if (fallback_get && [405, 501].includes(result.status)) {
         result = await requestData({
-          url, method: "GET", timeout_ms, redirect, headers, max_body_bytes: 1024, body_mode: "text"
+          url, method: "GET", timeout_ms: boundedTimeoutMs(timeout_ms, 5000), redirect, headers, max_body_bytes: 1024, body_mode: "text"
         });
         result.fallback_method = "GET";
       }
@@ -287,7 +308,7 @@ export function registerHttpTools(server, config) {
   }, async ({ url, timeout_ms = 5000, redirect = "follow", headers = {} }) => {
     try {
       const result = await requestData({
-        url, method: "HEAD", timeout_ms, redirect, headers, max_body_bytes: 0, body_mode: "text"
+        url, method: "HEAD", timeout_ms: boundedTimeoutMs(timeout_ms, 5000), redirect, headers, max_body_bytes: 0, body_mode: "text"
       });
       return textResult({
         ok: result.ok,
@@ -312,7 +333,7 @@ export function registerHttpTools(server, config) {
   }, async ({ url, destination, timeout_ms, redirect, headers, overwrite, max_bytes }) => {
     try {
       return textResult(await streamDownload(url, destination, {
-        timeout_ms, redirect, headers, overwrite, max_bytes
+        timeout_ms: boundedTimeoutMs(timeout_ms, 30000), redirect, headers, overwrite, max_bytes
       }, config));
     } catch (error) {
       return textResult({ downloaded: false, error_code: error.code ?? null, error_message: error.message }, true);
