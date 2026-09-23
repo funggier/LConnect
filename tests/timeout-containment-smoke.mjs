@@ -124,11 +124,24 @@ try {
   if (!httpResult.isError) {
     throw new Error(`http_request was not bounded by MCP synchronous request budget: ${textOf(httpResult)}`);
   }
-  if (httpElapsed > 3000) {
-    throw new Error(`http_request exceeded expected request budget window: ${httpElapsed} ms`);
+  if (httpElapsed > 2200) {
+    throw new Error(`http_request exceeded strict request budget window: ${httpElapsed} ms`);
   }
   if (!textOf(httpResult).includes("timed out")) {
     throw new Error(`http_request timeout evidence missing: ${textOf(httpResult)}`);
+  }
+  const httpInfo = jsonOf(httpResult);
+  if (httpInfo.timeout_requested_ms !== 5000 || httpInfo.timeout_effective_ms !== 1000 || !httpInfo.timeout_capped) {
+    throw new Error(`http_request timeout budget evidence missing/wrong: ${textOf(httpResult)}`);
+  }
+  if (!Number.isFinite(httpInfo.handler_elapsed_ms) || httpInfo.handler_elapsed_ms > 1800) {
+    throw new Error(`http_request handler timing evidence invalid: ${textOf(httpResult)}`);
+  }
+  if (!Number.isFinite(httpInfo.deadline_elapsed_ms) || httpInfo.deadline_elapsed_ms > 1800) {
+    throw new Error(`http_request deadline timing evidence invalid: ${textOf(httpResult)}`);
+  }
+  if (typeof httpInfo.completed_at !== "string" || !httpInfo.completed_at.includes("T")) {
+    throw new Error(`http_request completion timestamp missing: ${textOf(httpResult)}`);
   }
 
   // The managed process must still reach terminal state after the earlier short wait timeout.
@@ -151,6 +164,7 @@ try {
   console.log("managed process outlives short MCP wait: PASS");
   console.log("wait_session timeout evidence: PASS");
   console.log("HTTP full-operation timeout budget: PASS");
+  console.log("HTTP hard-settle + local completion evidence: PASS");
 } catch (error) {
   console.error("FAIL", error);
   process.exitCode = 1;

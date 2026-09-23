@@ -40,30 +40,52 @@ function redirectMode(value) {
   return "follow";
 }
 
-function httpTimeoutError(timeoutMs) {
+function httpTimeoutError(timeoutMs, startedAt) {
   const wrapped = new Error(`HTTP request timed out after ${timeoutMs} ms`);
   wrapped.code = "ETIMEDOUT";
+  wrapped.timeoutMs = timeoutMs;
+  wrapped.localElapsedMs = Math.round(performance.now() - startedAt);
+  wrapped.completedAt = new Date().toISOString();
   return wrapped;
 }
 
 async function withFetchDeadline(url, options, timeoutMs, consume) {
   const controller = new AbortController();
+  const startedAt = performance.now();
   let deadlineExpired = false;
-  const timer = setTimeout(() => {
-    deadlineExpired = true;
-    controller.abort();
-  }, timeoutMs);
+  let timer = null;
 
-  try {
+  const operation = (async () => {
     const response = await fetch(url, { ...options, signal: controller.signal });
     return await consume(response);
+  })();
+
+  // If the outer timeout wins, the underlying fetch/body operation may reject a
+  // moment later because of AbortSignal propagation. Mark it handled now so a
+  // late rejection can never become an unhandled rejection after we already
+  // returned the timeout result to MCP.
+  operation.catch(() => {});
+
+  const deadline = new Promise((_, reject) => {
+    timer = setTimeout(() => {
+      deadlineExpired = true;
+      try { controller.abort(); } catch {}
+      // Settle the MCP-facing operation immediately at the deadline. Do not
+      // depend on fetch/body readers observing AbortSignal before returning.
+      reject(httpTimeoutError(timeoutMs, startedAt));
+    }, timeoutMs);
+  });
+
+  try {
+    return await Promise.race([operation, deadline]);
   } catch (error) {
     if (deadlineExpired || error?.name === "AbortError") {
-      throw httpTimeoutError(timeoutMs);
+      if (error?.code === "ETIMEDOUT") throw error;
+      throw httpTimeoutError(timeoutMs, startedAt);
     }
     throw error;
   } finally {
-    clearTimeout(timer);
+    if (timer) clearTimeout(timer);
   }
 }
 
@@ -256,6 +278,28 @@ export function registerHttpTools(server, config) {
   const boundedTimeoutMs = (value, fallback) =>
     Math.min(Number(value ?? fallback), maxRequestMs);
 
+  const timingEvidence = (startedAt, requestedTimeoutMs, effectiveTimeoutMs, error = null) => ({
+    timeout_requested_ms: requestedTimeoutMs,
+    timeout_effective_ms: effectiveTimeoutMs,
+    timeout_capped: effectiveTimeoutMs < requestedTimeoutMs,
+    handler_elapsed_ms: Math.round(performance.now() - startedAt),
+    deadline_elapsed_ms: error?.localElapsedMs ?? null,
+    completed_at: error?.completedAt ?? new Date().toISOString(),
+  });
+
+  const errorPayload = (
+    error,
+    startedAt,
+    requestedTimeoutMs,
+    effectiveTimeoutMs,
+    base = {}
+  ) => ({
+    ...base,
+    error_code: error.code ?? null,
+    error_message: error.message,
+    ...timingEvidence(startedAt, requestedTimeoutMs, effectiveTimeoutMs, error),
+  });
+
   const common = {
     url: z.string().url(),
     timeout_ms: z.number().int().min(100).max(60000).optional(),
@@ -271,13 +315,29 @@ export function registerHttpTools(server, config) {
     max_body_bytes: z.number().int().min(0).max(5000000).optional(),
     body_mode: z.enum(["auto","text","json","base64"]).optional(),
   }, async (args) => {
+    const startedAt = performance.now();
+    const requestedTimeoutMs = Number(args.timeout_ms ?? 10000);
+    const effectiveTimeoutMs = boundedTimeoutMs(args.timeout_ms, 10000);
     try {
-      return textResult(await requestData({
+      const result = await requestData({
         ...args,
-        timeout_ms: boundedTimeoutMs(args.timeout_ms, 10000),
-      }));
+        timeout_ms: effectiveTimeoutMs,
+      });
+      return textResult({
+        ...result,
+        ...timingEvidence(startedAt, requestedTimeoutMs, effectiveTimeoutMs),
+      });
     } catch (error) {
-      return textResult({ ok: false, error_code: error.code ?? null, error_message: error.message }, true);
+      return textResult(
+        errorPayload(
+          error,
+          startedAt,
+          requestedTimeoutMs,
+          effectiveTimeoutMs,
+          { ok: false }
+        ),
+        true
+      );
     }
   });
 
@@ -286,19 +346,34 @@ export function registerHttpTools(server, config) {
     headers: z.record(z.string()).optional(),
     fallback_get: z.boolean().optional(),
   }, async ({ url, timeout_ms = 5000, redirect = "follow", headers = {}, fallback_get = true }) => {
+    const startedAt = performance.now();
+    const requestedTimeoutMs = Number(timeout_ms);
+    const effectiveTimeoutMs = boundedTimeoutMs(timeout_ms, 5000);
     try {
       let result = await requestData({
-        url, method: "HEAD", timeout_ms: boundedTimeoutMs(timeout_ms, 5000), redirect, headers, max_body_bytes: 0, body_mode: "text"
+        url, method: "HEAD", timeout_ms: effectiveTimeoutMs, redirect, headers, max_body_bytes: 0, body_mode: "text"
       });
       if (fallback_get && [405, 501].includes(result.status)) {
         result = await requestData({
-          url, method: "GET", timeout_ms: boundedTimeoutMs(timeout_ms, 5000), redirect, headers, max_body_bytes: 1024, body_mode: "text"
+          url, method: "GET", timeout_ms: effectiveTimeoutMs, redirect, headers, max_body_bytes: 1024, body_mode: "text"
         });
         result.fallback_method = "GET";
       }
-      return textResult(result);
+      return textResult({
+        ...result,
+        ...timingEvidence(startedAt, requestedTimeoutMs, effectiveTimeoutMs),
+      });
     } catch (error) {
-      return textResult({ ok: false, error_code: error.code ?? null, error_message: error.message }, true);
+      return textResult(
+        errorPayload(
+          error,
+          startedAt,
+          requestedTimeoutMs,
+          effectiveTimeoutMs,
+          { ok: false }
+        ),
+        true
+      );
     }
   });
 
@@ -306,9 +381,12 @@ export function registerHttpTools(server, config) {
     ...common,
     headers: z.record(z.string()).optional(),
   }, async ({ url, timeout_ms = 5000, redirect = "follow", headers = {} }) => {
+    const startedAt = performance.now();
+    const requestedTimeoutMs = Number(timeout_ms);
+    const effectiveTimeoutMs = boundedTimeoutMs(timeout_ms, 5000);
     try {
       const result = await requestData({
-        url, method: "HEAD", timeout_ms: boundedTimeoutMs(timeout_ms, 5000), redirect, headers, max_body_bytes: 0, body_mode: "text"
+        url, method: "HEAD", timeout_ms: effectiveTimeoutMs, redirect, headers, max_body_bytes: 0, body_mode: "text"
       });
       return textResult({
         ok: result.ok,
@@ -318,9 +396,19 @@ export function registerHttpTools(server, config) {
         redirected: result.redirected,
         elapsed_ms: result.elapsed_ms,
         headers: result.headers,
+        ...timingEvidence(startedAt, requestedTimeoutMs, effectiveTimeoutMs),
       });
     } catch (error) {
-      return textResult({ ok: false, error_code: error.code ?? null, error_message: error.message }, true);
+      return textResult(
+        errorPayload(
+          error,
+          startedAt,
+          requestedTimeoutMs,
+          effectiveTimeoutMs,
+          { ok: false }
+        ),
+        true
+      );
     }
   });
 
@@ -331,12 +419,28 @@ export function registerHttpTools(server, config) {
     overwrite: z.boolean().optional(),
     max_bytes: z.number().int().min(1).max(5368709120).optional(),
   }, async ({ url, destination, timeout_ms, redirect, headers, overwrite, max_bytes }) => {
+    const startedAt = performance.now();
+    const requestedTimeoutMs = Number(timeout_ms ?? 30000);
+    const effectiveTimeoutMs = boundedTimeoutMs(timeout_ms, 30000);
     try {
-      return textResult(await streamDownload(url, destination, {
-        timeout_ms: boundedTimeoutMs(timeout_ms, 30000), redirect, headers, overwrite, max_bytes
-      }, config));
+      const result = await streamDownload(url, destination, {
+        timeout_ms: effectiveTimeoutMs, redirect, headers, overwrite, max_bytes
+      }, config);
+      return textResult({
+        ...result,
+        ...timingEvidence(startedAt, requestedTimeoutMs, effectiveTimeoutMs),
+      });
     } catch (error) {
-      return textResult({ downloaded: false, error_code: error.code ?? null, error_message: error.message }, true);
+      return textResult(
+        errorPayload(
+          error,
+          startedAt,
+          requestedTimeoutMs,
+          effectiveTimeoutMs,
+          { downloaded: false }
+        ),
+        true
+      );
     }
   });
 }

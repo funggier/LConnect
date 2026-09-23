@@ -33,3 +33,4 @@
 | [LCN-029](tasks/LCN-029-exact-git-ref-ancestry.md) | PLANNED | Exact Git Ref / Ancestry Safety |
 | [LCN-030](tasks/LCN-030-github-actions-release.md) | PLANNED | GitHub Actions / Release Integration |
 | [LCN-031](tasks/LCN-031-mcp-request-timeout-containment.md) | COMPLETE | MCP Request Timeout Containment |
+| [LCN-032](tasks/LCN-032-http-hard-settle-delivery-evidence.md) | ACTIVE | HTTP Hard-Settle Timeout + Delivery Evidence |
