@@ -32,3 +32,4 @@
 | [LCN-028](tasks/LCN-028-file-integrity.md) | PLANNED | File Integrity |
 | [LCN-029](tasks/LCN-029-exact-git-ref-ancestry.md) | PLANNED | Exact Git Ref / Ancestry Safety |
 | [LCN-030](tasks/LCN-030-github-actions-release.md) | PLANNED | GitHub Actions / Release Integration |
+| [LCN-031](tasks/LCN-031-mcp-request-timeout-containment.md) | ACTIVE | MCP Request Timeout Containment |
