@@ -82,3 +82,67 @@ The tunnel protocol documents a response timeout covering the complete command l
 No new MCP channel, workflow engine, autonomous continuation or orchestration behavior was introduced.
 
 LCN-027 remains READY and was not started.
+
+## Live post-restart validation
+
+After restarting/reconnecting LConnect with LCN-032 active, live connector testing produced:
+
+### Delayed-body timeout fixture
+
+Three `http_request` calls used a 1000 ms timeout against a local server that sent headers immediately and delayed the body for 5000 ms.
+
+| Run | LConnect handler elapsed | Caller-observed wall time | Observed post-handler tail |
+|---|---:|---:|---:|
+| 1 | 1028 ms | 3449 ms | 2421 ms |
+| 2 | 1006 ms | 5251 ms | 4245 ms |
+| 3 | 1001 ms | 3735 ms | 2734 ms |
+
+Average:
+
+- LConnect handler: approximately 1012 ms
+- caller wall time: approximately 4145 ms
+- post-handler tail: approximately 3133 ms
+
+All timeout results returned `ETIMEDOUT` with correct local timing evidence.
+
+### Fast success-path fixture
+
+A local tunnel-client health HTTP request completed inside LConnect in:
+
+`handler_elapsed_ms = 2`
+
+Caller-observed wall time was approximately:
+
+`4635 ms`
+
+This proves the multi-second live tail is not specific to delayed HTTP-body cancellation.
+
+### Non-HTTP live tool observations
+
+Observed caller wall times:
+
+- `list_sessions`: approximately 640 ms
+- `system_info`: approximately 2717 ms
+- `refresh_state`: approximately 3280 ms
+
+The tail is therefore variable and transport/tool-delivery-wide rather than an HTTP-only execution defect.
+
+### tunnel-client metrics
+
+At the time of testing, local tunnel-client `/metrics` reported:
+
+- tools/call `poll_to_response`: 7569 ms / 14 = approximately 541 ms average
+- tools/call `enqueue_to_response`: 2291 ms / 4 = approximately 573 ms average
+- control-plane `POST /response`: 5.5308873 s / 19 = approximately 291 ms average
+
+These metrics indicate the local tunnel-client path typically posts terminal responses substantially faster than the worst caller-observed wall times.
+
+### Conclusion
+
+LCN-032 is active and working as designed.
+
+The remaining variable multi-second latency is after the LConnect-local handler boundary and is not explained by LConnect HTTP execution. Current evidence also does not indicate that tunnel-client response POST latency alone accounts for the full observed tail.
+
+The remaining tail should therefore be treated as downstream connector/control-plane/tool-delivery scheduling latency unless future instrumentation provides a more specific attribution.
+
+All temporary live-test process sessions were terminated/released and `refresh_state` confirmed no remaining process/log/watcher handles.
