@@ -306,7 +306,7 @@ export function readManagedProcessEvents(sessionId, afterSeq = 0, maxEvents = 10
 export async function waitManagedProcessSession(
   sessionId,
   {
-    timeoutSeconds = 30,
+    timeoutSeconds = 5,
     pollIntervalMs = 100,
     includeOutputTail = true,
     outputTailChars = 4000,
@@ -315,15 +315,30 @@ export async function waitManagedProcessSession(
   const session = sessions.get(sessionId);
   if (!session) return null;
 
-  const deadline = Date.now() + timeoutSeconds * 1000;
+  const waitStartedAt = Date.now();
+  const wasRunning = session.running;
+  const deadline = waitStartedAt + timeoutSeconds * 1000;
   while (session.running && Date.now() < deadline) {
-    await new Promise((resolve) => setTimeout(resolve, pollIntervalMs));
+    const remainingMs = Math.max(0, deadline - Date.now());
+    if (remainingMs <= 0) break;
+    await new Promise((resolve) =>
+      setTimeout(resolve, Math.min(pollIntervalMs, remainingMs))
+    );
   }
+
+  const waitedMs = Math.max(0, Date.now() - waitStartedAt);
+  const returnReason = !wasRunning
+    ? "already_completed"
+    : session.running
+      ? "timeout"
+      : "completed";
 
   return {
     ...snapshot(session, { includeOutput: false }),
     completed: !session.running,
     timed_out: session.running,
+    waited_ms: waitedMs,
+    return_reason: returnReason,
     output_tail: includeOutputTail ? outputTail(session, outputTailChars) : null,
   };
 }
@@ -360,6 +375,8 @@ export function refreshManagedProcessState({
 
 export function registerProcessTools(server, config) {
   const enabled = config.shell.enabled && process.env.MCP_ENABLE_POWERSHELL !== "false";
+  const maxWaitSeconds = Math.max(0.1, config.mcp.maxSynchronousRequestSeconds);
+  const defaultWaitSeconds = Math.min(5, maxWaitSeconds);
 
   server.tool("start_process", "Start a long-running local process and return a session ID.", {
     program: z.string().min(1),
@@ -401,15 +418,15 @@ export function registerProcessTools(server, config) {
     return textResult(result);
   });
 
-  server.tool("wait_session", "Wait a bounded time for a managed process session without terminating it on timeout.", {
+  server.tool("wait_session", "Wait briefly for a managed process session. Timeout never terminates the managed process; call again or read incremental events.", {
     session_id: z.string().min(1),
-    timeout_seconds: z.number().min(0).max(30).optional(),
+    timeout_seconds: z.number().min(0).max(maxWaitSeconds).optional(),
     poll_interval_ms: z.number().int().min(25).max(2000).optional(),
     include_output_tail: z.boolean().optional(),
     output_tail_chars: z.number().int().min(100).max(50000).optional(),
   }, async ({
     session_id,
-    timeout_seconds = 30,
+    timeout_seconds = defaultWaitSeconds,
     poll_interval_ms = 100,
     include_output_tail = true,
     output_tail_chars = 4000,
