@@ -1,8 +1,25 @@
 import { spawn } from "node:child_process";
 import path from "node:path";
 
+let maxSynchronousRequestSeconds = 15;
+
 function appendLimited(current, chunk, maxChars) {
   return (current + chunk.toString("utf8")).slice(-maxChars);
+}
+
+function normalizeBudget(value, fallback = 15) {
+  const parsed = Number(value);
+  if (!Number.isFinite(parsed)) return fallback;
+  return Math.min(120, Math.max(1, parsed));
+}
+
+export function configureRuntime({ maxSynchronousRequestSeconds: value } = {}) {
+  maxSynchronousRequestSeconds = normalizeBudget(value, maxSynchronousRequestSeconds);
+  return { maxSynchronousRequestSeconds };
+}
+
+export function getRuntimeRequestBudget() {
+  return { maxSynchronousRequestSeconds };
 }
 
 export function runProcess(program, args = [], options = {}) {
@@ -20,6 +37,13 @@ export function runProcess(program, args = [], options = {}) {
     let settled = false;
     let timedOut = false;
 
+    const requestedTimeoutSeconds = Math.max(1, Number(timeoutSeconds) || 1);
+    const effectiveTimeoutSeconds = Math.min(
+      requestedTimeoutSeconds,
+      maxSynchronousRequestSeconds
+    );
+    const timeoutCapped = effectiveTimeoutSeconds < requestedTimeoutSeconds;
+
     const child = spawn(program, args, {
       cwd: cwd ? path.resolve(cwd) : undefined,
       windowsHide,
@@ -27,10 +51,17 @@ export function runProcess(program, args = [], options = {}) {
       stdio: ["ignore", "pipe", "pipe"],
     });
 
+    const withTimeoutEvidence = (result) => ({
+      ...result,
+      timeoutRequestedSeconds: requestedTimeoutSeconds,
+      timeoutEffectiveSeconds: effectiveTimeoutSeconds,
+      timeoutCapped,
+    });
+
     const finish = (result) => {
       if (settled) return;
       settled = true;
-      resolve(result);
+      resolve(withTimeoutEvidence(result));
     };
 
     child.stdout?.on("data", (chunk) => {
@@ -43,7 +74,13 @@ export function runProcess(program, args = [], options = {}) {
     const timer = setTimeout(() => {
       timedOut = true;
       try { child.kill(); } catch {}
-    }, Math.max(1, timeoutSeconds) * 1000);
+      // Do not wait for child "close" after the request budget expires.
+      // Descendants can retain inherited stdout/stderr handles and delay close
+      // beyond the MCP response budget even after the direct child exits.
+      try { child.stdout?.destroy(); } catch {}
+      try { child.stderr?.destroy(); } catch {}
+      finish({ code: null, signal: null, stdout, stderr, timedOut: true });
+    }, effectiveTimeoutSeconds * 1000);
 
     child.on("error", (error) => {
       clearTimeout(timer);
@@ -74,12 +111,17 @@ export function runPowerShell(command, options = {}) {
 }
 
 export function formatRunResult(result) {
+  const timeoutEvidence = result.timeoutCapped
+    ? `\ntimeout_budget: requested=${result.timeoutRequestedSeconds}s effective=${result.timeoutEffectiveSeconds}s capped=true`
+    : "";
+
   if (result.error) {
-    return `Failed to launch process: ${result.error}\n\nstdout:\n${result.stdout || "(empty)"}\n\nstderr:\n${result.stderr || "(empty)"}`;
+    return `Failed to launch process: ${result.error}${timeoutEvidence}\n\nstdout:\n${result.stdout || "(empty)"}\n\nstderr:\n${result.stderr || "(empty)"}`;
   }
 
   return [
     `exit_code: ${result.code ?? "null"}${result.signal ? ` signal=${result.signal}` : ""}${result.timedOut ? " (timed out)" : ""}`,
+    ...(timeoutEvidence ? [timeoutEvidence.trim()] : []),
     "",
     "stdout:",
     result.stdout || "(empty)",
