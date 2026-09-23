@@ -1,6 +1,8 @@
 {
   "fullMachineAccess": true,
-  "allowedDirectories": [".."],
+  "allowedDirectories": [
+    ".."
+  ],
   "shell": {
     "enabled": true,
     "maxOutputChars": 120000,
@@ -9,5 +11,8 @@
   },
   "process": {
     "maxBufferedOutputChars": 240000
+  },
+  "mcp": {
+    "maxSynchronousRequestSeconds": 15
   }
 }
