@@ -1,6 +1,7 @@
 ﻿import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { loadLConnectConfig } from "./modules/config.mjs";
+import { configureRuntime } from "./modules/runtime.mjs";
 import { registerFilesystemTools } from "./modules/filesystem.mjs";
 import { registerShellTools } from "./modules/shell.mjs";
 import { registerProcessTools } from "./modules/process.mjs";
@@ -19,6 +20,10 @@ import { registerTransientStateTools } from "./modules/transient-state.mjs";
 import { registerEnvironmentTools } from "./modules/environment.mjs";
 
 const config = loadLConnectConfig(import.meta.url);
+configureRuntime({
+  maxSynchronousRequestSeconds: config.mcp.maxSynchronousRequestSeconds,
+});
+
 const server = new McpServer({
   name: "LConnect",
   version: "1.1.0",
@@ -42,7 +47,7 @@ registerTransientStateTools(server);
 registerEnvironmentTools(server, config);
 
 console.error(
-  `LConnect 1.1.0 starting; fullMachineAccess=${config.fullMachineAccess}; allowedDirectories=${config.allowedDirectories.join(";")}`
+  `LConnect 1.1.0 starting; fullMachineAccess=${config.fullMachineAccess}; maxSyncRequestSeconds=${config.mcp.maxSynchronousRequestSeconds}; allowedDirectories=${config.allowedDirectories.join(";")}`
 );
 
 await server.connect(new StdioServerTransport());
