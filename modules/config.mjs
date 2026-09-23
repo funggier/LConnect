@@ -7,6 +7,12 @@ function parseBoolean(value, fallback) {
   return !["0", "false", "no", "off"].includes(String(value).trim().toLowerCase());
 }
 
+function parseBoundedNumber(value, fallback, min, max) {
+  const parsed = Number(value);
+  if (!Number.isFinite(parsed)) return fallback;
+  return Math.min(max, Math.max(min, parsed));
+}
+
 export function loadLConnectConfig(importMetaUrl) {
   const installRoot = path.dirname(fileURLToPath(importMetaUrl));
   const configPath = path.join(installRoot, "lconnect-config.json");
@@ -33,6 +39,14 @@ export function loadLConnectConfig(importMetaUrl) {
     path.resolve(installRoot, entry)
   );
 
+  const maxSynchronousRequestSeconds = parseBoundedNumber(
+    process.env.LCONNECT_MAX_SYNCHRONOUS_REQUEST_SECONDS ??
+      config.mcp?.maxSynchronousRequestSeconds,
+    15,
+    1,
+    120
+  );
+
   return {
     installRoot,
     configPath,
@@ -46,6 +60,9 @@ export function loadLConnectConfig(importMetaUrl) {
     },
     process: {
       maxBufferedOutputChars: Number(config.process?.maxBufferedOutputChars ?? 240000),
+    },
+    mcp: {
+      maxSynchronousRequestSeconds,
     },
   };
 }
