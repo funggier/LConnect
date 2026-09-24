@@ -1,6 +1,6 @@
 # LCN-041 — Directory Manifest and Comparison
 
-Status: **ACTIVE — IMPLEMENTATION GREEN / INSTALLED LIVE VALIDATION PENDING**
+Status: **COMPLETE — LIVE VALIDATED**
 
 ## Goal
 
@@ -117,7 +117,10 @@ Both tools are read-only and may be allowlisted in `batch_inspect`.
 - source/install module file SHA-256 parity: PASS (`b997cf9f72185b2ee144c1afb3c896c21f45165a42686601ea42984eab222429`)
 - post-deploy source↔installed `modules` tree comparison: PASS (28/28 equal; manifest digest `b3292291420777e3f376b8a14361a3ed2576209216279b02624935bc80c24f96`)
 - pre-restart daemon: 115 tools, PID 38268, digest `cd018b4780f6ed2d3138b92e28037cdeb3ba64ab3df1a9a81a74478d22b67447`
-- restarted live validation: PENDING
+- restarted runtime: PASS (117 tools, PID 38572, digest `b44e9a4acdf1c83e7243d5374ca1c9c4629205fc30fb305419764251ebdc416e`)
+- live `batch_inspect → directory_manifest`: PASS (28 files, complete=true)
+- live source↔installed `compare_directories`: PASS (reliable + equal=true; changed/missing/extra=0)
+- live source/install manifest digest: `b3292291420777e3f376b8a14361a3ed2576209216279b02624935bc80c24f96`
 
 ## Acceptance
 

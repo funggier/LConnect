@@ -2,7 +2,7 @@
 
 ## Result
 
-**IMPLEMENTATION GREEN — INSTALLED LIVE VALIDATION PENDING**
+**PASS — DIRECTORY MANIFEST AND COMPARISON LIVE VALIDATED**
 
 ## Goal
 
@@ -236,4 +236,40 @@ The active daemon before restart remained the prior catalog:
 
 Therefore installed files are ready at 117 tools while one restart/reconnect is required to activate the two new tools in the running process.
 
-Restarted installed live validation: **PENDING**
+## Restarted installed live validation
+
+After restart/reconnect, `batch_inspect` observed:
+
+- process ID: `38572`
+- runtime start: `2026-09-24T11:46:05.411Z`
+- runtime tool count: 117
+- runtime catalog digest: `b44e9a4acdf1c83e7243d5374ca1c9c4629205fc30fb305419764251ebdc416e`
+- ChatGPT-visible direct catalog at that moment: 114
+- direct `directory_manifest` / `compare_directories`: not yet visible
+- `batch_inspect → directory_manifest`: PASS
+- `batch_inspect → compare_directories`: PASS
+
+Live installed manifest:
+
+- selected files: 28
+- selected bytes: 327928
+- complete: true
+- manifest digest: `b3292291420777e3f376b8a14361a3ed2576209216279b02624935bc80c24f96`
+
+Live source↔installed comparison:
+
+- comparison reliable: true
+- equal: true
+- source files: 28
+- installed files: 28
+- common equal: 28
+- changed: 0
+- source-only: 0
+- installed-only: 0
+- left/right manifest digest: `b3292291420777e3f376b8a14361a3ed2576209216279b02624935bc80c24f96`
+
+The three-operation batch completed in approximately 74.8 ms inner handler time.
+
+## Final result
+
+**PASS — DIRECTORY MANIFEST AND COMPARISON LIVE VALIDATED**
