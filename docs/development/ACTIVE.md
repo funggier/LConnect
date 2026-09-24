@@ -9,7 +9,8 @@ Last updated: 2026-09-24
 - Current implementation candidate: `3684ca90b027a9dff4f083bad1aedfa13141a4a3`
 - Passing implementation CI: `35998083970` — PASS
 - Current source MCP catalog: 119 tools (LCN-043 candidate)
-- Current installed/runtime catalog: 118 tools
+- Current installed source catalog: 119 tools
+- Current running daemon catalog: 118 tools — restart required for LCN-043 activation
 - Current runtime catalog digest: `3a4b6651ee0c2cdab802907f5a5ac7609e958579bee5a0a39c982a7ac3ae28a8`
 - Current ChatGPT-visible catalog: 114 tools (plugin not refreshed after LCN-040 activation)
 - LCN-025/026: COMPLETE
@@ -49,4 +50,4 @@ Message-delivery observation: [reports/LCN-20260924-message-delivery-timeout-obs
 
 ## Next action
 
-LCN-043 reduces post-push GitHub CI observation from list→identify→view into one exact-commit read-only tool call while preserving the no-network boundary of `batch_inspect`. Finish full local validation, commit/push, CI, deploy and live validation.
+LCN-043 code/CI/deployment validation is green at 119 tools and source↔installed module trees are reliably equal. The current daemon remains 118 tools. Restart LConnect, reconnect, then refresh the ChatGPT plugin schema because `github_commit_run_status` is intentionally not batch-allowlisted; directly validate the new tool and close LCN-043.

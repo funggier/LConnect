@@ -197,4 +197,33 @@ This is direct end-to-end evidence that the new primitive eliminates the former 
 
 GitHub Actions: **PASS** — run `35998083970`
 
-Installed live validation: **PENDING**
+## Pre-restart installed deployment evidence
+
+Tracked source was synchronized to the installed runtime.
+
+Installed validation:
+
+- syntax check: PASS
+- GitHub smoke/regression: PASS
+- source smoke: `PASS tools=119`
+- source/install `modules/github.mjs` SHA-256 parity: PASS
+- `github.mjs` digest: `187026405a2ae7d54ec84556a5529acf1f93929790eed72e2bbff00b36275956`
+- source↔installed `modules` comparison: reliable + equal=true
+- module files: 28 / 28 equal
+- changed/source-only/installed-only: 0 / 0 / 0
+- source/install manifest digest: `3e8be07b821717ad1ee7b2d5719d9f7dc817479266039e5900f7f52d66fc66de`
+
+The active daemon before restart remained the prior catalog:
+
+- process ID: `19372`
+- runtime start: `2026-09-24T12:05:38.935Z`
+- tool count: 118
+- catalog digest: `3a4b6651ee0c2cdab802907f5a5ac7609e958579bee5a0a39c982a7ac3ae28a8`
+
+Unlike LCN-040–042, the new tool is network-backed and intentionally not exposed through `batch_inspect`. Therefore final direct live validation requires:
+
+1. restart/reconnect LConnect so the daemon registers 119 tools;
+2. refresh the ChatGPT plugin schema so `github_commit_run_status` becomes directly callable;
+3. invoke the direct tool against an exact known commit and verify run/jobs/steps evidence.
+
+Restarted installed live validation: **PENDING**

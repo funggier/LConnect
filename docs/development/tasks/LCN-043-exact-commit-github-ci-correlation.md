@@ -107,7 +107,13 @@ It is **not** allowlisted in `batch_inspect`, whose contract intentionally exclu
 - GitHub CI discovered by `github_commit_run_status`: `35998083970` — PASS
 - pre-deploy repo exact-sync/clean: PASS (coordination HEAD `616a60f379879a81d145d77ff932bf72986a3cbe`)
 - pre-deploy source↔installed modules drift: PASS as expected (27 equal, 1 changed: `github.mjs`)
-- installed live validation: PENDING
+- installed source validation: PASS (`PASS tools=119`, GitHub regression PASS)
+- source/install `modules/github.mjs` SHA-256 parity: PASS (`187026405a2ae7d54ec84556a5529acf1f93929790eed72e2bbff00b36275956`)
+- post-deploy source↔installed `modules` tree comparison: PASS (28/28 equal; digest `3e8be07b821717ad1ee7b2d5719d9f7dc817479266039e5900f7f52d66fc66de`)
+- pre-restart daemon: 118 tools, PID 19372, digest `3a4b6651ee0c2cdab802907f5a5ac7609e958579bee5a0a39c982a7ac3ae28a8`
+- restarted daemon/catalog validation: PENDING
+- ChatGPT direct-tool schema refresh: PENDING
+- direct live `github_commit_run_status` validation: PENDING
 
 ## Acceptance
 
