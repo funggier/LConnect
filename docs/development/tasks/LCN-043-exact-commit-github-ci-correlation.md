@@ -1,6 +1,6 @@
 # LCN-043 — Exact Commit GitHub CI Correlation
 
-Status: **ACTIVE — IMPLEMENTATION GREEN / INSTALLED LIVE VALIDATION PENDING**
+Status: **COMPLETE — LIVE VALIDATED**
 
 ## Goal
 
@@ -111,9 +111,9 @@ It is **not** allowlisted in `batch_inspect`, whose contract intentionally exclu
 - source/install `modules/github.mjs` SHA-256 parity: PASS (`187026405a2ae7d54ec84556a5529acf1f93929790eed72e2bbff00b36275956`)
 - post-deploy source↔installed `modules` tree comparison: PASS (28/28 equal; digest `3e8be07b821717ad1ee7b2d5719d9f7dc817479266039e5900f7f52d66fc66de`)
 - pre-restart daemon: 118 tools, PID 19372, digest `3a4b6651ee0c2cdab802907f5a5ac7609e958579bee5a0a39c982a7ac3ae28a8`
-- restarted daemon/catalog validation: PENDING
-- ChatGPT direct-tool schema refresh: PENDING
-- direct live `github_commit_run_status` validation: PENDING
+- restarted daemon/catalog validation: PASS (119 tools, PID 2864, digest `70defc3f611d28c65eead0900a6976185e5c167e73e718b3eb707ecff9dd57a1`)
+- ChatGPT direct-tool schema refresh: PASS (119 visible tools; `github_commit_run_status` visible)
+- direct live `github_commit_run_status` validation: PASS (exact implementation commit → run `35998083970`, completed/success, jobs/steps returned)
 
 ## Acceptance
 

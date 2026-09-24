@@ -9,8 +9,9 @@ Last updated: 2026-09-24
 - Current implementation candidate: `3684ca90b027a9dff4f083bad1aedfa13141a4a3`
 - Passing implementation CI: `35998083970` — PASS
 - Current source MCP catalog: 119 tools (LCN-043 candidate)
-- Current installed source catalog: 119 tools
-- Current running daemon catalog: 118 tools — restart required for LCN-043 activation
+- Current installed/runtime catalog: 119 tools
+- Current runtime catalog digest: `70defc3f611d28c65eead0900a6976185e5c167e73e718b3eb707ecff9dd57a1`
+- Current ChatGPT-visible catalog: 119 tools
 - Current runtime catalog digest: `3a4b6651ee0c2cdab802907f5a5ac7609e958579bee5a0a39c982a7ac3ae28a8`
 - Current ChatGPT-visible catalog: 114 tools (plugin not refreshed after LCN-040 activation)
 - LCN-025/026: COMPLETE
@@ -30,11 +31,11 @@ Last updated: 2026-09-24
 - LCN-040: COMPLETE + LIVE VALIDATED — Structured Data Inspection
 - LCN-041: COMPLETE + LIVE VALIDATED — Directory Manifest and Comparison
 - LCN-042: COMPLETE + LIVE VALIDATED — Git Sync Verification
-- LCN-043: ACTIVE — Exact Commit GitHub CI Correlation
+- LCN-043: COMPLETE + LIVE VALIDATED — Exact Commit GitHub CI Correlation
 
 ## Active task
 
-**LCN-043 — Exact Commit GitHub CI Correlation**
+**NO ACTIVE DEVELOPMENT TASK**
 
 ## Latest completed task
 
@@ -50,4 +51,4 @@ Message-delivery observation: [reports/LCN-20260924-message-delivery-timeout-obs
 
 ## Next action
 
-LCN-043 code/CI/deployment validation is green at 119 tools and source↔installed module trees are reliably equal. The current daemon remains 118 tools. Restart LConnect, reconnect, then refresh the ChatGPT plugin schema because `github_commit_run_status` is intentionally not batch-allowlisted; directly validate the new tool and close LCN-043.
+LCN-043 is complete and live validated at 119 tools. Continue execution ergonomics with the next evidence-backed deterministic primitive; delivery-latency work remains closed at the current local evidence boundary unless new correlated evidence appears.

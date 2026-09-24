@@ -2,7 +2,7 @@
 
 ## Result
 
-**IMPLEMENTATION GREEN — INSTALLED LIVE VALIDATION PENDING**
+**PASS — EXACT COMMIT GITHUB CI CORRELATION LIVE VALIDATED**
 
 ## Goal
 
@@ -226,4 +226,39 @@ Unlike LCN-040–042, the new tool is network-backed and intentionally not expos
 2. refresh the ChatGPT plugin schema so `github_commit_run_status` becomes directly callable;
 3. invoke the direct tool against an exact known commit and verify run/jobs/steps evidence.
 
-Restarted installed live validation: **PENDING**
+## Restarted installed live validation
+
+After restart and ChatGPT plugin refresh:
+
+- process ID: `2864`
+- runtime start: `2026-09-24T12:25:43.976Z`
+- runtime tool count: 119
+- runtime catalog digest: `70defc3f611d28c65eead0900a6976185e5c167e73e718b3eb707ecff9dd57a1`
+- ChatGPT-visible direct catalog: 119 tools
+- direct `github_commit_run_status`: visible and callable
+
+Direct ChatGPT connector invocation used:
+
+- repo: `funggier/LConnect`
+- exact commit: `3684ca90b027a9dff4f083bad1aedfa13141a4a3`
+- workflow: `LConnect CI`
+- event: `push`
+- limit: 10
+
+Observed:
+
+- found: true
+- match count: 1
+- selected run ID: `35998083970`
+- run number: 112
+- exact head SHA matched requested commit
+- status: `completed`
+- conclusion: `success`
+- job `windows`: completed/success
+- full normalized steps returned, including Runtime smoke tests and Dependency audit
+
+This is the final direct-tool proof. No `batch_inspect` path was used or required, preserving its no-network contract.
+
+## Final result
+
+**PASS — EXACT COMMIT GITHUB CI CORRELATION LIVE VALIDATED**
