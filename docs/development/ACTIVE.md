@@ -9,8 +9,9 @@ Last updated: 2026-09-24
 - Current implementation candidate: `fea6ba11af78b4a5ba1b8bc5c4437d9b5706c003`
 - Passing implementation CI: `35978697107` — PASS
 - Current source MCP catalog: 113 tools
-- Current installed/runtime catalog: 112 tools pending LCN-036 deployment
-- Current ChatGPT-visible catalog: 112 tools after explicit plugin refresh
+- Current installed/runtime catalog: 113 tools
+- Current runtime catalog digest: `d5038c67f856a5eda6b5bc8fd9c70f90108095d2633ba6e82ccc604396084f72`
+- Current ChatGPT-visible catalog before plugin refresh: 112 tools — stale schema directly confirmed by `runtime_catalog`
 - LCN-025/026: COMPLETE
 - LCN-031/032: COMPLETE
 - LCN-033: COMPLETE — live telemetry measured approximately 96.7% sampled wall time outside handlers
@@ -41,4 +42,4 @@ Message-delivery observation: [reports/LCN-20260924-message-delivery-timeout-obs
 
 ## Next action
 
-Deploy the CI-green 113-tool LCN-036 candidate, restart LConnect without refreshing the ChatGPT plugin, and verify that `batch_inspect → runtime_catalog` reports the new server-side count/digest while the direct client catalog remains stale. Then refresh the plugin and confirm convergence. Continue latency/message-delivery mitigation afterward.
+LCN-036 no-refresh validation passed: ChatGPT exposed 112 tools while `batch_inspect → runtime_catalog` proved the running daemon exposed 113 with a stable digest. Explicitly refresh the ChatGPT plugin once and confirm direct 113-tool convergence, then close LCN-036. Continue latency/message-delivery mitigation afterward.

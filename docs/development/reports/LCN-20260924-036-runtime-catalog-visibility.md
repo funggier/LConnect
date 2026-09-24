@@ -107,6 +107,39 @@ Full local suite: **PASS** (`PASS tools=113`, approximately 43.9 seconds)
 
 GitHub Actions: **PASS** — run `35978697107`
 
+## Live no-refresh validation
+
+After deploying 113-tool source, the user restarted LConnect without refreshing the ChatGPT plugin.
+
+Observed client state:
+
+- ChatGPT-visible tools: 112
+- direct `runtime_catalog`: not visible
+- direct `session_status`: visible
+- `batch_inspect`: visible
+
+Observed server/runtime state through `batch_inspect → runtime_catalog`:
+
+- version: `1.1.0`
+- process ID: `38888`
+- runtime start: `2026-09-24T09:11:21.079Z`
+- catalog ready: `true`
+- server tool count: `113`
+- catalog digest: `d5038c67f856a5eda6b5bc8fd9c70f90108095d2633ba6e82ccc604396084f72`
+- inner runtime_catalog handler: `0.275 ms`
+
+Startup stderr independently reported the same server catalog:
+
+`tools=113; catalogDigest=d5038c67f856a5eda6b5bc8fd9c70f90108095d2633ba6e82ccc604396084f72`
+
+Conclusion:
+
+`ChatGPT-visible catalog = 112` while `running LConnect catalog = 113` was directly measurable without plugin refresh.
+
+The stale-client recovery contract is therefore live validated.
+
+Final convergence validation after explicit ChatGPT plugin refresh: **PENDING**
+
 ## Architecture
 
 `runtime_catalog` is observation only.

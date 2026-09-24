@@ -61,7 +61,8 @@ This means an older ChatGPT-visible schema that already knows `batch_inspect` ca
 - full local suite: PASS
 - dependency audit: 0 vulnerabilities
 - GitHub Actions: `35978697107` — PASS
-- live deployment validation: PENDING
+- live no-refresh stale-client validation: PASS (ChatGPT 112 vs runtime 113)
+- post-refresh convergence validation: PENDING
 
 ## Acceptance
 
