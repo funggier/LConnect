@@ -26,6 +26,7 @@ const config = {
 
 let wait43Calls = 0;
 let authCalls = 0;
+let lastWaitStatusTimeout = null;
 let lastDispatchArgs = null;
 
 function runJson(id, status, conclusion, jobs = []) {
@@ -71,7 +72,7 @@ function ok(stdout = "", stderr = "") {
   };
 }
 
-async function fakeGh(args) {
+async function fakeGh(args, options = {}) {
   if (args[0] === "auth" && args[1] === "status") {
     authCalls += 1;
     return ok("authenticated");
@@ -109,6 +110,13 @@ async function fakeGh(args) {
       ));
     }
     if (id === 44) return ok(JSON.stringify(runJson(44, "in_progress", null, [])));
+    if (id === 45) {
+      lastWaitStatusTimeout = options.timeout_seconds ?? null;
+      if (Number(options.timeout_seconds) < 2) {
+        return { code: null, stdout: "", stderr: "", timedOut: true, error: null };
+      }
+      return ok(JSON.stringify(runJson(45, "in_progress", null, [])));
+    }
     return { code: 1, stdout: "", stderr: "run not found", timedOut: false, error: null };
   }
 
@@ -268,6 +276,25 @@ try {
     throw new Error("github_run_wait bounded timeout failed");
   }
 
+  lastWaitStatusTimeout = null;
+  const slowStatus = await call(client, "github_run_wait", {
+    repo: "funggier/LConnect",
+    run_id: 45,
+    wait_seconds: 0,
+  });
+  if (
+    slowStatus.completed !== false ||
+    slowStatus.timed_out !== true ||
+    slowStatus.return_reason !== "timeout" ||
+    slowStatus.status_checks !== 1 ||
+    slowStatus.status_fetch_timeout_seconds !== 5 ||
+    Number(lastWaitStatusTimeout) < 2
+  ) {
+    throw new Error(
+      "github_run_wait status-fetch budget was incorrectly coupled to wait window"
+    );
+  }
+
   const overLimitWait = await client.callTool({
     name: "github_run_wait",
     arguments: {
@@ -396,6 +423,7 @@ try {
 
   console.log("github auth readiness cache: PASS");
   console.log("github_run_wait 1s default / 3s maximum: PASS");
+  console.log("github_run_wait status-fetch/wait budget separation: PASS");
   console.log("github_run_wait completion/timeout: PASS");
   console.log("github_run_failed_logs bounds/redaction: PASS");
   console.log("github_workflow_dispatch explicit inputs/redaction: PASS");

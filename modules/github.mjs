@@ -373,7 +373,7 @@ export function registerGitHubTools(server, config, dependencies = {}) {
     }
   });
 
-  server.tool("github_run_wait", "Wait briefly (default 1s, maximum 3s) for one GitHub Actions run without cancelling it on timeout. Prefer github_run_view for a non-blocking status check.", {
+  server.tool("github_run_wait", "Observe one GitHub Actions run with a short wait window (default 1s, maximum 3s). The wait window is separate from the bounded gh status-fetch timeout. The workflow is never cancelled.", {
     repo: z.string().min(3),
     run_id: z.number().int().positive(),
     wait_seconds: z.number().min(0).max(3).optional(),
@@ -391,24 +391,152 @@ export function registerGitHubTools(server, config, dependencies = {}) {
         1000,
         getRuntimeRequestBudget().maxSynchronousRequestSeconds * 1000 - 500
       );
+      const requestDeadline = started + runtimeBudgetMs;
       const requestedWaitMs = boundedInteger(wait_seconds * 1000, 1000, 0, 3000);
-      const effectiveWaitMs = Math.min(requestedWaitMs, runtimeBudgetMs);
-      const deadline = started + effectiveWaitMs;
-      const pollMs = boundedInteger(poll_interval_ms, 1000, 100, 5000);
-      const authTimeoutSeconds = Math.max(
-        1,
-        Math.min(5, Math.ceil(Math.max(1, deadline - now()) / 1000))
-      );
+      const pollMs = boundedInteger(poll_interval_ms, 500, 100, 5000);
+      const authTimeoutSeconds = 3;
+      const statusFetchTimeoutSeconds = 5;
+      const statusFetchReserveMs = statusFetchTimeoutSeconds * 1000 + 500;
+
       await ensureGhReadyCached(authTimeoutSeconds);
-      let run;
+
+      let statusChecks = 0;
+      let run = await readRun(
+        runGhRaw,
+        repo,
+        run_id,
+        statusFetchTimeoutSeconds
+      );
+      statusChecks += 1;
+
+      if (TERMINAL_RUN_STATUS.has(String(run.status || "").toLowerCase())) {
+        return textResult({
+          repo,
+          run_id,
+          completed: true,
+          timed_out: false,
+          waited_ms: Math.max(0, now() - started),
+          requested_wait_ms: requestedWaitMs,
+          effective_wait_ms: 0,
+          request_budget_ms: runtimeBudgetMs,
+          status_fetch_timeout_seconds: statusFetchTimeoutSeconds,
+          status_checks: statusChecks,
+          return_reason: "completed",
+          run,
+        });
+      }
+
+      if (requestedWaitMs <= 0) {
+        return textResult({
+          repo,
+          run_id,
+          completed: false,
+          timed_out: true,
+          waited_ms: Math.max(0, now() - started),
+          requested_wait_ms: requestedWaitMs,
+          effective_wait_ms: 0,
+          request_budget_ms: runtimeBudgetMs,
+          status_fetch_timeout_seconds: statusFetchTimeoutSeconds,
+          status_checks: statusChecks,
+          return_reason: "timeout",
+          run,
+        });
+      }
+
+      const remainingRequestBudgetMs = Math.max(0, requestDeadline - now());
+      const effectiveWaitMs = Math.min(
+        requestedWaitMs,
+        Math.max(0, remainingRequestBudgetMs - statusFetchReserveMs)
+      );
+      const observationDeadline = now() + effectiveWaitMs;
+
+      if (effectiveWaitMs <= 0) {
+        return textResult({
+          repo,
+          run_id,
+          completed: false,
+          timed_out: true,
+          waited_ms: Math.max(0, now() - started),
+          requested_wait_ms: requestedWaitMs,
+          effective_wait_ms: 0,
+          request_budget_ms: runtimeBudgetMs,
+          status_fetch_timeout_seconds: statusFetchTimeoutSeconds,
+          status_checks: statusChecks,
+          return_reason: "request_budget",
+          run,
+        });
+      }
 
       while (true) {
-        const remainingBeforeRead = Math.max(1, deadline - now());
-        const readTimeoutSeconds = Math.max(
-          1,
-          Math.min(5, Math.ceil(remainingBeforeRead / 1000))
+        const remainingObservationMs = observationDeadline - now();
+        if (remainingObservationMs <= 0) {
+          return textResult({
+            repo,
+            run_id,
+            completed: false,
+            timed_out: true,
+            waited_ms: Math.max(0, now() - started),
+            requested_wait_ms: requestedWaitMs,
+            effective_wait_ms: effectiveWaitMs,
+            request_budget_ms: runtimeBudgetMs,
+            status_fetch_timeout_seconds: statusFetchTimeoutSeconds,
+            status_checks: statusChecks,
+            return_reason: "timeout",
+            run,
+          });
+        }
+
+        const remainingRequestBeforeSleepMs = requestDeadline - now();
+        const safeSleepMs = Math.min(
+          pollMs,
+          remainingObservationMs,
+          Math.max(0, remainingRequestBeforeSleepMs - statusFetchReserveMs)
         );
-        run = await readRun(runGhRaw, repo, run_id, readTimeoutSeconds);
+
+        if (safeSleepMs <= 0) {
+          return textResult({
+            repo,
+            run_id,
+            completed: false,
+            timed_out: true,
+            waited_ms: Math.max(0, now() - started),
+            requested_wait_ms: requestedWaitMs,
+            effective_wait_ms: effectiveWaitMs,
+            request_budget_ms: runtimeBudgetMs,
+            status_fetch_timeout_seconds: statusFetchTimeoutSeconds,
+            status_checks: statusChecks,
+            return_reason: "request_budget",
+            run,
+          });
+        }
+
+        await sleep(safeSleepMs);
+
+        if (requestDeadline - now() < statusFetchReserveMs) {
+          return textResult({
+            repo,
+            run_id,
+            completed: false,
+            timed_out: true,
+            waited_ms: Math.max(0, now() - started),
+            requested_wait_ms: requestedWaitMs,
+            effective_wait_ms: effectiveWaitMs,
+            request_budget_ms: runtimeBudgetMs,
+            status_fetch_timeout_seconds: statusFetchTimeoutSeconds,
+            status_checks: statusChecks,
+            return_reason: "request_budget",
+            run,
+          });
+        }
+
+        run = await readRun(
+          runGhRaw,
+          repo,
+          run_id,
+          statusFetchTimeoutSeconds
+        );
+        statusChecks += 1;
+
         if (TERMINAL_RUN_STATUS.has(String(run.status || "").toLowerCase())) {
           return textResult({
             repo,
@@ -419,27 +547,12 @@ export function registerGitHubTools(server, config, dependencies = {}) {
             requested_wait_ms: requestedWaitMs,
             effective_wait_ms: effectiveWaitMs,
             request_budget_ms: runtimeBudgetMs,
+            status_fetch_timeout_seconds: statusFetchTimeoutSeconds,
+            status_checks: statusChecks,
             return_reason: "completed",
             run,
           });
         }
-
-        const remaining = deadline - now();
-        if (remaining <= 0) {
-          return textResult({
-            repo,
-            run_id,
-            completed: false,
-            timed_out: true,
-            waited_ms: Math.max(0, now() - started),
-            requested_wait_ms: requestedWaitMs,
-            effective_wait_ms: effectiveWaitMs,
-            request_budget_ms: runtimeBudgetMs,
-            return_reason: "timeout",
-            run,
-          });
-        }
-        await sleep(Math.min(pollMs, remaining));
       }
     } catch (error) {
       return textResult(error.message, true);
