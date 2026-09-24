@@ -26,6 +26,7 @@ import { registerBatchInspectionTool } from "./modules/batch-inspect.mjs";
 import { registerStructuredTextSearchTool } from "./modules/structured-text-search.mjs";
 import { registerFileIntegrityTools } from "./modules/file-integrity.mjs";
 import { registerGitHubTools } from "./modules/github.mjs";
+import { installRuntimeCatalog } from "./modules/runtime-catalog.mjs";
 
 const config = loadLConnectConfig(import.meta.url);
 configureRuntime({
@@ -38,6 +39,7 @@ const server = new McpServer({
 });
 
 installToolTelemetry(server, config.telemetry);
+const runtimeCatalog = installRuntimeCatalog(server, { version: "1.1.0" });
 
 registerFilesystemTools(server, config);
 registerShellTools(server, config);
@@ -60,9 +62,10 @@ registerFileIntegrityTools(server, config);
 registerGitHubTools(server, config);
 registerBatchInspectionTool(server);
 registerToolTelemetryTool(server);
+const runtimeCatalogState = runtimeCatalog.markReady();
 
 console.error(
-  `LConnect 1.1.0 starting; fullMachineAccess=${config.fullMachineAccess}; maxSyncRequestSeconds=${config.mcp.maxSynchronousRequestSeconds}; telemetryEnabled=${config.telemetry.enabled}; telemetryMaxEvents=${config.telemetry.maxEvents}; allowedDirectories=${config.allowedDirectories.join(";")}`
+  `LConnect 1.1.0 starting; tools=${runtimeCatalogState.tool_count}; catalogDigest=${runtimeCatalogState.tool_name_digest_sha256}; fullMachineAccess=${config.fullMachineAccess}; maxSyncRequestSeconds=${config.mcp.maxSynchronousRequestSeconds}; telemetryEnabled=${config.telemetry.enabled}; telemetryMaxEvents=${config.telemetry.maxEvents}; allowedDirectories=${config.allowedDirectories.join(";")}`
 );
 
 await server.connect(new StdioServerTransport());

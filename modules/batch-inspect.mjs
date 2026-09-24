@@ -14,6 +14,7 @@ const READ_ONLY_TOOLS = new Set([
   "get_file_info",
   "list_sessions",
   "session_status",
+  "runtime_catalog",
   "system_info",
   "list_processes",
   "list_listening_ports",
