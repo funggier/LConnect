@@ -1,6 +1,6 @@
 # LCN-043 — Exact Commit GitHub CI Correlation
 
-Status: **ACTIVE — IMPLEMENTATION GREEN / CI PENDING**
+Status: **ACTIVE — IMPLEMENTATION GREEN / CI IN PROGRESS**
 
 ## Goal
 
@@ -103,7 +103,8 @@ It is **not** allowlisted in `batch_inspect`, whose contract intentionally exclu
 - syntax check: PASS
 - dependency audit: 0 vulnerabilities
 - full local suite: PASS (`PASS tools=119`, approximately 51.6 seconds)
-- GitHub CI: PENDING
+- implementation: `3684ca90b027a9dff4f083bad1aedfa13141a4a3`
+- GitHub CI discovered by `github_commit_run_status`: `35998083970` — IN PROGRESS
 - installed live validation: PENDING
 
 ## Acceptance
