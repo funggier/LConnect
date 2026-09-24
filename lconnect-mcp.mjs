@@ -25,6 +25,7 @@ import {
 import { registerBatchInspectionTool } from "./modules/batch-inspect.mjs";
 import { registerStructuredTextSearchTool } from "./modules/structured-text-search.mjs";
 import { registerFileIntegrityTools } from "./modules/file-integrity.mjs";
+import { registerGitHubTools } from "./modules/github.mjs";
 
 const config = loadLConnectConfig(import.meta.url);
 configureRuntime({
@@ -56,6 +57,7 @@ registerTransientStateTools(server);
 registerEnvironmentTools(server, config);
 registerStructuredTextSearchTool(server, config);
 registerFileIntegrityTools(server, config);
+registerGitHubTools(server, config);
 registerBatchInspectionTool(server);
 registerToolTelemetryTool(server);
 
