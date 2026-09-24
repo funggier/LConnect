@@ -38,7 +38,7 @@ Agent Operations Reliability ชุด LCN-025–030 ปิดครบแล้
 | Developer Foundation | COMPLETE | LCN-012–014 | Git + Development + HTTP complete |
 | Observation | COMPLETE | LCN-015–017 | Log Tail + File Watcher + Scheduled Tasks complete |
 | Agent Operations Reliability | COMPLETE | LCN-025–034 | LCN-025–030 and LCN-031–034 complete |
-| Delivery / Turn Reliability | ACTIVE | LCN-031–038 | LCN-038 complete + live validated; pre-handler vs post-handler delta localization next |
+| Delivery / Turn Reliability | COMPLETE AT CURRENT LOCAL EVIDENCE BOUNDARY | LCN-031–039 | LCN-039 localized normal low-cost calls: ~0.42 ms handler, ~300 ms local poll→response, ~865 ms average outside local metric scope |
 | Execution Ergonomics | ACTIVE | after LCN-030 | Deterministic structured primitives only; no agent/workflow runtime |
 | Desktop Control | DEFERRED | LCN-018–020 | Explicitly paused |
 | Browser Automation | DEFERRED | LCN-021–023 | Explicitly paused |
