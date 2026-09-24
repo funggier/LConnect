@@ -2,7 +2,7 @@
 
 ## Result
 
-**IMPLEMENTATION GREEN — LIVE DEPLOY VALIDATION PENDING**
+**PASS — TURN-SAFE LONG OPERATION OBSERVATION LIVE VALIDATED**
 
 ## Goal
 
@@ -167,25 +167,114 @@ Result:
 
 Windows job, runtime smoke tests and dependency audit all completed successfully.
 
-## Deployment state
+## Live post-deploy validation
 
-The currently connected installed daemon still runs the 111-tool pre-LCN-035 code.
+Tracked files were synchronized to the installed runtime and the daemon was restarted.
 
-The source candidate is 112 tools.
+Installed source smoke:
 
-Tracked files must be synchronized to the installed runtime and LConnect restarted/reconnected before live post-deploy telemetry can be recorded.
+`PASS tools=112`
 
-## Expected live acceptance
+### Important catalog-refresh finding
 
-After restart/reconnect:
+The user intentionally restarted/reconnected LConnect **without refreshing the ChatGPT plugin UI**.
 
-- ChatGPT-visible catalog = 112
-- `session_status` visible
-- default `list_sessions` compact
-- live `session_status` handler near-immediate
-- live default `wait_session` bounded near 1 second
-- sequential GitHub calls show reduced local handler cost from readiness-cache reuse
-- tunnel/tool telemetry remains healthy
+Observed ChatGPT-visible catalog:
+
+- visible tools: 111
+- direct `session_status`: not present in the ChatGPT schema
+
+However, the restarted daemon was proven to be running the 112-tool code:
+
+1. telemetry restarted at the new daemon start time
+2. installed source smoke reported 112 tools
+3. `batch_inspect` successfully invoked the new `session_status` operation even though ChatGPT did not expose it directly
+4. `list_sessions` exhibited the new compact-default behavior
+
+Catalog-cache proof sample:
+
+- `session_status` invoked through `batch_inspect`: PASS
+- inner handler: 0.164 ms
+- compact `list_sessions` inner handler: 0.069 ms
+
+Conclusion:
+
+`daemon/runtime schema = 112 while ChatGPT-visible plugin schema remained 111 until plugin/catalog refresh`
+
+Restarting LConnect alone does not necessarily refresh the ChatGPT-visible tool catalog.
+
+### Live compact session observation
+
+Representative live post-deploy `list_sessions` sample:
+
+- caller wall: 1026 ms
+- handler: 0.034 ms
+- result: 602 chars
+
+Pre-deploy baseline:
+
+- caller wall: 1333 ms
+- handler: 0.072 ms
+- result: 6813 chars
+
+For this representative buffered-output fixture, response text decreased by approximately 91.2%.
+
+### Live session_status
+
+Because the ChatGPT direct catalog remained stale, `session_status` was exercised through the read-only `batch_inspect` dispatcher.
+
+The server executed the new operation successfully with sub-millisecond inner handler time.
+
+This proves the runtime capability was active even though the direct ChatGPT schema was stale.
+
+### Live wait_session default
+
+A managed 10-second process was started and `wait_session` was called without an explicit timeout.
+
+Observed:
+
+- caller wall: 3264 ms
+- handler: 1012.896 ms
+- reported `waited_ms`: 1013 ms
+- `timed_out`: true
+- `output_tail`: null
+- result size: 634 bytes
+
+Therefore the new one-second default is active in the installed daemon.
+
+Approximately 2.25 seconds of the caller wall remained outside the LConnect handler in this sample.
+
+### Live GitHub observation
+
+Two sequential post-deploy `github_run_view` calls:
+
+First:
+
+- caller wall: 4089 ms
+- handler: 2104.568 ms
+
+Second within readiness-cache TTL:
+
+- caller wall: 3840 ms
+- handler: 1472.070 ms
+
+The second local handler avoided the repeated auth-readiness process and was approximately 632 ms lower in this sample.
+
+The remaining multi-second caller overhead is still outside the local handler.
+
+## Live acceptance result
+
+- installed source catalog = 112: PASS
+- new runtime behavior active: PASS
+- `session_status` executable server-side: PASS
+- compact `list_sessions`: PASS
+- one-second default `wait_session`: PASS
+- no default output tail: PASS
+- GitHub readiness-cache behavior: PASS
+- tool telemetry healthy: PASS
+- ChatGPT-visible catalog automatically refreshed by daemon restart alone: **NO**
+
+The final item is a plugin/catalog-discovery behavior, not an LCN-035 turn-safe observation failure.
 
 ## Architecture
 

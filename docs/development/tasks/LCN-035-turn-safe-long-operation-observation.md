@@ -1,6 +1,6 @@
 # LCN-035 — Turn-Safe Long Operation Observation
 
-Status: **ACTIVE — IMPLEMENTATION GREEN / LIVE VALIDATION PENDING**
+Status: **COMPLETE — LIVE VALIDATED**
 
 ## Goal
 
@@ -92,7 +92,8 @@ Not included:
 - dependency audit: 0 vulnerabilities
 - GitHub Actions: `35976569888` — PASS
 - live pre-deploy baseline: recorded
-- live post-deploy validation: PENDING
+- live post-deploy validation: PASS
+- no-refresh catalog experiment: daemon/runtime 112 confirmed while ChatGPT-visible schema remained 111
 - report: `../reports/LCN-20260924-035-turn-safe-long-operation-observation.md`
 
 ## Acceptance
