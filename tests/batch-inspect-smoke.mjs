@@ -1,5 +1,7 @@
 import fs from "node:fs";
+import os from "node:os";
 import path from "node:path";
+import { spawnSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { StdioClientTransport } from "@modelcontextprotocol/sdk/client/stdio.js";
@@ -36,17 +38,29 @@ async function call(name, args = {}) {
   return await client.callTool({ name, arguments: args });
 }
 
+let tempGitRoot = null;
+
 try {
   await client.connect(transport);
 
   await call("tool_telemetry", { action: "clear" });
+
+  tempGitRoot = fs.mkdtempSync(path.join(os.tmpdir(), "lconnect-batch-git-"));
+  const gitInit = spawnSync("git", ["init"], {
+    cwd: tempGitRoot,
+    encoding: "utf8",
+    windowsHide: true,
+  });
+  if (gitInit.status !== 0) {
+    throw new Error(`Disposable git init failed: ${gitInit.stderr || gitInit.stdout}`);
+  }
 
   const readmePath = path.join(root, "README.md");
   const batch = await call("batch_inspect", {
     operations: [
       { id: "sessions", tool: "list_sessions", arguments: {} },
       { id: "system", tool: "system_info", arguments: {} },
-      { id: "git", tool: "git_status", arguments: { repo_path: root } },
+      { id: "git", tool: "git_status", arguments: { repo_path: tempGitRoot } },
       { id: "readme", tool: "read_text_file", arguments: { path: readmePath, head: 12 } },
       { id: "info", tool: "get_file_info", arguments: { path: readmePath } },
     ],
@@ -187,4 +201,7 @@ try {
   process.exitCode = 1;
 } finally {
   await transport.close().catch(() => {});
+  if (tempGitRoot) {
+    try { fs.rmSync(tempGitRoot, { recursive: true, force: true }); } catch {}
+  }
 }
