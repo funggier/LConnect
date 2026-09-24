@@ -49,6 +49,11 @@ try {
     operations: [
       { id: "catalog", tool: "runtime_catalog", arguments: {} },
       { id: "delivery", tool: "delivery_snapshot", arguments: { telemetry_limit: 5 } },
+      {
+        id: "structured",
+        tool: "structured_data_inspect",
+        arguments: { path: path.join(root, "package.json"), pointer: "/name" },
+      },
     ],
   }));
   const catalogText = catalogBatch.results[0]?.result_text || "";
@@ -56,13 +61,20 @@ try {
   if (
     catalogBatch.results[0]?.ok !== true ||
     catalog.catalog_ready !== true ||
-    catalog.tool_count < 114 ||
+    catalog.tool_count < 115 ||
     !/^[0-9a-f]{64}$/.test(catalog.tool_name_digest_sha256)
   ) {
     throw new Error("runtime_catalog batch visibility failed");
   }
   if (catalogBatch.results[1]?.ok !== true) {
     throw new Error("delivery_snapshot batch visibility failed");
+  }
+  if (catalogBatch.results[2]?.ok !== true) {
+    throw new Error("structured_data_inspect batch visibility failed");
+  }
+  const structured = JSON.parse(catalogBatch.results[2].result_text || "{}");
+  if (structured.value_preview !== "lconnect-mcp") {
+    throw new Error("structured_data_inspect batch value failed");
   }
 
   tempGitRoot = fs.mkdtempSync(path.join(os.tmpdir(), "lconnect-batch-git-"));
@@ -230,6 +242,7 @@ try {
 
   console.log("batch_inspect runtime_catalog visibility: PASS");
   console.log("batch_inspect delivery_snapshot visibility: PASS");
+  console.log("batch_inspect structured_data_inspect visibility: PASS");
   console.log("batch_inspect five-operation single call: PASS");
   console.log("batch_inspect ordered results: PASS");
   console.log("batch_inspect read-only allowlist guard: PASS");

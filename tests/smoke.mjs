@@ -49,6 +49,7 @@ const requiredTools = [
   "session_status",
   "runtime_catalog",
   "delivery_snapshot",
+  "structured_data_inspect",
   "system_info",
   "list_processes",
   "kill_process",
