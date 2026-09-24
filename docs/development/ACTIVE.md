@@ -7,8 +7,7 @@ Last updated: 2026-09-24
 - Repository: `funggier/LConnect`
 - Branch: `main`
 - Current implementation candidate: `3684ca90b027a9dff4f083bad1aedfa13141a4a3`
-- Candidate CI: `35998083970` — IN PROGRESS
-- Last passing implementation CI: `35996073922` — PASS
+- Passing implementation CI: `35998083970` — PASS
 - Current source MCP catalog: 119 tools (LCN-043 candidate)
 - Current installed/runtime catalog: 118 tools
 - Current runtime catalog digest: `3a4b6651ee0c2cdab802907f5a5ac7609e958579bee5a0a39c982a7ac3ae28a8`

@@ -1,6 +1,6 @@
 # LCN-043 — Exact Commit GitHub CI Correlation
 
-Status: **ACTIVE — IMPLEMENTATION GREEN / CI IN PROGRESS**
+Status: **ACTIVE — IMPLEMENTATION GREEN / INSTALLED LIVE VALIDATION PENDING**
 
 ## Goal
 
@@ -104,7 +104,9 @@ It is **not** allowlisted in `batch_inspect`, whose contract intentionally exclu
 - dependency audit: 0 vulnerabilities
 - full local suite: PASS (`PASS tools=119`, approximately 51.6 seconds)
 - implementation: `3684ca90b027a9dff4f083bad1aedfa13141a4a3`
-- GitHub CI discovered by `github_commit_run_status`: `35998083970` — IN PROGRESS
+- GitHub CI discovered by `github_commit_run_status`: `35998083970` — PASS
+- pre-deploy repo exact-sync/clean: PASS (coordination HEAD `616a60f379879a81d145d77ff932bf72986a3cbe`)
+- pre-deploy source↔installed modules drift: PASS as expected (27 equal, 1 changed: `github.mjs`)
 - installed live validation: PENDING
 
 ## Acceptance

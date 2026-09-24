@@ -2,7 +2,7 @@
 
 ## Result
 
-**IMPLEMENTATION GREEN — CI/LIVE VALIDATION PENDING**
+**IMPLEMENTATION GREEN — INSTALLED LIVE VALIDATION PENDING**
 
 ## Goal
 
@@ -143,6 +143,27 @@ Observed:
 
 This exactly matches the previously independently observed LCN-042 CI run, proving the new tool can discover and expand the correct run from only the commit SHA and filters.
 
+## Pre-deploy source↔installed evidence
+
+Before deployment, a bounded local snapshot confirmed:
+
+- repository coordination HEAD: `616a60f379879a81d145d77ff932bf72986a3cbe`
+- exact remote sync state: `equal`
+- working tree: clean
+- running daemon: 118 tools
+- source modules: 28 files
+- installed modules: 28 files
+- common equal: 27
+- changed: 1
+- source-only: 0
+- installed-only: 0
+- only changed module: `github.mjs`
+- source module digest: `187026405a2ae7d54ec84556a5529acf1f93929790eed72e2bbff00b36275956`
+- installed module digest: `20c2885512bf6199f01b0ddc80fefef658e4b6ea2b92191710f9ee4031fd7ade`
+- comparison reliable: true
+
+This is the expected pre-deploy drift for LCN-043.
+
 ## Dependency audit
 
 `npm audit --omit=dev --audit-level=high`: **0 vulnerabilities**
@@ -174,6 +195,6 @@ It discovered:
 
 This is direct end-to-end evidence that the new primitive eliminates the former list→extract ID→view sequence for exact implementation commits.
 
-GitHub Actions: **IN PROGRESS** — run `35998083970`
+GitHub Actions: **PASS** — run `35998083970`
 
 Installed live validation: **PENDING**
