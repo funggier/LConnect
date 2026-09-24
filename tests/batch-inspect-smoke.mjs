@@ -38,7 +38,23 @@ async function call(name, args = {}) {
   return await client.callTool({ name, arguments: args });
 }
 
+function fixtureGit(cwd, args) {
+  const result = spawnSync("git", args, {
+    cwd,
+    encoding: "utf8",
+    windowsHide: true,
+  });
+  if (result.status !== 0) {
+    throw new Error(
+      "Disposable git command failed: git " + args.join(" ") + "\n" +
+      (result.stderr || result.stdout || "")
+    );
+  }
+  return (result.stdout || "").trim();
+}
+
 let tempGitRoot = null;
+let tempGitRemote = null;
 
 try {
   await client.connect(transport);
@@ -75,7 +91,7 @@ try {
   if (
     catalogBatch.results[0]?.ok !== true ||
     catalog.catalog_ready !== true ||
-    catalog.tool_count < 117 ||
+    catalog.tool_count < 118 ||
     !/^[0-9a-f]{64}$/.test(catalog.tool_name_digest_sha256)
   ) {
     throw new Error("runtime_catalog batch visibility failed");
@@ -114,13 +130,33 @@ try {
   }
 
   tempGitRoot = fs.mkdtempSync(path.join(os.tmpdir(), "lconnect-batch-git-"));
-  const gitInit = spawnSync("git", ["init"], {
-    cwd: tempGitRoot,
-    encoding: "utf8",
-    windowsHide: true,
-  });
-  if (gitInit.status !== 0) {
-    throw new Error(`Disposable git init failed: ${gitInit.stderr || gitInit.stdout}`);
+  tempGitRemote = fs.mkdtempSync(path.join(os.tmpdir(), "lconnect-batch-remote-"));
+  const bareRemote = path.join(tempGitRemote, "origin.git");
+  fixtureGit(tempGitRemote, ["init", "--bare", bareRemote]);
+  fixtureGit(tempGitRoot, ["init"]);
+  fixtureGit(tempGitRoot, ["config", "user.name", "LConnect Batch Test"]);
+  fixtureGit(tempGitRoot, ["config", "user.email", "batch@example.invalid"]);
+  fs.writeFileSync(path.join(tempGitRoot, "state.txt"), "A\n", "utf8");
+  fixtureGit(tempGitRoot, ["add", "state.txt"]);
+  fixtureGit(tempGitRoot, ["commit", "-m", "A"]);
+  fixtureGit(tempGitRoot, ["branch", "-M", "main"]);
+  fixtureGit(tempGitRoot, ["remote", "add", "origin", bareRemote]);
+  fixtureGit(tempGitRoot, ["push", "-u", "origin", "main"]);
+
+  const syncBatch = jsonOf(await call("batch_inspect", {
+    operations: [
+      { id: "sync", tool: "git_sync_status", arguments: { repo_path: tempGitRoot } },
+    ],
+  }));
+  if (syncBatch.results[0]?.ok !== true) {
+    throw new Error("git_sync_status batch visibility failed");
+  }
+  const syncState = JSON.parse(syncBatch.results[0].result_text || "{}");
+  if (
+    syncState.sync_state !== "equal" ||
+    syncState.exact_remote?.matches_local_head !== true
+  ) {
+    throw new Error("git_sync_status batch value failed");
   }
 
   const readmePath = path.join(root, "README.md");
@@ -281,6 +317,7 @@ try {
   console.log("batch_inspect structured_data_inspect visibility: PASS");
   console.log("batch_inspect directory_manifest visibility: PASS");
   console.log("batch_inspect compare_directories visibility: PASS");
+  console.log("batch_inspect git_sync_status visibility: PASS");
   console.log("batch_inspect five-operation single call: PASS");
   console.log("batch_inspect ordered results: PASS");
   console.log("batch_inspect read-only allowlist guard: PASS");
@@ -295,5 +332,8 @@ try {
   await transport.close().catch(() => {});
   if (tempGitRoot) {
     try { fs.rmSync(tempGitRoot, { recursive: true, force: true }); } catch {}
+  }
+  if (tempGitRemote) {
+    try { fs.rmSync(tempGitRemote, { recursive: true, force: true }); } catch {}
   }
 }

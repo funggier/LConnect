@@ -322,6 +322,120 @@ async function isAncestorSha(repoPath, ancestorSha, descendantSha, config) {
   );
 }
 
+async function configuredRemoteTarget(identity, explicitRemote, explicitRef, config) {
+  const hasRemote = Boolean(explicitRemote);
+  const hasRef = Boolean(explicitRef);
+
+  if (hasRemote !== hasRef) {
+    throw new Error("remote and ref must be supplied together.");
+  }
+
+  if (hasRemote && hasRef) {
+    validateRemote(explicitRemote);
+    await validateFullRef(identity.repo_root, explicitRef, config, false);
+    return {
+      remote: explicitRemote,
+      ref: explicitRef,
+      source: "explicit",
+    };
+  }
+
+  if (!identity.branch) {
+    throw new Error(
+      "Cannot derive remote/ref without a current branch. Supply explicit remote and full ref."
+    );
+  }
+
+  const remote = await tryGit(
+    identity.repo_root,
+    ["config", "--get", "branch." + identity.branch + ".remote"],
+    config,
+    20
+  );
+  const ref = await tryGit(
+    identity.repo_root,
+    ["config", "--get", "branch." + identity.branch + ".merge"],
+    config,
+    20
+  );
+
+  if (!remote || !ref) {
+    throw new Error(
+      "Current branch has no configured remote/merge ref. Supply explicit remote and full ref."
+    );
+  }
+
+  validateRemote(remote);
+  await validateFullRef(identity.repo_root, ref, config, false);
+  return {
+    remote,
+    ref,
+    source: "branch-config",
+  };
+}
+
+async function localCommitObjectExists(repoPath, sha, config) {
+  if (!sha) return false;
+  const result = await runGitRaw(
+    repoPath,
+    ["cat-file", "-e", sha + "^{commit}"],
+    config,
+    20
+  );
+  if (result.error) throw new Error("Failed to launch Git: " + result.error);
+  if (result.timedOut) throw new Error("Git object availability check timed out.");
+  return result.code === 0;
+}
+
+async function localTrackingSha(identity, config) {
+  if (!identity.upstream) return null;
+  const sha = await tryGit(
+    identity.repo_root,
+    ["rev-parse", "--verify", identity.upstream + "^{commit}"],
+    config,
+    20
+  );
+  return /^[0-9a-fA-F]{40}$/.test(sha || "") ? sha.toLowerCase() : null;
+}
+
+async function commitDistance(repoPath, leftSha, rightSha, config) {
+  const counts = await tryGit(
+    repoPath,
+    ["rev-list", "--left-right", "--count", leftSha + "..." + rightSha],
+    config,
+    20
+  );
+  if (!counts) return { ahead: null, behind: null };
+  const [left, right] = counts.split(/\s+/).map(Number);
+  return {
+    ahead: Number.isFinite(left) ? left : null,
+    behind: Number.isFinite(right) ? right : null,
+  };
+}
+
+function classifyExactSync({
+  head,
+  remoteSha,
+  remoteObjectLocal,
+  localIsAncestorOfRemote,
+  remoteIsAncestorOfLocal,
+}) {
+  if (!head) return "unborn";
+  if (!remoteSha) return "remote_ref_missing";
+  if (head === remoteSha) return "equal";
+  if (!remoteObjectLocal) return "remote_object_not_local";
+  if (localIsAncestorOfRemote === true && remoteIsAncestorOfLocal === false) {
+    return "remote_ahead";
+  }
+  if (remoteIsAncestorOfLocal === true && localIsAncestorOfRemote === false) {
+    return "local_ahead";
+  }
+  if (localIsAncestorOfRemote === false && remoteIsAncestorOfLocal === false) {
+    return "diverged";
+  }
+  return "unknown";
+}
+
 export function registerGitTools(server, config) {
   const enabled = config.shell.enabled && process.env.MCP_ENABLE_POWERSHELL !== "false";
 
@@ -353,6 +467,148 @@ export function registerGitTools(server, config) {
         clean: entries.length === 0,
         counts: countStatusEntries(entries),
         entries,
+      });
+    } catch (error) {
+      return textResult(error.message, true);
+    }
+  });
+
+  server.tool("git_sync_status", "Compare local HEAD/cached upstream state with one exact remote Git ref without fetching or mutating the repository.", {
+    repo_path: z.string().min(1),
+    remote: z.string().min(1).optional(),
+    ref: z.string().min(1).optional(),
+    include_untracked: z.boolean().optional(),
+    max_status_entries: z.number().int().min(1).max(500).optional(),
+  }, async ({
+    repo_path,
+    remote,
+    ref,
+    include_untracked = true,
+    max_status_entries = 50,
+  }) => {
+    try {
+      requireEnabled();
+
+      const identity = await repoIdentity(repo_path, config);
+      const target = await configuredRemoteTarget(identity, remote, ref, config);
+
+      const statusResult = await runGit(
+        identity.repo_root,
+        [
+          "status",
+          "--porcelain=v1",
+          "-z",
+          include_untracked ? "--untracked-files=normal" : "--untracked-files=no",
+        ],
+        config,
+        30
+      );
+      const entries = parsePorcelainV1Z(statusResult.stdout);
+      const statusCounts = countStatusEntries(entries);
+
+      const remoteSha = await remoteRefSha(
+        identity.repo_root,
+        target.remote,
+        target.ref,
+        config
+      );
+      const trackingSha = await localTrackingSha(identity, config);
+
+      let remoteObjectLocal = false;
+      let exactAhead = null;
+      let exactBehind = null;
+      let localIsAncestorOfRemote = null;
+      let remoteIsAncestorOfLocal = null;
+
+      if (identity.head && remoteSha) {
+        remoteObjectLocal = identity.head === remoteSha
+          ? true
+          : await localCommitObjectExists(identity.repo_root, remoteSha, config);
+
+        if (remoteObjectLocal) {
+          const distance = await commitDistance(
+            identity.repo_root,
+            identity.head,
+            remoteSha,
+            config
+          );
+          exactAhead = distance.ahead;
+          exactBehind = distance.behind;
+
+          if (identity.head === remoteSha) {
+            localIsAncestorOfRemote = true;
+            remoteIsAncestorOfLocal = true;
+          } else {
+            localIsAncestorOfRemote = await isAncestorSha(
+              identity.repo_root,
+              identity.head,
+              remoteSha,
+              config
+            );
+            remoteIsAncestorOfLocal = await isAncestorSha(
+              identity.repo_root,
+              remoteSha,
+              identity.head,
+              config
+            );
+          }
+        }
+      }
+
+      const syncState = classifyExactSync({
+        head: identity.head,
+        remoteSha,
+        remoteObjectLocal,
+        localIsAncestorOfRemote,
+        remoteIsAncestorOfLocal,
+      });
+
+      return textResult({
+        repo_root: identity.repo_root,
+        local: {
+          head: identity.head,
+          branch: identity.branch,
+          detached: identity.detached,
+          unborn: identity.unborn,
+          upstream: identity.upstream,
+          cached_ahead: identity.ahead,
+          cached_behind: identity.behind,
+        },
+        working_tree: {
+          clean: entries.length === 0,
+          counts: statusCounts,
+          entries: entries.slice(0, max_status_entries),
+          entries_truncated: entries.length > max_status_entries,
+          total_entries: entries.length,
+          include_untracked,
+        },
+        target: {
+          source: target.source,
+          remote: target.remote,
+          ref: target.ref,
+        },
+        exact_remote: {
+          found: Boolean(remoteSha),
+          sha: remoteSha,
+          matches_local_head:
+            identity.head && remoteSha ? identity.head === remoteSha : null,
+          object_available_locally: remoteSha ? remoteObjectLocal : null,
+          ahead: exactAhead,
+          behind: exactBehind,
+          local_is_ancestor_of_remote: localIsAncestorOfRemote,
+          remote_is_ancestor_of_local: remoteIsAncestorOfLocal,
+        },
+        local_tracking: {
+          ref: identity.upstream,
+          sha: trackingSha,
+          matches_exact_remote:
+            trackingSha && remoteSha ? trackingSha === remoteSha : null,
+        },
+        sync_state: syncState,
+        exact_ancestry_available:
+          Boolean(identity.head && remoteSha && remoteObjectLocal),
+        note:
+          "Read-only verification only. No fetch is performed. cached_ahead/cached_behind compare HEAD with the local upstream tracking ref; exact_remote uses git ls-remote. Exact ancestry is unavailable until the exact remote commit object exists locally.",
       });
     } catch (error) {
       return textResult(error.message, true);

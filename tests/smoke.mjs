@@ -86,6 +86,7 @@ const requiredTools = [
   "storage_health",
   "battery_info",
   "git_status",
+  "git_sync_status",
   "git_diff",
   "git_log",
   "git_branch",
