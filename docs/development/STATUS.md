@@ -8,7 +8,7 @@ Current project state: **BASIC CORE STABLE / AGENT OPERATIONS RELIABILITY ACTIVE
 
 Current published release: **v1.1.0 — Expanded Tools & First-Run Guide**
 
-Current main MCP catalog: **101 tools**
+Current main MCP catalog: **104 tools**
 
 LConnect มี Core ที่ใช้งานจริงแล้วและผ่าน runtime acceptance บน Windows:
 
@@ -33,7 +33,7 @@ Expansion phase ถัดไปเน้น Agent Operations Reliability ชุ�
 | System Foundation | COMPLETE | LCN-007–011 | Environment + Process + Services + Network + Hardware complete |
 | Developer Foundation | COMPLETE | LCN-012–014 | Git + Development + HTTP complete |
 | Observation | COMPLETE | LCN-015–017 | Log Tail + File Watcher + Scheduled Tasks complete |
-| Agent Operations Reliability | ACTIVE | LCN-025–034 | LCN-025–028 and LCN-031–034 complete; LCN-029 active |
+| Agent Operations Reliability | ACTIVE | LCN-025–034 | LCN-025–029 and LCN-031–034 complete; LCN-030 active |
 | Desktop Control | PLANNED | LCN-018–020 | Deferred until LCN-025–030 complete |
 | Browser Automation | PLANNED | LCN-021–023 | Common browser layer + Firefox + Chrome |
 
@@ -340,6 +340,23 @@ GitHub Actions run `35964536298`: PASS.
 
 Catalog increased from 99 to 101 tools.
 
+### LCN-029 — Exact Git Ref / Ancestry Safety
+**COMPLETE**
+
+Added:
+
+- `git_remote_ref`
+- `git_is_ancestor`
+- `git_push_ref`
+
+Exact ref identity, resolved ancestry evidence and non-force fast-forward-safe explicit ref push are now available without raw Git parsing. The LCN-029 review also removed mutating `git_branch` from the read-only `batch_inspect` allowlist and added a regression proving branch creation cannot execute through batch.
+
+Implementation: `f003d526f0b160587c1be7a2d80a765a0850ceec`
+
+GitHub Actions run `35965366927`: PASS.
+
+Catalog increased from 101 to 104 tools.
+
 ### LCN-034 — Bounded Read-Only Batch Inspection
 **COMPLETE**
 
@@ -404,9 +421,9 @@ LCN-027 Structured Text Search — COMPLETE
   ↓
 LCN-028 File Integrity — COMPLETE
   ↓
-LCN-029 Exact Git Ref / Ancestry Safety — READY
+LCN-029 Exact Git Ref / Ancestry Safety — COMPLETE
   ↓
-LCN-030 GitHub Actions / Release Integration — PLANNED
+LCN-030 GitHub Actions / Release Integration — READY
   ↓
 LCN-018 Clipboard — PLANNED
   ↓

@@ -1,6 +1,6 @@
 # LCN-029 — Exact Git Ref / Ancestry Safety
 
-Status: **PLANNED**
+Status: **COMPLETE**
 
 ## Goal
 
@@ -67,6 +67,17 @@ Use disposable local repository + bare remote:
 - direct MCP runtime acceptance PASS
 - GitHub CI PASS
 - docs/status/report updated
+
+## Completion evidence
+
+- implementation: `f003d526f0b160587c1be7a2d80a765a0850ceec`
+- source catalog: 104 tools
+- targeted exact-ref acceptance: PASS
+- batch read-only mutation regression: PASS
+- full local suite: PASS
+- dependency audit: 0 vulnerabilities
+- GitHub Actions: `35965366927` — PASS
+- report: `../reports/LCN-20260924-029-exact-git-ref-ancestry.md`
 
 ## Scope rule
 
