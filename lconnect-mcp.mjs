@@ -23,6 +23,7 @@ import {
   registerToolTelemetryTool,
 } from "./modules/telemetry.mjs";
 import { registerBatchInspectionTool } from "./modules/batch-inspect.mjs";
+import { registerStructuredTextSearchTool } from "./modules/structured-text-search.mjs";
 
 const config = loadLConnectConfig(import.meta.url);
 configureRuntime({
@@ -52,6 +53,7 @@ registerFileWatcherTools(server, config);
 registerScheduledTaskTools(server, config);
 registerTransientStateTools(server);
 registerEnvironmentTools(server, config);
+registerStructuredTextSearchTool(server, config);
 registerBatchInspectionTool(server);
 registerToolTelemetryTool(server);
 

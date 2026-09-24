@@ -35,6 +35,7 @@ const requiredTools = [
   "write_file",
   "edit_file",
   "search_files",
+  "search_text",
   "get_file_info",
   "powershell_run",
   "command_run",
