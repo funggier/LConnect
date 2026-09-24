@@ -6,9 +6,10 @@ Last updated: 2026-09-24
 
 - Repository: `funggier/LConnect`
 - Branch: `main`
-- Current implementation candidate: `ba740c75ed29d2b14b52a42c88db448e159d0488`
-- Passing CI: `35966485027`
-- Current source MCP catalog: 111 tools
+- Current implementation candidate: `ddab13a48a78e7ef217e153a6ba023cffd7ddd47`
+- Passing implementation CI: `35976569888` — PASS
+- Current source MCP catalog: 112 tools
+- Current installed/live catalog: 111 tools — restart/reconnect required for LCN-035
 - LCN-025/026: COMPLETE
 - LCN-031/032: COMPLETE
 - LCN-033: COMPLETE — live telemetry measured approximately 96.7% sampled wall time outside handlers
@@ -18,10 +19,11 @@ Last updated: 2026-09-24
 - LCN-029: COMPLETE — Exact Git Ref / Ancestry Safety
 - LCN-030: COMPLETE — GitHub Actions / Release Integration
 - LCN-025–030: COMPLETE — Agent Operations Reliability core sequence
+- LCN-035: ACTIVE — Turn-Safe Long Operation Observation
 
 ## Active task
 
-**NO ACTIVE DEVELOPMENT TASK**
+**LCN-035 — Turn-Safe Long Operation Observation**
 
 ## Latest completed task
 
@@ -37,4 +39,4 @@ Message-delivery observation: [reports/LCN-20260924-message-delivery-timeout-obs
 
 ## Next action
 
-Agent Operations Reliability LCN-025–030 is complete. Continue with execution ergonomics only. Latency/timeout expansion and Desktop/Browser automation remain intentionally deferred. Avoid repeated long polling loops inside one assistant turn; preserve managed-process evidence and checkpoint completed work in Git.
+Synchronize the CI-green 112-tool LCN-035 candidate to the installed runtime, restart/reconnect LConnect, and record live post-deploy telemetry. Latency/message-delivery mitigation is active again alongside execution ergonomics. Desktop/Browser automation remains deferred.

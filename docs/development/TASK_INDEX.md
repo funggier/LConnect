@@ -28,11 +28,12 @@
 | [LCN-024](tasks/LCN-024-first-run-installation-guide-v1.1.0-release.md) | COMPLETE | First-run Installation Guide + v1.1.0 Release |
 | [LCN-025](tasks/LCN-025-managed-session-completion.md) | COMPLETE | Managed Session Completion |
 | [LCN-026](tasks/LCN-026-process-output-cursor.md) | COMPLETE | Incremental Process Output Cursor |
-| [LCN-027](tasks/LCN-027-structured-text-search.md) | READY | Structured Text Search |
-| [LCN-028](tasks/LCN-028-file-integrity.md) | PLANNED | File Integrity |
-| [LCN-029](tasks/LCN-029-exact-git-ref-ancestry.md) | PLANNED | Exact Git Ref / Ancestry Safety |
-| [LCN-030](tasks/LCN-030-github-actions-release.md) | PLANNED | GitHub Actions / Release Integration |
+| [LCN-027](tasks/LCN-027-structured-text-search.md) | COMPLETE | Structured Text Search |
+| [LCN-028](tasks/LCN-028-file-integrity.md) | COMPLETE | File Integrity |
+| [LCN-029](tasks/LCN-029-exact-git-ref-ancestry.md) | COMPLETE | Exact Git Ref / Ancestry Safety |
+| [LCN-030](tasks/LCN-030-github-actions-release.md) | COMPLETE | GitHub Actions / Release Integration |
 | [LCN-031](tasks/LCN-031-mcp-request-timeout-containment.md) | COMPLETE | MCP Request Timeout Containment |
 | [LCN-032](tasks/LCN-032-http-hard-settle-delivery-evidence.md) | COMPLETE | HTTP Hard-Settle Timeout + Delivery Evidence |
 | [LCN-033](tasks/LCN-033-general-mcp-tool-delivery-telemetry.md) | COMPLETE | General MCP Tool Delivery Telemetry |
 | [LCN-034](tasks/LCN-034-bounded-read-only-batch-inspection.md) | COMPLETE | Bounded Read-Only Batch Inspection |
+| [LCN-035](tasks/LCN-035-turn-safe-long-operation-observation.md) | ACTIVE | Turn-Safe Long Operation Observation |

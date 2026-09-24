@@ -1,6 +1,6 @@
 # LCN-035 — Turn-Safe Long Operation Observation
 
-Status: **ACTIVE**
+Status: **ACTIVE — IMPLEMENTATION GREEN / LIVE VALIDATION PENDING**
 
 ## Goal
 
@@ -82,6 +82,18 @@ Not included:
 - new MCP channels
 - persistent workflow scheduler
 - Desktop/Browser work
+
+## Current evidence
+
+- implementation: `ddab13a48a78e7ef217e153a6ba023cffd7ddd47`
+- source catalog: 112 tools
+- targeted process/GitHub/batch tests: PASS
+- full local suite: PASS
+- dependency audit: 0 vulnerabilities
+- GitHub Actions: `35976569888` — PASS
+- live pre-deploy baseline: recorded
+- live post-deploy validation: PENDING
+- report: `../reports/LCN-20260924-035-turn-safe-long-operation-observation.md`
 
 ## Acceptance
 
