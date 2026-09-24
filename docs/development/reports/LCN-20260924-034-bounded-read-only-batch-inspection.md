@@ -137,15 +137,44 @@ Acceptance:
 - telemetry request correlation: PASS
 - direct tool compatibility: PASS
 
-## Next live validation
+## Live validation
 
-After runtime restart:
+Live runtime validation completed after restart/reconnect with the 98-tool catalog visible to ChatGPT.
 
-1. clear telemetry
-2. measure a representative set of individual read-only calls
-3. run the equivalent inspections through one `batch_inspect`
-4. compare caller wall time
-5. compare batch handler time and internal handler sum
-6. confirm that fewer round trips materially reduce whole-turn elapsed time
+Equivalent inspection set:
 
-Only then decide whether additional specialized batches are warranted.
+- `list_sessions`
+- `system_info`
+- `git_status`
+- `read_text_file`
+- `get_file_info`
+
+Paired sample:
+
+| Measurement | 5 individual MCP calls | 1 `batch_inspect` |
+| --- | ---: | ---: |
+| Caller wall | 9963 ms | 2667 ms |
+| Local handler work | 192.324 ms total | 176.760 ms outer |
+| Outside-handler time | 9770.676 ms | 2490.240 ms |
+| MCP round trips | 5 | 1 |
+
+Observed caller-wall reduction:
+
+- 7296 ms saved
+- approximately 73.2% lower wall time
+- approximately 3.7x faster for this inspection set
+
+The batch's internal handler sum was approximately 176.226 ms, consistent with the outer handler time and confirming that the gain came primarily from removing repeated delivery/round-trip overhead rather than making the underlying local inspections faster.
+
+This is one paired live sample, not a multi-run benchmark. It is sufficient for the LCN-034 acceptance criterion because it demonstrates a material whole-call reduction while preserving equivalent read-only work.
+
+Result:
+
+**PASS — LIVE ROUND-TRIP REDUCTION CONFIRMED**
+
+Follow-up direction:
+
+- prefer bounded read-only batching when several independent inspections are known upfront
+- keep direct individual tools available for one-off reads
+- do not generalize this into arbitrary mutating workflow execution
+- use additional specialized batch surfaces only where repeated live evidence justifies them
