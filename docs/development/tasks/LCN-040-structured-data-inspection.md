@@ -1,6 +1,6 @@
 # LCN-040 — Structured Data Inspection
 
-Status: **ACTIVE — IMPLEMENTATION GREEN / INSTALLED LIVE VALIDATION PENDING**
+Status: **COMPLETE — LIVE VALIDATED**
 
 ## Goal
 
@@ -103,7 +103,10 @@ This allows several independent config queries to be returned in one MCP round t
 - installed source/dependencies: PASS (`tools=115`, `yaml@2.9.1`, `smol-toml@1.9.0`)
 - source/install module SHA-256 parity: PASS (`ff4157f67c5f64f41a8148fdf2d906977d0a3ea16cef2262fa09a987cc4f4646`)
 - pre-restart daemon: 114 tools, PID 37256, digest `5e9102835c1cb8012140315651e840d51453cfee66e9373d1d0539014318dc0e`
-- restarted live validation: PENDING
+- restarted runtime: PASS (115 tools, PID 38268, digest `cd018b4780f6ed2d3138b92e28037cdeb3ba64ab3df1a9a81a74478d22b67447`)
+- live `batch_inspect → structured_data_inspect`: PASS
+- live JSON pointer `/name`: `lconnect-mcp`
+- live YAML pointer `/health/listen_addr`: `127.0.0.1:18020`
 
 ## Acceptance
 

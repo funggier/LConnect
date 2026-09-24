@@ -2,7 +2,7 @@
 
 ## Result
 
-**IMPLEMENTATION GREEN — INSTALLED LIVE VALIDATION PENDING**
+**PASS — STRUCTURED DATA INSPECTION LIVE VALIDATED**
 
 ## Goal
 
@@ -192,4 +192,25 @@ The active daemon before restart remained the previous catalog:
 
 Therefore the installed files/dependencies are ready at 115 tools while one restart/reconnect is required to activate the new tool in the running process.
 
-Restarted installed live validation: **PENDING**
+## Restarted installed live validation
+
+After restart/reconnect, `batch_inspect` observed:
+
+- process ID: `38268`
+- runtime start: `2026-09-24T11:00:05.481Z`
+- runtime tool count: 115
+- runtime catalog digest: `cd018b4780f6ed2d3138b92e28037cdeb3ba64ab3df1a9a81a74478d22b67447`
+- ChatGPT-visible direct catalog at that moment: 114
+- direct `structured_data_inspect`: not yet visible
+- `batch_inspect → structured_data_inspect`: PASS
+
+Live installed reads:
+
+- `package.json#/name` → `lconnect-mcp`
+- `mcp-conf.yaml#/health/listen_addr` → `127.0.0.1:18020`
+
+The three-operation live batch (`runtime_catalog` + JSON + YAML) completed in approximately 6.1 ms inner handler time.
+
+## Final result
+
+**PASS — STRUCTURED DATA INSPECTION LIVE VALIDATED**
