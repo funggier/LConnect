@@ -38,3 +38,4 @@
 | [LCN-034](tasks/LCN-034-bounded-read-only-batch-inspection.md) | COMPLETE | Bounded Read-Only Batch Inspection |
 | [LCN-035](tasks/LCN-035-turn-safe-long-operation-observation.md) | COMPLETE | Turn-Safe Long Operation Observation |
 | [LCN-036](tasks/LCN-036-runtime-catalog-visibility.md) | COMPLETE | Runtime Catalog Visibility / Refresh Evidence |
+| [LCN-037](tasks/LCN-037-github-wait-budget-separation.md) | ACTIVE | GitHub Wait Budget Separation |

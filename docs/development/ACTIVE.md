@@ -6,8 +6,8 @@ Last updated: 2026-09-24
 
 - Repository: `funggier/LConnect`
 - Branch: `main`
-- Current implementation candidate: `fea6ba11af78b4a5ba1b8bc5c4437d9b5706c003`
-- Passing implementation CI: `35978697107` — PASS
+- Current implementation candidate: `ac3d4a9a0ff9f10a12dc54df8bba47f900f99aec`
+- Passing implementation CI: `35980718759` — PASS
 - Current source MCP catalog: 113 tools
 - Current installed/runtime catalog: 113 tools
 - Current runtime catalog digest: `d5038c67f856a5eda6b5bc8fd9c70f90108095d2633ba6e82ccc604396084f72`
@@ -23,10 +23,11 @@ Last updated: 2026-09-24
 - LCN-025–030: COMPLETE — Agent Operations Reliability core sequence
 - LCN-035: COMPLETE + LIVE VALIDATED — Turn-Safe Long Operation Observation
 - LCN-036: COMPLETE + LIVE VALIDATED — Runtime Catalog Visibility / Refresh Evidence
+- LCN-037: ACTIVE — GitHub Wait Budget Separation
 
 ## Active task
 
-**NO ACTIVE DEVELOPMENT TASK**
+**LCN-037 — GitHub Wait Budget Separation**
 
 ## Latest completed task
 
@@ -42,4 +43,4 @@ Message-delivery observation: [reports/LCN-20260924-message-delivery-timeout-obs
 
 ## Next action
 
-LCN-036 is complete. The post-refresh attempt did not generate a new `server/discover` request, so the client remained on 112 while `runtime_catalog` proved the daemon remained 113. Next: repair the live `github_run_wait` regression where a 1-second observation window can incorrectly become the timeout for one `gh run view` status fetch. Continue latency/message-delivery mitigation afterward.
+Deploy the CI-green LCN-037 repair to the installed 113-tool runtime, restart LConnect (no plugin refresh required), and requalify `github_run_wait` against a real GitHub Actions run. Then close LCN-037 and continue delivery-layer latency work. Continue latency/message-delivery mitigation afterward.

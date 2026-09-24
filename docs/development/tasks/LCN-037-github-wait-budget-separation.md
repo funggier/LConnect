@@ -1,6 +1,6 @@
 # LCN-037 — GitHub Wait Budget Separation
 
-Status: **ACTIVE**
+Status: **ACTIVE — IMPLEMENTATION GREEN / INSTALLED LIVE VALIDATION PENDING**
 
 ## Goal
 
@@ -36,6 +36,17 @@ Rules:
 - if there is insufficient MCP budget for another safe status fetch, return structured timeout evidence instead of starting a doomed subprocess
 - GitHub workflow is never cancelled
 - no background polling is added
+
+## Current evidence
+
+- implementation: `ac3d4a9a0ff9f10a12dc54df8bba47f900f99aec`
+- targeted GitHub regression: PASS
+- source catalog: 113 tools (unchanged)
+- full local suite: PASS
+- dependency audit: 0 vulnerabilities
+- GitHub Actions: `35980718759` — PASS
+- live source-candidate requalification against real in-progress Actions run: PASS (~1.99s status fetch, structured timeout)
+- live installed-runtime requalification: PENDING
 
 ## Acceptance
 
