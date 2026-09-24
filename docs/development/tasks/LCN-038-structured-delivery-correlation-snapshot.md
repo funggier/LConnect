@@ -1,6 +1,6 @@
 # LCN-038 — Structured Delivery Correlation Snapshot
 
-Status: **ACTIVE — IMPLEMENTATION GREEN / INSTALLED LIVE VALIDATION PENDING**
+Status: **COMPLETE — LIVE VALIDATED**
 
 ## Goal
 
@@ -107,7 +107,9 @@ Add `delivery_snapshot` to the read-only `batch_inspect` allowlist so an older c
 - GitHub Actions: `35982810098` — PASS
 - installed files/source validation: PASS (`PASS tools=114`, delivery smoke PASS, source/install SHA-256 parity)
 - running daemon before restart: 113 tools, PID 5176, digest `d5038c67f856a5eda6b5bc8fd9c70f90108095d2633ba6e82ccc604396084f72`
-- restarted live validation: PENDING
+- restarted runtime: PASS (114 tools, digest `5e9102835c1cb8012140315651e840d51453cfee66e9373d1d0539014318dc0e`)
+- live `batch_inspect → delivery_snapshot`: PASS
+- controlled correlation sample: PASS (caller-minus-handler remainder remained ~2.0–2.2s with queue length 0)
 
 ## Acceptance
 

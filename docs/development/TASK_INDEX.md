@@ -39,4 +39,4 @@
 | [LCN-035](tasks/LCN-035-turn-safe-long-operation-observation.md) | COMPLETE | Turn-Safe Long Operation Observation |
 | [LCN-036](tasks/LCN-036-runtime-catalog-visibility.md) | COMPLETE | Runtime Catalog Visibility / Refresh Evidence |
 | [LCN-037](tasks/LCN-037-github-wait-budget-separation.md) | COMPLETE | GitHub Wait Budget Separation |
-| [LCN-038](tasks/LCN-038-structured-delivery-correlation-snapshot.md) | ACTIVE | Structured Delivery Correlation Snapshot |
+| [LCN-038](tasks/LCN-038-structured-delivery-correlation-snapshot.md) | COMPLETE | Structured Delivery Correlation Snapshot |

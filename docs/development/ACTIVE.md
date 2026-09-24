@@ -9,8 +9,8 @@ Last updated: 2026-09-24
 - Current implementation candidate: `ff12ecb2f167a319a117a27387c81efc71fd7356`
 - Passing implementation CI: `35982810098` — PASS
 - Current source MCP catalog: 114 tools
-- Current installed source catalog: 114 tools
-- Current running daemon catalog: 113 tools — restart required for LCN-038 activation
+- Current installed/runtime catalog: 114 tools
+- Current runtime catalog digest: `5e9102835c1cb8012140315651e840d51453cfee66e9373d1d0539014318dc0e`
 - Current runtime catalog digest: `d5038c67f856a5eda6b5bc8fd9c70f90108095d2633ba6e82ccc604396084f72`
 - Current ChatGPT-visible catalog before plugin refresh: 112 tools — stale schema directly confirmed by `runtime_catalog`
 - LCN-025/026: COMPLETE
@@ -25,11 +25,11 @@ Last updated: 2026-09-24
 - LCN-035: COMPLETE + LIVE VALIDATED — Turn-Safe Long Operation Observation
 - LCN-036: COMPLETE + LIVE VALIDATED — Runtime Catalog Visibility / Refresh Evidence
 - LCN-037: COMPLETE + LIVE VALIDATED — GitHub Wait Budget Separation
-- LCN-038: ACTIVE — Structured Delivery Correlation Snapshot
+- LCN-038: COMPLETE + LIVE VALIDATED — Structured Delivery Correlation Snapshot
 
 ## Active task
 
-**LCN-038 — Structured Delivery Correlation Snapshot**
+**NO ACTIVE DEVELOPMENT TASK**
 
 ## Latest completed task
 
@@ -45,4 +45,4 @@ Message-delivery observation: [reports/LCN-20260924-message-delivery-timeout-obs
 
 ## Next action
 
-LCN-038 source is deployed and validated at 114 tools while the current running daemon remains 113 tools. Restart LConnect, reconnect without requiring direct schema refresh, then validate `batch_inspect → delivery_snapshot` against the restarted runtime. Then use the structured snapshot to continue message-delivery latency localization. Desktop/Browser automation remains deferred.
+LCN-038 is complete. Continue latency localization by separating pre-handler dispatch delay from post-handler response-delivery delay using bounded before/after tunnel metric deltas and handler timestamps. Do not infer exact platform-side causality without a shared request identifier. Then use the structured snapshot to continue message-delivery latency localization. Desktop/Browser automation remains deferred.

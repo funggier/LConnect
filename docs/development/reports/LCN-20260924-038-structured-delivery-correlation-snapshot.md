@@ -2,7 +2,7 @@
 
 ## Result
 
-**IMPLEMENTATION GREEN — INSTALLED LIVE VALIDATION PENDING**
+**PASS — STRUCTURED DELIVERY CORRELATION SNAPSHOT LIVE VALIDATED**
 
 ## Goal
 
@@ -235,4 +235,50 @@ The currently running daemon was independently observed through `batch_inspect �
 
 Therefore the files are deployed at 114 tools while the active process is still the prior 113-tool daemon. One restart/reconnect is required for installed live validation.
 
-Restarted installed live validation: **PENDING**
+## Restarted installed live validation
+
+After restart/reconnect, `batch_inspect → runtime_catalog + delivery_snapshot` observed:
+
+- running process ID: `35212`
+- runtime start: `2026-09-24T09:47:48.618Z`
+- runtime tool count: 114
+- runtime catalog digest: `5e9102835c1cb8012140315651e840d51453cfee66e9373d1d0539014318dc0e`
+- ChatGPT-visible direct catalog at that moment: 113
+- direct `delivery_snapshot`: not yet visible
+- `batch_inspect → delivery_snapshot`: PASS
+
+The first live snapshot completed in approximately 26.4 ms inner handler time and successfully reported runtime health/metrics.
+
+### Controlled correlation sample
+
+Telemetry was cleared, then one real `github_run_wait(wait_seconds=0)` was executed, followed by `batch_inspect → delivery_snapshot`.
+
+GitHub call:
+
+- caller wall: 4446 ms
+- handler: 2423 ms
+- completed: true
+- error: false
+- approximate caller-minus-handler remainder: 2023 ms
+
+Delivery snapshot call:
+
+- caller wall: 2221 ms
+- inner `delivery_snapshot` handler: 5.458 ms
+- batch handler: 5.463 ms
+- approximate caller-minus-handler remainder: 2215 ms
+
+Snapshot tunnel state:
+
+- tools/call enqueue_to_response: count 1, average 467 ms
+- tools/call poll_to_response: count 3, average 1116 ms
+- response POST: count 3, average 291.591 ms
+- queue length: 0
+- worker occupancy/capacity: 1 / 10
+- commands enqueued/polled: 4 / 4
+
+These tunnel metrics are cumulative and do not prove an exact per-request decomposition. However, the controlled sample strongly reinforces that material caller latency remains outside the local LConnect handler, while no local queue pressure was present.
+
+## Final result
+
+**PASS — STRUCTURED DELIVERY CORRELATION SNAPSHOT LIVE VALIDATED**
