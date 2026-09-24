@@ -4,15 +4,17 @@ Last updated: 2026-09-24
 
 ## Overall
 
-Current project state: **BASIC CORE STABLE / DELIVERY RELIABILITY BOUNDED / EXECUTION ERGONOMICS ACTIVE**
+Current project state: **BASIC CORE STABLE / DELIVERY RELIABILITY BOUNDED / EXECUTION ERGONOMICS COMPLETE AT CURRENT NEED / v1.2.0 RELEASE PREPARATION ACTIVE**
 
 Current published release: **v1.1.0 — Expanded Tools & First-Run Guide**
 
-Current main/source MCP catalog: **119 tools** (LCN-043 candidate)
+Release candidate in preparation: **v1.2.0 — Reliability & Verification**
 
-Current installed/runtime MCP catalog: **119 tools**
+Current main/source MCP catalog: **120 tools** (LCN-044 / v1.2.0 candidate)
 
-Current ChatGPT-visible MCP catalog: **119 tools**
+Current installed/running MCP catalog before final deployment: **119 tools**
+
+Current ChatGPT-visible MCP catalog before final deployment/refresh: **119 tools**
 
 LConnect มี Core ที่ใช้งานจริงแล้วและผ่าน runtime acceptance บน Windows:
 
@@ -27,7 +29,7 @@ LConnect มี Core ที่ใช้งานจริงแล้วแล�
 - Thai documentation
 - GitHub releases
 
-Agent Operations Reliability ชุด LCN-025–030 ปิดครบแล้ว ปัจจุบันกลับมาเดิน latency/message-delivery mitigation ควบคู่กับ execution ergonomics โดยยังคงหลัก deterministic structured primitives และไม่ย้าย workflow ownership เข้า LConnect; Desktop/Browser automation ยังพักไว้
+Agent Operations Reliability LCN-025–030 ปิดครบ, Delivery/Turn Reliability LCN-031–039 ปิดที่ evidence boundary ปัจจุบัน และ Execution Ergonomics LCN-040–044 ปิดที่ current need หลัง Deployment Verification Snapshot ผ่าน local acceptance; ขณะนี้กำลังเตรียม v1.2.0 release โดย Desktop/Browser automation ยังพักไว้
 
 ## Workstream status
 
@@ -39,7 +41,7 @@ Agent Operations Reliability ชุด LCN-025–030 ปิดครบแล้
 | Observation | COMPLETE | LCN-015–017 | Log Tail + File Watcher + Scheduled Tasks complete |
 | Agent Operations Reliability | COMPLETE | LCN-025–034 | LCN-025–030 and LCN-031–034 complete |
 | Delivery / Turn Reliability | COMPLETE AT CURRENT LOCAL EVIDENCE BOUNDARY | LCN-031–039 | LCN-039 localized normal low-cost calls: ~0.42 ms handler, ~300 ms local poll→response, ~865 ms average outside local metric scope |
-| Execution Ergonomics | ACTIVE | LCN-040+ | LCN-043 complete + live validated; deterministic structured primitives continue |
+| Execution Ergonomics | COMPLETE AT CURRENT NEED | LCN-040–044 | LCN-044 Deployment Verification Snapshot local implementation green; final installed live validation is part of v1.2.0 release gate |
 | Desktop Control | DEFERRED | LCN-018–020 | Explicitly paused |
 | Browser Automation | DEFERRED | LCN-021–023 | Explicitly paused |
 
@@ -401,9 +403,9 @@ Purpose:
 - enforce a strict read-only allowlist
 - bound per-result and total output
 
-Current local candidate:
+LCN-034 completion evidence (historical):
 
-- catalog: 98 tools
+- catalog at that task: 98 tools
 - targeted batch tests: PASS
 - full local suite: PASS
 - dependency audit: 0 vulnerabilities
@@ -454,7 +456,9 @@ LCN-029 Exact Git Ref / Ancestry Safety — COMPLETE
   ↓
 LCN-030 GitHub Actions / Release Integration — COMPLETE
   ↓
-Execution Ergonomics — NEXT
+LCN-040–044 Execution Ergonomics — COMPLETE AT CURRENT NEED
+  ↓
+LCN-045 v1.2.0 Documentation & Release — ACTIVE
   ↓
 LCN-018 Clipboard — DEFERRED
   ↓
@@ -469,18 +473,18 @@ LCN-022 Firefox Adapter — DEFERRED
 LCN-023 Chrome Adapter — DEFERRED
 ```
 
-## Planned reliability phase
+## Completed Agent Operations Reliability plan
 
 Detailed plan:
 
 [AGENT_OPERATIONS_RELIABILITY_PLAN.md](AGENT_OPERATIONS_RELIABILITY_PLAN.md)
 
-Scope is intentionally limited to six capability groups: LCN-025–030. Event Log, archive, registry and additional desktop/system extras are not part of this phase.
+The original six capability groups LCN-025–030 are complete. Follow-up delivery/turn reliability LCN-031–039 is also complete at the current local evidence boundary; Execution Ergonomics LCN-040–044 is complete at current need.
 
 ## Current known constraints
 
 - Tool calls that block too long can be cut by an upstream caller timeout; long-running work should use session/job-style patterns.
-- Repeated 10-second polling inside one long assistant turn has now correlated with a user-visible message-delivery timeout even though LConnect/tunnel responses remained healthy; avoid that polling pattern while latency work is deferred.
+- Repeated long polling inside one assistant turn correlated with user-visible message-delivery timeout; LCN-031–039 now provide bounded waits, telemetry and local delivery evidence, so avoid returning to repeated long polling unless new evidence warrants reopening that workstream.
 - `/readyz` is not proof that stdio MCP RPC is healthy.
 - tunnel configuration remains local-only and must never be committed.
 - Browser automation must not depend on Edge.

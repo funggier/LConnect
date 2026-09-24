@@ -90,11 +90,27 @@ LConnect รุ่นปัจจุบันใช้ PowerShell-hosted `netsta
 
 Node ESM modules ถูกโหลดตอน Core start
 
-ดังนั้น:
+แยกสถานะ 3 ชั้นให้ชัด:
 
-1. Stop LConnect
-2. Start LConnect ใหม่
-3. ถ้า tool schema เปลี่ยน ให้ refresh connector/plugin
+1. **source/installed files** — ใช้ `deployment_verification_snapshot` หรือ `compare_directories`
+2. **running daemon catalog** — ใช้ `runtime_catalog`
+3. **ChatGPT-visible schema** — ต้อง refresh connector/plugin เมื่อ tool schema เปลี่ยน
+
+กรณีที่พบบ่อย:
+
+- source/installed เป็น catalog ใหม่ แต่ daemon ยังเก่า → Stop/Start LConnect
+- daemon เป็น catalog ใหม่ แต่ ChatGPT ยังเห็น tool เก่า → Refresh Plugin/Connector
+- source↔installed tracked parity ไม่ตรง → แก้ deployment ก่อน restart
+
+สำหรับ v1.2.0 baseline runtime ที่ activation สำเร็จควรรายงาน version `1.2.0` และ **120 tools**
+
+ดังนั้นเมื่ออัปเดต source:
+
+1. ตรวจ source↔installed parity
+2. Stop LConnect
+3. Start LConnect ใหม่
+4. ตรวจ `runtime_catalog`
+5. ถ้า tool schema เปลี่ยน ให้ refresh connector/plugin
 
 ## Start-LConnect บอกว่า mcp-conf.yaml หาย
 

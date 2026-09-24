@@ -132,8 +132,9 @@ npm test
 4. อัปเดต `docs/TOOLS_TH.md`
 5. `npm run check`
 6. `npm test`
-7. restart LConnect
-8. refresh ChatGPT connector/plugin ถ้า schema เปลี่ยน
+7. ถ้าเป็น deployment/release ให้ใช้ `deployment_verification_snapshot` ตรวจ source↔installed/package/dependency/preserved/runtime evidence
+8. restart LConnect เมื่อ source ที่ installed เปลี่ยน
+9. refresh ChatGPT connector/plugin ถ้า schema เปลี่ยน
 
 ## Tunnel configuration
 
@@ -157,13 +158,16 @@ Roadmap expansion รุ่นปัจจุบันอยู่ที่:
 - [development/STATUS.md](development/STATUS.md)
 - [development/TASK_INDEX.md](development/TASK_INDEX.md)
 
-ลำดับหลักที่อนุมัติแล้วคือ System Foundation → Developer Foundation → Observation → Agent Operations Reliability (LCN-025–030) → Desktop Control → Browser Automation
+ลำดับที่ทำเสร็จแล้วคือ System Foundation → Developer Foundation → Observation → Agent Operations Reliability → Delivery/Turn Reliability → Execution Ergonomics
 
 Agent Operations Reliability plan:
 
 - [development/AGENT_OPERATIONS_RELIABILITY_PLAN.md](development/AGENT_OPERATIONS_RELIABILITY_PLAN.md)
-- เน้น 6 กลุ่มเท่านั้น: wait session, process output cursor, text search, file integrity, exact Git refs/ancestry, GitHub Actions/Release
-- ทำชุดนี้ให้ complete ก่อนเริ่ม Desktop/Browser implementation
+- LCN-025–030 complete แล้ว
+- Reliability/diagnostic follow-up LCN-031–039 complete ที่ evidence boundary ปัจจุบัน
+- Execution Ergonomics LCN-040–044 complete at current need โดยเพิ่มเฉพาะ deterministic primitives ที่เกิดจาก pain point จริง เช่น structured data/directory inspection, Git/GitHub exact verification และ deployment verification
+
+Desktop Control (LCN-018–020) และ Browser Automation (LCN-021–023) ยัง **DEFERRED** จนมีการเปิด scope ใหม่โดยชัดเจน
 
 Browser direction:
 

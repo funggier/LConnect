@@ -1,6 +1,6 @@
 # LCN-022 — Firefox Adapter
 
-Status: **PLANNED**
+Status: **DEFERRED**
 
 ## Goal
 

@@ -1,6 +1,6 @@
 # รายการ Tools ของ LConnect
 
-LConnect Core บน current `main` expose 98 tools ผ่าน MCP `main` channel เดียว (published v1.1.0 มี 91 tools)
+LConnect v1.2.0 บน current `main` expose **120 tools** ผ่าน MCP `main` channel เดียว
 
 ## Filesystem
 
@@ -223,6 +223,20 @@ soft reconcile สำหรับ transient state ของ LConnect ที่�
 list process sessions ที่ LConnect instance ปัจจุบันรู้จัก
 
 session อยู่ใน memory และหายเมื่อ restart LConnect
+
+### session_status
+
+อ่านสถานะ session เดียวแบบ compact/non-blocking โดยไม่ต้อง list ทุก session
+
+เหมาะกับการเช็ก long-running process ระหว่าง turn:
+
+- exact `session_id`
+- running/terminal state
+- exit code/signal
+- started/completed timestamps
+- optional bounded output tail
+
+ค่า default ไม่คืน output เพื่อให้ payload เล็ก
 
 ## Process Advanced
 
@@ -980,6 +994,129 @@ arguments:
 - `all`
 - `cwd`
 
+## Structured Search / Integrity
+
+### search_text
+
+ค้นข้อความแบบ recursive โดยไม่ต้องเรียก PowerShell/`findstr`/`rg`
+
+รองรับ literal/regex, include/exclude patterns, context lines, Unicode/Thai และ bounds สำหรับ files/bytes/matches/output
+
+### file_hash / compare_files
+
+คำนวณ digest แบบ streaming และเปรียบเทียบไฟล์สองชุดด้วย structured evidence
+
+ใช้สำหรับ source↔installed parity, artifact verification และ recovery evidence
+
+## Runtime / Delivery Evidence
+
+### runtime_catalog
+
+รายงาน catalog ที่ daemon **กำลังรันจริง**:
+
+- version
+- PID
+- runtime start time
+- working directory
+- tool count
+- stable SHA-256 digest ของชื่อ tools
+- optional sorted tool names
+
+ใช้แยกกรณี source/install ถูกอัปเดตแล้วแต่ ChatGPT/plugin schema หรือ daemon ยังเป็น catalog เก่า
+
+### delivery_snapshot
+
+รวม bounded local delivery evidence จาก runtime health/metrics และ LConnect telemetry เพื่อช่วยแยก handler time, tunnel queue/response metrics และ runtime identity
+
+เป็น observation tool ไม่ใช่ root-cause predictor ของ ChatGPT UI timeout
+
+## Structured Data / Directory Verification
+
+### structured_data_inspect
+
+อ่าน node ที่ต้องการจาก JSON/YAML/TOML ด้วย RFC 6901 JSON Pointer โดยไม่ต้องอ่านทั้งไฟล์เข้าคำตอบ
+
+มี bounds สำหรับ file size, depth, container members, string length และ output
+
+### directory_manifest
+
+สร้าง deterministic streamed-hash manifest ของ directory tree ที่เลือก พร้อม include/exclude patterns, stability evidence และ bounded diagnostics
+
+### compare_directories
+
+เทียบสอง directory manifests ด้วย relative path + size + digest
+
+ถ้า scan/hash ไม่ครบหรือ unstable จะคืน `comparison_reliable=false` และ `equal=null` แทนการสรุปเกินหลักฐาน
+
+## Git Verification
+
+### git_remote_ref
+
+อ่าน exact remote ref SHA ด้วย full ref identity
+
+### git_is_ancestor
+
+ตรวจ exact commit ancestry แบบ structured
+
+### git_push_ref
+
+push exact SHA ไป exact ref โดยรักษา non-force / fast-forward safety contract
+
+### git_sync_status
+
+รวม local HEAD, working tree, cached tracking ref และ **exact remote ref จาก ls-remote** ใน call เดียวโดยไม่ fetch
+
+แยก sync state เช่น:
+
+- `equal`
+- `local_ahead`
+- `remote_ahead`
+- `diverged`
+- `remote_object_not_local`
+- `remote_ref_missing`
+
+## GitHub Actions / Release
+
+### github_run_list
+
+list Actions runs แบบ structured/bounded
+
+### github_commit_run_status
+
+หา Actions run จาก **exact 40-hex commit SHA** แล้วเลือก latest deterministic match พร้อม expand jobs/steps ใน call เดียว
+
+เป็น network-backed direct tool และตั้งใจ **ไม่** allowlist ใน `batch_inspect`
+
+### github_run_view / github_run_wait / github_run_failed_logs
+
+อ่าน run/job/step evidence, short bounded wait และ failed logs
+
+`github_run_wait` ใช้ short wait window แยกจาก status-fetch timeout และไม่ cancel workflow
+
+### github_workflow_dispatch
+
+dispatch exact workflow/ref พร้อม explicit inputs
+
+### github_release_view / github_release_download
+
+อ่าน release metadata/assets และ download exact asset แบบ bounded พร้อม local SHA-256 evidence
+
+## Deployment Verification
+
+### deployment_verification_snapshot
+
+รวม post-deploy evidence ใน direct read-only call เดียว:
+
+- exact Git-tracked source↔installed file parity
+- streamed manifest digests
+- source/installed package version parity
+- direct dependency declarations + installed dependency presence/version
+- preserved local paths เช่น `mcp-conf.yaml`, `node_modules`, `logs`, `runtime`
+- running runtime version/PID/working directory/tool count/catalog digest
+- optional expected tool-count match
+
+tool นี้ **ไม่ copy/install/restart/refresh/release** และไม่ตัดสินว่า deployment หรือ release “ปลอดภัยพอ” — ChatGPT/operator ยังคงเป็น workflow owner
+
 ## Batch Inspection
 
 ### batch_inspect
@@ -1000,16 +1137,19 @@ arguments:
 - `tool`
 - `arguments`
 
-เฉพาะ allowlisted read-only tools เท่านั้น เช่น:
+เฉพาะ allowlisted **local read-only** tools เท่านั้น เช่น:
 
 - filesystem read/inspection
 - session/system/process inspection
 - services/network/hardware read
-- Git read
+- Git read รวม `git_sync_status`
+- structured inspection เช่น `structured_data_inspect`, `directory_manifest`, `compare_directories`
 - project/build-system detection
 - log/watch event read
 - Scheduled Task read
 - PATH/which
+
+Network-backed read-only tools เช่น `github_commit_run_status` ตั้งใจไม่อยู่ใน batch allowlist เพื่อรักษา contract ของ `batch_inspect` ให้เป็น local bounded inspection
 
 ไม่อนุญาต mutation/execution เช่น:
 

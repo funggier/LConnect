@@ -1,6 +1,6 @@
 # LCN-018 — Clipboard
 
-Status: **PLANNED**
+Status: **DEFERRED**
 
 ## Goal
 

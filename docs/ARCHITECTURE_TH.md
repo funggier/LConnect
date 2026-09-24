@@ -23,7 +23,9 @@ main MCP channel
 lconnect-mcp.mjs
    |
    +-- modules/config.mjs
+   +-- modules/version.mjs
    +-- modules/runtime.mjs
+   +-- modules/runtime-catalog.mjs
    +-- modules/filesystem.mjs
    +-- modules/shell.mjs
    +-- modules/process.mjs
@@ -32,6 +34,7 @@ lconnect-mcp.mjs
    +-- modules/network.mjs
    +-- modules/hardware.mjs
    +-- modules/git.mjs
+   +-- modules/github.mjs
    +-- modules/development.mjs
    +-- modules/http.mjs
    +-- modules/log-tail.mjs
@@ -40,8 +43,15 @@ lconnect-mcp.mjs
    +-- modules/transient-state.mjs
    +-- modules/system.mjs
    +-- modules/environment.mjs
+   +-- modules/structured-text-search.mjs
+   +-- modules/file-integrity.mjs
+   +-- modules/structured-data-inspection.mjs
+   +-- modules/directory-integrity.mjs
+   +-- modules/deployment-verification.mjs
+   +-- modules/delivery-snapshot.mjs
    +-- modules/telemetry.mjs
    +-- modules/batch-inspect.mjs
+   +-- modules/path-utils.mjs
 ```
 
 ## เหตุผลที่ใช้ main channel เดียว
@@ -60,12 +70,16 @@ ChatGPT tool discovery ทำงานกับ MCP catalog ที่อยู�
 
 `lconnect-mcp.mjs` มีหน้าที่:
 
-1. โหลด config
-2. สร้าง MCP server
-3. register modules
-4. connect ผ่าน stdio transport
+1. อ่าน product version จาก `package.json` ผ่าน `modules/version.mjs`
+2. โหลด config
+3. สร้าง MCP server
+4. install runtime catalog/telemetry hooks
+5. register modules
+6. connect ผ่าน stdio transport
 
 Core ไม่ควรมี implementation รายละเอียดของแต่ละ capability มากเกินไป
+
+Product/runtime version ใช้ `package.json` เป็น source of truth เดียว เพื่อไม่ให้ MCP server version, runtime catalog และ startup log drift จาก package metadata
 
 ## Module contract
 

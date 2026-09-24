@@ -696,7 +696,7 @@ https://chatgpt.com/#settings/Connectors
 3. กลับเข้า ChatGPT
 4. Refresh connector/plugin หากจำเป็น
 
-LConnect v1.1.0 baseline มี **91 tools**
+LConnect v1.2.0 baseline มี **120 tools**
 
 หลัง refresh ที่ถูกต้อง ChatGPT ควร discover catalog รุ่นใหม่
 
@@ -741,17 +741,12 @@ npm test
 
 `npm test` เปิด child MCP server จริงและทดสอบ integration fixtures
 
-สำหรับ published LConnect v1.1.0 baseline คาดว่าจะเห็น:
+สำหรับ LConnect v1.2.0 release baseline คาดว่าจะเห็น:
 
 ```text
-PASS tools=91
+PASS tools=120
 ```
 
-สำหรับ current `main` หลัง LCN-025/026 คาดว่าจะเห็น:
-
-```text
-PASS tools=96
-```
 
 หมายเหตุ: destructive/system mutation บางประเภทถูกทดสอบเต็มรูปแบบบน disposable CI environment ส่วน local tests จะหลีกเลี่ยงการเปลี่ยน service/task จริงโดยไม่จำเป็น
 

@@ -388,3 +388,26 @@ It preserves local configuration, tunnel client, dependencies, source, Scheduled
 **Decision:** ChatGPT must specify every operation upfront. LConnect does not branch, loop, plan, retry autonomously or continue work on its own.
 
 **Why:** LCN-033 measured approximately 96.7% of sampled caller wall time outside LConnect handlers. Avoiding multiple MCP round trips can save materially more time than further optimizing handlers already completing in milliseconds.
+---
+
+## D-033 — package.json is the single product/runtime version source
+
+**Decision:** LConnect product/runtime version is read from `package.json` through `modules/version.mjs`.
+
+**Decision:** The same value feeds MCP server metadata, `runtime_catalog` and startup logging.
+
+**Why:** v1.2.0 release preparation found the product version duplicated in multiple runtime locations. A single source prevents package/runtime/startup drift across future releases.
+
+**Validation:** `tests/version-smoke.mjs` asserts that the runtime version source matches `package.json`.
+
+---
+
+## D-034 — Deployment verification is evidence, not workflow ownership
+
+**Decision:** `deployment_verification_snapshot` may combine deterministic read-only deployment evidence in one call: Git-tracked source↔installed parity, package/dependency evidence, preserved local paths and running runtime identity/catalog.
+
+**Decision:** The snapshot does not copy files, install dependencies, restart/refresh LConnect, tag, publish, or decide whether deployment/release should proceed.
+
+**Why:** Post-deploy verification was repeated after nearly every reliability/ergonomics task. Combining those observations reduces round trips while preserving the invariant that ChatGPT/operator owns workflow and release decisions.
+
+**Boundary:** Local-only configuration may be checked for existence/type, but secret contents are not read into the snapshot.

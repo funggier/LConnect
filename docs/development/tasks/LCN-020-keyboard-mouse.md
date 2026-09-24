@@ -1,6 +1,6 @@
 # LCN-020 — Keyboard / Mouse
 
-Status: **PLANNED**
+Status: **DEFERRED**
 
 ## Goal
 

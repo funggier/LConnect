@@ -1,6 +1,6 @@
 # LCN-023 — Chrome Adapter
 
-Status: **PLANNED**
+Status: **DEFERRED**
 
 ## Goal
 

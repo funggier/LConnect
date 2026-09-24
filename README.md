@@ -10,12 +10,12 @@
 
 ## สถานะปัจจุบัน
 
-- Source version: **1.1.0**
-- MCP catalog on current `main`: **98 tools**
-- Latest published release `v1.1.0`: **91 tools**
+- Source version: **1.2.0**
+- MCP catalog on current `main`: **120 tools**
+- v1.2.0 release baseline: **120 tools**
 - OpenAI tunnel-client minimum: **0.0.14**
 
-LConnect Core ผ่าน runtime acceptance บน Windows 10 แล้ว โดย current `main` แสดง 98 tools และทดสอบจริงทั้ง filesystem, PowerShell, process/session, stdin, process-tree termination และ listening ports
+LConnect Core ผ่าน runtime acceptance บน Windows 10 แล้ว โดย current `main` แสดง 120 tools ครอบคลุม filesystem, shell, managed process/session, system/network/hardware, Git, GitHub Actions/Release, structured inspection, runtime/delivery evidence และ deployment verification
 
 ## โครงสร้าง
 
@@ -140,6 +140,7 @@ npm test
 - `write_process_input`
 - `terminate_process`
 - `list_sessions`
+- `session_status`
 - `refresh_state`
 
 ### Environment
@@ -191,6 +192,33 @@ npm test
 - `git_pull`
 - `git_push`
 - `git_worktree`
+- `git_remote_ref`
+- `git_is_ancestor`
+- `git_push_ref`
+- `git_sync_status`
+
+### Structured Inspection / Integrity
+- `search_text`
+- `file_hash`
+- `compare_files`
+- `structured_data_inspect`
+- `directory_manifest`
+- `compare_directories`
+- `deployment_verification_snapshot`
+
+### GitHub Actions / Release
+- `github_run_list`
+- `github_commit_run_status`
+- `github_run_view`
+- `github_run_wait`
+- `github_run_failed_logs`
+- `github_workflow_dispatch`
+- `github_release_view`
+- `github_release_download`
+
+### Runtime / Delivery Evidence
+- `runtime_catalog`
+- `delivery_snapshot`
 
 ### Development
 - `detect_project`

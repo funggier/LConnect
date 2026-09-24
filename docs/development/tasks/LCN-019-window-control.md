@@ -1,6 +1,6 @@
 # LCN-019 — Window Control
 
-Status: **PLANNED**
+Status: **DEFERRED**
 
 ## Goal
 

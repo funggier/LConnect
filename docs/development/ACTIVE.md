@@ -6,49 +6,49 @@ Last updated: 2026-09-24
 
 - Repository: `funggier/LConnect`
 - Branch: `main`
-- Current implementation candidate: `3684ca90b027a9dff4f083bad1aedfa13141a4a3`
-- Passing implementation CI: `35998083970` — PASS
-- Current source MCP catalog: 119 tools (LCN-043 candidate)
-- Current installed/runtime catalog: 119 tools
-- Current runtime catalog digest: `70defc3f611d28c65eead0900a6976185e5c167e73e718b3eb707ecff9dd57a1`
-- Current ChatGPT-visible catalog: 119 tools
-- Current runtime catalog digest: `3a4b6651ee0c2cdab802907f5a5ac7609e958579bee5a0a39c982a7ac3ae28a8`
-- Current ChatGPT-visible catalog: 114 tools (plugin not refreshed after LCN-040 activation)
-- LCN-025/026: COMPLETE
-- LCN-031/032: COMPLETE
-- LCN-033: COMPLETE — live telemetry measured approximately 96.7% sampled wall time outside handlers
-- LCN-034: COMPLETE + LIVE VALIDATED — five equivalent individual reads measured 9963 ms caller wall versus 2667 ms through one `batch_inspect` call (approximately 73.2% reduction)
-- LCN-027: COMPLETE — Structured Text Search
-- LCN-028: COMPLETE — File Integrity
-- LCN-029: COMPLETE — Exact Git Ref / Ancestry Safety
-- LCN-030: COMPLETE — GitHub Actions / Release Integration
-- LCN-025–030: COMPLETE — Agent Operations Reliability core sequence
-- LCN-035: COMPLETE + LIVE VALIDATED — Turn-Safe Long Operation Observation
-- LCN-036: COMPLETE + LIVE VALIDATED — Runtime Catalog Visibility / Refresh Evidence
-- LCN-037: COMPLETE + LIVE VALIDATED — GitHub Wait Budget Separation
-- LCN-038: COMPLETE + LIVE VALIDATED — Structured Delivery Correlation Snapshot
-- LCN-039: COMPLETE — Local Delivery Phase Localization
-- LCN-040: COMPLETE + LIVE VALIDATED — Structured Data Inspection
-- LCN-041: COMPLETE + LIVE VALIDATED — Directory Manifest and Comparison
-- LCN-042: COMPLETE + LIVE VALIDATED — Git Sync Verification
-- LCN-043: COMPLETE + LIVE VALIDATED — Exact Commit GitHub CI Correlation
+- Release candidate: **v1.2.0 — Reliability & Verification**
+- Current release-candidate implementation: working tree pending final commit
+- Last passing implementation CI: `35998083970` — PASS (LCN-043 baseline)
+- Current source version: 1.2.0
+- Current source MCP catalog: 120 tools
+- Current installed/running catalog before final deployment: 119 tools
+- Current ChatGPT-visible catalog before final deployment/refresh: 119 tools
+- Current running runtime digest: `70defc3f611d28c65eead0900a6976185e5c167e73e718b3eb707ecff9dd57a1`
+- LCN-025–030: COMPLETE — Agent Operations Reliability
+- LCN-031–039: COMPLETE AT CURRENT LOCAL EVIDENCE BOUNDARY — Delivery / Turn Reliability
+- LCN-040–043: COMPLETE + LIVE VALIDATED — Execution Ergonomics primitives
+- LCN-044: ACTIVE — Deployment Verification Snapshot; local implementation green
+- LCN-045: ACTIVE — v1.2.0 Documentation and Release
+- LCN-018–023: DEFERRED — Desktop Control / Browser Automation
 
-## Active task
+## Active tasks
 
-**NO ACTIVE DEVELOPMENT TASK**
+### LCN-044 — Deployment Verification Snapshot
+
+Status: **ACTIVE — LOCAL IMPLEMENTATION GREEN / FINAL CI + INSTALLED LIVE VALIDATION PENDING**
+
+Task: [tasks/LCN-044-deployment-verification-snapshot.md](tasks/LCN-044-deployment-verification-snapshot.md)
+
+Report: [reports/LCN-20260924-044-deployment-verification-snapshot.md](reports/LCN-20260924-044-deployment-verification-snapshot.md)
+
+### LCN-045 — v1.2.0 Documentation and Release
+
+Status: **ACTIVE — RELEASE CANDIDATE PREPARATION**
+
+Task: [tasks/LCN-045-v1.2.0-documentation-release.md](tasks/LCN-045-v1.2.0-documentation-release.md)
+
+Report: [reports/LCN-20260924-045-v1.2.0-documentation-release.md](reports/LCN-20260924-045-v1.2.0-documentation-release.md)
 
 ## Latest completed task
 
-### LCN-039 — Local Delivery Phase Localization
+### LCN-043 — Exact Commit GitHub CI Correlation
 
-Status: **COMPLETE**
+Status: **COMPLETE + LIVE VALIDATED**
 
-Task: [tasks/LCN-039-local-delivery-phase-localization.md](tasks/LCN-039-local-delivery-phase-localization.md)
+Task: [tasks/LCN-043-exact-commit-github-ci-correlation.md](tasks/LCN-043-exact-commit-github-ci-correlation.md)
 
-Report: [reports/LCN-20260924-039-local-delivery-phase-localization.md](reports/LCN-20260924-039-local-delivery-phase-localization.md)
-
-Message-delivery observation: [reports/LCN-20260924-message-delivery-timeout-observation.md](reports/LCN-20260924-message-delivery-timeout-observation.md)
+Report: [reports/LCN-20260924-043-exact-commit-github-ci-correlation.md](reports/LCN-20260924-043-exact-commit-github-ci-correlation.md)
 
 ## Next action
 
-LCN-043 is complete and live validated at 119 tools. Continue execution ergonomics with the next evidence-backed deterministic primitive; delivery-latency work remains closed at the current local evidence boundary unless new correlated evidence appears.
+Finish the current-facing documentation sweep, run the final v1.2.0 local suite/audit, commit and push the exact release candidate, require exact-commit GitHub CI PASS, deploy tracked source to the installed runtime, restart/refresh, validate `deployment_verification_snapshot` live at 120 tools, then publish and verify the v1.2.0 tag/release asset.

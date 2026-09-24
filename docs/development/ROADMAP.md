@@ -279,6 +279,64 @@ The phase is complete only after LCN-025–030 pass local runtime acceptance and
 
 ---
 
+# Phase 4A — Delivery / Turn Reliability — COMPLETE AT CURRENT LOCAL EVIDENCE BOUNDARY
+
+LCN-031–039 addressed bounded synchronous execution, delivery telemetry, runtime/catalog visibility and local latency localization without turning LConnect into a workflow runtime.
+
+Completed capabilities include:
+
+- MCP synchronous request containment
+- HTTP hard-settle timeout evidence
+- general tool-handler telemetry
+- bounded read-only batch inspection
+- turn-safe long-operation observation
+- runtime catalog / plugin-refresh evidence
+- GitHub wait-budget separation
+- structured delivery correlation snapshot
+- local delivery phase localization
+
+Current decision: do not add speculative timeout/retry layers. Reopen only when a reproducible incident or a new cross-boundary tracing primitive provides new evidence.
+
+---
+
+# Phase 4B — Execution Ergonomics — COMPLETE AT CURRENT NEED
+
+LCN-040–044 added deterministic structured primitives only where repeated real work showed a concrete round-trip or evidence gap:
+
+## LCN-040 Structured Data Inspection
+
+- `structured_data_inspect`
+- bounded JSON/YAML/TOML inspection through RFC 6901 JSON Pointer
+
+## LCN-041 Directory Manifest and Comparison
+
+- `directory_manifest`
+- `compare_directories`
+- deterministic streamed tree-digest/parity evidence
+
+## LCN-042 Git Sync Verification
+
+- `git_sync_status`
+- exact remote state versus local HEAD/tracking state without implicit fetch
+
+## LCN-043 Exact Commit GitHub CI Correlation
+
+- `github_commit_run_status`
+- exact commit → Actions run/jobs/steps in one bounded network-backed direct call
+
+## LCN-044 Deployment Verification Snapshot
+
+- `deployment_verification_snapshot`
+- tracked source↔installed parity, package/dependency evidence, preserved local paths and running runtime catalog in one bounded read-only snapshot
+
+Execution Ergonomics is not an open-ended request to add more tools. Additional work should be created only when a repeated real workflow exposes a deterministic capability/evidence gap that existing tools or `batch_inspect` cannot address cleanly.
+
+## Release checkpoint — LCN-045 / v1.2.0
+
+After LCN-044, publish **v1.2.0 — Reliability & Verification** from one exact release candidate with 120 tools, final CI, installed-runtime verification, reproducible Git archive and post-publication asset/tag verification.
+
+---
+
 # Phase 5 — Desktop Control
 
 ## LCN-018 Clipboard

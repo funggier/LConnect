@@ -116,6 +116,13 @@ npm test
 
 ดังนั้นเมื่อแก้ production module แล้วให้:
 
-1. `Stop-LConnect.cmd`
-2. `Start-LConnect.cmd`
-3. refresh ChatGPT connector/plugin ถ้า tool schema เปลี่ยน
+1. sync/deploy tracked source ไป installed directory โดย preserve local-only config/runtime ตามนโยบายของ installation
+2. ใช้ `deployment_verification_snapshot` ตรวจ tracked parity, package/dependency evidence และ preserved paths ก่อน restart
+3. `Stop-LConnect.cmd`
+4. `Start-LConnect.cmd`
+5. เรียก `runtime_catalog` หรือ `deployment_verification_snapshot` ยืนยัน running version/catalog/root
+6. refresh ChatGPT connector/plugin ถ้า tool schema เปลี่ยน
+
+สำหรับ v1.2.0 baseline คาดว่า source/runtime catalog หลัง activation จะเป็น **120 tools**
+
+`deployment_verification_snapshot` เป็น evidence-only tool: มันไม่ copy/install/restart/release และไม่ตัดสินแทนผู้ใช้ว่า deployment พร้อมหรือไม่

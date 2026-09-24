@@ -1,6 +1,6 @@
 # LCN-021 — Browser Common Layer
 
-Status: **PLANNED**
+Status: **DEFERRED**
 
 ## Goal
 
