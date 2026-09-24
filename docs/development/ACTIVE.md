@@ -9,8 +9,8 @@ Last updated: 2026-09-24
 - Current implementation candidate: `1f83e23450b6c773358920dea53d6555a4f60e15`
 - Passing implementation CI: `35996073922` — PASS
 - Current source MCP catalog: 118 tools (LCN-042 candidate)
-- Current installed source catalog: 118 tools
-- Current running daemon catalog: 117 tools — restart required for LCN-042 activation
+- Current installed/runtime catalog: 118 tools
+- Current runtime catalog digest: `3a4b6651ee0c2cdab802907f5a5ac7609e958579bee5a0a39c982a7ac3ae28a8`
 - Current runtime catalog digest: `b44e9a4acdf1c83e7243d5374ca1c9c4629205fc30fb305419764251ebdc416e`
 - Current runtime catalog digest: `cd018b4780f6ed2d3138b92e28037cdeb3ba64ab3df1a9a81a74478d22b67447`
 - Current ChatGPT-visible catalog: 114 tools (plugin not refreshed after LCN-040 activation)
@@ -30,11 +30,11 @@ Last updated: 2026-09-24
 - LCN-039: COMPLETE — Local Delivery Phase Localization
 - LCN-040: COMPLETE + LIVE VALIDATED — Structured Data Inspection
 - LCN-041: COMPLETE + LIVE VALIDATED — Directory Manifest and Comparison
-- LCN-042: ACTIVE — Git Sync Verification
+- LCN-042: COMPLETE + LIVE VALIDATED — Git Sync Verification
 
 ## Active task
 
-**LCN-042 — Git Sync Verification**
+**NO ACTIVE DEVELOPMENT TASK**
 
 ## Latest completed task
 
@@ -50,4 +50,4 @@ Message-delivery observation: [reports/LCN-20260924-message-delivery-timeout-obs
 
 ## Next action
 
-LCN-042 code/CI/deployment validation is green at 118 tools. Installed source is ready and source↔installed module trees are reliably equal, while the current daemon remains 117 tools. Restart LConnect, reconnect without requiring plugin refresh, validate `batch_inspect → runtime_catalog + git_sync_status`, then close LCN-042.
+LCN-042 is complete and live validated at 118 tools. Continue execution ergonomics with the next evidence-backed deterministic primitive; delivery-latency work remains closed at the current local evidence boundary unless new correlated evidence appears.

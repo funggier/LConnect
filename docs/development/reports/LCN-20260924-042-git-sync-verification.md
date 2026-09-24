@@ -2,7 +2,7 @@
 
 ## Result
 
-**IMPLEMENTATION GREEN — INSTALLED LIVE VALIDATION PENDING**
+**PASS — GIT SYNC VERIFICATION LIVE VALIDATED**
 
 ## Goal
 
@@ -194,4 +194,34 @@ The active daemon before restart remained the prior catalog:
 
 Therefore installed files are ready at 118 tools while one restart/reconnect is required to activate `git_sync_status` in the running daemon.
 
-Restarted installed live validation: **PENDING**
+## Restarted installed live validation
+
+After restart/reconnect, `batch_inspect` observed:
+
+- process ID: `19372`
+- runtime start: `2026-09-24T12:05:38.935Z`
+- runtime tool count: 118
+- runtime catalog digest: `3a4b6651ee0c2cdab802907f5a5ac7609e958579bee5a0a39c982a7ac3ae28a8`
+- ChatGPT-visible direct catalog at that moment: 114
+- direct `git_sync_status`: not yet visible
+- `batch_inspect → git_sync_status`: PASS
+
+Live repository evidence:
+
+- local HEAD: `a087d95625a7915c286658b5cc17e9f551f5f63f`
+- exact remote `refs/heads/main`: same SHA
+- local tracking `origin/main`: same SHA
+- cached ahead/behind: 0 / 0
+- exact ahead/behind: 0 / 0
+- exact ancestry available: true
+- local is ancestor of remote: true
+- remote is ancestor of local: true
+- sync state: `equal`
+- working tree: clean
+- staged / unstaged / untracked / conflicts: 0 / 0 / 0 / 0
+
+The two-operation live batch (`runtime_catalog` + `git_sync_status`) completed in approximately 1.214 seconds inner handler time; the Git portion includes exact remote lookup without fetch.
+
+## Final result
+
+**PASS — GIT SYNC VERIFICATION LIVE VALIDATED**

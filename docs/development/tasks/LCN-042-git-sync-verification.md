@@ -1,6 +1,6 @@
 # LCN-042 — Git Sync Verification
 
-Status: **ACTIVE — IMPLEMENTATION GREEN / INSTALLED LIVE VALIDATION PENDING**
+Status: **COMPLETE — LIVE VALIDATED**
 
 ## Goal
 
@@ -125,7 +125,12 @@ Working-tree cleanliness is reported separately and does not change commit sync 
 - source/install `modules/git.mjs` SHA-256 parity: PASS (`a3aaff1868762d52ba386a0b3cd7e385cc40bafd3a5344785eb90f92c521587f`)
 - source↔installed `modules` tree comparison: PASS (28/28 equal; digest `c604c108645d5ac5d2065496da976bc3df3cf39b0ddc08b4a438df33d159192b`)
 - pre-restart daemon: 117 tools, PID 38572, digest `b44e9a4acdf1c83e7243d5374ca1c9c4629205fc30fb305419764251ebdc416e`
-- restarted live validation: PENDING
+- restarted runtime: PASS (118 tools, PID 19372, digest `3a4b6651ee0c2cdab802907f5a5ac7609e958579bee5a0a39c982a7ac3ae28a8`)
+- live `batch_inspect → git_sync_status`: PASS
+- live repo sync state: `equal`
+- local HEAD = exact remote = `a087d95625a7915c286658b5cc17e9f551f5f63f`
+- exact ahead/behind: 0/0
+- working tree: clean
 
 ## Acceptance
 
