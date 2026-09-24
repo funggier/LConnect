@@ -8,7 +8,7 @@ Current project state: **BASIC CORE STABLE / DELIVERY RELIABILITY BOUNDED / EXEC
 
 Current published release: **v1.1.0 — Expanded Tools & First-Run Guide**
 
-Current main/source MCP catalog: **117 tools** (LCN-041 candidate)
+Current main/source MCP catalog: **118 tools** (LCN-042 candidate)
 
 Current installed/runtime MCP catalog: **117 tools**
 
@@ -39,7 +39,7 @@ Agent Operations Reliability ชุด LCN-025–030 ปิดครบแล้
 | Observation | COMPLETE | LCN-015–017 | Log Tail + File Watcher + Scheduled Tasks complete |
 | Agent Operations Reliability | COMPLETE | LCN-025–034 | LCN-025–030 and LCN-031–034 complete |
 | Delivery / Turn Reliability | COMPLETE AT CURRENT LOCAL EVIDENCE BOUNDARY | LCN-031–039 | LCN-039 localized normal low-cost calls: ~0.42 ms handler, ~300 ms local poll→response, ~865 ms average outside local metric scope |
-| Execution Ergonomics | ACTIVE | LCN-040+ | LCN-041 complete + live validated; deterministic structured primitives continue |
+| Execution Ergonomics | ACTIVE | LCN-040+ | LCN-042 Git sync verification implementation in progress |
 | Desktop Control | DEFERRED | LCN-018–020 | Explicitly paused |
 | Browser Automation | DEFERRED | LCN-021–023 | Explicitly paused |
 
