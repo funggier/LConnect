@@ -10,7 +10,9 @@ Current published release: **v1.1.0 — Expanded Tools & First-Run Guide**
 
 Current main/source MCP catalog: **114 tools**
 
-Current installed/runtime MCP catalog: **113 tools** pending LCN-038 deployment
+Current installed source MCP catalog: **114 tools**
+
+Current running daemon MCP catalog: **113 tools** — restart required for LCN-038 activation
 
 Current ChatGPT-visible MCP catalog: **112 tools** — latest UI refresh did not trigger a new `server/discover`; runtime remains 113 and is directly observable through `runtime_catalog`
 

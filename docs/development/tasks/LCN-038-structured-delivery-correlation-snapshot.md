@@ -105,7 +105,9 @@ Add `delivery_snapshot` to the read-only `batch_inspect` allowlist so an older c
 - full local suite: PASS (`PASS tools=114`, approximately 44.8 seconds)
 - dependency audit: 0 vulnerabilities
 - GitHub Actions: `35982810098` — PASS
-- installed live validation: PENDING
+- installed files/source validation: PASS (`PASS tools=114`, delivery smoke PASS, source/install SHA-256 parity)
+- running daemon before restart: 113 tools, PID 5176, digest `d5038c67f856a5eda6b5bc8fd9c70f90108095d2633ba6e82ccc604396084f72`
+- restarted live validation: PENDING
 
 ## Acceptance
 

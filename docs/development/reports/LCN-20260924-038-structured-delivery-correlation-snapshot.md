@@ -214,4 +214,25 @@ Full local suite: **PASS** (`PASS tools=114`, approximately 44.8 seconds)
 
 GitHub Actions: **PASS** — run `35982810098`
 
-Installed live validation: **PENDING**
+## Pre-restart installed deployment evidence
+
+Tracked source was synchronized to the installed runtime.
+
+Installed validation:
+
+- syntax check: PASS
+- `tests/delivery-snapshot-smoke.mjs`: PASS
+- source smoke: `PASS tools=114`
+- source/install `modules/delivery-snapshot.mjs` SHA-256 parity: PASS
+- digest: `634d30be73ea9498a9413230001e2543f02a27d22ec0fe6279dfe918b5e29abd`
+
+The currently running daemon was independently observed through `batch_inspect → runtime_catalog`:
+
+- process ID: `5176`
+- runtime start: `2026-09-24T09:29:44.488Z`
+- tool count: 113
+- catalog digest: `d5038c67f856a5eda6b5bc8fd9c70f90108095d2633ba6e82ccc604396084f72`
+
+Therefore the files are deployed at 114 tools while the active process is still the prior 113-tool daemon. One restart/reconnect is required for installed live validation.
+
+Restarted installed live validation: **PENDING**
