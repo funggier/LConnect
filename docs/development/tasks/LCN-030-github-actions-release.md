@@ -1,6 +1,6 @@
 # LCN-030 — GitHub Actions / Release Integration
 
-Status: **PLANNED**
+Status: **COMPLETE**
 
 ## Goal
 
@@ -112,6 +112,17 @@ Not included:
 - direct MCP runtime acceptance PASS
 - GitHub CI PASS
 - docs/status/report updated
+
+## Completion evidence
+
+- implementation: `ba740c75ed29d2b14b52a42c88db448e159d0488`
+- source catalog: 111 tools
+- targeted GitHub smoke: PASS
+- source runtime smoke: PASS
+- local dependency audit: 0 vulnerabilities
+- GitHub Actions: `35966485027` — PASS
+- report: `../reports/LCN-20260924-030-github-actions-release.md`
+- message-delivery incident evidence: `../reports/LCN-20260924-message-delivery-timeout-observation.md`
 
 ## Scope rule
 

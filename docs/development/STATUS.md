@@ -1,14 +1,14 @@
 # STATUS — LConnect Development
 
-Last updated: 2026-09-23
+Last updated: 2026-09-24
 
 ## Overall
 
-Current project state: **BASIC CORE STABLE / AGENT OPERATIONS RELIABILITY ACTIVE**
+Current project state: **BASIC CORE STABLE / AGENT OPERATIONS RELIABILITY COMPLETE / EXECUTION ERGONOMICS NEXT**
 
 Current published release: **v1.1.0 — Expanded Tools & First-Run Guide**
 
-Current main MCP catalog: **104 tools**
+Current main MCP catalog: **111 tools**
 
 LConnect มี Core ที่ใช้งานจริงแล้วและผ่าน runtime acceptance บน Windows:
 
@@ -23,7 +23,7 @@ LConnect มี Core ที่ใช้งานจริงแล้วแล�
 - Thai documentation
 - GitHub releases
 
-Expansion phase ถัดไปเน้น Agent Operations Reliability ชุดเล็ก LCN-025–030 ก่อน Desktop/Browser automation เพื่อให้ long-running process, evidence, Git และ release workflow มี structured semantics ที่ครบขึ้น
+Agent Operations Reliability ชุด LCN-025–030 ปิดครบแล้ว ขั้นถัดไปเน้น execution ergonomics ที่เป็น deterministic structured primitives เท่านั้น ขณะที่ latency/timeout expansion และ Desktop/Browser automation ถูกพักตามทิศทางปัจจุบัน
 
 ## Workstream status
 
@@ -33,9 +33,10 @@ Expansion phase ถัดไปเน้น Agent Operations Reliability ชุ�
 | System Foundation | COMPLETE | LCN-007–011 | Environment + Process + Services + Network + Hardware complete |
 | Developer Foundation | COMPLETE | LCN-012–014 | Git + Development + HTTP complete |
 | Observation | COMPLETE | LCN-015–017 | Log Tail + File Watcher + Scheduled Tasks complete |
-| Agent Operations Reliability | ACTIVE | LCN-025–034 | LCN-025–029 and LCN-031–034 complete; LCN-030 active |
-| Desktop Control | PLANNED | LCN-018–020 | Deferred until LCN-025–030 complete |
-| Browser Automation | PLANNED | LCN-021–023 | Common browser layer + Firefox + Chrome |
+| Agent Operations Reliability | COMPLETE | LCN-025–034 | LCN-025–030 and LCN-031–034 complete |
+| Execution Ergonomics | NEXT | after LCN-030 | Deterministic structured primitives only; no agent/workflow runtime |
+| Desktop Control | DEFERRED | LCN-018–020 | Explicitly paused |
+| Browser Automation | DEFERRED | LCN-021–023 | Explicitly paused |
 
 ## Completed baseline
 
@@ -357,6 +358,29 @@ GitHub Actions run `35965366927`: PASS.
 
 Catalog increased from 101 to 104 tools.
 
+### LCN-030 — GitHub Actions / Release Integration
+**COMPLETE**
+
+Added:
+
+- `github_run_list`
+- `github_run_view`
+- `github_run_wait`
+- `github_run_failed_logs`
+- `github_workflow_dispatch`
+- `github_release_view`
+- `github_release_download`
+
+The module reuses authenticated `gh`, keeps Git tools independent, bounds wait/log/download behavior, redacts secret-like output, and does not expose generic GitHub project mutation.
+
+Implementation: `ba740c75ed29d2b14b52a42c88db448e159d0488`
+
+GitHub Actions run `35966485027`: PASS.
+
+Catalog increased from 104 to 111 tools.
+
+A user-visible message-delivery timeout occurred while the already-running CI watcher continued normally and completed PASS. Evidence is recorded in `reports/LCN-20260924-message-delivery-timeout-observation.md`; no new latency task was opened because that workstream is deferred.
+
 ### LCN-034 — Bounded Read-Only Batch Inspection
 **COMPLETE**
 
@@ -423,19 +447,21 @@ LCN-028 File Integrity — COMPLETE
   ↓
 LCN-029 Exact Git Ref / Ancestry Safety — COMPLETE
   ↓
-LCN-030 GitHub Actions / Release Integration — READY
+LCN-030 GitHub Actions / Release Integration — COMPLETE
   ↓
-LCN-018 Clipboard — PLANNED
+Execution Ergonomics — NEXT
   ↓
-LCN-019 Window Control
+LCN-018 Clipboard — DEFERRED
   ↓
-LCN-020 Keyboard / Mouse
+LCN-019 Window Control — DEFERRED
   ↓
-LCN-021 Browser Common Layer
+LCN-020 Keyboard / Mouse — DEFERRED
   ↓
-LCN-022 Firefox Adapter
+LCN-021 Browser Common Layer — DEFERRED
   ↓
-LCN-023 Chrome Adapter
+LCN-022 Firefox Adapter — DEFERRED
+  ↓
+LCN-023 Chrome Adapter — DEFERRED
 ```
 
 ## Planned reliability phase
@@ -449,6 +475,7 @@ Scope is intentionally limited to six capability groups: LCN-025–030. Event Lo
 ## Current known constraints
 
 - Tool calls that block too long can be cut by an upstream caller timeout; long-running work should use session/job-style patterns.
+- Repeated 10-second polling inside one long assistant turn has now correlated with a user-visible message-delivery timeout even though LConnect/tunnel responses remained healthy; avoid that polling pattern while latency work is deferred.
 - `/readyz` is not proof that stdio MCP RPC is healthy.
 - tunnel configuration remains local-only and must never be committed.
 - Browser automation must not depend on Edge.
