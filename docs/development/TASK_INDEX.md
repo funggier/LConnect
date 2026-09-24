@@ -35,4 +35,4 @@
 | [LCN-031](tasks/LCN-031-mcp-request-timeout-containment.md) | COMPLETE | MCP Request Timeout Containment |
 | [LCN-032](tasks/LCN-032-http-hard-settle-delivery-evidence.md) | COMPLETE | HTTP Hard-Settle Timeout + Delivery Evidence |
 | [LCN-033](tasks/LCN-033-general-mcp-tool-delivery-telemetry.md) | COMPLETE | General MCP Tool Delivery Telemetry |
-| [LCN-034](tasks/LCN-034-bounded-read-only-batch-inspection.md) | ACTIVE | Bounded Read-Only Batch Inspection |
+| [LCN-034](tasks/LCN-034-bounded-read-only-batch-inspection.md) | COMPLETE | Bounded Read-Only Batch Inspection |

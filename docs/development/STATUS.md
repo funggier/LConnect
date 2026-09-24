@@ -33,7 +33,7 @@ Expansion phase ถัดไปเน้น Agent Operations Reliability ชุ�
 | System Foundation | COMPLETE | LCN-007–011 | Environment + Process + Services + Network + Hardware complete |
 | Developer Foundation | COMPLETE | LCN-012–014 | Git + Development + HTTP complete |
 | Observation | COMPLETE | LCN-015–017 | Log Tail + File Watcher + Scheduled Tasks complete |
-| Agent Operations Reliability | ACTIVE | LCN-025–034 | LCN-025/026, LCN-031/032/033 complete; LCN-034 batch inspection active |
+| Agent Operations Reliability | ACTIVE | LCN-025–034 | LCN-025/026 and LCN-031–034 complete; live batch validation next |
 | Desktop Control | PLANNED | LCN-018–020 | Deferred until LCN-025–030 complete |
 | Browser Automation | PLANNED | LCN-021–023 | Common browser layer + Firefox + Chrome |
 
@@ -310,7 +310,7 @@ Current local candidate:
 No tool arguments or result contents are recorded.
 
 ### LCN-034 — Bounded Read-Only Batch Inspection
-**ACTIVE**
+**COMPLETE**
 
 Adds one bounded deterministic read-only batch tool:
 
@@ -330,7 +330,7 @@ Current local candidate:
 - targeted batch tests: PASS
 - full local suite: PASS
 - dependency audit: 0 vulnerabilities
-- GitHub CI: pending
+- GitHub CI `35960766521`: PASS
 
 ## Next sequence
 
@@ -367,7 +367,7 @@ LCN-032 HTTP Hard-Settle Timeout + Delivery Evidence — COMPLETE
   ↓
 LCN-033 General MCP Tool Delivery Telemetry — COMPLETE
   ↓
-LCN-034 Bounded Read-Only Batch Inspection — ACTIVE
+LCN-034 Bounded Read-Only Batch Inspection — COMPLETE
   ↓
 LCN-027 Structured Text Search — READY
   ↓

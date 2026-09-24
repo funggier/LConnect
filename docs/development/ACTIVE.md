@@ -6,24 +6,29 @@ Last updated: 2026-09-24
 
 - Repository: `funggier/LConnect`
 - Branch: `main`
-- Current main HEAD: `b60dbe47232203e7e09a62a4af92ff79b1952923`
-- LCN-033 implementation commit: `8ebb95591b95443d28b77bcd812964c106650e34`
-- LCN-033 passing CI: `35958925520`
-- Current source MCP catalog: 97 tools
+- Current implementation candidate: `6d85cc0138bfa5955490b758db3f33a76b268cff`
+- Passing CI: `35960766521`
+- Current source MCP catalog: 98 tools
 - LCN-025/026: COMPLETE
 - LCN-031/032: COMPLETE
-- LCN-033: COMPLETE — live validation shows approximately 96.7% of sampled caller wall time outside handlers
-- LCN-034: ACTIVE — Bounded Read-Only Batch Inspection
-- LCN-027: READY but intentionally deferred during timeout/round-trip work
+- LCN-033: COMPLETE — live telemetry measured approximately 96.7% sampled wall time outside handlers
+- LCN-034: COMPLETE — Bounded Read-Only Batch Inspection
+- LCN-027: READY but intentionally deferred during timeout/round-trip investigation
 
 ## Active task
 
+**NO ACTIVE DEVELOPMENT TASK**
+
+## Latest completed task
+
 ### LCN-034 — Bounded Read-Only Batch Inspection
 
-Status: **ACTIVE**
+Status: **COMPLETE**
 
 Task: [tasks/LCN-034-bounded-read-only-batch-inspection.md](tasks/LCN-034-bounded-read-only-batch-inspection.md)
 
-## Direction
+Report: [reports/LCN-20260924-034-bounded-read-only-batch-inspection.md](reports/LCN-20260924-034-bounded-read-only-batch-inspection.md)
 
-Reduce MCP round trips without moving intelligence/workflow ownership into LConnect.
+## Next action
+
+Restart/reconnect installed LConnect and compare equivalent individual inspections against one live `batch_inspect` call before adding any further round-trip-reduction surface.

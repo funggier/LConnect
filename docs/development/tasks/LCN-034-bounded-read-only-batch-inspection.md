@@ -1,6 +1,6 @@
 # LCN-034 — Bounded Read-Only Batch Inspection
 
-Status: **ACTIVE**
+Status: **COMPLETE**
 
 ## Goal
 
@@ -111,6 +111,20 @@ Internal events should share the same MCP request ID where available, enabling c
 - Targeted batch smoke: PASS.
 - Full local suite: PASS / 98 tools.
 - Dependency audit: 0 vulnerabilities.
+
+## Completion evidence
+
+- Implementation commit: `6d85cc0138bfa5955490b758db3f33a76b268cff`
+- GitHub Actions run: `35960766521` — PASS
+- Current catalog: 98 tools
+- Targeted batch tests: PASS
+- Read-only allowlist mutation guard: PASS
+- Ordered execution: PASS
+- `stop_on_error`: PASS
+- Per-result/total result bounds: PASS
+- Telemetry correlation: PASS
+- Full local suite: PASS
+- Dependency audit: 0 vulnerabilities
 
 ## Acceptance
 

@@ -374,3 +374,17 @@ It preserves local configuration, tunnel client, dependencies, source, Scheduled
 **Decision:** Storage is a bounded in-memory ring by default; overflow is explicit.
 
 **Why:** The remaining Message delivery timeout evidence increasingly points to whole-turn/downstream delivery latency. Measuring every local handler with minimal overhead allows correlation without adding payload logging, another MCP channel or workflow/runtime complexity.
+
+---
+
+## D-032 — Round-trip reduction uses bounded read-only batches
+
+**Decision:** When live telemetry shows transport/tool-delivery overhead dominates local handler time, LConnect may reduce round trips through explicit bounded read-only batches.
+
+**Decision:** Batch operations use a strict allowlist, ordered deterministic execution and bounded output.
+
+**Decision:** Mutation/execution capabilities are excluded from the first batch contract.
+
+**Decision:** ChatGPT must specify every operation upfront. LConnect does not branch, loop, plan, retry autonomously or continue work on its own.
+
+**Why:** LCN-033 measured approximately 96.7% of sampled caller wall time outside LConnect handlers. Avoiding multiple MCP round trips can save materially more time than further optimizing handlers already completing in milliseconds.
