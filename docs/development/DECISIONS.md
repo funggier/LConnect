@@ -360,3 +360,17 @@ It preserves local configuration, tunnel client, dependencies, source, Scheduled
 **Decision:** HTTP results expose safe LConnect-local timing/completion evidence so callers can distinguish local execution latency from later Tunnel/ChatGPT delivery latency.
 
 **Why:** Live connector testing proved that LConnect direct stdio can complete near the requested timeout while the result may reach the ChatGPT caller later. LConnect should guarantee its own deadline boundary and make the external delivery tail measurable instead of conflating the two.
+
+---
+
+## D-031 — Tool delivery telemetry is metadata-only and bounded
+
+**Decision:** General MCP tool telemetry is installed once at the common tool-registration boundary rather than duplicated inside capability modules.
+
+**Decision:** Telemetry stores only request/tool identity, local handler timing, approximate result size and error/timeout state.
+
+**Decision:** Tool arguments and result contents are not stored.
+
+**Decision:** Storage is a bounded in-memory ring by default; overflow is explicit.
+
+**Why:** The remaining Message delivery timeout evidence increasingly points to whole-turn/downstream delivery latency. Measuring every local handler with minimal overhead allows correlation without adding payload logging, another MCP channel or workflow/runtime complexity.

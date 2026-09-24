@@ -1,6 +1,6 @@
 # LCN-033 — General MCP Tool Delivery Telemetry
 
-Status: **ACTIVE**
+Status: **COMPLETE**
 
 ## Goal
 
@@ -88,6 +88,18 @@ Snapshot provides:
 - First full suite exposed the known local File Watcher timing flake; isolated watcher rerun passed and no watcher code changed.
 - Second full suite: PASS / 97 tools.
 - Dependency audit: 0 vulnerabilities.
+
+## Completion evidence
+
+- Implementation commit: `8ebb95591b95443d28b77bcd812964c106650e34`
+- GitHub Actions run: `35958925520` — PASS
+- Current candidate catalog: 97 tools
+- Targeted telemetry tests: PASS
+- Metadata privacy regression: PASS
+- Bounded overflow/clear: PASS
+- Full local suite rerun: PASS
+- Dependency audit: 0 vulnerabilities
+- Known File Watcher local timing flake reproduced once; isolated watcher rerun and full rerun passed, with no watcher code changes in LCN-033.
 
 ## Acceptance
 

@@ -33,7 +33,7 @@ Expansion phase ถัดไปเน้น Agent Operations Reliability ชุ�
 | System Foundation | COMPLETE | LCN-007–011 | Environment + Process + Services + Network + Hardware complete |
 | Developer Foundation | COMPLETE | LCN-012–014 | Git + Development + HTTP complete |
 | Observation | COMPLETE | LCN-015–017 | Log Tail + File Watcher + Scheduled Tasks complete |
-| Agent Operations Reliability | ACTIVE | LCN-025–033 | LCN-025/026, LCN-031/032 complete; LCN-033 telemetry active |
+| Agent Operations Reliability | ACTIVE | LCN-025–033 | LCN-025/026, LCN-031/032 complete; LCN-033 telemetry complete; live validation next |
 | Desktop Control | PLANNED | LCN-018–020 | Deferred until LCN-025–030 complete |
 | Browser Automation | PLANNED | LCN-021–023 | Common browser layer + Firefox + Chrome |
 
@@ -295,7 +295,7 @@ GitHub Actions run `35888912101`: PASS.
 The remaining observed delay between LConnect-local completion and live ChatGPT receipt is downstream transport/tool-delivery latency rather than LConnect HTTP execution.
 
 ### LCN-033 — General MCP Tool Delivery Telemetry
-**ACTIVE**
+**COMPLETE**
 
 Adds metadata-only timing telemetry at the common MCP tool-registration boundary.
 
@@ -305,7 +305,7 @@ Current local candidate:
 - targeted telemetry tests: PASS
 - full suite rerun: PASS
 - dependency audit: 0 vulnerabilities
-- GitHub CI: pending
+- GitHub CI `35958925520`: PASS
 
 No tool arguments or result contents are recorded.
 
@@ -342,7 +342,7 @@ LCN-031 MCP Request Timeout Containment — COMPLETE (priority repair)
   ↓
 LCN-032 HTTP Hard-Settle Timeout + Delivery Evidence — COMPLETE
   ↓
-LCN-033 General MCP Tool Delivery Telemetry — ACTIVE
+LCN-033 General MCP Tool Delivery Telemetry — COMPLETE
   ↓
 LCN-027 Structured Text Search — READY
   ↓
