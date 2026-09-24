@@ -9,7 +9,8 @@ Last updated: 2026-09-24
 - Current implementation candidate: `1f83e23450b6c773358920dea53d6555a4f60e15`
 - Passing implementation CI: `35996073922` — PASS
 - Current source MCP catalog: 118 tools (LCN-042 candidate)
-- Current installed/runtime catalog: 117 tools
+- Current installed source catalog: 118 tools
+- Current running daemon catalog: 117 tools — restart required for LCN-042 activation
 - Current runtime catalog digest: `b44e9a4acdf1c83e7243d5374ca1c9c4629205fc30fb305419764251ebdc416e`
 - Current runtime catalog digest: `cd018b4780f6ed2d3138b92e28037cdeb3ba64ab3df1a9a81a74478d22b67447`
 - Current ChatGPT-visible catalog: 114 tools (plugin not refreshed after LCN-040 activation)
@@ -49,4 +50,4 @@ Message-delivery observation: [reports/LCN-20260924-message-delivery-timeout-obs
 
 ## Next action
 
-LCN-042 adds exact remote Git sync verification without fetch/mutation, including stale tracking detection and bounded working-tree evidence. Finish full local validation, commit/push, CI, deploy and live validation.
+LCN-042 code/CI/deployment validation is green at 118 tools. Installed source is ready and source↔installed module trees are reliably equal, while the current daemon remains 117 tools. Restart LConnect, reconnect without requiring plugin refresh, validate `batch_inspect → runtime_catalog + git_sync_status`, then close LCN-042.

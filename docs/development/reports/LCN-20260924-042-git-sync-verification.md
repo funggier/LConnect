@@ -169,4 +169,29 @@ Implementation commit: `1f83e23450b6c773358920dea53d6555a4f60e15`
 
 GitHub Actions: **PASS** — run `35996073922`
 
-Installed live validation: **PENDING**
+## Pre-restart installed deployment evidence
+
+Tracked source was synchronized to the installed runtime.
+
+Installed validation:
+
+- syntax check: PASS
+- `tests/git-sync-status-smoke.mjs`: PASS
+- source smoke: `PASS tools=118`
+- source/install `modules/git.mjs` SHA-256 parity: PASS
+- module digest: `a3aaff1868762d52ba386a0b3cd7e385cc40bafd3a5344785eb90f92c521587f`
+- source↔installed `modules` comparison: reliable + equal=true
+- module files: 28 / 28 equal
+- changed/source-only/installed-only: 0 / 0 / 0
+- source/install manifest digest: `c604c108645d5ac5d2065496da976bc3df3cf39b0ddc08b4a438df33d159192b`
+
+The active daemon before restart remained the prior catalog:
+
+- process ID: `38572`
+- runtime start: `2026-09-24T11:46:05.411Z`
+- tool count: 117
+- catalog digest: `b44e9a4acdf1c83e7243d5374ca1c9c4629205fc30fb305419764251ebdc416e`
+
+Therefore installed files are ready at 118 tools while one restart/reconnect is required to activate `git_sync_status` in the running daemon.
+
+Restarted installed live validation: **PENDING**

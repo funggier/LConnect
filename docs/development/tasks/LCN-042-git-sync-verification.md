@@ -121,7 +121,11 @@ Working-tree cleanliness is reported separately and does not change commit sync 
 - implementation: `1f83e23450b6c773358920dea53d6555a4f60e15`
 - GitHub CI: `35996073922` — PASS
 - real source-repo candidate check: PASS (`sync_state=equal`, exact ahead/behind 0/0, working tree independently dirty)
-- installed live validation: PENDING
+- installed source validation: PASS (`PASS tools=118`, Git sync scenario smoke PASS)
+- source/install `modules/git.mjs` SHA-256 parity: PASS (`a3aaff1868762d52ba386a0b3cd7e385cc40bafd3a5344785eb90f92c521587f`)
+- source↔installed `modules` tree comparison: PASS (28/28 equal; digest `c604c108645d5ac5d2065496da976bc3df3cf39b0ddc08b4a438df33d159192b`)
+- pre-restart daemon: 117 tools, PID 38572, digest `b44e9a4acdf1c83e7243d5374ca1c9c4629205fc30fb305419764251ebdc416e`
+- restarted live validation: PENDING
 
 ## Acceptance
 
