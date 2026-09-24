@@ -8,7 +8,7 @@ Current project state: **BASIC CORE STABLE / AGENT OPERATIONS RELIABILITY ACTIVE
 
 Current published release: **v1.1.0 — Expanded Tools & First-Run Guide**
 
-Current main MCP catalog: **98 tools**
+Current main MCP catalog: **99 tools**
 
 LConnect มี Core ที่ใช้งานจริงแล้วและผ่าน runtime acceptance บน Windows:
 
@@ -33,7 +33,7 @@ Expansion phase ถัดไปเน้น Agent Operations Reliability ชุ�
 | System Foundation | COMPLETE | LCN-007–011 | Environment + Process + Services + Network + Hardware complete |
 | Developer Foundation | COMPLETE | LCN-012–014 | Git + Development + HTTP complete |
 | Observation | COMPLETE | LCN-015–017 | Log Tail + File Watcher + Scheduled Tasks complete |
-| Agent Operations Reliability | ACTIVE | LCN-025–034 | LCN-025/026 and LCN-031–034 complete; live batch validation next |
+| Agent Operations Reliability | ACTIVE | LCN-025–034 | LCN-025/026, LCN-027 and LCN-031–034 complete; LCN-028 active |
 | Desktop Control | PLANNED | LCN-018–020 | Deferred until LCN-025–030 complete |
 | Browser Automation | PLANNED | LCN-021–023 | Common browser layer + Firefox + Chrome |
 
@@ -309,6 +309,21 @@ Current local candidate:
 
 No tool arguments or result contents are recorded.
 
+### LCN-027 — Structured Text Search
+**COMPLETE**
+
+Added:
+
+- `search_text`
+
+Structured UTF-8 content search now supports literal/regex matching, case modes, include/exclude patterns, context, Unicode/Thai-safe line/column evidence, binary/error reporting and hard files/bytes/matches/output bounds. The tool is also available inside the bounded read-only `batch_inspect` allowlist.
+
+Implementation: `0b91d8a2b1a94fa3e18a5c340ab1cd4da161591d`
+
+GitHub Actions run `35963995356`: PASS.
+
+Catalog increased from 98 to 99 tools.
+
 ### LCN-034 — Bounded Read-Only Batch Inspection
 **COMPLETE**
 
@@ -369,9 +384,9 @@ LCN-033 General MCP Tool Delivery Telemetry — COMPLETE
   ↓
 LCN-034 Bounded Read-Only Batch Inspection — COMPLETE
   ↓
-LCN-027 Structured Text Search — READY
+LCN-027 Structured Text Search — COMPLETE
   ↓
-LCN-028 File Integrity — PLANNED
+LCN-028 File Integrity — READY
   ↓
 LCN-029 Exact Git Ref / Ancestry Safety — PLANNED
   ↓

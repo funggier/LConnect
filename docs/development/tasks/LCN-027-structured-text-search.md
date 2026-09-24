@@ -1,6 +1,6 @@
 # LCN-027 — Structured Text Search
 
-Status: **READY**
+Status: **COMPLETE**
 
 ## Goal
 
@@ -53,6 +53,16 @@ External `rg` may be used as an optional optimization only if LConnect preserves
 - direct MCP runtime acceptance PASS
 - GitHub CI PASS
 - docs/status/report updated
+
+## Completion evidence
+
+- implementation: `0b91d8a2b1a94fa3e18a5c340ab1cd4da161591d`
+- source catalog: 99 tools
+- targeted acceptance: PASS
+- full local suite: PASS
+- dependency audit: 0 vulnerabilities
+- GitHub Actions: `35963995356` — PASS
+- report: `../reports/LCN-20260924-027-structured-text-search.md`
 
 ## Scope rule
 
