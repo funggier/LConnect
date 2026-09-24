@@ -218,6 +218,110 @@ function parseWorktrees(stdout) {
   });
 }
 
+function validateRemote(remote) {
+  if (!remote || typeof remote !== "string") throw new Error("An explicit remote is required.");
+  if (remote.startsWith("-") || /[\r\n\0]/.test(remote)) {
+    throw new Error("Invalid Git remote value.");
+  }
+  return remote;
+}
+
+async function validateFullRef(repoPath, ref, config, headsOnly = false) {
+  if (!ref || typeof ref !== "string" || !ref.startsWith("refs/")) {
+    throw new Error("A full Git ref beginning with refs/ is required.");
+  }
+  if (/[\r\n\0]/.test(ref) || /[*?\[]/.test(ref)) {
+    throw new Error("Wildcard or control characters are not permitted in an exact Git ref.");
+  }
+  if (headsOnly && !ref.startsWith("refs/heads/")) {
+    throw new Error("Destination ref must be a full branch ref under refs/heads/.");
+  }
+
+  await runGit(repoPath, ["check-ref-format", ref], config, 20);
+  return ref;
+}
+
+function validateCommitish(value, label) {
+  if (!value || typeof value !== "string") throw new Error(label + " is required.");
+  if (value.startsWith("-") || /[\r\n\0]/.test(value)) {
+    throw new Error("Invalid " + label + " commit-ish.");
+  }
+  return value;
+}
+
+async function resolveCommit(repoPath, value, config, label = "commit-ish") {
+  validateCommitish(value, label);
+  const result = await runGit(
+    repoPath,
+    ["rev-parse", "--verify", value + "^{commit}"],
+    config,
+    20
+  );
+  const sha = (result.stdout || "").trim();
+  if (!/^[0-9a-fA-F]{40}$/.test(sha)) {
+    throw new Error("Could not resolve " + label + " to one exact commit SHA.");
+  }
+  return sha.toLowerCase();
+}
+
+async function resolveExplicitPushSource(repoPath, source, config) {
+  if (/^[0-9a-fA-F]{40}$/.test(source)) {
+    return await resolveCommit(repoPath, source, config, "source");
+  }
+  if (source && source.startsWith("refs/")) {
+    await validateFullRef(repoPath, source, config, false);
+    return await resolveCommit(repoPath, source, config, "source");
+  }
+  throw new Error("source must be an exact 40-hex commit SHA or a full refs/... ref.");
+}
+
+async function remoteRefSha(repoPath, remote, ref, config) {
+  validateRemote(remote);
+  await validateFullRef(repoPath, ref, config, false);
+  const result = await runGit(
+    repoPath,
+    ["ls-remote", "--refs", remote, ref],
+    config,
+    60
+  );
+
+  const rows = String(result.stdout || "")
+    .split(/\r?\n/)
+    .filter(Boolean)
+    .map((line) => {
+      const tab = line.indexOf("\t");
+      return tab >= 0
+        ? { sha: line.slice(0, tab), ref: line.slice(tab + 1) }
+        : null;
+    })
+    .filter(Boolean)
+    .filter((row) => row.ref === ref);
+
+  if (rows.length === 0) return null;
+  if (rows.length !== 1 || !/^[0-9a-fA-F]{40}$/.test(rows[0].sha)) {
+    throw new Error("Remote ref lookup did not resolve to one exact SHA.");
+  }
+  return rows[0].sha.toLowerCase();
+}
+
+async function isAncestorSha(repoPath, ancestorSha, descendantSha, config) {
+  const result = await runGitRaw(
+    repoPath,
+    ["merge-base", "--is-ancestor", ancestorSha, descendantSha],
+    config,
+    30
+  );
+  if (result.error) throw new Error("Failed to launch Git: " + result.error);
+  if (result.timedOut) throw new Error("Git ancestry check timed out.");
+  if (result.code === 0) return true;
+  if (result.code === 1) return false;
+  const detail = resultText(result);
+  throw new Error(
+    "Git ancestry check failed (exit " + result.code + ")" +
+    (detail ? "\n" + detail : "")
+  );
+}
+
 export function registerGitTools(server, config) {
   const enabled = config.shell.enabled && process.env.MCP_ENABLE_POWERSHELL !== "false";
 
@@ -555,6 +659,158 @@ export function registerGitTools(server, config) {
         set_upstream,
         tags,
         head: after.head,
+        output: resultText(result),
+      });
+    } catch (error) {
+      return textResult(error.message, true);
+    }
+  });
+
+  server.tool("git_remote_ref", "Resolve one exact full remote Git ref to its SHA without mutating the repository.", {
+    repo_path: z.string().min(1),
+    remote: z.string().min(1),
+    ref: z.string().min(1),
+  }, async ({ repo_path, remote, ref }) => {
+    try {
+      requireEnabled();
+      const identity = await repoIdentity(repo_path, config);
+      const sha = await remoteRefSha(identity.repo_root, remote, ref, config);
+      return textResult({
+        repo_root: identity.repo_root,
+        remote,
+        ref,
+        found: Boolean(sha),
+        sha,
+      });
+    } catch (error) {
+      return textResult(error.message, true);
+    }
+  });
+
+  server.tool("git_is_ancestor", "Resolve two commit-ish values to exact commit SHAs and report whether the first is an ancestor of the second.", {
+    repo_path: z.string().min(1),
+    ancestor: z.string().min(1),
+    descendant: z.string().min(1),
+  }, async ({ repo_path, ancestor, descendant }) => {
+    try {
+      requireEnabled();
+      const identity = await repoIdentity(repo_path, config);
+      const ancestorSha = await resolveCommit(identity.repo_root, ancestor, config, "ancestor");
+      const descendantSha = await resolveCommit(identity.repo_root, descendant, config, "descendant");
+      const isAncestor = await isAncestorSha(
+        identity.repo_root,
+        ancestorSha,
+        descendantSha,
+        config
+      );
+      return textResult({
+        repo_root: identity.repo_root,
+        ancestor,
+        descendant,
+        ancestor_sha: ancestorSha,
+        descendant_sha: descendantSha,
+        is_ancestor: isAncestor,
+      });
+    } catch (error) {
+      return textResult(error.message, true);
+    }
+  });
+
+  server.tool("git_push_ref", "Push one exact source commit/full ref to one explicit full branch ref with non-force fast-forward safety and before/after remote SHA evidence.", {
+    repo_path: z.string().min(1),
+    remote: z.string().min(1),
+    source: z.string().min(1),
+    destination: z.string().min(1),
+  }, async ({ repo_path, remote, source, destination }) => {
+    try {
+      requireEnabled();
+      const identity = await repoIdentity(repo_path, config);
+      validateRemote(remote);
+      await validateFullRef(identity.repo_root, destination, config, true);
+      const sourceSha = await resolveExplicitPushSource(
+        identity.repo_root,
+        source,
+        config
+      );
+
+      const beforeSha = await remoteRefSha(
+        identity.repo_root,
+        remote,
+        destination,
+        config
+      );
+
+      let fastForwardVerified = true;
+      if (beforeSha) {
+        await runGit(
+          identity.repo_root,
+          ["fetch", "--no-tags", remote, destination],
+          config,
+          60
+        );
+        const fetchedSha = await resolveCommit(
+          identity.repo_root,
+          "FETCH_HEAD",
+          config,
+          "fetched remote destination"
+        );
+        if (fetchedSha !== beforeSha) {
+          return textResult({
+            error_code: "REMOTE_REF_CHANGED",
+            message: "Remote ref changed during fast-forward safety verification; retry with fresh evidence.",
+            remote,
+            destination,
+            remote_sha_before: beforeSha,
+            fetched_sha: fetchedSha,
+            source_sha: sourceSha,
+          }, true);
+        }
+
+        fastForwardVerified = await isAncestorSha(
+          identity.repo_root,
+          beforeSha,
+          sourceSha,
+          config
+        );
+        if (!fastForwardVerified) {
+          return textResult({
+            error_code: "NON_FAST_FORWARD",
+            message: "Push rejected before mutation because the current remote branch is not an ancestor of the explicit source commit.",
+            remote,
+            destination,
+            remote_sha_before: beforeSha,
+            source_sha: sourceSha,
+          }, true);
+        }
+      }
+
+      const result = await runGit(
+        identity.repo_root,
+        ["push", "--porcelain", remote, sourceSha + ":" + destination],
+        config,
+        120
+      );
+
+      const afterSha = await remoteRefSha(
+        identity.repo_root,
+        remote,
+        destination,
+        config
+      );
+
+      return textResult({
+        pushed: true,
+        repo_root: identity.repo_root,
+        remote,
+        source,
+        source_sha: sourceSha,
+        destination,
+        created: beforeSha === null,
+        fast_forward_verified: fastForwardVerified,
+        remote_sha_before: beforeSha,
+        remote_sha_after: afterSha,
+        post_push_matches_source: afterSha === sourceSha,
+        force_used: false,
         output: resultText(result),
       });
     } catch (error) {

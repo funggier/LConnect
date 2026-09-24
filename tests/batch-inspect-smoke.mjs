@@ -147,6 +147,25 @@ try {
     throw new Error("Blocked write_file operation unexpectedly executed");
   }
 
+  const blockedGitBranch = jsonOf(await call("batch_inspect", {
+    operations: [{
+      id: "git-branch-mutation",
+      tool: "git_branch",
+      arguments: { repo_path: tempGitRoot, action: "create", name: "MUST_NOT_EXIST" },
+    }],
+  }));
+  if (blockedGitBranch.results[0]?.error_code !== "TOOL_NOT_ALLOWED") {
+    throw new Error("git_branch mutation surface was not rejected by batch allowlist");
+  }
+  const branchCheck = spawnSync("git", ["show-ref", "--verify", "--quiet", "refs/heads/MUST_NOT_EXIST"], {
+    cwd: tempGitRoot,
+    encoding: "utf8",
+    windowsHide: true,
+  });
+  if (branchCheck.status === 0) {
+    throw new Error("Blocked git_branch mutation unexpectedly executed");
+  }
+
   const stopBatch = jsonOf(await call("batch_inspect", {
     operations: [
       { id: "before", tool: "list_sessions", arguments: {} },

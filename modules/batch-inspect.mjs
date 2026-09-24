@@ -34,7 +34,7 @@ const READ_ONLY_TOOLS = new Set([
   "git_status",
   "git_diff",
   "git_log",
-  "git_branch",
+  "git_is_ancestor",
   "detect_project",
   "detect_build_system",
   "project_info",
