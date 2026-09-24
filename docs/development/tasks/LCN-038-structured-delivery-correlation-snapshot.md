@@ -1,6 +1,6 @@
 # LCN-038 — Structured Delivery Correlation Snapshot
 
-Status: **ACTIVE**
+Status: **ACTIVE — IMPLEMENTATION GREEN / CI IN PROGRESS**
 
 ## Goal
 
@@ -95,6 +95,17 @@ Add `delivery_snapshot` to the read-only `batch_inspect` allowlist so an older c
 - autonomous monitoring
 - background polling
 - inferring an exact platform-side root cause from aggregate metrics
+
+## Current evidence
+
+- implementation: `ff12ecb2f167a319a117a27387c81efc71fd7356`
+- source catalog: 114 tools
+- targeted delivery/batch/source smoke: PASS
+- live source-candidate parser validation: PASS
+- full local suite: PASS (`PASS tools=114`, approximately 44.8 seconds)
+- dependency audit: 0 vulnerabilities
+- GitHub Actions: `35982810098` — IN PROGRESS
+- installed live validation: PENDING
 
 ## Acceptance
 

@@ -8,9 +8,9 @@ Current project state: **BASIC CORE STABLE / DELIVERY-TIMEOUT MITIGATION ACTIVE 
 
 Current published release: **v1.1.0 — Expanded Tools & First-Run Guide**
 
-Current main/source MCP catalog: **113 tools**
+Current main/source MCP catalog: **114 tools**
 
-Current installed/runtime MCP catalog: **113 tools**
+Current installed/runtime MCP catalog: **113 tools** pending LCN-038 deployment
 
 Current ChatGPT-visible MCP catalog: **112 tools** — latest UI refresh did not trigger a new `server/discover`; runtime remains 113 and is directly observable through `runtime_catalog`
 
@@ -38,7 +38,7 @@ Agent Operations Reliability ชุด LCN-025–030 ปิดครบแล้
 | Developer Foundation | COMPLETE | LCN-012–014 | Git + Development + HTTP complete |
 | Observation | COMPLETE | LCN-015–017 | Log Tail + File Watcher + Scheduled Tasks complete |
 | Agent Operations Reliability | COMPLETE | LCN-025–034 | LCN-025–030 and LCN-031–034 complete |
-| Delivery / Turn Reliability | ACTIVE | LCN-031–037 | LCN-037 complete + live validated; deeper delivery-layer correlation next |
+| Delivery / Turn Reliability | ACTIVE | LCN-031–038 | LCN-038 structured delivery correlation implementation in progress |
 | Execution Ergonomics | ACTIVE | after LCN-030 | Deterministic structured primitives only; no agent/workflow runtime |
 | Desktop Control | DEFERRED | LCN-018–020 | Explicitly paused |
 | Browser Automation | DEFERRED | LCN-021–023 | Explicitly paused |

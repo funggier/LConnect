@@ -6,10 +6,11 @@ Last updated: 2026-09-24
 
 - Repository: `funggier/LConnect`
 - Branch: `main`
-- Current implementation candidate: `ac3d4a9a0ff9f10a12dc54df8bba47f900f99aec`
-- Passing implementation CI: `35980718759` — PASS
-- Current source MCP catalog: 113 tools
-- Current installed/runtime catalog: 113 tools
+- Current implementation candidate: `ff12ecb2f167a319a117a27387c81efc71fd7356`
+- Candidate CI: `35982810098` — IN PROGRESS
+- Last passing implementation CI: `35980718759`
+- Current source MCP catalog: 114 tools
+- Current installed/runtime catalog: 113 tools pending LCN-038 deployment
 - Current runtime catalog digest: `d5038c67f856a5eda6b5bc8fd9c70f90108095d2633ba6e82ccc604396084f72`
 - Current ChatGPT-visible catalog before plugin refresh: 112 tools — stale schema directly confirmed by `runtime_catalog`
 - LCN-025/026: COMPLETE
@@ -24,10 +25,11 @@ Last updated: 2026-09-24
 - LCN-035: COMPLETE + LIVE VALIDATED — Turn-Safe Long Operation Observation
 - LCN-036: COMPLETE + LIVE VALIDATED — Runtime Catalog Visibility / Refresh Evidence
 - LCN-037: COMPLETE + LIVE VALIDATED — GitHub Wait Budget Separation
+- LCN-038: ACTIVE — Structured Delivery Correlation Snapshot
 
 ## Active task
 
-**NO ACTIVE DEVELOPMENT TASK**
+**LCN-038 — Structured Delivery Correlation Snapshot**
 
 ## Latest completed task
 
@@ -43,4 +45,4 @@ Message-delivery observation: [reports/LCN-20260924-message-delivery-timeout-obs
 
 ## Next action
 
-LCN-037 is complete. Continue delivery-layer latency work by correlating LConnect handler telemetry with tunnel dispatcher/control-plane metrics in one structured diagnostic path. Desktop/Browser automation remains deferred. Continue latency/message-delivery mitigation afterward.
+Finish LCN-038 CI, deploy the 114-tool candidate, restart LConnect without requiring direct schema refresh, and validate `batch_inspect → delivery_snapshot` against the installed runtime. Then use the structured snapshot to continue message-delivery latency localization. Desktop/Browser automation remains deferred.
