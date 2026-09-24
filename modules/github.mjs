@@ -20,6 +20,30 @@ function validateRepo(repo) {
   return repo;
 }
 
+function validateCommitSha(value) {
+  const sha = String(value || "").toLowerCase();
+  if (!/^[0-9a-f]{40}$/.test(sha)) {
+    throw new Error("commit must be one exact 40-hex SHA.");
+  }
+  return sha;
+}
+
+function compareRunsLatest(left, right) {
+  const leftTime = Date.parse(left?.created_at || "") || 0;
+  const rightTime = Date.parse(right?.created_at || "") || 0;
+  if (leftTime !== rightTime) return rightTime - leftTime;
+
+  const leftId = Number(left?.id);
+  const rightId = Number(right?.id);
+  if (Number.isFinite(leftId) && Number.isFinite(rightId) && leftId !== rightId) {
+    return rightId - leftId;
+  }
+
+  const leftText = String(left?.id ?? "");
+  const rightText = String(right?.id ?? "");
+  return rightText < leftText ? -1 : rightText > leftText ? 1 : 0;
+}
+
 function validateIdentity(value, label) {
   const text = String(value || "");
   if (!text || text.startsWith("-") || /[\r\n\0]/.test(text)) {
@@ -355,6 +379,95 @@ export function registerGitHubTools(server, config, dependencies = {}) {
       const data = parseJsonResult(result, "gh run list");
       const runs = Array.isArray(data) ? data.slice(0, limit).map(normalizeRun) : [];
       return textResult({ repo, count: runs.length, limit, runs });
+    } catch (error) {
+      return textResult(error.message, true);
+    }
+  });
+
+  server.tool("github_commit_run_status", "Correlate one exact 40-hex commit SHA to GitHub Actions runs and return the deterministic latest matching run with jobs/steps.", {
+    repo: z.string().min(3),
+    commit: z.string().min(1),
+    limit: z.number().int().min(1).max(100).optional(),
+    workflow: z.string().min(1).optional(),
+    branch: z.string().min(1).optional(),
+    status: z.string().min(1).optional(),
+    event: z.string().min(1).optional(),
+  }, async ({
+    repo,
+    commit,
+    limit = 20,
+    workflow,
+    branch,
+    status,
+    event,
+  }) => {
+    try {
+      validateRepo(repo);
+      const commitSha = validateCommitSha(commit);
+      await ensureGhReadyCached();
+
+      const args = [
+        "run",
+        "list",
+        "--repo",
+        repo,
+        "--limit",
+        String(limit),
+        "--commit",
+        commitSha,
+        "--json",
+        "databaseId,number,workflowName,displayTitle,event,headBranch,headSha,status,conclusion,createdAt,updatedAt,url",
+      ];
+      if (workflow) args.push("--workflow", validateIdentity(workflow, "workflow"));
+      if (branch) args.push("--branch", validateIdentity(branch, "branch"));
+      if (status) args.push("--status", validateIdentity(status, "status"));
+      if (event) args.push("--event", validateIdentity(event, "event"));
+
+      const result = await checkedGh(
+        runGhRaw,
+        args,
+        { timeout_seconds: 10, max_output_chars: 240000 }
+      );
+      const data = parseJsonResult(result, "gh run list --commit");
+      const listedRuns = Array.isArray(data)
+        ? data.slice(0, limit).map(normalizeRun)
+        : [];
+      const matches = listedRuns
+        .filter((run) => String(run.head_sha || "").toLowerCase() === commitSha)
+        .sort(compareRunsLatest);
+
+      const selectedSummary = matches[0] || null;
+      const selectedRun = selectedSummary?.id
+        ? await readRun(runGhRaw, repo, selectedSummary.id)
+        : null;
+
+      if (
+        selectedRun &&
+        String(selectedRun.head_sha || "").toLowerCase() !== commitSha
+      ) {
+        throw new Error(
+          "Selected GitHub Actions run does not match the requested exact commit SHA."
+        );
+      }
+
+      return textResult({
+        repo,
+        commit: commitSha,
+        found: Boolean(selectedRun),
+        match_count: matches.length,
+        candidate_limit: limit,
+        candidates_truncated: listedRuns.length >= limit,
+        candidates: matches,
+        selected_run_id: selectedRun?.id ?? null,
+        selection: selectedRun
+          ? {
+              rule: "latest_created_at_then_run_id",
+              created_at: selectedRun.created_at,
+              run_id: selectedRun.id,
+            }
+          : null,
+        run: selectedRun,
+      });
     } catch (error) {
       return textResult(error.message, true);
     }

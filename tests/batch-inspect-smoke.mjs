@@ -91,7 +91,7 @@ try {
   if (
     catalogBatch.results[0]?.ok !== true ||
     catalog.catalog_ready !== true ||
-    catalog.tool_count < 118 ||
+    catalog.tool_count < 119 ||
     !/^[0-9a-f]{64}$/.test(catalog.tool_name_digest_sha256)
   ) {
     throw new Error("runtime_catalog batch visibility failed");
@@ -270,6 +270,20 @@ try {
     throw new Error("Blocked git_branch mutation unexpectedly executed");
   }
 
+  const blockedGithubNetwork = jsonOf(await call("batch_inspect", {
+    operations: [{
+      id: "github-network",
+      tool: "github_commit_run_status",
+      arguments: {
+        repo: "funggier/LConnect",
+        commit: "0000000000000000000000000000000000000000",
+      },
+    }],
+  }));
+  if (blockedGithubNetwork.results[0]?.error_code !== "TOOL_NOT_ALLOWED") {
+    throw new Error("Network-backed GitHub tool was not rejected by batch allowlist");
+  }
+
   const stopBatch = jsonOf(await call("batch_inspect", {
     operations: [
       { id: "before", tool: "list_sessions", arguments: {} },
@@ -321,6 +335,7 @@ try {
   console.log("batch_inspect five-operation single call: PASS");
   console.log("batch_inspect ordered results: PASS");
   console.log("batch_inspect read-only allowlist guard: PASS");
+  console.log("batch_inspect network-backed GitHub rejection: PASS");
   console.log("batch_inspect stop_on_error semantics: PASS");
   console.log("batch_inspect result bounds/truncation: PASS");
   console.log("batch_inspect telemetry correlation: PASS");

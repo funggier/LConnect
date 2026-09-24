@@ -99,6 +99,7 @@ const requiredTools = [
   "git_push_ref",
   "git_worktree",
   "github_run_list",
+  "github_commit_run_status",
   "github_run_view",
   "github_run_wait",
   "github_run_failed_logs",

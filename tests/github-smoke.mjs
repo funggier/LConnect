@@ -24,26 +24,29 @@ const config = {
   },
 };
 
+const fixtureCommit = "0123456789abcdef0123456789abcdef01234567";
+const otherCommit = "89abcdef0123456789abcdef0123456789abcdef";
 let wait43Calls = 0;
 let authCalls = 0;
 let lastWaitStatusTimeout = null;
 let lastDispatchArgs = null;
+let lastCommitListArgs = null;
 
-function runJson(id, status, conclusion, jobs = []) {
+function runJson(id, status, conclusion, jobs = [], overrides = {}) {
   return {
     databaseId: id,
     number: id,
-    workflowName: "LConnect CI",
-    displayTitle: "fixture run " + id,
-    event: "workflow_dispatch",
-    headBranch: "main",
-    headSha: "0123456789abcdef0123456789abcdef01234567",
+    workflowName: overrides.workflowName ?? "LConnect CI",
+    displayTitle: overrides.displayTitle ?? ("fixture run " + id),
+    event: overrides.event ?? "workflow_dispatch",
+    headBranch: overrides.headBranch ?? "main",
+    headSha: overrides.headSha ?? fixtureCommit,
     status,
     conclusion,
-    createdAt: "2026-09-24T00:00:00Z",
-    startedAt: "2026-09-24T00:00:01Z",
-    updatedAt: "2026-09-24T00:00:02Z",
-    url: "https://example.invalid/run/" + id,
+    createdAt: overrides.createdAt ?? "2026-09-24T00:00:00Z",
+    startedAt: overrides.startedAt ?? "2026-09-24T00:00:01Z",
+    updatedAt: overrides.updatedAt ?? "2026-09-24T00:00:02Z",
+    url: overrides.url ?? ("https://example.invalid/run/" + id),
     jobs,
   };
 }
@@ -79,6 +82,29 @@ async function fakeGh(args, options = {}) {
   }
 
   if (args[0] === "run" && args[1] === "list") {
+    const commitIndex = args.indexOf("--commit");
+    if (commitIndex >= 0) {
+      lastCommitListArgs = [...args];
+      const requestedCommit = String(args[commitIndex + 1] || "").toLowerCase();
+      if (requestedCommit === "ffffffffffffffffffffffffffffffffffffffff") {
+        return ok("[]");
+      }
+      return ok(JSON.stringify([
+        runJson(40, "completed", "success", [], {
+          headSha: requestedCommit,
+          createdAt: "2026-09-23T23:59:59Z",
+        }),
+        runJson(41, "completed", "success", [], {
+          headSha: requestedCommit,
+          createdAt: "2026-09-24T00:00:00Z",
+        }),
+        runJson(99, "completed", "failure", [], {
+          headSha: otherCommit,
+          createdAt: "2026-09-25T00:00:00Z",
+        }),
+      ]));
+    }
+
     return ok(JSON.stringify([
       runJson(42, "completed", "failure"),
       runJson(43, "in_progress", null),
@@ -94,6 +120,27 @@ async function fakeGh(args, options = {}) {
 
   if (args[0] === "run" && args[1] === "view") {
     const id = Number(args[2]);
+    if (id === 40) {
+      return ok(JSON.stringify(runJson(40, "completed", "success", [], {
+        headSha: fixtureCommit,
+        createdAt: "2026-09-23T23:59:59Z",
+      })));
+    }
+    if (id === 41) {
+      return ok(JSON.stringify(runJson(41, "completed", "success", [{
+        databaseId: 500,
+        name: "windows",
+        status: "completed",
+        conclusion: "success",
+        steps: [
+          { number: 1, name: "checkout", status: "completed", conclusion: "success" },
+          { number: 2, name: "test", status: "completed", conclusion: "success" },
+        ],
+      }], {
+        headSha: fixtureCommit,
+        createdAt: "2026-09-24T00:00:00Z",
+      })));
+    }
     if (id === 42) return ok(JSON.stringify(runJson(42, "completed", "failure", failedJobs)));
     if (id === 43) {
       wait43Calls += 1;
@@ -230,6 +277,67 @@ try {
     list.runs[0].workflow_name !== "LConnect CI"
   ) {
     throw new Error("github_run_list structured output failed");
+  }
+
+  lastCommitListArgs = null;
+  const correlated = await call(client, "github_commit_run_status", {
+    repo: "funggier/LConnect",
+    commit: fixtureCommit.toUpperCase(),
+    workflow: "ci.yml",
+    branch: "main",
+    status: "completed",
+    event: "push",
+    limit: 10,
+  });
+  if (
+    correlated.found !== true ||
+    correlated.commit !== fixtureCommit ||
+    correlated.match_count !== 2 ||
+    correlated.selected_run_id !== 41 ||
+    correlated.selection?.rule !== "latest_created_at_then_run_id" ||
+    correlated.run?.head_sha !== fixtureCommit ||
+    correlated.run?.jobs?.[0]?.name !== "windows" ||
+    correlated.run?.jobs?.[0]?.steps?.[1]?.name !== "test" ||
+    correlated.candidates.some((run) => run.id === 99)
+  ) {
+    throw new Error("github_commit_run_status exact correlation/selection failed");
+  }
+  const expectedCommitArgs = [
+    ["--commit", fixtureCommit],
+    ["--workflow", "ci.yml"],
+    ["--branch", "main"],
+    ["--status", "completed"],
+    ["--event", "push"],
+  ];
+  for (const [flag, value] of expectedCommitArgs) {
+    const index = lastCommitListArgs?.indexOf(flag) ?? -1;
+    if (index < 0 || lastCommitListArgs[index + 1] !== value) {
+      throw new Error("github_commit_run_status missing gh filter " + flag);
+    }
+  }
+
+  const missingCommitRun = await call(client, "github_commit_run_status", {
+    repo: "funggier/LConnect",
+    commit: "ffffffffffffffffffffffffffffffffffffffff",
+  });
+  if (
+    missingCommitRun.found !== false ||
+    missingCommitRun.match_count !== 0 ||
+    missingCommitRun.selected_run_id !== null ||
+    missingCommitRun.run !== null
+  ) {
+    throw new Error("github_commit_run_status missing commit evidence failed");
+  }
+
+  const shortCommit = await client.callTool({
+    name: "github_commit_run_status",
+    arguments: {
+      repo: "funggier/LConnect",
+      commit: "0123456",
+    },
+  });
+  if (!shortCommit.isError || !textOf(shortCommit).includes("exact 40-hex SHA")) {
+    throw new Error("github_commit_run_status accepted a short SHA");
   }
 
   const view = await call(client, "github_run_view", {
@@ -416,6 +524,8 @@ try {
   }
 
   console.log("github_run_list structured: PASS");
+  console.log("github_commit_run_status exact commit/filter/latest/jobs: PASS");
+  console.log("github_commit_run_status missing/invalid commit: PASS");
   console.log("github_run_view jobs/steps: PASS");
   if (authCalls !== 1) {
     throw new Error("GitHub auth readiness cache did not suppress repeated auth probes");
