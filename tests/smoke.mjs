@@ -36,6 +36,8 @@ const requiredTools = [
   "edit_file",
   "search_files",
   "search_text",
+  "file_hash",
+  "compare_files",
   "get_file_info",
   "powershell_run",
   "command_run",

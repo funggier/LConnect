@@ -9,6 +9,8 @@ const READ_ONLY_TOOLS = new Set([
   "read_multiple_files",
   "search_files",
   "search_text",
+  "file_hash",
+  "compare_files",
   "get_file_info",
   "list_sessions",
   "system_info",
