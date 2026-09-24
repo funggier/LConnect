@@ -1,6 +1,6 @@
 # LCN-038 — Structured Delivery Correlation Snapshot
 
-Status: **ACTIVE — IMPLEMENTATION GREEN / CI IN PROGRESS**
+Status: **ACTIVE — IMPLEMENTATION GREEN / INSTALLED LIVE VALIDATION PENDING**
 
 ## Goal
 
@@ -104,7 +104,7 @@ Add `delivery_snapshot` to the read-only `batch_inspect` allowlist so an older c
 - live source-candidate parser validation: PASS
 - full local suite: PASS (`PASS tools=114`, approximately 44.8 seconds)
 - dependency audit: 0 vulnerabilities
-- GitHub Actions: `35982810098` — IN PROGRESS
+- GitHub Actions: `35982810098` — PASS
 - installed live validation: PENDING
 
 ## Acceptance

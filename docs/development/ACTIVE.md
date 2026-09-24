@@ -7,8 +7,7 @@ Last updated: 2026-09-24
 - Repository: `funggier/LConnect`
 - Branch: `main`
 - Current implementation candidate: `ff12ecb2f167a319a117a27387c81efc71fd7356`
-- Candidate CI: `35982810098` — IN PROGRESS
-- Last passing implementation CI: `35980718759`
+- Passing implementation CI: `35982810098` — PASS
 - Current source MCP catalog: 114 tools
 - Current installed/runtime catalog: 113 tools pending LCN-038 deployment
 - Current runtime catalog digest: `d5038c67f856a5eda6b5bc8fd9c70f90108095d2633ba6e82ccc604396084f72`
@@ -45,4 +44,4 @@ Message-delivery observation: [reports/LCN-20260924-message-delivery-timeout-obs
 
 ## Next action
 
-Finish LCN-038 CI, deploy the 114-tool candidate, restart LConnect without requiring direct schema refresh, and validate `batch_inspect → delivery_snapshot` against the installed runtime. Then use the structured snapshot to continue message-delivery latency localization. Desktop/Browser automation remains deferred.
+Deploy the CI-green 114-tool LCN-038 candidate, restart LConnect without requiring direct schema refresh, and validate `batch_inspect → delivery_snapshot` against the installed runtime. Then use the structured snapshot to continue message-delivery latency localization. Desktop/Browser automation remains deferred.
