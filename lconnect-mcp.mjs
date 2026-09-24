@@ -27,6 +27,7 @@ import { registerStructuredTextSearchTool } from "./modules/structured-text-sear
 import { registerFileIntegrityTools } from "./modules/file-integrity.mjs";
 import { registerGitHubTools } from "./modules/github.mjs";
 import { installRuntimeCatalog } from "./modules/runtime-catalog.mjs";
+import { registerDeliverySnapshotTool } from "./modules/delivery-snapshot.mjs";
 
 const config = loadLConnectConfig(import.meta.url);
 configureRuntime({
@@ -60,6 +61,7 @@ registerEnvironmentTools(server, config);
 registerStructuredTextSearchTool(server, config);
 registerFileIntegrityTools(server, config);
 registerGitHubTools(server, config);
+registerDeliverySnapshotTool(server, config);
 registerBatchInspectionTool(server);
 registerToolTelemetryTool(server);
 const runtimeCatalogState = runtimeCatalog.markReady();

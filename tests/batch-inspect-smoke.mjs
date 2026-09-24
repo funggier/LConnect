@@ -46,17 +46,23 @@ try {
   await call("tool_telemetry", { action: "clear" });
 
   const catalogBatch = jsonOf(await call("batch_inspect", {
-    operations: [{ id: "catalog", tool: "runtime_catalog", arguments: {} }],
+    operations: [
+      { id: "catalog", tool: "runtime_catalog", arguments: {} },
+      { id: "delivery", tool: "delivery_snapshot", arguments: { telemetry_limit: 5 } },
+    ],
   }));
   const catalogText = catalogBatch.results[0]?.result_text || "";
   const catalog = JSON.parse(catalogText);
   if (
     catalogBatch.results[0]?.ok !== true ||
     catalog.catalog_ready !== true ||
-    catalog.tool_count < 113 ||
+    catalog.tool_count < 114 ||
     !/^[0-9a-f]{64}$/.test(catalog.tool_name_digest_sha256)
   ) {
     throw new Error("runtime_catalog batch visibility failed");
+  }
+  if (catalogBatch.results[1]?.ok !== true) {
+    throw new Error("delivery_snapshot batch visibility failed");
   }
 
   tempGitRoot = fs.mkdtempSync(path.join(os.tmpdir(), "lconnect-batch-git-"));
@@ -223,6 +229,7 @@ try {
   if (direct.isError) throw new Error("Direct tool behavior regressed after batch calls");
 
   console.log("batch_inspect runtime_catalog visibility: PASS");
+  console.log("batch_inspect delivery_snapshot visibility: PASS");
   console.log("batch_inspect five-operation single call: PASS");
   console.log("batch_inspect ordered results: PASS");
   console.log("batch_inspect read-only allowlist guard: PASS");
