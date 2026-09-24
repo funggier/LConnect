@@ -6,11 +6,11 @@ Last updated: 2026-09-24
 
 - Repository: `funggier/LConnect`
 - Branch: `main`
-- Current implementation candidate: `ddab13a48a78e7ef217e153a6ba023cffd7ddd47`
-- Passing implementation CI: `35976569888` — PASS
-- Current source MCP catalog: 112 tools
-- Current installed/runtime catalog: 112 tools
-- Current ChatGPT-visible catalog without plugin refresh: 111 tools — stale schema confirmed
+- Current implementation candidate: `fea6ba11af78b4a5ba1b8bc5c4437d9b5706c003`
+- Passing implementation CI: `35978697107` — PASS
+- Current source MCP catalog: 113 tools
+- Current installed/runtime catalog: 112 tools pending LCN-036 deployment
+- Current ChatGPT-visible catalog: 112 tools after explicit plugin refresh
 - LCN-025/026: COMPLETE
 - LCN-031/032: COMPLETE
 - LCN-033: COMPLETE — live telemetry measured approximately 96.7% sampled wall time outside handlers
@@ -21,10 +21,11 @@ Last updated: 2026-09-24
 - LCN-030: COMPLETE — GitHub Actions / Release Integration
 - LCN-025–030: COMPLETE — Agent Operations Reliability core sequence
 - LCN-035: COMPLETE + LIVE VALIDATED — Turn-Safe Long Operation Observation
+- LCN-036: ACTIVE — Runtime Catalog Visibility / Refresh Evidence
 
 ## Active task
 
-**NO ACTIVE DEVELOPMENT TASK**
+**LCN-036 — Runtime Catalog Visibility / Refresh Evidence**
 
 ## Latest completed task
 
@@ -40,4 +41,4 @@ Message-delivery observation: [reports/LCN-20260924-message-delivery-timeout-obs
 
 ## Next action
 
-LCN-035 is complete. The next delivery-reliability investigation should address catalog discovery/refresh visibility: a restarted 112-tool daemon remained exposed as 111 tools to ChatGPT until plugin refresh. Continue latency/message-delivery mitigation alongside execution ergonomics. Desktop/Browser automation remains deferred.
+Deploy the CI-green 113-tool LCN-036 candidate, restart LConnect without refreshing the ChatGPT plugin, and verify that `batch_inspect → runtime_catalog` reports the new server-side count/digest while the direct client catalog remains stale. Then refresh the plugin and confirm convergence. Continue latency/message-delivery mitigation afterward.

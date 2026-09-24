@@ -8,11 +8,11 @@ Current project state: **BASIC CORE STABLE / DELIVERY-TIMEOUT MITIGATION ACTIVE 
 
 Current published release: **v1.1.0 — Expanded Tools & First-Run Guide**
 
-Current main/source MCP catalog: **112 tools**
+Current main/source MCP catalog: **113 tools**
 
-Current installed/runtime MCP catalog: **112 tools**
+Current installed/runtime MCP catalog: **112 tools** pending LCN-036 deployment
 
-Current ChatGPT-visible MCP catalog without plugin refresh: **111 tools** — stale catalog visibility confirmed
+Current ChatGPT-visible MCP catalog: **112 tools** after explicit plugin refresh
 
 LConnect มี Core ที่ใช้งานจริงแล้วและผ่าน runtime acceptance บน Windows:
 
@@ -38,7 +38,7 @@ Agent Operations Reliability ชุด LCN-025–030 ปิดครบแล้
 | Developer Foundation | COMPLETE | LCN-012–014 | Git + Development + HTTP complete |
 | Observation | COMPLETE | LCN-015–017 | Log Tail + File Watcher + Scheduled Tasks complete |
 | Agent Operations Reliability | COMPLETE | LCN-025–034 | LCN-025–030 and LCN-031–034 complete |
-| Delivery / Turn Reliability | ACTIVE | LCN-031–035 | LCN-035 complete + live validated; catalog refresh visibility is the next investigation |
+| Delivery / Turn Reliability | ACTIVE | LCN-031–036 | LCN-035 complete; LCN-036 runtime catalog visibility implementation in progress |
 | Execution Ergonomics | ACTIVE | after LCN-030 | Deterministic structured primitives only; no agent/workflow runtime |
 | Desktop Control | DEFERRED | LCN-018–020 | Explicitly paused |
 | Browser Automation | DEFERRED | LCN-021–023 | Explicitly paused |

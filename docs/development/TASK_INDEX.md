@@ -37,3 +37,4 @@
 | [LCN-033](tasks/LCN-033-general-mcp-tool-delivery-telemetry.md) | COMPLETE | General MCP Tool Delivery Telemetry |
 | [LCN-034](tasks/LCN-034-bounded-read-only-batch-inspection.md) | COMPLETE | Bounded Read-Only Batch Inspection |
 | [LCN-035](tasks/LCN-035-turn-safe-long-operation-observation.md) | COMPLETE | Turn-Safe Long Operation Observation |
+| [LCN-036](tasks/LCN-036-runtime-catalog-visibility.md) | ACTIVE | Runtime Catalog Visibility / Refresh Evidence |

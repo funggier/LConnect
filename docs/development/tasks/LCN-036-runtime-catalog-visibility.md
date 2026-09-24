@@ -1,6 +1,6 @@
 # LCN-036 — Runtime Catalog Visibility / Refresh Evidence
 
-Status: **ACTIVE**
+Status: **ACTIVE — IMPLEMENTATION GREEN / LIVE VALIDATION PENDING**
 
 ## Goal
 
@@ -52,6 +52,16 @@ This means an older ChatGPT-visible schema that already knows `batch_inspect` ca
 - adding a second MCP channel
 - autonomous refresh/retry loops
 - changing OpenAI control-plane behavior
+
+## Current evidence
+
+- implementation: `fea6ba11af78b4a5ba1b8bc5c4437d9b5706c003`
+- source catalog: 113 tools
+- targeted runtime-catalog/batch tests: PASS
+- full local suite: PASS
+- dependency audit: 0 vulnerabilities
+- GitHub Actions: `35978697107` — PASS
+- live deployment validation: PENDING
 
 ## Acceptance
 
