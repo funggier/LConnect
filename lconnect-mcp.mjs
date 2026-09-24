@@ -29,6 +29,7 @@ import { registerGitHubTools } from "./modules/github.mjs";
 import { installRuntimeCatalog } from "./modules/runtime-catalog.mjs";
 import { registerDeliverySnapshotTool } from "./modules/delivery-snapshot.mjs";
 import { registerStructuredDataInspectionTool } from "./modules/structured-data-inspection.mjs";
+import { registerDirectoryIntegrityTools } from "./modules/directory-integrity.mjs";
 
 const config = loadLConnectConfig(import.meta.url);
 configureRuntime({
@@ -64,6 +65,7 @@ registerFileIntegrityTools(server, config);
 registerGitHubTools(server, config);
 registerDeliverySnapshotTool(server, config);
 registerStructuredDataInspectionTool(server, config);
+registerDirectoryIntegrityTools(server, config);
 registerBatchInspectionTool(server);
 registerToolTelemetryTool(server);
 const runtimeCatalogState = runtimeCatalog.markReady();

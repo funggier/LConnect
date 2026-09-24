@@ -54,6 +54,20 @@ try {
         tool: "structured_data_inspect",
         arguments: { path: path.join(root, "package.json"), pointer: "/name" },
       },
+      {
+        id: "manifest",
+        tool: "directory_manifest",
+        arguments: { path: path.join(root, "modules"), max_reported_entries: 3 },
+      },
+      {
+        id: "dircompare",
+        tool: "compare_directories",
+        arguments: {
+          left: path.join(root, "modules"),
+          right: path.join(root, "modules"),
+          max_reported_entries: 3,
+        },
+      },
     ],
   }));
   const catalogText = catalogBatch.results[0]?.result_text || "";
@@ -61,7 +75,7 @@ try {
   if (
     catalogBatch.results[0]?.ok !== true ||
     catalog.catalog_ready !== true ||
-    catalog.tool_count < 115 ||
+    catalog.tool_count < 117 ||
     !/^[0-9a-f]{64}$/.test(catalog.tool_name_digest_sha256)
   ) {
     throw new Error("runtime_catalog batch visibility failed");
@@ -75,6 +89,28 @@ try {
   const structured = JSON.parse(catalogBatch.results[2].result_text || "{}");
   if (structured.value_preview !== "lconnect-mcp") {
     throw new Error("structured_data_inspect batch value failed");
+  }
+  if (catalogBatch.results[3]?.ok !== true) {
+    throw new Error("directory_manifest batch visibility failed");
+  }
+  const manifest = JSON.parse(catalogBatch.results[3].result_text || "{}");
+  if (
+    manifest.complete !== true ||
+    manifest.counts?.selected_files < 1 ||
+    !/^[0-9a-f]{64}$/.test(manifest.manifest_digest || "")
+  ) {
+    throw new Error("directory_manifest batch value failed");
+  }
+  if (catalogBatch.results[4]?.ok !== true) {
+    throw new Error("compare_directories batch visibility failed");
+  }
+  const dirCompare = JSON.parse(catalogBatch.results[4].result_text || "{}");
+  if (
+    dirCompare.comparison_reliable !== true ||
+    dirCompare.equal !== true ||
+    dirCompare.counts?.changed_files !== 0
+  ) {
+    throw new Error("compare_directories batch value failed");
   }
 
   tempGitRoot = fs.mkdtempSync(path.join(os.tmpdir(), "lconnect-batch-git-"));
@@ -243,6 +279,8 @@ try {
   console.log("batch_inspect runtime_catalog visibility: PASS");
   console.log("batch_inspect delivery_snapshot visibility: PASS");
   console.log("batch_inspect structured_data_inspect visibility: PASS");
+  console.log("batch_inspect directory_manifest visibility: PASS");
+  console.log("batch_inspect compare_directories visibility: PASS");
   console.log("batch_inspect five-operation single call: PASS");
   console.log("batch_inspect ordered results: PASS");
   console.log("batch_inspect read-only allowlist guard: PASS");

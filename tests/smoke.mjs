@@ -50,6 +50,8 @@ const requiredTools = [
   "runtime_catalog",
   "delivery_snapshot",
   "structured_data_inspect",
+  "directory_manifest",
+  "compare_directories",
   "system_info",
   "list_processes",
   "kill_process",

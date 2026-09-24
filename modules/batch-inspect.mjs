@@ -17,6 +17,8 @@ const READ_ONLY_TOOLS = new Set([
   "runtime_catalog",
   "delivery_snapshot",
   "structured_data_inspect",
+  "directory_manifest",
+  "compare_directories",
   "system_info",
   "list_processes",
   "list_listening_ports",
