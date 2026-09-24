@@ -42,3 +42,4 @@
 | [LCN-038](tasks/LCN-038-structured-delivery-correlation-snapshot.md) | COMPLETE | Structured Delivery Correlation Snapshot |
 | [LCN-039](tasks/LCN-039-local-delivery-phase-localization.md) | COMPLETE | Local Delivery Phase Localization |
 | [LCN-040](tasks/LCN-040-structured-data-inspection.md) | COMPLETE | Structured Data Inspection |
+| [LCN-041](tasks/LCN-041-directory-manifest-comparison.md) | ACTIVE | Directory Manifest and Comparison |

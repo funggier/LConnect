@@ -6,13 +6,13 @@ Last updated: 2026-09-24
 
 - Repository: `funggier/LConnect`
 - Branch: `main`
-- Current implementation candidate: `597ce9f8454158858d3085ed086adf006fd7789d`
-- Passing implementation CI: `35988530743` — PASS
-- Current source MCP catalog: 115 tools
+- Current implementation candidate: `07769a29c22b27d431cbfe159042e2ffad958c12`
+- Candidate CI: `35991690293` — IN PROGRESS
+- Last passing implementation CI: `35988530743`
+- Current source MCP catalog: 117 tools (LCN-041 candidate)
 - Current installed/runtime catalog: 115 tools
 - Current runtime catalog digest: `cd018b4780f6ed2d3138b92e28037cdeb3ba64ab3df1a9a81a74478d22b67447`
-- Current runtime catalog digest: `5e9102835c1cb8012140315651e840d51453cfee66e9373d1d0539014318dc0e`
-- Current ChatGPT-visible catalog: 114 tools after explicit plugin refresh
+- Current ChatGPT-visible catalog: 114 tools (plugin not refreshed after LCN-040 activation)
 - LCN-025/026: COMPLETE
 - LCN-031/032: COMPLETE
 - LCN-033: COMPLETE — live telemetry measured approximately 96.7% sampled wall time outside handlers
@@ -28,10 +28,11 @@ Last updated: 2026-09-24
 - LCN-038: COMPLETE + LIVE VALIDATED — Structured Delivery Correlation Snapshot
 - LCN-039: COMPLETE — Local Delivery Phase Localization
 - LCN-040: COMPLETE + LIVE VALIDATED — Structured Data Inspection
+- LCN-041: ACTIVE — Directory Manifest and Comparison
 
 ## Active task
 
-**NO ACTIVE DEVELOPMENT TASK**
+**LCN-041 — Directory Manifest and Comparison**
 
 ## Latest completed task
 
@@ -47,4 +48,4 @@ Message-delivery observation: [reports/LCN-20260924-message-delivery-timeout-obs
 
 ## Next action
 
-LCN-040 is complete and live validated at 115 tools. Continue execution ergonomics with the next deterministic structured primitive; delivery-latency work remains closed at the current local evidence boundary unless new correlated evidence appears.
+LCN-041 adds bounded deterministic directory manifests and source↔installed tree comparison. Finish full local validation, commit/push, CI, deploy and live source/install comparison. Delivery-latency work remains closed at the current local evidence boundary unless new correlated evidence appears.
