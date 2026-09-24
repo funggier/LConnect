@@ -9,7 +9,8 @@ Last updated: 2026-09-24
 - Current implementation candidate: `07769a29c22b27d431cbfe159042e2ffad958c12`
 - Passing implementation CI: `35991690293` — PASS
 - Current source MCP catalog: 117 tools (LCN-041 candidate)
-- Current installed/runtime catalog: 115 tools
+- Current installed source catalog: 117 tools
+- Current running daemon catalog: 115 tools — restart required for LCN-041 activation
 - Current runtime catalog digest: `cd018b4780f6ed2d3138b92e28037cdeb3ba64ab3df1a9a81a74478d22b67447`
 - Current ChatGPT-visible catalog: 114 tools (plugin not refreshed after LCN-040 activation)
 - LCN-025/026: COMPLETE
@@ -47,4 +48,4 @@ Message-delivery observation: [reports/LCN-20260924-message-delivery-timeout-obs
 
 ## Next action
 
-LCN-041 adds bounded deterministic directory manifests and source↔installed tree comparison. Finish full local validation, commit/push, CI, deploy and live source/install comparison. Delivery-latency work remains closed at the current local evidence boundary unless new correlated evidence appears.
+LCN-041 code/CI/deployment validation is green at 117 tools and source↔installed module trees are reliably equal. The current running daemon remains 115 tools. Restart LConnect, reconnect without requiring plugin refresh, validate `batch_inspect → runtime_catalog + directory_manifest + compare_directories`, then close LCN-041.

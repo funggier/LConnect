@@ -113,7 +113,11 @@ Both tools are read-only and may be allowlisted in `batch_inspect`.
 - implementation: `07769a29c22b27d431cbfe159042e2ffad958c12`
 - GitHub CI: `35991690293` — PASS
 - real source↔installed pre-deploy comparison: PASS (reliable; 26 equal, 1 changed, 1 source-only)
-- installed live validation: PENDING
+- installed source validation: PASS (`PASS tools=117`, directory-integrity smoke PASS)
+- source/install module file SHA-256 parity: PASS (`b997cf9f72185b2ee144c1afb3c896c21f45165a42686601ea42984eab222429`)
+- post-deploy source↔installed `modules` tree comparison: PASS (28/28 equal; manifest digest `b3292291420777e3f376b8a14361a3ed2576209216279b02624935bc80c24f96`)
+- pre-restart daemon: 115 tools, PID 38268, digest `cd018b4780f6ed2d3138b92e28037cdeb3ba64ab3df1a9a81a74478d22b67447`
+- restarted live validation: PENDING
 
 ## Acceptance
 

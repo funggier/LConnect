@@ -204,4 +204,36 @@ Implementation commit: `07769a29c22b27d431cbfe159042e2ffad958c12`
 
 GitHub Actions: **PASS** — run `35991690293`
 
-Installed live validation: **PENDING**
+## Pre-restart installed deployment evidence
+
+Tracked source was synchronized to the installed runtime.
+
+Installed validation:
+
+- syntax check: PASS
+- directory-integrity smoke: PASS
+- source smoke: `PASS tools=117`
+- source/install `modules/directory-integrity.mjs` SHA-256 parity: PASS
+- module digest: `b997cf9f72185b2ee144c1afb3c896c21f45165a42686601ea42984eab222429`
+
+A post-deploy tree-level comparison using the LCN-041 candidate reported:
+
+- comparison reliable: true
+- source modules: 28 files
+- installed modules: 28 files
+- common equal files: 28
+- changed files: 0
+- source-only files: 0
+- installed-only files: 0
+- left/right manifest digest: `b3292291420777e3f376b8a14361a3ed2576209216279b02624935bc80c24f96`
+
+The active daemon before restart remained the prior catalog:
+
+- process ID: `38268`
+- runtime start: `2026-09-24T11:00:05.481Z`
+- tool count: 115
+- catalog digest: `cd018b4780f6ed2d3138b92e28037cdeb3ba64ab3df1a9a81a74478d22b67447`
+
+Therefore installed files are ready at 117 tools while one restart/reconnect is required to activate the two new tools in the running process.
+
+Restarted installed live validation: **PENDING**
