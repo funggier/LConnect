@@ -297,10 +297,6 @@ function previewValue(value, bounds, state, depth = 0) {
     }
     if (value.length > limit) {
       state.container_items += value.length - limit;
-      output.push({
-        $truncated: "container_items",
-        omitted_items: value.length - limit
-      });
     }
     return output;
   }
@@ -312,17 +308,13 @@ function previewValue(value, bounds, state, depth = 0) {
   if (type === "object" || type === "map") {
     const entries = objectEntries(value).sort(([a], [b]) => a.localeCompare(b));
     const limit = Math.min(entries.length, bounds.maxContainerItems);
-    const output = {};
+    const output = Object.create(null);
     for (let i = 0; i < limit; i += 1) {
       const [key, child] = entries[i];
       output[key] = previewValue(child, bounds, state, depth + 1);
     }
     if (entries.length > limit) {
       state.container_items += entries.length - limit;
-      output.$truncated = {
-        reason: "container_items",
-        omitted_items: entries.length - limit
-      };
     }
     return output;
   }

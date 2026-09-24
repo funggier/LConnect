@@ -44,6 +44,10 @@ fs.writeFileSync(jsonPath, JSON.stringify({
     c: 3,
     d: 4
   },
+  danger: {
+    ["__proto__"]: "proto-value",
+    "$truncated": "user-value"
+  },
   ["k".repeat(3000)]: "long-key-value"
 }, null, 2), "utf8");
 
@@ -225,9 +229,21 @@ try {
     containerBound.data.selected_summary.key_count !== 4 ||
     containerBound.data.selected_summary.keys.length !== 2 ||
     containerBound.data.truncation.container_items !== 2 ||
-    !containerBound.data.value_preview.$truncated
+    Object.keys(containerBound.data.value_preview).length !== 2
   ) {
     throw new Error("container bound failed");
+  }
+
+  const dangerousKeys = await call({
+    path: jsonPath,
+    pointer: "/danger"
+  });
+  if (
+    !Object.prototype.hasOwnProperty.call(dangerousKeys.data.value_preview, "__proto__") ||
+    dangerousKeys.data.value_preview["__proto__"] !== "proto-value" ||
+    dangerousKeys.data.value_preview["$truncated"] !== "user-value"
+  ) {
+    throw new Error("reserved/prototype-like object key preservation failed");
   }
 
   const depthBound = await call({
@@ -319,6 +335,7 @@ try {
   console.log("structured_data_inspect TOML non-finite number preservation: PASS");
   console.log("structured_data_inspect arrays/escaped pointers: PASS");
   console.log("structured_data_inspect string/container/depth/output bounds: PASS");
+  console.log("structured_data_inspect prototype/reserved-key preservation: PASS");
   console.log("structured_data_inspect invalid pointer/missing node: PASS");
   console.log("structured_data_inspect parse diagnostic: PASS");
   console.log("structured_data_inspect file-size bound: PASS");
