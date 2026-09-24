@@ -1,6 +1,6 @@
 # รายการ Tools ของ LConnect
 
-LConnect Core บน current `main` expose 97 tools ผ่าน MCP `main` channel เดียว (published v1.1.0 มี 91 tools)
+LConnect Core บน current `main` expose 98 tools ผ่าน MCP `main` channel เดียว (published v1.1.0 มี 91 tools)
 
 ## Filesystem
 
@@ -979,6 +979,66 @@ arguments:
 - `command`
 - `all`
 - `cwd`
+
+## Batch Inspection
+
+### batch_inspect
+
+รวม read-only inspection หลายรายการไว้ใน MCP call เดียวเพื่อลด round trips
+
+ค่าเริ่มต้น:
+
+- สูงสุด 10 operations ต่อ batch
+- execute ตามลำดับที่ caller ระบุ
+- `stop_on_error: false`
+- `max_chars_per_result: 4000`
+- `max_total_chars: 20000`
+
+แต่ละ operation ระบุ:
+
+- optional `id`
+- `tool`
+- `arguments`
+
+เฉพาะ allowlisted read-only tools เท่านั้น เช่น:
+
+- filesystem read/inspection
+- session/system/process inspection
+- services/network/hardware read
+- Git read
+- project/build-system detection
+- log/watch event read
+- Scheduled Task read
+- PATH/which
+
+ไม่อนุญาต mutation/execution เช่น:
+
+- write/edit/move file
+- shell command
+- start/terminate/restart process
+- Git commit/fetch/pull/push
+- service mutation
+- Scheduled Task mutation
+- environment mutation
+- HTTP request
+- watcher/follower creation
+- nested batch
+- telemetry tool
+
+ผลลัพธ์มี per-operation:
+
+- `ok`
+- `is_error`
+- `handler_elapsed_ms`
+- `result_bytes`
+- `result_chars`
+- `returned_chars`
+- `truncated`
+- bounded `result_text`
+
+ผลรวมถูกจำกัดทั้งต่อ operation และทั้ง batch เพื่อไม่ให้การลด round trips กลายเป็น response ขนาดใหญ่แบบ unbounded
+
+`batch_inspect` ไม่มี branching, loop, planner หรือ continuation ใด ๆ ChatGPT ยังเป็นผู้กำหนดทุก operation เอง
 
 ## Tool Telemetry
 

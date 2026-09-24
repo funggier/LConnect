@@ -123,3 +123,55 @@ After runtime restart with LCN-033 active:
 5. run a multi-tool sequence and estimate accumulated downstream delivery tail
 
 Only after this measurement should round-trip-reduction capabilities be designed.
+
+## Live runtime validation
+
+After restarting LConnect with LCN-033 active, ChatGPT discovered 97 tools and `tool_telemetry` was available.
+
+Telemetry was cleared before measurement.
+
+### Individual inspection calls
+
+| Tool | Caller wall | LConnect handler | Approx. outside-handler time |
+|---|---:|---:|---:|
+| `list_sessions` | 1231 ms | 0.050 ms | 1230.950 ms |
+| `system_info` | 1216 ms | 1.770 ms | 1214.230 ms |
+| `git_status` | 2787 ms | 182.364 ms | 2604.636 ms |
+| `read_text_file` | 3638 ms | 1.390 ms | 3636.610 ms |
+| `refresh_state` | 2414 ms | 0.177 ms | 2413.823 ms |
+
+### Managed-process interaction
+
+| Tool | Caller wall | LConnect handler | Approx. outside-handler time |
+|---|---:|---:|---:|
+| `start_process` | 14457 ms | 4.684 ms | 14452.316 ms |
+| `wait_session` (1 s wait) | 3400 ms | 1006.224 ms | 2393.776 ms |
+| `read_process_events` | 2511 ms | 0.162 ms | 2510.838 ms |
+| terminal `wait_session` | 2176 ms | 0.039 ms | 2175.961 ms |
+| `release_session` | 2265 ms | 0.119 ms | 2264.881 ms |
+
+### Aggregate
+
+Across these 10 calls:
+
+- caller-observed wall time: **36095 ms**
+- LConnect handler time: **1196.979 ms**
+- outside-handler difference: **34898.021 ms**
+- outside-handler share: **approximately 96.7%**
+
+A particularly important sample was `start_process`:
+
+- LConnect handler: **4.684 ms**
+- caller wall time: **14457 ms**
+
+The managed process started immediately and remained independent; the large wall time was not local process-start work.
+
+The telemetry snapshot itself took approximately 12179 ms to arrive at the caller and is intentionally not self-recorded.
+
+### Conclusion
+
+The current Message delivery problem is dominated by per-call round-trip/delivery overhead rather than LConnect handler execution in this live sample.
+
+The evidence now supports moving from further handler micro-optimization to **bounded deterministic round-trip reduction**.
+
+LCN-034 should therefore batch only explicit read-only inspection operations inside one MCP call. It must not add autonomous planning or arbitrary workflow execution.

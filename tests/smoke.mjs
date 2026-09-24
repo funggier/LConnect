@@ -119,6 +119,7 @@ const requiredTools = [
   "refresh_state",
   "read_process_events",
   "tool_telemetry",
+  "batch_inspect",
 ];
 
 try {

@@ -11,11 +11,11 @@
 ## สถานะปัจจุบัน
 
 - Source version: **1.1.0**
-- MCP catalog on current `main`: **97 tools**
+- MCP catalog on current `main`: **98 tools**
 - Latest published release `v1.1.0`: **91 tools**
 - OpenAI tunnel-client minimum: **0.0.14**
 
-LConnect Core ผ่าน runtime acceptance บน Windows 10 แล้ว โดย current `main` แสดง 97 tools และทดสอบจริงทั้ง filesystem, PowerShell, process/session, stdin, process-tree termination และ listening ports
+LConnect Core ผ่าน runtime acceptance บน Windows 10 แล้ว โดย current `main` แสดง 98 tools และทดสอบจริงทั้ง filesystem, PowerShell, process/session, stdin, process-tree termination และ listening ports
 
 ## โครงสร้าง
 
@@ -229,6 +229,11 @@ npm test
 - `enable_scheduled_task`
 - `disable_scheduled_task`
 - `delete_scheduled_task`
+
+### Batch Inspection
+- `batch_inspect`
+
+รวม explicit read-only inspections สูงสุด 10 operations ไว้ใน MCP round trip เดียว โดยใช้ allowlist, ordered execution, result bounds และ stop-on-error ที่กำหนดชัดเจน เพื่อช่วยลด accumulated Tool delivery overhead โดยไม่สร้าง workflow engine
 
 ### Tool Telemetry
 - `tool_telemetry`

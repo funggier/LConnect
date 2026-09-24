@@ -22,6 +22,7 @@ import {
   installToolTelemetry,
   registerToolTelemetryTool,
 } from "./modules/telemetry.mjs";
+import { registerBatchInspectionTool } from "./modules/batch-inspect.mjs";
 
 const config = loadLConnectConfig(import.meta.url);
 configureRuntime({
@@ -51,6 +52,7 @@ registerFileWatcherTools(server, config);
 registerScheduledTaskTools(server, config);
 registerTransientStateTools(server);
 registerEnvironmentTools(server, config);
+registerBatchInspectionTool(server);
 registerToolTelemetryTool(server);
 
 console.error(

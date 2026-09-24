@@ -41,6 +41,7 @@ lconnect-mcp.mjs
    +-- modules/system.mjs
    +-- modules/environment.mjs
    +-- modules/telemetry.mjs
+   +-- modules/batch-inspect.mjs
 ```
 
 ## เหตุผลที่ใช้ main channel เดียว
@@ -296,6 +297,35 @@ environment module ให้ structured contract สำหรับ:
 - Windows PATHEXT executable resolution
 
 process scope ใช้ Node environment โดยตรง ส่วน persistent user/machine scope ใช้ Windows environment API ผ่าน PowerShell โดยยังเคารพ execution setting ของ LConnect
+
+## Batch Inspection
+
+`modules/batch-inspect.mjs` เป็น round-trip-reduction layer แบบ bounded/deterministic สำหรับ read-only inspection เท่านั้น
+
+หลักการ:
+
+- caller ระบุ ordered operations ทั้งหมด upfront
+- local execution เป็น sequential
+- ใช้ allowlist ของ read-only tools
+- reuse registered tool validation/handlers เดิม
+- จำกัดจำนวน operations
+- จำกัดผลลัพธ์ต่อ operation และรวมทั้ง batch
+- ไม่มี conditional branch
+- ไม่มี loop
+- ไม่มี autonomous continuation
+- ไม่มี persistent workflow state
+
+จึงลด:
+
+```text
+N MCP round trips
+        ↓
+1 MCP round trip + N local handler calls
+```
+
+โดยยังคง ChatGPT เป็น intelligence/workflow owner
+
+LCN-033 telemetry สามารถเห็น outer `batch_inspect` และ internal handlers ภายใต้ MCP request ID เดียวกัน เพื่อวัด local work เทียบกับ caller wall time
 
 ## Tool Telemetry
 

@@ -6,30 +6,24 @@ Last updated: 2026-09-24
 
 - Repository: `funggier/LConnect`
 - Branch: `main`
-- Current main implementation candidate: `8ebb95591b95443d28b77bcd812964c106650e34`
-- Passing CI: `35958925520`
+- Current main HEAD: `b60dbe47232203e7e09a62a4af92ff79b1952923`
+- LCN-033 implementation commit: `8ebb95591b95443d28b77bcd812964c106650e34`
+- LCN-033 passing CI: `35958925520`
 - Current source MCP catalog: 97 tools
-- LCN-025: COMPLETE
-- LCN-026: COMPLETE
-- LCN-031: COMPLETE
-- LCN-032: COMPLETE
-- LCN-033: COMPLETE — General MCP Tool Delivery Telemetry
-- LCN-027: READY but intentionally deferred while timeout investigation remains active
+- LCN-025/026: COMPLETE
+- LCN-031/032: COMPLETE
+- LCN-033: COMPLETE — live validation shows approximately 96.7% of sampled caller wall time outside handlers
+- LCN-034: ACTIVE — Bounded Read-Only Batch Inspection
+- LCN-027: READY but intentionally deferred during timeout/round-trip work
 
 ## Active task
 
-**NO ACTIVE DEVELOPMENT TASK**
+### LCN-034 — Bounded Read-Only Batch Inspection
 
-## Latest completed task
+Status: **ACTIVE**
 
-### LCN-033 — General MCP Tool Delivery Telemetry
+Task: [tasks/LCN-034-bounded-read-only-batch-inspection.md](tasks/LCN-034-bounded-read-only-batch-inspection.md)
 
-Status: **COMPLETE**
+## Direction
 
-Task: [tasks/LCN-033-general-mcp-tool-delivery-telemetry.md](tasks/LCN-033-general-mcp-tool-delivery-telemetry.md)
-
-Report: [reports/LCN-20260924-033-general-mcp-tool-delivery-telemetry.md](reports/LCN-20260924-033-general-mcp-tool-delivery-telemetry.md)
-
-## Next action
-
-Restart/reconnect the installed LConnect runtime and perform live telemetry validation before adding round-trip-reduction features.
+Reduce MCP round trips without moving intelligence/workflow ownership into LConnect.

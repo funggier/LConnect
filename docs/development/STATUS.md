@@ -8,7 +8,7 @@ Current project state: **BASIC CORE STABLE / AGENT OPERATIONS RELIABILITY ACTIVE
 
 Current published release: **v1.1.0 — Expanded Tools & First-Run Guide**
 
-Current main MCP catalog: **97 tools**
+Current main MCP catalog: **98 tools**
 
 LConnect มี Core ที่ใช้งานจริงแล้วและผ่าน runtime acceptance บน Windows:
 
@@ -33,7 +33,7 @@ Expansion phase ถัดไปเน้น Agent Operations Reliability ชุ�
 | System Foundation | COMPLETE | LCN-007–011 | Environment + Process + Services + Network + Hardware complete |
 | Developer Foundation | COMPLETE | LCN-012–014 | Git + Development + HTTP complete |
 | Observation | COMPLETE | LCN-015–017 | Log Tail + File Watcher + Scheduled Tasks complete |
-| Agent Operations Reliability | ACTIVE | LCN-025–033 | LCN-025/026, LCN-031/032 complete; LCN-033 telemetry complete; live validation next |
+| Agent Operations Reliability | ACTIVE | LCN-025–034 | LCN-025/026, LCN-031/032/033 complete; LCN-034 batch inspection active |
 | Desktop Control | PLANNED | LCN-018–020 | Deferred until LCN-025–030 complete |
 | Browser Automation | PLANNED | LCN-021–023 | Common browser layer + Firefox + Chrome |
 
@@ -309,6 +309,29 @@ Current local candidate:
 
 No tool arguments or result contents are recorded.
 
+### LCN-034 — Bounded Read-Only Batch Inspection
+**ACTIVE**
+
+Adds one bounded deterministic read-only batch tool:
+
+- `batch_inspect`
+
+Purpose:
+
+- reduce accumulated MCP round trips
+- keep ChatGPT as the intelligence/workflow owner
+- preserve existing tool validation/semantics
+- enforce a strict read-only allowlist
+- bound per-result and total output
+
+Current local candidate:
+
+- catalog: 98 tools
+- targeted batch tests: PASS
+- full local suite: PASS
+- dependency audit: 0 vulnerabilities
+- GitHub CI: pending
+
 ## Next sequence
 
 ```text
@@ -343,6 +366,8 @@ LCN-031 MCP Request Timeout Containment — COMPLETE (priority repair)
 LCN-032 HTTP Hard-Settle Timeout + Delivery Evidence — COMPLETE
   ↓
 LCN-033 General MCP Tool Delivery Telemetry — COMPLETE
+  ↓
+LCN-034 Bounded Read-Only Batch Inspection — ACTIVE
   ↓
 LCN-027 Structured Text Search — READY
   ↓
