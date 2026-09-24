@@ -43,7 +43,8 @@ fs.writeFileSync(jsonPath, JSON.stringify({
     b: 2,
     c: 3,
     d: 4
-  }
+  },
+  ["k".repeat(3000)]: "long-key-value"
 }, null, 2), "utf8");
 
 fs.writeFileSync(yamlPath, [
@@ -68,6 +69,11 @@ fs.writeFileSync(tomlPath, [
   "",
   "[[items]]",
   "name = \"toml-second\"",
+  "",
+  "[numbers]",
+  "nan = nan",
+  "pos = inf",
+  "neg = -inf",
   ""
 ].join("\n"), "utf8");
 
@@ -190,6 +196,14 @@ try {
     throw new Error("TOML array pointer failed");
   }
 
+  const tomlNan = await call({
+    path: tomlPath,
+    pointer: "/numbers/nan"
+  });
+  if (tomlNan.data.value_preview?.$number !== "NaN") {
+    throw new Error("TOML non-finite number preservation failed");
+  }
+
   const stringBound = await call({
     path: jsonPath,
     pointer: "/long",
@@ -235,7 +249,7 @@ try {
   if (
     outputBound.text.length > 1000 ||
     outputBound.data.truncation.final_output !== true ||
-    !outputBound.data.output_bound
+    outputBound.data.output_bound?.metadata_clipped !== true
   ) {
     throw new Error("final output bound failed");
   }
@@ -302,6 +316,7 @@ try {
   console.log("structured_data_inspect JSON nested pointer: PASS");
   console.log("structured_data_inspect YAML nested pointer: PASS");
   console.log("structured_data_inspect TOML nested pointer: PASS");
+  console.log("structured_data_inspect TOML non-finite number preservation: PASS");
   console.log("structured_data_inspect arrays/escaped pointers: PASS");
   console.log("structured_data_inspect string/container/depth/output bounds: PASS");
   console.log("structured_data_inspect invalid pointer/missing node: PASS");

@@ -20,6 +20,7 @@ function textResult(value, isError = false, maxOutputChars = 30000) {
   let text = JSON.stringify(payload, null, 2);
 
   if (text.length > maxOutputChars) {
+    const originalOutputChars = text.length;
     payload = {
       ok: value?.ok !== false,
       path: value?.path ?? null,
@@ -34,12 +35,32 @@ function textResult(value, isError = false, maxOutputChars = 30000) {
       },
       output_bound: {
         max_output_chars: maxOutputChars,
-        original_output_chars: text.length
+        original_output_chars: originalOutputChars
       },
       note:
         "The structured value preview was omitted because the bounded final response would exceed max_output_chars. Query a narrower JSON Pointer or raise max_output_chars within the allowed bound."
     };
     text = JSON.stringify(payload, null, 2);
+
+    if (text.length > maxOutputChars) {
+      payload = {
+        ok: value?.ok !== false,
+        format: value?.format ?? null,
+        pointer: boundedText(value?.pointer ?? "", 200),
+        selected_type: value?.selected_type ?? null,
+        truncation: {
+          final_output: true
+        },
+        output_bound: {
+          max_output_chars: maxOutputChars,
+          original_output_chars: originalOutputChars,
+          metadata_clipped: true
+        },
+        note:
+          "Value preview and oversized metadata were omitted to enforce max_output_chars. Query a narrower JSON Pointer."
+      };
+      text = JSON.stringify(payload, null, 2);
+    }
   }
 
   return {
@@ -246,7 +267,10 @@ function objectEntries(value) {
 function previewValue(value, bounds, state, depth = 0) {
   const type = nodeType(value);
 
-  if (value === null || type === "boolean" || type === "number") return value;
+  if (value === null || type === "boolean") return value;
+  if (type === "number") {
+    return Number.isFinite(value) ? value : { $number: String(value) };
+  }
   if (type === "bigint") return { $bigint: value.toString() };
   if (type === "undefined") return { $undefined: true };
   if (type === "date") return { $date: value.toISOString() };
