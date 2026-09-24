@@ -206,6 +206,22 @@ export function getManagedProcessSessionSnapshot(sessionId, options) {
   return session ? snapshot(session, options) : null;
 }
 
+export function getManagedProcessSessionStatus(
+  sessionId,
+  {
+    includeOutputTail = false,
+    outputTailChars = 1000,
+  } = {}
+) {
+  const session = sessions.get(sessionId);
+  if (!session) return null;
+  return {
+    ...snapshot(session, { includeOutput: false }),
+    completed: !session.running,
+    output_tail: includeOutputTail ? outputTail(session, outputTailChars) : null,
+  };
+}
+
 export function listManagedProcessSessions(options) {
   return [...sessions.values()].map((session) => snapshot(session, options));
 }
@@ -375,8 +391,11 @@ export function refreshManagedProcessState({
 
 export function registerProcessTools(server, config) {
   const enabled = config.shell.enabled && process.env.MCP_ENABLE_POWERSHELL !== "false";
-  const maxWaitSeconds = Math.max(0.1, config.mcp.maxSynchronousRequestSeconds);
-  const defaultWaitSeconds = Math.min(5, maxWaitSeconds);
+  const maxWaitSeconds = Math.max(
+    0.1,
+    Math.min(3, config.mcp.maxSynchronousRequestSeconds)
+  );
+  const defaultWaitSeconds = Math.min(1, maxWaitSeconds);
 
   server.tool("start_process", "Start a long-running local process and return a session ID.", {
     program: z.string().min(1),
@@ -396,6 +415,23 @@ export function registerProcessTools(server, config) {
     } catch (error) {
       return textResult(error.message, true);
     }
+  });
+
+  server.tool("session_status", "Read immediate compact status for one managed process session without waiting. Output is omitted by default; request a bounded tail only when needed.", {
+    session_id: z.string().min(1),
+    include_output_tail: z.boolean().optional(),
+    output_tail_chars: z.number().int().min(100).max(10000).optional(),
+  }, async ({
+    session_id,
+    include_output_tail = false,
+    output_tail_chars = 1000,
+  }) => {
+    const result = getManagedProcessSessionStatus(session_id, {
+      includeOutputTail: include_output_tail,
+      outputTailChars: output_tail_chars,
+    });
+    if (!result) return textResult(`Unknown session: ${session_id}`, true);
+    return textResult(result);
   });
 
   server.tool("read_process_output", "Read buffered stdout/stderr and status for a process session.", {
@@ -418,7 +454,7 @@ export function registerProcessTools(server, config) {
     return textResult(result);
   });
 
-  server.tool("wait_session", "Wait briefly for a managed process session. Timeout never terminates the managed process; call again or read incremental events.", {
+  server.tool("wait_session", "Wait briefly (default 1s, maximum 3s) for a managed process session. Prefer session_status for non-blocking checks. Timeout never terminates managed work.", {
     session_id: z.string().min(1),
     timeout_seconds: z.number().min(0).max(maxWaitSeconds).optional(),
     poll_interval_ms: z.number().int().min(25).max(2000).optional(),
@@ -428,8 +464,8 @@ export function registerProcessTools(server, config) {
     session_id,
     timeout_seconds = defaultWaitSeconds,
     poll_interval_ms = 100,
-    include_output_tail = true,
-    output_tail_chars = 4000,
+    include_output_tail = false,
+    output_tail_chars = 1000,
   }) => {
     const result = await waitManagedProcessSession(session_id, {
       timeoutSeconds: timeout_seconds,
@@ -482,7 +518,9 @@ export function registerProcessTools(server, config) {
     }
   });
 
-  server.tool("list_sessions", "List process sessions started by this LConnect instance.", {}, async () => {
-    return textResult(listManagedProcessSessions());
+  server.tool("list_sessions", "List process sessions started by this LConnect instance. Buffered stdout/stderr are omitted by default to keep status checks compact.", {
+    include_output: z.boolean().optional(),
+  }, async ({ include_output = false }) => {
+    return textResult(listManagedProcessSessions({ includeOutput: include_output }));
   });
 }

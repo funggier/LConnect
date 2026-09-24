@@ -46,6 +46,7 @@ const requiredTools = [
   "write_process_input",
   "terminate_process",
   "list_sessions",
+  "session_status",
   "system_info",
   "list_processes",
   "kill_process",

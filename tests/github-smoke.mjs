@@ -25,6 +25,7 @@ const config = {
 };
 
 let wait43Calls = 0;
+let authCalls = 0;
 let lastDispatchArgs = null;
 
 function runJson(id, status, conclusion, jobs = []) {
@@ -71,7 +72,10 @@ function ok(stdout = "", stderr = "") {
 }
 
 async function fakeGh(args) {
-  if (args[0] === "auth" && args[1] === "status") return ok("authenticated");
+  if (args[0] === "auth" && args[1] === "status") {
+    authCalls += 1;
+    return ok("authenticated");
+  }
 
   if (args[0] === "run" && args[1] === "list") {
     return ok(JSON.stringify([
@@ -224,6 +228,9 @@ try {
     repo: "funggier/LConnect",
     run_id: 42,
   });
+  if (authCalls !== 1) {
+    throw new Error("GitHub auth readiness was not reused from the short in-memory cache");
+  }
   if (
     view.run.id !== 42 ||
     view.run.jobs[0]?.name !== "windows" ||
@@ -236,12 +243,13 @@ try {
   const waited = await call(client, "github_run_wait", {
     repo: "funggier/LConnect",
     run_id: 43,
-    wait_seconds: 1,
     poll_interval_ms: 100,
   });
   if (
     waited.completed !== true ||
     waited.timed_out !== false ||
+    waited.requested_wait_ms !== 1000 ||
+    waited.effective_wait_ms > 1000 ||
     waited.run.conclusion !== "success"
   ) {
     throw new Error("github_run_wait completion failed");
@@ -258,6 +266,18 @@ try {
     timed.return_reason !== "timeout"
   ) {
     throw new Error("github_run_wait bounded timeout failed");
+  }
+
+  const overLimitWait = await client.callTool({
+    name: "github_run_wait",
+    arguments: {
+      repo: "funggier/LConnect",
+      run_id: 44,
+      wait_seconds: 4,
+    },
+  });
+  if (!overLimitWait.isError) {
+    throw new Error("github_run_wait accepted a wait longer than 3 seconds");
   }
 
   const failed = await call(client, "github_run_failed_logs", {
@@ -370,6 +390,12 @@ try {
 
   console.log("github_run_list structured: PASS");
   console.log("github_run_view jobs/steps: PASS");
+  if (authCalls !== 1) {
+    throw new Error("GitHub auth readiness cache did not suppress repeated auth probes");
+  }
+
+  console.log("github auth readiness cache: PASS");
+  console.log("github_run_wait 1s default / 3s maximum: PASS");
   console.log("github_run_wait completion/timeout: PASS");
   console.log("github_run_failed_logs bounds/redaction: PASS");
   console.log("github_workflow_dispatch explicit inputs/redaction: PASS");

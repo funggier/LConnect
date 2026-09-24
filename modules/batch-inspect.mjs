@@ -13,6 +13,7 @@ const READ_ONLY_TOOLS = new Set([
   "compare_files",
   "get_file_info",
   "list_sessions",
+  "session_status",
   "system_info",
   "list_processes",
   "list_listening_ports",

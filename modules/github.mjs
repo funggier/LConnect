@@ -295,7 +295,24 @@ export function registerGitHubTools(server, config, dependencies = {}) {
   const runGhRaw = dependencies.runGhRaw || defaultRunner(config);
   const sleep = dependencies.sleep || ((ms) => new Promise((resolve) => setTimeout(resolve, ms)));
   const now = dependencies.now || (() => Date.now());
+  const authReadyTtlMs = boundedInteger(
+    dependencies.authReadyTtlMs,
+    30000,
+    1000,
+    300000
+  );
+  let authReadyUntil = 0;
   const resolveAllowedExisting = makeExistingPathGuard(config);
+
+  async function ensureGhReadyCached(timeoutSeconds = 5) {
+    if (now() < authReadyUntil) {
+      return { cached: true, ready_until: authReadyUntil };
+    }
+
+    await ensureGhReady(runGhRaw, timeoutSeconds);
+    authReadyUntil = now() + authReadyTtlMs;
+    return { cached: false, ready_until: authReadyUntil };
+  }
 
   server.tool("github_run_list", "List GitHub Actions runs through authenticated gh with structured bounded output.", {
     repo: z.string().min(3),
@@ -314,7 +331,7 @@ export function registerGitHubTools(server, config, dependencies = {}) {
   }) => {
     try {
       validateRepo(repo);
-      await ensureGhReady(runGhRaw);
+      await ensureGhReadyCached();
       const args = [
         "run",
         "list",
@@ -349,23 +366,23 @@ export function registerGitHubTools(server, config, dependencies = {}) {
   }, async ({ repo, run_id }) => {
     try {
       validateRepo(repo);
-      await ensureGhReady(runGhRaw);
+      await ensureGhReadyCached();
       return textResult({ repo, run: await readRun(runGhRaw, repo, run_id) });
     } catch (error) {
       return textResult(error.message, true);
     }
   });
 
-  server.tool("github_run_wait", "Wait briefly for one GitHub Actions run without cancelling it on timeout. Repeat the call to continue waiting.", {
+  server.tool("github_run_wait", "Wait briefly (default 1s, maximum 3s) for one GitHub Actions run without cancelling it on timeout. Prefer github_run_view for a non-blocking status check.", {
     repo: z.string().min(3),
     run_id: z.number().int().positive(),
-    wait_seconds: z.number().min(0).max(10).optional(),
+    wait_seconds: z.number().min(0).max(3).optional(),
     poll_interval_ms: z.number().int().min(100).max(5000).optional(),
   }, async ({
     repo,
     run_id,
-    wait_seconds = 5,
-    poll_interval_ms = 1000,
+    wait_seconds = 1,
+    poll_interval_ms = 500,
   }) => {
     try {
       validateRepo(repo);
@@ -374,7 +391,7 @@ export function registerGitHubTools(server, config, dependencies = {}) {
         1000,
         getRuntimeRequestBudget().maxSynchronousRequestSeconds * 1000 - 500
       );
-      const requestedWaitMs = boundedInteger(wait_seconds * 1000, 5000, 0, 10000);
+      const requestedWaitMs = boundedInteger(wait_seconds * 1000, 1000, 0, 3000);
       const effectiveWaitMs = Math.min(requestedWaitMs, runtimeBudgetMs);
       const deadline = started + effectiveWaitMs;
       const pollMs = boundedInteger(poll_interval_ms, 1000, 100, 5000);
@@ -382,7 +399,7 @@ export function registerGitHubTools(server, config, dependencies = {}) {
         1,
         Math.min(5, Math.ceil(Math.max(1, deadline - now()) / 1000))
       );
-      await ensureGhReady(runGhRaw, authTimeoutSeconds);
+      await ensureGhReadyCached(authTimeoutSeconds);
       let run;
 
       while (true) {
@@ -436,7 +453,7 @@ export function registerGitHubTools(server, config, dependencies = {}) {
   }, async ({ repo, run_id, max_chars = 30000 }) => {
     try {
       validateRepo(repo);
-      await ensureGhReady(runGhRaw);
+      await ensureGhReadyCached();
       const run = await readRun(runGhRaw, repo, run_id);
       const result = await checkedGh(
         runGhRaw,
@@ -472,7 +489,7 @@ export function registerGitHubTools(server, config, dependencies = {}) {
       validateRepo(repo);
       validateIdentity(workflow, "workflow");
       if (ref) validateIdentity(ref, "ref");
-      await ensureGhReady(runGhRaw);
+      await ensureGhReadyCached();
 
       const args = ["workflow", "run", workflow, "--repo", repo];
       if (ref) args.push("--ref", ref);
@@ -525,7 +542,7 @@ export function registerGitHubTools(server, config, dependencies = {}) {
     try {
       validateRepo(repo);
       validateIdentity(tag, "tag");
-      await ensureGhReady(runGhRaw);
+      await ensureGhReadyCached();
       return textResult({
         repo,
         release: await readRelease(runGhRaw, repo, tag),
@@ -555,7 +572,7 @@ export function registerGitHubTools(server, config, dependencies = {}) {
       validateRepo(repo);
       validateIdentity(tag, "tag");
       const safeAssetName = validateAssetName(asset_name);
-      await ensureGhReady(runGhRaw);
+      await ensureGhReadyCached();
 
       const guarded = await resolveAllowedExisting(destination_directory);
       const destinationStat = await fsp.stat(guarded.real);

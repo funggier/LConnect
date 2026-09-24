@@ -65,7 +65,7 @@ async function startNode(code, label) {
   return result.data;
 }
 
-async function waitComplete(id, timeout = 5) {
+async function waitComplete(id, timeout = 3) {
   const result = await callJson("wait_session", {
     session_id: id,
     timeout_seconds: timeout,
@@ -98,6 +98,38 @@ try {
     throw new Error("start_process did not preserve label");
   }
 
+  const immediateStatus = await callJson("session_status", {
+    session_id: staged.session_id,
+  });
+  if (
+    immediateStatus.data.session_id !== staged.session_id ||
+    Object.hasOwn(immediateStatus.data, "stdout") ||
+    Object.hasOwn(immediateStatus.data, "stderr") ||
+    immediateStatus.data.output_tail !== null
+  ) {
+    throw new Error("session_status compact non-blocking contract failed");
+  }
+
+  const compactList = await callJson("list_sessions");
+  const compactEntry = compactList.data.find((item) => item.session_id === staged.session_id);
+  if (
+    !compactEntry ||
+    Object.hasOwn(compactEntry, "stdout") ||
+    Object.hasOwn(compactEntry, "stderr")
+  ) {
+    throw new Error("list_sessions compact default failed");
+  }
+
+  const fullList = await callJson("list_sessions", { include_output: true });
+  const fullEntry = fullList.data.find((item) => item.session_id === staged.session_id);
+  if (
+    !fullEntry ||
+    !Object.hasOwn(fullEntry, "stdout") ||
+    !Object.hasOwn(fullEntry, "stderr")
+  ) {
+    throw new Error("list_sessions explicit output compatibility failed");
+  }
+
   const firstWait = await callJson("wait_session", {
     session_id: staged.session_id,
     timeout_seconds: 0.03,
@@ -108,7 +140,7 @@ try {
     throw new Error(`wait_session timeout contract failed: ${JSON.stringify(firstWait.data)}`);
   }
 
-  const completed = await waitComplete(staged.session_id, 5);
+  const completed = await waitComplete(staged.session_id, 3);
   if (completed.exit_code !== 7 || completed.running || !completed.completed || completed.timed_out) {
     throw new Error(`wait_session terminal contract failed: ${JSON.stringify(completed)}`);
   }
@@ -159,6 +191,49 @@ try {
   if (!released.data.released) throw new Error("release_session did not release terminal session");
   cleanup.sessions.delete(staged.session_id);
 
+  const defaultWaitFixture = await startNode(
+    "setTimeout(()=>process.exit(0),1800)",
+    "turn-safe-default-wait"
+  );
+  const defaultWaitStarted = Date.now();
+  const defaultWait = await callJson("wait_session", {
+    session_id: defaultWaitFixture.session_id,
+  });
+  const defaultWaitWallMs = Date.now() - defaultWaitStarted;
+  if (
+    !defaultWait.data.running ||
+    !defaultWait.data.timed_out ||
+    defaultWait.data.completed ||
+    defaultWait.data.output_tail !== null ||
+    defaultWait.data.waited_ms < 500 ||
+    defaultWait.data.waited_ms > 2500 ||
+    defaultWaitWallMs > 3000
+  ) {
+    throw new Error(
+      "wait_session turn-safe default contract failed: " +
+      JSON.stringify({ data: defaultWait.data, defaultWaitWallMs })
+    );
+  }
+
+  const overLimitWait = await client.callTool({
+    name: "wait_session",
+    arguments: {
+      session_id: defaultWaitFixture.session_id,
+      timeout_seconds: 4,
+    },
+  });
+  if (!overLimitWait.isError) {
+    throw new Error("wait_session accepted a wait longer than 3 seconds");
+  }
+
+  await client.callTool({
+    name: "terminate_process",
+    arguments: { session_id: defaultWaitFixture.session_id },
+  });
+  await waitComplete(defaultWaitFixture.session_id, 3);
+  await callJson("release_session", { session_id: defaultWaitFixture.session_id });
+  cleanup.sessions.delete(defaultWaitFixture.session_id);
+
   const releasedRead = await client.callTool({
     name: "read_process_output",
     arguments: { session_id: staged.session_id },
@@ -197,15 +272,15 @@ try {
     name: "terminate_process",
     arguments: { session_id: running.session_id },
   });
-  await waitComplete(running.session_id, 5);
+  await waitComplete(running.session_id, 3);
   await callJson("release_session", { session_id: running.session_id });
   cleanup.sessions.delete(running.session_id);
 
   // Prune dry-run and actual release.
   const pruneA = await startNode("process.exit(0)", "prune-a");
   const pruneB = await startNode("process.exit(0)", "prune-b");
-  await waitComplete(pruneA.session_id, 5);
-  await waitComplete(pruneB.session_id, 5);
+  await waitComplete(pruneA.session_id, 3);
+  await waitComplete(pruneB.session_id, 3);
 
   const pruneDry = await callJson("prune_sessions", {
     older_than_seconds: 0,
@@ -233,7 +308,7 @@ try {
     "process.stdout.write('X'.repeat(700000));",
     "overflow-fixture"
   );
-  await waitComplete(overflow.session_id, 5);
+  await waitComplete(overflow.session_id, 3);
   const overflowEvents = await callJson("read_process_events", {
     session_id: overflow.session_id,
     after_seq: 0,
@@ -264,7 +339,7 @@ try {
 
   const refreshRunning = await startNode("setInterval(()=>{},1000)", "refresh-running");
   const refreshDone = await startNode("process.exit(0)", "refresh-terminal");
-  await waitComplete(refreshDone.session_id, 5);
+  await waitComplete(refreshDone.session_id, 3);
 
   const refreshDry = await callJson("refresh_state", {
     scope: "all",
@@ -313,7 +388,7 @@ try {
     name: "terminate_process",
     arguments: { session_id: refreshRunning.session_id },
   });
-  await waitComplete(refreshRunning.session_id, 5);
+  await waitComplete(refreshRunning.session_id, 3);
   await callJson("release_session", { session_id: refreshRunning.session_id });
   cleanup.sessions.delete(refreshRunning.session_id);
 
@@ -322,6 +397,9 @@ try {
   await callJson("stop_watch", { watcher_id: watcher.data.watcher_id });
   cleanup.watchers.delete(watcher.data.watcher_id);
 
+  console.log("session_status compact non-blocking: PASS");
+  console.log("list_sessions compact/full-output contract: PASS");
+  console.log("wait_session 1s default / 3s maximum: PASS");
   console.log("wait_session bounded timeout/completion/idempotence: PASS");
   console.log("process label + completed_at: PASS");
   console.log("read_process_events cursor/stream/exit: PASS");
