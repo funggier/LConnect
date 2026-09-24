@@ -9,7 +9,8 @@ Last updated: 2026-09-24
 - Current implementation candidate: `597ce9f8454158858d3085ed086adf006fd7789d`
 - Passing implementation CI: `35988530743` — PASS
 - Current source MCP catalog: 115 tools
-- Current installed/runtime catalog: 114 tools
+- Current installed source catalog: 115 tools
+- Current running daemon catalog: 114 tools — restart required for LCN-040 activation
 - Current runtime catalog digest: `5e9102835c1cb8012140315651e840d51453cfee66e9373d1d0539014318dc0e`
 - Current ChatGPT-visible catalog: 114 tools after explicit plugin refresh
 - LCN-025/026: COMPLETE
@@ -46,4 +47,4 @@ Message-delivery observation: [reports/LCN-20260924-message-delivery-timeout-obs
 
 ## Next action
 
-LCN-040 implements bounded read-only JSON/YAML/TOML inspection with RFC 6901 JSON Pointer and batch support. Finish full local validation, commit/push, CI, deploy and live validation. Continue execution ergonomics afterward; delivery-latency work remains closed at the current local evidence boundary unless new correlated evidence appears.
+LCN-040 code/CI/deployment validation is green at 115 tools. Installed files and dependencies are ready, while the currently running daemon remains 114 tools. Restart LConnect, reconnect without requiring plugin refresh, validate `batch_inspect → structured_data_inspect`, then close LCN-040 and continue execution ergonomics.

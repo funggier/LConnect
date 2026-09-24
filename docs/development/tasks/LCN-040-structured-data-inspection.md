@@ -100,7 +100,10 @@ This allows several independent config queries to be returned in one MCP round t
 - bounds/numeric hardening: `ff04cc0b1fee9d1c0b47cdf79e8c255b8c5f89e2` — CI `35988193442` PASS
 - final frozen candidate: `597ce9f8454158858d3085ed086adf006fd7789d`
 - GitHub CI: `35988530743` — PASS
-- installed live validation: PENDING
+- installed source/dependencies: PASS (`tools=115`, `yaml@2.9.1`, `smol-toml@1.9.0`)
+- source/install module SHA-256 parity: PASS (`ff4157f67c5f64f41a8148fdf2d906977d0a3ea16cef2262fa09a987cc4f4646`)
+- pre-restart daemon: 114 tools, PID 37256, digest `5e9102835c1cb8012140315651e840d51453cfee66e9373d1d0539014318dc0e`
+- restarted live validation: PENDING
 
 ## Acceptance
 

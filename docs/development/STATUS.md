@@ -10,7 +10,9 @@ Current published release: **v1.1.0 — Expanded Tools & First-Run Guide**
 
 Current main/source MCP catalog: **115 tools** (LCN-040 candidate)
 
-Current installed/runtime MCP catalog: **114 tools**
+Current installed source MCP catalog: **115 tools**
+
+Current running daemon MCP catalog: **114 tools** — restart required for LCN-040 activation
 
 Current ChatGPT-visible MCP catalog: **114 tools** after explicit plugin refresh
 

@@ -170,4 +170,26 @@ Final frozen candidate: `597ce9f8454158858d3085ed086adf006fd7789d`
 
 GitHub Actions: **PASS** — run `35988530743`
 
-Installed live validation: **PENDING**
+## Pre-restart installed deployment evidence
+
+Tracked source was synchronized to the installed runtime and the two parser dependencies were added without removing the existing `node_modules` tree.
+
+Installed validation:
+
+- dependency versions: `yaml@2.9.1`, `smol-toml@1.9.0`
+- syntax check: PASS
+- structured-data smoke: PASS
+- source smoke: `PASS tools=115`
+- source/install `modules/structured-data-inspection.mjs` SHA-256 parity: PASS
+- module digest: `ff4157f67c5f64f41a8148fdf2d906977d0a3ea16cef2262fa09a987cc4f4646`
+
+The active daemon before restart remained the previous catalog:
+
+- process ID: `37256`
+- runtime start: `2026-09-24T10:20:26.195Z`
+- tool count: 114
+- catalog digest: `5e9102835c1cb8012140315651e840d51453cfee66e9373d1d0539014318dc0e`
+
+Therefore the installed files/dependencies are ready at 115 tools while one restart/reconnect is required to activate the new tool in the running process.
+
+Restarted installed live validation: **PENDING**
