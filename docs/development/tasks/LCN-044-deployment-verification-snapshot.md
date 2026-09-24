@@ -1,6 +1,6 @@
 # LCN-044 — Deployment Verification Snapshot
 
-Status: **ACTIVE — LOCAL IMPLEMENTATION GREEN / FINAL CI + INSTALLED LIVE VALIDATION PENDING**
+Status: **COMPLETE**
 
 ## Goal
 
@@ -136,8 +136,10 @@ ChatGPT/operator remains workflow and release owner.
 - post-bump source smoke: PASS (`tools=120`)
 - dependency audit: 0 vulnerabilities
 - final v1.2.0 release-candidate full suite: PASS (`PASS tools=120`, approximately 53.3 seconds)
-- final release-candidate GitHub CI: PENDING
-- installed 120-tool live snapshot: PENDING
+- final release-candidate GitHub CI: PASS — run `36005012233`
+- installed live deployment snapshot: PASS — tracked parity `178/178`, package/dependencies/preserved paths/runtime checks all PASS
+- activated tunnel daemon: `1.2.0`, 120 tools, catalog digest `3fe695d2143f49aff416714e5a5d9b89049e6c208f6da2176bb3884e577f20ff`
+- v1.2.0 release: PUBLISHED
 
 ## Acceptance
 

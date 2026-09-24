@@ -12,7 +12,7 @@
 
 - Source version: **1.2.0**
 - MCP catalog on current `main`: **120 tools**
-- v1.2.0 release baseline: **120 tools**
+- Latest published release [`v1.2.0 — Reliability & Verification`](https://github.com/funggier/LConnect/releases/tag/v1.2.0): **120 tools**
 - OpenAI tunnel-client minimum: **0.0.14**
 
 LConnect Core ผ่าน runtime acceptance บน Windows 10 แล้ว โดย current `main` แสดง 120 tools ครอบคลุม filesystem, shell, managed process/session, system/network/hardware, Git, GitHub Actions/Release, structured inspection, runtime/delivery evidence และ deployment verification

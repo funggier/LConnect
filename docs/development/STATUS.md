@@ -4,17 +4,21 @@ Last updated: 2026-09-24
 
 ## Overall
 
-Current project state: **BASIC CORE STABLE / DELIVERY RELIABILITY BOUNDED / EXECUTION ERGONOMICS COMPLETE AT CURRENT NEED / v1.2.0 RELEASE PREPARATION ACTIVE**
+Current project state: **BASIC CORE STABLE / DELIVERY RELIABILITY BOUNDED / EXECUTION ERGONOMICS COMPLETE AT CURRENT NEED / v1.2.0 PUBLISHED**
 
-Current published release: **v1.1.0 — Expanded Tools & First-Run Guide**
+Current published release: **v1.2.0 — Reliability & Verification**
 
-Release candidate in preparation: **v1.2.0 — Reliability & Verification**
+Release tag target: `043a669a7f421db21586e4fb5cd3645ef0f44c60`
 
-Current main/source MCP catalog: **120 tools** (LCN-044 / v1.2.0 candidate)
+Release CI: `36005012233` — PASS
 
-Current installed/running MCP catalog before final deployment: **119 tools**
+Current main/source MCP catalog: **120 tools**
 
-Current ChatGPT-visible MCP catalog before final deployment/refresh: **119 tools**
+Current installed/running MCP catalog: **120 tools** (`1.2.0`)
+
+Current running catalog digest: `3fe695d2143f49aff416714e5a5d9b89049e6c208f6da2176bb3884e577f20ff`
+
+Current ChatGPT-visible catalog in the release session: **119 tools** until the connector/plugin is refreshed; this is a client-schema cache state, not a runtime catalog mismatch.
 
 LConnect มี Core ที่ใช้งานจริงแล้วและผ่าน runtime acceptance บน Windows:
 
@@ -29,7 +33,7 @@ LConnect มี Core ที่ใช้งานจริงแล้วแล�
 - Thai documentation
 - GitHub releases
 
-Agent Operations Reliability LCN-025–030 ปิดครบ, Delivery/Turn Reliability LCN-031–039 ปิดที่ evidence boundary ปัจจุบัน และ Execution Ergonomics LCN-040–044 ปิดที่ current need หลัง Deployment Verification Snapshot ผ่าน local acceptance; ขณะนี้กำลังเตรียม v1.2.0 release โดย Desktop/Browser automation ยังพักไว้
+Agent Operations Reliability LCN-025–030 ปิดครบ, Delivery/Turn Reliability LCN-031–039 ปิดที่ evidence boundary ปัจจุบัน, Execution Ergonomics LCN-040–044 ปิดที่ current need และ v1.2.0 ถูก publish/verify แล้ว; Desktop/Browser automation ยังพักไว้
 
 ## Workstream status
 
@@ -41,7 +45,7 @@ Agent Operations Reliability LCN-025–030 ปิดครบ, Delivery/Turn Rel
 | Observation | COMPLETE | LCN-015–017 | Log Tail + File Watcher + Scheduled Tasks complete |
 | Agent Operations Reliability | COMPLETE | LCN-025–034 | LCN-025–030 and LCN-031–034 complete |
 | Delivery / Turn Reliability | COMPLETE AT CURRENT LOCAL EVIDENCE BOUNDARY | LCN-031–039 | LCN-039 localized normal low-cost calls: ~0.42 ms handler, ~300 ms local poll→response, ~865 ms average outside local metric scope |
-| Execution Ergonomics | COMPLETE AT CURRENT NEED | LCN-040–044 | LCN-044 Deployment Verification Snapshot local implementation green; final installed live validation is part of v1.2.0 release gate |
+| Execution Ergonomics | COMPLETE AT CURRENT NEED | LCN-040–044 | LCN-044 Deployment Verification Snapshot PASS on installed tree; 178/178 tracked parity, runtime 1.2.0 / 120 tools |
 | Desktop Control | DEFERRED | LCN-018–020 | Explicitly paused |
 | Browser Automation | DEFERRED | LCN-021–023 | Explicitly paused |
 
@@ -458,7 +462,7 @@ LCN-030 GitHub Actions / Release Integration — COMPLETE
   ↓
 LCN-040–044 Execution Ergonomics — COMPLETE AT CURRENT NEED
   ↓
-LCN-045 v1.2.0 Documentation & Release — ACTIVE
+LCN-045 v1.2.0 Documentation & Release — COMPLETE
   ↓
 LCN-018 Clipboard — DEFERRED
   ↓

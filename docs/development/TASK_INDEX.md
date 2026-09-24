@@ -45,5 +45,5 @@
 | [LCN-041](tasks/LCN-041-directory-manifest-comparison.md) | COMPLETE | Directory Manifest and Comparison |
 | [LCN-042](tasks/LCN-042-git-sync-verification.md) | COMPLETE | Git Sync Verification |
 | [LCN-043](tasks/LCN-043-exact-commit-github-ci-correlation.md) | COMPLETE | Exact Commit GitHub CI Correlation |
-| [LCN-044](tasks/LCN-044-deployment-verification-snapshot.md) | ACTIVE | Deployment Verification Snapshot |
-| [LCN-045](tasks/LCN-045-v1.2.0-documentation-release.md) | ACTIVE | v1.2.0 Documentation and Release |
+| [LCN-044](tasks/LCN-044-deployment-verification-snapshot.md) | COMPLETE | Deployment Verification Snapshot |
+| [LCN-045](tasks/LCN-045-v1.2.0-documentation-release.md) | COMPLETE | v1.2.0 Documentation and Release |

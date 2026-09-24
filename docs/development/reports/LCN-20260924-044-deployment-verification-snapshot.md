@@ -2,7 +2,7 @@
 
 ## Result
 
-**IMPLEMENTATION GREEN — RELEASE CANDIDATE VALIDATION PENDING**
+**COMPLETE — IMPLEMENTED, DEPLOYED, LIVE VERIFIED AND RELEASED IN v1.2.0**
 
 ## Goal
 
@@ -73,10 +73,27 @@ Release preparation also added `modules/version.mjs`. Runtime product version no
 - dependency audit: 0 vulnerabilities
 - `git diff --check`: PASS
 
-## Remaining acceptance
+## Final deployment / live evidence
 
-- final release-candidate GitHub CI
-- installed candidate deployment
-- restarted 120-tool runtime
-- direct live `deployment_verification_snapshot`
-- LCN-045 v1.2.0 release publication
+- exact release-candidate commit: `043a669a7f421db21586e4fb5cd3645ef0f44c60`
+- GitHub CI run `36005012233` / #117: PASS
+- deployed tracked files: 178
+- source↔installed pre-restart hash parity: 178/178 exact
+- preserved local paths: `mcp-conf.yaml`, `node_modules`, `logs`, `runtime` all present
+- installed source smoke: `PASS tools=120`
+- activated tunnel daemon: version `1.2.0`, 120 tools, working directory `T:\Sanbox\openclawspace\tunnel-mcp-ok`
+- activated daemon catalog digest: `3fe695d2143f49aff416714e5a5d9b89049e6c208f6da2176bb3884e577f20ff`
+- production-composed installed snapshot: PASS
+- snapshot tracked parity: 178/178, zero missing/changed/unstable
+- snapshot source/install manifest digest: `9ec6870289b0206cc10a036b055d7453fefcde4dc8ddcb03a7ab3e309c4584f6`
+- package version parity: `1.2.0` / `1.2.0`
+- direct dependencies present: 4/4
+- preserved paths all present: PASS
+- snapshot runtime root/version/tool-count checks: PASS
+- snapshot runtime catalog digest equals activated daemon digest: PASS
+
+## Release
+
+Published in `v1.2.0 — Reliability & Verification`:
+
+https://github.com/funggier/LConnect/releases/tag/v1.2.0
