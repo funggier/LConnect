@@ -22,11 +22,11 @@ Last updated: 2026-09-24
 - LCN-030: COMPLETE — GitHub Actions / Release Integration
 - LCN-025–030: COMPLETE — Agent Operations Reliability core sequence
 - LCN-035: COMPLETE + LIVE VALIDATED — Turn-Safe Long Operation Observation
-- LCN-036: ACTIVE — Runtime Catalog Visibility / Refresh Evidence
+- LCN-036: COMPLETE + LIVE VALIDATED — Runtime Catalog Visibility / Refresh Evidence
 
 ## Active task
 
-**LCN-036 — Runtime Catalog Visibility / Refresh Evidence**
+**NO ACTIVE DEVELOPMENT TASK**
 
 ## Latest completed task
 
@@ -42,4 +42,4 @@ Message-delivery observation: [reports/LCN-20260924-message-delivery-timeout-obs
 
 ## Next action
 
-LCN-036 no-refresh validation passed: ChatGPT exposed 112 tools while `batch_inspect → runtime_catalog` proved the running daemon exposed 113 with a stable digest. Explicitly refresh the ChatGPT plugin once and confirm direct 113-tool convergence, then close LCN-036. Continue latency/message-delivery mitigation afterward.
+LCN-036 is complete. The post-refresh attempt did not generate a new `server/discover` request, so the client remained on 112 while `runtime_catalog` proved the daemon remained 113. Next: repair the live `github_run_wait` regression where a 1-second observation window can incorrectly become the timeout for one `gh run view` status fetch. Continue latency/message-delivery mitigation afterward.

@@ -2,7 +2,7 @@
 
 ## Result
 
-**IMPLEMENTATION GREEN — LIVE DEPLOY VALIDATION PENDING**
+**PASS — RUNTIME CATALOG VISIBILITY LIVE VALIDATED**
 
 ## Goal
 
@@ -138,7 +138,34 @@ Conclusion:
 
 The stale-client recovery contract is therefore live validated.
 
-Final convergence validation after explicit ChatGPT plugin refresh: **PENDING**
+## Post-refresh observation
+
+The user explicitly refreshed the ChatGPT plugin UI after the no-refresh validation.
+
+Observed afterward:
+
+- ChatGPT-visible tools: 112
+- direct `runtime_catalog`: still absent
+- running LConnect catalog: 113
+- runtime digest remained `d5038c67f856a5eda6b5bc8fd9c70f90108095d2633ba6e82ccc604396084f72`
+- server-only tool difference: exactly `runtime_catalog`
+
+Tunnel metrics are decisive for this attempt:
+
+- `command_end_to_end_latency_milliseconds_count{request_method="server/discover"}` was 1 before the UI refresh
+- the same metric remained 1 after the UI refresh
+
+Therefore this particular UI refresh did **not** trigger a new `server/discover` request through the active tunnel. The client remained on the previously discovered 112-tool schema.
+
+This is not evidence that the server returned 113 tools and ChatGPT discarded one; no new discovery request was observed.
+
+## Final result
+
+**PASS — RUNTIME CATALOG VISIBILITY LIVE VALIDATED**
+
+LCN-036 achieved its goal: server/runtime catalog state can now be measured independently of the ChatGPT-visible schema, including when the client does not rediscover after a runtime restart or UI refresh.
+
+Forcing or guaranteeing ChatGPT-side rediscovery remains outside LConnect ownership.
 
 ## Architecture
 

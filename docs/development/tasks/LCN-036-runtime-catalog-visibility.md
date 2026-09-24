@@ -1,6 +1,6 @@
 # LCN-036 — Runtime Catalog Visibility / Refresh Evidence
 
-Status: **ACTIVE — IMPLEMENTATION GREEN / LIVE VALIDATION PENDING**
+Status: **COMPLETE — LIVE VALIDATED**
 
 ## Goal
 
@@ -62,7 +62,8 @@ This means an older ChatGPT-visible schema that already knows `batch_inspect` ca
 - dependency audit: 0 vulnerabilities
 - GitHub Actions: `35978697107` — PASS
 - live no-refresh stale-client validation: PASS (ChatGPT 112 vs runtime 113)
-- post-refresh convergence validation: PENDING
+- post-refresh observation: UI refresh did not trigger a new `server/discover`; client remained 112 while runtime remained 113
+- diagnostic goal: PASS
 
 ## Acceptance
 
