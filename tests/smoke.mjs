@@ -118,6 +118,7 @@ const requiredTools = [
   "prune_sessions",
   "refresh_state",
   "read_process_events",
+  "tool_telemetry",
 ];
 
 try {

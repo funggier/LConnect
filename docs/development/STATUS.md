@@ -8,7 +8,7 @@ Current project state: **BASIC CORE STABLE / AGENT OPERATIONS RELIABILITY ACTIVE
 
 Current published release: **v1.1.0 — Expanded Tools & First-Run Guide**
 
-Current main MCP catalog: **96 tools**
+Current main MCP catalog: **97 tools**
 
 LConnect มี Core ที่ใช้งานจริงแล้วและผ่าน runtime acceptance บน Windows:
 
@@ -33,7 +33,7 @@ Expansion phase ถัดไปเน้น Agent Operations Reliability ชุ�
 | System Foundation | COMPLETE | LCN-007–011 | Environment + Process + Services + Network + Hardware complete |
 | Developer Foundation | COMPLETE | LCN-012–014 | Git + Development + HTTP complete |
 | Observation | COMPLETE | LCN-015–017 | Log Tail + File Watcher + Scheduled Tasks complete |
-| Agent Operations Reliability | ACTIVE | LCN-025–032 | LCN-025/026, LCN-031 and LCN-032 complete; Structured Text Search next |
+| Agent Operations Reliability | ACTIVE | LCN-025–033 | LCN-025/026, LCN-031/032 complete; LCN-033 telemetry active |
 | Desktop Control | PLANNED | LCN-018–020 | Deferred until LCN-025–030 complete |
 | Browser Automation | PLANNED | LCN-021–023 | Common browser layer + Firefox + Chrome |
 
@@ -294,6 +294,21 @@ GitHub Actions run `35888912101`: PASS.
 
 The remaining observed delay between LConnect-local completion and live ChatGPT receipt is downstream transport/tool-delivery latency rather than LConnect HTTP execution.
 
+### LCN-033 — General MCP Tool Delivery Telemetry
+**ACTIVE**
+
+Adds metadata-only timing telemetry at the common MCP tool-registration boundary.
+
+Current local candidate:
+
+- catalog: 97 tools
+- targeted telemetry tests: PASS
+- full suite rerun: PASS
+- dependency audit: 0 vulnerabilities
+- GitHub CI: pending
+
+No tool arguments or result contents are recorded.
+
 ## Next sequence
 
 ```text
@@ -326,6 +341,8 @@ LCN-026 Incremental Process Output Cursor — COMPLETE
 LCN-031 MCP Request Timeout Containment — COMPLETE (priority repair)
   ↓
 LCN-032 HTTP Hard-Settle Timeout + Delivery Evidence — COMPLETE
+  ↓
+LCN-033 General MCP Tool Delivery Telemetry — ACTIVE
   ↓
 LCN-027 Structured Text Search — READY
   ↓

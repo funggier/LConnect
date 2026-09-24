@@ -40,6 +40,7 @@ lconnect-mcp.mjs
    +-- modules/transient-state.mjs
    +-- modules/system.mjs
    +-- modules/environment.mjs
+   +-- modules/telemetry.mjs
 ```
 
 ## เหตุผลที่ใช้ main channel เดียว
@@ -295,6 +296,30 @@ environment module ให้ structured contract สำหรับ:
 - Windows PATHEXT executable resolution
 
 process scope ใช้ Node environment โดยตรง ส่วน persistent user/machine scope ใช้ Windows environment API ผ่าน PowerShell โดยยังเคารพ execution setting ของ LConnect
+
+## Tool Telemetry
+
+`modules/telemetry.mjs` instrument การ register tools ที่ MCP server boundary หนึ่งจุด แทนการแก้ทุก handler แยกกัน
+
+หลักการ:
+
+- จับเฉพาะ metadata ที่จำเป็นต่อ latency correlation
+- ใช้ bounded in-memory ring buffer
+- ไม่ persist โดย default
+- ไม่บันทึก arguments หรือ payload contents
+- ไม่เปลี่ยน tool semantics
+- ไม่เพิ่ม MCP channel
+- diagnostic tool `tool_telemetry` ไม่ instrument ตัวเองเพื่อไม่ให้ snapshot รบกวนข้อมูลที่กำลังอ่าน
+
+จุดนี้ใช้แยก:
+
+```text
+LConnect handler elapsed
+        vs
+caller-observed Tool wall time
+```
+
+เพื่อวิเคราะห์ Message delivery timeout โดยไม่เดาว่า latency อยู่ใน local handler เสมอ
 
 ## การเพิ่ม module ในอนาคต
 

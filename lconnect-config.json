@@ -14,5 +14,9 @@
   },
   "mcp": {
     "maxSynchronousRequestSeconds": 15
+  },
+  "telemetry": {
+    "enabled": true,
+    "maxEvents": 500
   }
 }

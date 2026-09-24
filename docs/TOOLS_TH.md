@@ -1,6 +1,6 @@
 # รายการ Tools ของ LConnect
 
-LConnect Core บน current `main` expose 96 tools ผ่าน MCP `main` channel เดียว (published v1.1.0 มี 91 tools)
+LConnect Core บน current `main` expose 97 tools ผ่าน MCP `main` channel เดียว (published v1.1.0 มี 91 tools)
 
 ## Filesystem
 
@@ -979,6 +979,62 @@ arguments:
 - `command`
 - `all`
 - `cwd`
+
+## Tool Telemetry
+
+### tool_telemetry
+
+อ่านหรือล้าง bounded metadata-only telemetry ของ LConnect Tool handlers
+
+actions:
+
+- `snapshot`
+- `clear`
+
+snapshot สามารถระบุ:
+
+- `after_seq`
+- `limit`
+- `tool_name`
+- `include_events`
+
+metadata ที่เก็บ:
+
+- monotonic `seq`
+- MCP `request_id` เมื่อ SDK มีให้
+- `tool_name`
+- `handler_started_at`
+- `handler_completed_at`
+- `handler_elapsed_ms`
+- approximate `result_bytes`
+- `is_error`
+- `timed_out`
+- `threw`
+
+telemetry เป็น bounded in-memory ring buffer และ **ไม่เก็บ**:
+
+- tool arguments
+- command text
+- file contents
+- environment values
+- HTTP bodies
+- result contents
+
+ค่า default:
+
+```json
+{
+  "telemetry": {
+    "enabled": true,
+    "maxEvents": 500
+  }
+}
+```
+
+environment overrides:
+
+- `LCONNECT_TELEMETRY_ENABLED`
+- `LCONNECT_TELEMETRY_MAX_EVENTS`
 
 ## System
 

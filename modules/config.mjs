@@ -47,6 +47,19 @@ export function loadLConnectConfig(importMetaUrl) {
     120
   );
 
+  const telemetryEnabled = parseBoolean(
+    process.env.LCONNECT_TELEMETRY_ENABLED,
+    config.telemetry?.enabled !== false
+  );
+
+  const telemetryMaxEvents = parseBoundedNumber(
+    process.env.LCONNECT_TELEMETRY_MAX_EVENTS ??
+      config.telemetry?.maxEvents,
+    500,
+    10,
+    5000
+  );
+
   return {
     installRoot,
     configPath,
@@ -63,6 +76,10 @@ export function loadLConnectConfig(importMetaUrl) {
     },
     mcp: {
       maxSynchronousRequestSeconds,
+    },
+    telemetry: {
+      enabled: telemetryEnabled,
+      maxEvents: Math.floor(telemetryMaxEvents),
     },
   };
 }

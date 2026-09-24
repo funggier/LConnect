@@ -18,6 +18,10 @@ import { registerFileWatcherTools } from "./modules/file-watcher.mjs";
 import { registerScheduledTaskTools } from "./modules/scheduled-tasks.mjs";
 import { registerTransientStateTools } from "./modules/transient-state.mjs";
 import { registerEnvironmentTools } from "./modules/environment.mjs";
+import {
+  installToolTelemetry,
+  registerToolTelemetryTool,
+} from "./modules/telemetry.mjs";
 
 const config = loadLConnectConfig(import.meta.url);
 configureRuntime({
@@ -28,6 +32,8 @@ const server = new McpServer({
   name: "LConnect",
   version: "1.1.0",
 });
+
+installToolTelemetry(server, config.telemetry);
 
 registerFilesystemTools(server, config);
 registerShellTools(server, config);
@@ -45,9 +51,10 @@ registerFileWatcherTools(server, config);
 registerScheduledTaskTools(server, config);
 registerTransientStateTools(server);
 registerEnvironmentTools(server, config);
+registerToolTelemetryTool(server);
 
 console.error(
-  `LConnect 1.1.0 starting; fullMachineAccess=${config.fullMachineAccess}; maxSyncRequestSeconds=${config.mcp.maxSynchronousRequestSeconds}; allowedDirectories=${config.allowedDirectories.join(";")}`
+  `LConnect 1.1.0 starting; fullMachineAccess=${config.fullMachineAccess}; maxSyncRequestSeconds=${config.mcp.maxSynchronousRequestSeconds}; telemetryEnabled=${config.telemetry.enabled}; telemetryMaxEvents=${config.telemetry.maxEvents}; allowedDirectories=${config.allowedDirectories.join(";")}`
 );
 
 await server.connect(new StdioServerTransport());
