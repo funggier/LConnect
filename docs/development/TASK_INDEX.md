@@ -41,3 +41,4 @@
 | [LCN-037](tasks/LCN-037-github-wait-budget-separation.md) | COMPLETE | GitHub Wait Budget Separation |
 | [LCN-038](tasks/LCN-038-structured-delivery-correlation-snapshot.md) | COMPLETE | Structured Delivery Correlation Snapshot |
 | [LCN-039](tasks/LCN-039-local-delivery-phase-localization.md) | COMPLETE | Local Delivery Phase Localization |
+| [LCN-040](tasks/LCN-040-structured-data-inspection.md) | ACTIVE | Structured Data Inspection |

@@ -6,13 +6,12 @@ Last updated: 2026-09-24
 
 - Repository: `funggier/LConnect`
 - Branch: `main`
-- Current implementation candidate: `ff12ecb2f167a319a117a27387c81efc71fd7356`
-- Passing implementation CI: `35982810098` — PASS
-- Current source MCP catalog: 114 tools
+- Current implementation candidate: `597ce9f8454158858d3085ed086adf006fd7789d`
+- Passing implementation CI: `35988530743` — PASS
+- Current source MCP catalog: 115 tools
 - Current installed/runtime catalog: 114 tools
 - Current runtime catalog digest: `5e9102835c1cb8012140315651e840d51453cfee66e9373d1d0539014318dc0e`
-- Current runtime catalog digest: `d5038c67f856a5eda6b5bc8fd9c70f90108095d2633ba6e82ccc604396084f72`
-- Current ChatGPT-visible catalog before plugin refresh: 112 tools — stale schema directly confirmed by `runtime_catalog`
+- Current ChatGPT-visible catalog: 114 tools after explicit plugin refresh
 - LCN-025/026: COMPLETE
 - LCN-031/032: COMPLETE
 - LCN-033: COMPLETE — live telemetry measured approximately 96.7% sampled wall time outside handlers
@@ -27,10 +26,11 @@ Last updated: 2026-09-24
 - LCN-037: COMPLETE + LIVE VALIDATED — GitHub Wait Budget Separation
 - LCN-038: COMPLETE + LIVE VALIDATED — Structured Delivery Correlation Snapshot
 - LCN-039: COMPLETE — Local Delivery Phase Localization
+- LCN-040: ACTIVE — Structured Data Inspection
 
 ## Active task
 
-**NO ACTIVE DEVELOPMENT TASK**
+**LCN-040 — Structured Data Inspection**
 
 ## Latest completed task
 
@@ -46,4 +46,4 @@ Message-delivery observation: [reports/LCN-20260924-message-delivery-timeout-obs
 
 ## Next action
 
-LCN-039 establishes the current local delivery-latency boundary: low-cost tool handlers average ~0.42 ms, local tunnel poll-to-response ~300 ms, and approximately 865 ms average caller wall remains outside the measurable local poll-to-response scope. Do not add speculative local timeout layers. Resume delivery work only with new correlated evidence; continue execution ergonomics otherwise. Then use the structured snapshot to continue message-delivery latency localization. Desktop/Browser automation remains deferred.
+LCN-040 implements bounded read-only JSON/YAML/TOML inspection with RFC 6901 JSON Pointer and batch support. Finish full local validation, commit/push, CI, deploy and live validation. Continue execution ergonomics afterward; delivery-latency work remains closed at the current local evidence boundary unless new correlated evidence appears.

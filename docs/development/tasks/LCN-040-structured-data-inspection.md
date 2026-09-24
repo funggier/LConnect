@@ -1,6 +1,6 @@
 # LCN-040 — Structured Data Inspection
 
-Status: **ACTIVE — IMPLEMENTATION GREEN / CI PENDING**
+Status: **ACTIVE — IMPLEMENTATION GREEN / INSTALLED LIVE VALIDATION PENDING**
 
 ## Goal
 
@@ -88,12 +88,18 @@ This allows several independent config queries to be returned in one MCP round t
 - targeted JSON/YAML/TOML tests: PASS
 - pointer/array/escape tests: PASS
 - bounds/diagnostics/path guard: PASS
+- TOML non-finite numeric fidelity: PASS
+- prototype/reserved-key preservation (`__proto__`, `$truncated`): PASS
 - batch visibility: PASS
 - source smoke: PASS (`tools=115`)
 - syntax check: PASS
 - dependency audit: 0 vulnerabilities
-- full local suite: PASS (`PASS tools=115`, approximately 44.7 seconds)
-- GitHub CI: PENDING
+- final frozen full local suite: PASS (`PASS tools=115`, approximately 43.5 seconds)
+- real-file source-candidate check: PASS (`package.json#/name`, `mcp-conf.yaml#/health/listen_addr`)
+- base implementation: `9e395d0c56aa89f33409edf681dcc8ec322be8c5` — CI `35987712170` PASS
+- bounds/numeric hardening: `ff04cc0b1fee9d1c0b47cdf79e8c255b8c5f89e2` — CI `35988193442` PASS
+- final frozen candidate: `597ce9f8454158858d3085ed086adf006fd7789d`
+- GitHub CI: `35988530743` — PASS
 - installed live validation: PENDING
 
 ## Acceptance
