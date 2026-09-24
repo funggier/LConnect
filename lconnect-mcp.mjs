@@ -30,7 +30,10 @@ import { installRuntimeCatalog } from "./modules/runtime-catalog.mjs";
 import { registerDeliverySnapshotTool } from "./modules/delivery-snapshot.mjs";
 import { registerStructuredDataInspectionTool } from "./modules/structured-data-inspection.mjs";
 import { registerDirectoryIntegrityTools } from "./modules/directory-integrity.mjs";
+import { registerDeploymentVerificationTool } from "./modules/deployment-verification.mjs";
+import { readPackageVersion } from "./modules/version.mjs";
 
+const version = readPackageVersion(import.meta.url);
 const config = loadLConnectConfig(import.meta.url);
 configureRuntime({
   maxSynchronousRequestSeconds: config.mcp.maxSynchronousRequestSeconds,
@@ -38,11 +41,11 @@ configureRuntime({
 
 const server = new McpServer({
   name: "LConnect",
-  version: "1.1.0",
+  version,
 });
 
 installToolTelemetry(server, config.telemetry);
-const runtimeCatalog = installRuntimeCatalog(server, { version: "1.1.0" });
+const runtimeCatalog = installRuntimeCatalog(server, { version });
 
 registerFilesystemTools(server, config);
 registerShellTools(server, config);
@@ -66,12 +69,13 @@ registerGitHubTools(server, config);
 registerDeliverySnapshotTool(server, config);
 registerStructuredDataInspectionTool(server, config);
 registerDirectoryIntegrityTools(server, config);
+registerDeploymentVerificationTool(server, config, { runtimeCatalog });
 registerBatchInspectionTool(server);
 registerToolTelemetryTool(server);
 const runtimeCatalogState = runtimeCatalog.markReady();
 
 console.error(
-  `LConnect 1.1.0 starting; tools=${runtimeCatalogState.tool_count}; catalogDigest=${runtimeCatalogState.tool_name_digest_sha256}; fullMachineAccess=${config.fullMachineAccess}; maxSyncRequestSeconds=${config.mcp.maxSynchronousRequestSeconds}; telemetryEnabled=${config.telemetry.enabled}; telemetryMaxEvents=${config.telemetry.maxEvents}; allowedDirectories=${config.allowedDirectories.join(";")}`
+  `LConnect ${version} starting; tools=${runtimeCatalogState.tool_count}; catalogDigest=${runtimeCatalogState.tool_name_digest_sha256}; fullMachineAccess=${config.fullMachineAccess}; maxSyncRequestSeconds=${config.mcp.maxSynchronousRequestSeconds}; telemetryEnabled=${config.telemetry.enabled}; telemetryMaxEvents=${config.telemetry.maxEvents}; allowedDirectories=${config.allowedDirectories.join(";")}`
 );
 
 await server.connect(new StdioServerTransport());

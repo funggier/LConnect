@@ -52,6 +52,7 @@ const requiredTools = [
   "structured_data_inspect",
   "directory_manifest",
   "compare_directories",
+  "deployment_verification_snapshot",
   "system_info",
   "list_processes",
   "kill_process",
