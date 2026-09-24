@@ -2,7 +2,7 @@
 
 ## Result
 
-**IMPLEMENTATION GREEN — CI/LIVE VALIDATION PENDING**
+**IMPLEMENTATION GREEN — INSTALLED LIVE VALIDATION PENDING**
 
 ## Goal
 
@@ -175,12 +175,33 @@ Before freezing the implementation:
 
 Targeted regression after hardening: **PASS**.
 
+## Real source↔installed pre-deploy validation
+
+The source candidate was executed directly against:
+
+- left: `LConnect-github/modules`
+- right: `tunnel-mcp-ok/modules`
+
+Before deployment it reported:
+
+- comparison reliable: true
+- left files: 28
+- right files: 27
+- common equal files: 26
+- changed files: 1
+- source-only files: 1
+- installed-only files: 0
+- source-only: `directory-integrity.mjs`
+- changed: `batch-inspect.mjs`
+
+This exactly matched the expected LCN-041 pre-deploy drift and demonstrates the intended deployment-verification use case.
+
 ## Full validation
 
 Final frozen full local suite: **PASS** (`PASS tools=117`, approximately 44.6 seconds)
 
 Implementation commit: `07769a29c22b27d431cbfe159042e2ffad958c12`
 
-GitHub Actions: **IN PROGRESS** — run `35991690293`
+GitHub Actions: **PASS** — run `35991690293`
 
 Installed live validation: **PENDING**

@@ -1,6 +1,6 @@
 # LCN-041 — Directory Manifest and Comparison
 
-Status: **ACTIVE — IMPLEMENTATION GREEN / CI IN PROGRESS**
+Status: **ACTIVE — IMPLEMENTATION GREEN / INSTALLED LIVE VALIDATION PENDING**
 
 ## Goal
 
@@ -111,7 +111,8 @@ Both tools are read-only and may be allowlisted in `batch_inspect`.
 - dependency audit: 0 vulnerabilities
 - final frozen full local suite: PASS (`PASS tools=117`, approximately 44.6 seconds)
 - implementation: `07769a29c22b27d431cbfe159042e2ffad958c12`
-- GitHub CI: `35991690293` — IN PROGRESS
+- GitHub CI: `35991690293` — PASS
+- real source↔installed pre-deploy comparison: PASS (reliable; 26 equal, 1 changed, 1 source-only)
 - installed live validation: PENDING
 
 ## Acceptance
