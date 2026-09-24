@@ -1,6 +1,6 @@
 # LCN-028 — File Integrity
 
-Status: **PLANNED**
+Status: **COMPLETE**
 
 ## Goal
 
@@ -68,6 +68,16 @@ Return:
 - direct MCP runtime acceptance PASS
 - GitHub CI PASS
 - docs/status/report updated
+
+## Completion evidence
+
+- implementation: `f813bda063efde3efe4f278cfd4cd357d60744bc`
+- source catalog: 101 tools
+- targeted acceptance: PASS
+- full local suite: PASS
+- dependency audit: 0 vulnerabilities
+- GitHub Actions: `35964536298` — PASS
+- report: `../reports/LCN-20260924-028-file-integrity.md`
 
 ## Scope rule
 

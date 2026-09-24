@@ -8,7 +8,7 @@ Current project state: **BASIC CORE STABLE / AGENT OPERATIONS RELIABILITY ACTIVE
 
 Current published release: **v1.1.0 — Expanded Tools & First-Run Guide**
 
-Current main MCP catalog: **99 tools**
+Current main MCP catalog: **101 tools**
 
 LConnect มี Core ที่ใช้งานจริงแล้วและผ่าน runtime acceptance บน Windows:
 
@@ -33,7 +33,7 @@ Expansion phase ถัดไปเน้น Agent Operations Reliability ชุ�
 | System Foundation | COMPLETE | LCN-007–011 | Environment + Process + Services + Network + Hardware complete |
 | Developer Foundation | COMPLETE | LCN-012–014 | Git + Development + HTTP complete |
 | Observation | COMPLETE | LCN-015–017 | Log Tail + File Watcher + Scheduled Tasks complete |
-| Agent Operations Reliability | ACTIVE | LCN-025–034 | LCN-025/026, LCN-027 and LCN-031–034 complete; LCN-028 active |
+| Agent Operations Reliability | ACTIVE | LCN-025–034 | LCN-025–028 and LCN-031–034 complete; LCN-029 active |
 | Desktop Control | PLANNED | LCN-018–020 | Deferred until LCN-025–030 complete |
 | Browser Automation | PLANNED | LCN-021–023 | Common browser layer + Firefox + Chrome |
 
@@ -324,6 +324,22 @@ GitHub Actions run `35963995356`: PASS.
 
 Catalog increased from 98 to 99 tools.
 
+### LCN-028 — File Integrity
+**COMPLETE**
+
+Added:
+
+- `file_hash`
+- `compare_files`
+
+Files are hashed through bounded streaming with SHA-256 as the default. Results include cryptographic digest evidence plus before/after stability metadata and restricted real-path enforcement. Both tools are available through the bounded read-only `batch_inspect` allowlist.
+
+Implementation: `f813bda063efde3efe4f278cfd4cd357d60744bc`
+
+GitHub Actions run `35964536298`: PASS.
+
+Catalog increased from 99 to 101 tools.
+
 ### LCN-034 — Bounded Read-Only Batch Inspection
 **COMPLETE**
 
@@ -386,9 +402,9 @@ LCN-034 Bounded Read-Only Batch Inspection — COMPLETE
   ↓
 LCN-027 Structured Text Search — COMPLETE
   ↓
-LCN-028 File Integrity — READY
+LCN-028 File Integrity — COMPLETE
   ↓
-LCN-029 Exact Git Ref / Ancestry Safety — PLANNED
+LCN-029 Exact Git Ref / Ancestry Safety — READY
   ↓
 LCN-030 GitHub Actions / Release Integration — PLANNED
   ↓
