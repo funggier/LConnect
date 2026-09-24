@@ -23,11 +23,11 @@ Last updated: 2026-09-24
 - LCN-025–030: COMPLETE — Agent Operations Reliability core sequence
 - LCN-035: COMPLETE + LIVE VALIDATED — Turn-Safe Long Operation Observation
 - LCN-036: COMPLETE + LIVE VALIDATED — Runtime Catalog Visibility / Refresh Evidence
-- LCN-037: ACTIVE — GitHub Wait Budget Separation
+- LCN-037: COMPLETE + LIVE VALIDATED — GitHub Wait Budget Separation
 
 ## Active task
 
-**LCN-037 — GitHub Wait Budget Separation**
+**NO ACTIVE DEVELOPMENT TASK**
 
 ## Latest completed task
 
@@ -43,4 +43,4 @@ Message-delivery observation: [reports/LCN-20260924-message-delivery-timeout-obs
 
 ## Next action
 
-Deploy the CI-green LCN-037 repair to the installed 113-tool runtime, restart LConnect (no plugin refresh required), and requalify `github_run_wait` against a real GitHub Actions run. Then close LCN-037 and continue delivery-layer latency work. Continue latency/message-delivery mitigation afterward.
+LCN-037 is complete. Continue delivery-layer latency work by correlating LConnect handler telemetry with tunnel dispatcher/control-plane metrics in one structured diagnostic path. Desktop/Browser automation remains deferred. Continue latency/message-delivery mitigation afterward.

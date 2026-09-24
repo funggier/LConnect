@@ -38,7 +38,7 @@ Agent Operations Reliability ชุด LCN-025–030 ปิดครบแล้
 | Developer Foundation | COMPLETE | LCN-012–014 | Git + Development + HTTP complete |
 | Observation | COMPLETE | LCN-015–017 | Log Tail + File Watcher + Scheduled Tasks complete |
 | Agent Operations Reliability | COMPLETE | LCN-025–034 | LCN-025–030 and LCN-031–034 complete |
-| Delivery / Turn Reliability | ACTIVE | LCN-031–037 | LCN-036 complete; LCN-037 repairs GitHub wait/status-fetch timeout coupling |
+| Delivery / Turn Reliability | ACTIVE | LCN-031–037 | LCN-037 complete + live validated; deeper delivery-layer correlation next |
 | Execution Ergonomics | ACTIVE | after LCN-030 | Deterministic structured primitives only; no agent/workflow runtime |
 | Desktop Control | DEFERRED | LCN-018–020 | Explicitly paused |
 | Browser Automation | DEFERRED | LCN-021–023 | Explicitly paused |

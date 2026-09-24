@@ -2,7 +2,7 @@
 
 ## Result
 
-**IMPLEMENTATION GREEN — INSTALLED LIVE VALIDATION PENDING**
+**PASS — GITHUB WAIT BUDGET SEPARATION LIVE VALIDATED**
 
 ## Trigger
 
@@ -130,4 +130,28 @@ Pre-deploy file-integrity evidence:
 - source candidate `modules/github.mjs` SHA-256: `20c2885512bf6199f01b0ddc80fefef658e4b6ea2b92191710f9ee4031fd7ade`
 - installed pre-LCN-037 `modules/github.mjs` SHA-256: `3b2e175ab07847c91e77ec95a6a6074b866d31bd7cb2efe0bcae3fbd761ee30c`
 
-Live installed-runtime requalification: **PENDING**
+## Live installed-runtime requalification
+
+After restart, the installed runtime was tested directly against completed GitHub Actions run `35981046103` with `github_run_wait(wait_seconds=0)`.
+
+Observed:
+
+- caller wall: 4123 ms
+- handler: 1525.596 ms
+- `completed=true`
+- `timed_out=false`
+- `return_reason=completed`
+- `status_fetch_timeout_seconds=5`
+- `status_checks=1`
+- result size: 4079 bytes
+- no tool error
+
+This is the same >1-second status-fetch timing class that previously failed when the fetch timeout was coupled to the one-second observation window.
+
+The repair therefore passes installed live requalification.
+
+The difference between caller wall and local handler in this sample is approximately 2597 ms, reinforcing the existing evidence that material latency remains outside the LConnect handler.
+
+## Final result
+
+**PASS — GITHUB WAIT BUDGET SEPARATION LIVE VALIDATED**

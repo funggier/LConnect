@@ -1,6 +1,6 @@
 # LCN-037 — GitHub Wait Budget Separation
 
-Status: **ACTIVE — IMPLEMENTATION GREEN / INSTALLED LIVE VALIDATION PENDING**
+Status: **COMPLETE — LIVE VALIDATED**
 
 ## Goal
 
@@ -46,7 +46,7 @@ Rules:
 - dependency audit: 0 vulnerabilities
 - GitHub Actions: `35980718759` — PASS
 - live source-candidate requalification against real in-progress Actions run: PASS (~1.99s status fetch, structured timeout)
-- live installed-runtime requalification: PENDING
+- live installed-runtime requalification: PASS (handler 1525.596 ms, caller wall 4123 ms, completed=true)
 
 ## Acceptance
 
