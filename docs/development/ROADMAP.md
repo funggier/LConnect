@@ -355,11 +355,13 @@ Closure evidence: ChatGPT reconnect exposed all 122 tools; direct `latency_budge
 
 Post-closure evidence from a real user-confirmed Retry showed that the handler-sum-based adaptive ceiling is not a valid proxy for end-to-end Retry risk: failed round 6 lasted ~563.973 s wall-clock while completed handler time summed to only ~36.899 s. The explicit round boundary remains useful, but handler-sum ENFORCE semantics are superseded by LCN-047.
 
-# Phase 4D — Turn-Risk Telemetry Model Repair — ACTIVE
+# Phase 4D — Turn-Risk Telemetry Model Repair — COMPLETE AT CURRENT EVIDENCE
 
 LCN-047 converts the LCN-046 mechanism into observation-only round telemetry. It separates explicit-round wall-clock, handler time, observed idle gaps, result volume, errors/timeouts and in-flight state, and captures user-confirmed Retry snapshots without creating or enforcing a speculative latency ceiling.
 
 The MCP catalog remains 122 tools; existing direct tool names are retained for compatibility.
+
+Closure: primary commit `70bfa9412d13a1f1e9a77c1a5b870ba3c84622d2` / CI #128 PASS, migration corrective commit `708c75a961cfd2b1a41c10cb4c8c8d175b11b1ec` / CI #129 PASS, installed/runtime live GREEN at 122 tools. Future real Retry events are captured as observation snapshots with `ConfirmRetry-LConnect.cmd`; no handler-sum-derived enforcement is active.
 
 # Phase 5 — Desktop Control
 

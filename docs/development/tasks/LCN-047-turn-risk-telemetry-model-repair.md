@@ -1,6 +1,6 @@
 # LCN-047 — Turn-Risk Telemetry Model Repair
 
-Status: **ACTIVE**
+Status: **COMPLETE — OBSERVATION-ONLY TURN-RISK TELEMETRY LIVE GREEN**
 
 Date: 2026-09-27
 
@@ -110,5 +110,7 @@ Add preferred aliases:
 - live-found migration corrective full `npm test`: PASS (52.178 s)
 - dependency audit: PASS (0 vulnerabilities)
 - `git diff --check`: PASS
-- source↔installed deployment parity: PENDING
-- live runtime validation: PENDING
+- source↔installed deployment parity: PASS — 192/192 before docs-only closure
+- live runtime validation: PASS — runtime 1.2.0 / 122 tools / `turn_risk_observation_v2` / OBSERVE / enforcement disabled
+- controlled Stop/Start activation via independent BConnect channel: PASS
+- clean live round 13 zero boundary after final restart: PASS

@@ -13,32 +13,30 @@ Last updated: 2026-09-27
 - Running catalog digest: `4a8ef91a83938d4e835a7716c90c8784235708bdf31c5cb763b1d2911fecc525`
 - ChatGPT-visible catalog after reconnect: **122 tools**
 - LCN-046: COMPLETE — original round-boundary implementation; handler-sum enforcement superseded by LCN-047 evidence
-- LCN-047: ACTIVE — Turn-Risk Telemetry Model Repair
+- LCN-047: COMPLETE — Turn-Risk Telemetry Model Repair / observation-only live GREEN
 - LCN-018–023: DEFERRED — Desktop Control / Browser Automation
 
 ## Active task
 
-### LCN-047 — Turn-Risk Telemetry Model Repair
+No active development task.
 
-Status: **ACTIVE**
+Latest completed task: [LCN-047 — Turn-Risk Telemetry Model Repair](tasks/LCN-047-turn-risk-telemetry-model-repair.md)
 
-Task: [tasks/LCN-047-turn-risk-telemetry-model-repair.md](tasks/LCN-047-turn-risk-telemetry-model-repair.md)
+Final report: [reports/LCN-20260927-047-turn-risk-telemetry-model-repair.md](reports/LCN-20260927-047-turn-risk-telemetry-model-repair.md)
 
-Root evidence: failed round 6 lasted ~563.973 s wall-clock while completed LConnect handler sum was only ~36.899 s (~6.54%). The adaptive ceiling derived from handler sum is therefore disabled pending a better evidence model.
+Current reliability state:
 
-LCN-046 final report remains historical evidence: [reports/LCN-20260927-046-user-confirmed-adaptive-turn-latency-budget.md](reports/LCN-20260927-046-user-confirmed-adaptive-turn-latency-budget.md)
-
-Previous closure evidence:
-
-- ChatGPT-visible LConnect catalog: **122 tools**
-- `latency_budget_status` direct call: PASS
-- `latency_round_start` direct call: PASS
-- new round starts at `0 calls / 0 cumulative ms / 0 max ms`: PASS
-- previous-round latency carry-over: none
-- runtime: `1.2.0 / 122 tools`
-- runtime catalog digest: `4a8ef91a83938d4e835a7716c90c8784235708bdf31c5cb763b1d2911fecc525`
-- no synthetic MaxLatency calibration performed
+- runtime: **1.2.0 / 122 tools**
+- measurement model: `turn_risk_observation_v2`
+- mode: **OBSERVE**
+- enforcement: **disabled**
+- speculative handler-sum ceiling: **removed**
+- fresh live round 13 started at zero: PASS
+- primary CI #128: PASS
+- corrective CI #129: PASS
+- source↔installed before docs-only closure: **192/192 equal**
+- no synthetic Retry snapshot used for closure
 
 ## Next action
 
-Implement and validate LCN-047 observation-only turn-risk telemetry, deploy it, and use future real Retry events as comparative evidence rather than as an automatic handler-sum ceiling.
+Use LConnect normally. If a real Retry/message-delivery failure occurs, capture that exact round with `ConfirmRetry-LConnect.cmd` and compare the observation snapshot rather than automatically enforcing a guessed latency ceiling.

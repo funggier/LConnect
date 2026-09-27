@@ -2,7 +2,7 @@
 
 ## Status
 
-**ACTIVE — LOCAL GREEN / CI + LIVE DEPLOYMENT PENDING**
+**COMPLETE — LIVE GREEN / OBSERVATION-ONLY TURN-RISK TELEMETRY**
 
 ## Trigger
 
@@ -162,10 +162,39 @@ Operational correction: do not activate LConnect by killing only `node lconnect-
 - direct `latency_budget_status`: PASS — `turn_risk_observation_v2 / OBSERVE / enforcement disabled`
 - clean live round 12 start: PASS — all counters zero at boundary
 
-## Pending
+## Corrective / final live evidence
 
-- corrective commit + CI
-- corrective installed sync
-- controlled Stop/Start activation through BConnect
-- final live direct-tool validation
-- final source↔installed parity
+- corrective commit: `708c75a961cfd2b1a41c10cb4c8c8d175b11b1ec`
+- GitHub CI #129 / run `36329746304`: PASS
+- corrective installed targeted smoke: PASS
+- source↔installed before docs-only closure: `192/192` equal
+- source/install manifest digest before docs-only closure: `cb21efef29d03bad5637e2a2d726f2b55c0b780109e8b11da36eed4eeeb97602`
+- controlled Stop/Start through independent BConnect: PASS
+- final tunnel PID after controlled restart: `41124`
+- final MCP runtime PID: `13716`
+- runtime version/catalog: `1.2.0 / 122 tools`
+- runtime catalog digest: `4a8ef91a83938d4e835a7716c90c8784235708bdf31c5cb763b1d2911fecc525`
+- direct measurement model: `turn_risk_observation_v2`
+- direct mode: `OBSERVE`
+- direct enforcement: `disabled`
+- failure ceiling / safe max / prediction / remaining budget: all null
+- final fresh round: `13`
+- round 13 direct start boundary: 0 calls / 0 handler ms / 0 result bytes / 0 errors / 0 timeouts
+- no synthetic Retry snapshot was created during final validation
+
+## Operational use after LCN-047
+
+For LConnect work where Retry evidence is being observed, the AI starts a fresh round with `latency_round_start` before the first LConnect work tool of a new user turn.
+
+If the user actually sees a Retry/message-delivery failure:
+
+1. run `ConfirmRetry-LConnect.cmd` (preferred), or legacy `SetMaxLatency-LConnect.cmd`
+2. the current round is captured as a user-confirmed Retry snapshot
+3. no ceiling is calculated and no blocking is enabled
+4. future failed snapshots are compared as evidence; history remains audit-only
+
+`ResetRound-LConnect.cmd` remains useful for a deliberate manual measurement round. The user does not need to reset every normal turn when the AI owns the explicit round boundary.
+
+## Closure
+
+LCN-047 is COMPLETE at the current evidence boundary. The system no longer claims that completed LConnect handler time predicts ChatGPT Retry. It records separable observables and waits for future real Retry events before drawing a stronger causal or policy conclusion.
