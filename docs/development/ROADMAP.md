@@ -337,7 +337,7 @@ After LCN-044, publish **v1.2.0 — Reliability & Verification** from one exact 
 
 ---
 
-# Phase 4C — User-Confirmed Adaptive Turn Latency Budget — ACTIVE
+# Phase 4C — User-Confirmed Adaptive Turn Latency Budget — COMPLETE AT CURRENT NEED
 
 LCN-046 adds a round-scoped guard for retry-prone tool sequences.
 
@@ -350,6 +350,8 @@ Key rules:
 - after calibration the AI starts each new user-turn round with `latency_round_start`
 - no request-ID or idle-time turn inference
 - preflight returns `ROUND_NOT_STARTED` or `LATENCY_BUDGET_EXCEEDED` before work-handler execution when applicable
+
+Closure evidence: ChatGPT reconnect exposed all 122 tools; direct `latency_budget_status` and `latency_round_start` both passed; a fresh direct round began at zero without historical carry-over. Real MaxLatency calibration is intentionally deferred until an actual user-observed Retry.
 
 # Phase 5 — Desktop Control
 

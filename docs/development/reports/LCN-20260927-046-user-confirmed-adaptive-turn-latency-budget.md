@@ -2,7 +2,7 @@
 
 ## Status
 
-**LIVE GREEN — CHATGPT DIRECT-TOOL REFRESH VALIDATION PENDING**
+**COMPLETE — DIRECT CHATGPT TOOL VALIDATION PASS**
 
 ## Goal
 
@@ -129,24 +129,45 @@ Targeted acceptance:
 - implementation CI: run `36318144473` / #123 — PASS
 - corrective null-semantics commit: `500b7cb0cad669b087cf8242e5f84d114af2e5fd`
 - corrective CI: run `36318612471` / #124 — PASS
+- live-checkpoint CI: run `36318986517` / #125 — PASS
+- full-handoff commit: `1d592cfd4a51dd0bb4ea391df304409f75c9459b`
+- full-handoff CI: run `36320528918` / #126 — PASS
 
 ## Installed live validation
 
-- tracked source↔installed: `187/187` equal
-- source/install manifest digest: `0b27910bcae52bdee5519ca82e2c59ab67bb71cf25ce5bbebdd8e7740fabca96`
+- tracked source↔installed before closure edits: `188/188` equal
+- pre-closure source/install manifest digest: `687693bc4cfceaa1908fdff09db3f08dddb7ef8359c9de9bae5fca5592259a85`
 - package version parity: PASS (`1.2.0`)
 - dependency declarations/presence: PASS (4/4)
 - preserved local paths: PASS (`mcp-conf.yaml`, `node_modules`, `logs`, `runtime`)
 - running runtime: `1.2.0 / 122 tools`
-- runtime PID: `13148`
+- runtime PID at direct validation: `17236`
 - runtime catalog digest: `4a8ef91a83938d4e835a7716c90c8784235708bdf31c5cb763b1d2911fecc525`
 - expected tool-count match: PASS
 - live OBSERVE metadata null semantics: PASS
-- `StatusMaxLatency` shared CLI: PASS — round 0 / not_started / no ceiling / unbounded remaining
+- direct pre-start `latency_budget_status`: PASS — OBSERVE / generation 1 / round 1 / not_started / 0 calls / 0 ms / no ceiling / unbounded remaining
+- direct `latency_round_start`: PASS — advanced to round 2 / active with `calls_this_round=0` and `current_round_ms=0`
+- direct post-start `latency_budget_status`: PASS — round 2 / active / `call_count=0` / `cumulative_latency_ms=0` / `max_call_ms=0`
+- previous-round latency carry-over into the new round: NONE
+- no synthetic `SetMaxLatency` calibration was performed
 
-## Pending
+## Final direct ChatGPT validation
 
-- ChatGPT connector/plugin refresh
-- direct `latency_budget_status` visibility/call
-- direct `latency_round_start` visibility/call without altering calibration max
-- final LCN-046 closure
+After reconnect, ChatGPT exposed the complete **122-tool** LConnect catalog, including both new direct tools:
+
+- `latency_budget_status`
+- `latency_round_start`
+
+The initial direct status remained uncalibrated OBSERVE with round 1 not started and zero active-round latency. `latency_round_start` then created round 2 and returned zero counters before any subsequent work tool ran. A direct status call immediately afterward confirmed the same zero-start state. This closes the remaining client-schema validation gap and proves that a new round does not inherit previous-round latency.
+
+## Closure
+
+Post-closure docs sync verification:
+
+- tracked source↔installed: `188/188` equal
+- missing installed: `0`
+- changed: `0`
+- runtime remains `1.2.0 / 122 tools`
+- preserved `mcp-conf.yaml`, `node_modules`, `logs`, and `runtime`: PASS
+
+LCN-046 is COMPLETE at the current need. Real calibration remains intentionally external to task closure: the user should run `ResetRound-LConnect.cmd` before a deliberate measurement round and run `SetMaxLatency-LConnect.cmd` only after an actual user-observed Retry/message-delivery failure. Historical rounds remain audit-only.

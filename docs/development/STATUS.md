@@ -1,10 +1,10 @@
 # STATUS — LConnect Development
 
-Last updated: 2026-09-24
+Last updated: 2026-09-27
 
 ## Overall
 
-Current project state: **BASIC CORE STABLE / LCN-046 ADAPTIVE LATENCY BUDGET ACTIVE / v1.2.0 PUBLISHED**
+Current project state: **BASIC CORE STABLE / LCN-046 COMPLETE / v1.2.0 PUBLISHED**
 
 Current published release: **v1.2.0 — Reliability & Verification**
 
@@ -12,13 +12,13 @@ Release tag target: `043a669a7f421db21586e4fb5cd3645ef0f44c60`
 
 Release CI: `36005012233` — PASS
 
-Current main/source MCP catalog: **122 tools** (LCN-046 candidate)
+Current main/source MCP catalog: **122 tools**
 
 Current installed/running MCP catalog: **122 tools** (`1.2.0`)
 
 Current running catalog digest: `4a8ef91a83938d4e835a7716c90c8784235708bdf31c5cb763b1d2911fecc525`
 
-Current ChatGPT-visible catalog before LCN-046 connector refresh: **120 tools** while installed/running daemon is already 122.
+Current ChatGPT-visible catalog after reconnect: **122 tools**, matching the installed/running daemon.
 
 LConnect มี Core ที่ใช้งานจริงแล้วและผ่าน runtime acceptance บน Windows:
 
@@ -33,7 +33,7 @@ LConnect มี Core ที่ใช้งานจริงแล้วแล�
 - Thai documentation
 - GitHub releases
 
-Agent Operations Reliability LCN-025–030 ปิดครบ, Delivery/Turn Reliability LCN-031–039 ปิดที่ evidence boundary ปัจจุบัน, Execution Ergonomics LCN-040–044 ปิดที่ current need และ v1.2.0 ถูก publish/verify แล้ว; Desktop/Browser automation ยังพักไว้
+Agent Operations Reliability LCN-025–030 ปิดครบ, Delivery/Turn Reliability LCN-031–039 และ LCN-046 ปิดที่ current need, Execution Ergonomics LCN-040–044 ปิดที่ current need และ v1.2.0 ถูก publish/verify แล้ว; Desktop/Browser automation ยังพักไว้
 
 ## Workstream status
 
@@ -44,7 +44,7 @@ Agent Operations Reliability LCN-025–030 ปิดครบ, Delivery/Turn Rel
 | Developer Foundation | COMPLETE | LCN-012–014 | Git + Development + HTTP complete |
 | Observation | COMPLETE | LCN-015–017 | Log Tail + File Watcher + Scheduled Tasks complete |
 | Agent Operations Reliability | COMPLETE | LCN-025–034 | LCN-025–030 and LCN-031–034 complete |
-| Delivery / Turn Reliability | ACTIVE FOLLOW-UP | LCN-031–039, LCN-046 | LCN-046 adds user-confirmed, round-scoped adaptive latency budgeting without inferring retry state from unreliable request IDs or idle-time heuristics |
+| Delivery / Turn Reliability | COMPLETE AT CURRENT NEED | LCN-031–039, LCN-046 | LCN-046 direct ChatGPT validation PASS at 122 visible tools; explicit new rounds start from zero and real Retry calibration remains user-confirmed only |
 | Execution Ergonomics | COMPLETE AT CURRENT NEED | LCN-040–044 | LCN-044 Deployment Verification Snapshot PASS on installed tree; 178/178 tracked parity, runtime 1.2.0 / 120 tools |
 | Desktop Control | DEFERRED | LCN-018–020 | Explicitly paused |
 | Browser Automation | DEFERRED | LCN-021–023 | Explicitly paused |

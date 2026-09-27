@@ -1,10 +1,10 @@
 # LCN-046 — User-Confirmed Adaptive Turn Latency Budget
 
-Status: **ACTIVE — LIVE GREEN / CHATGPT DIRECT-TOOL REFRESH VALIDATION PENDING**
+Status: **COMPLETE — DIRECT CHATGPT TOOL VALIDATION PASS**
 
 Local gate: `npm test` PASS (`tools=122`, ~52.5s), dependency audit 0 vulnerabilities, `git diff --check` PASS.
 
-Live gate: corrective commit `500b7cb0cad669b087cf8242e5f84d114af2e5fd`, CI #124 PASS, source↔installed 187/187, runtime `1.2.0 / 122 tools`, CLI state `OBSERVE / round 0 / not_started`, uncalibrated ceiling/safe/prediction/remaining preserved as null.
+Live gate: corrective commit `500b7cb0cad669b087cf8242e5f84d114af2e5fd`, handoff commit `1d592cfd4a51dd0bb4ea391df304409f75c9459b`, CI #124–#126 PASS, source↔installed 188/188 before closure edits, runtime `1.2.0 / 122 tools`, ChatGPT-visible catalog 122, direct `latency_budget_status` PASS, direct `latency_round_start` PASS, and the new round started at `call_count=0 / cumulative_latency_ms=0 / max_call_ms=0`.
 
 ## Goal
 
@@ -104,3 +104,8 @@ Every wrapped work-tool result receives compact `latency_budget` metadata includ
 - full local suite: PASS
 - GitHub CI: PASS
 - installed live validation after restart/refresh: PASS
+- ChatGPT-visible direct tool catalog = 122: PASS
+- direct `latency_budget_status`: PASS
+- direct `latency_round_start`: PASS
+- direct new-round evidence starts at `call_count=0 / cumulative_latency_ms=0 / max_call_ms=0`: PASS
+- real Retry calibration intentionally deferred until the user observes an actual Retry; no synthetic MaxLatency was created: PASS
