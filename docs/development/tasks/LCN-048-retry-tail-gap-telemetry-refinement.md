@@ -52,7 +52,7 @@ Round 13:
 
 This further disproves a fixed handler-sum threshold, fixed call-count threshold, or single fixed round-wall threshold as a sufficient Retry model.
 
-The terminal quiet gap is now a materially relevant observable, but it is correlation evidence only. LConnect still cannot prove which ChatGPT/platform phase caused the Retry.
+The terminal quiet gap is now a materially relevant observable, but it is correlation evidence only. Its endpoint is the user-confirmation timestamp, so it can include a small unknown delay between the UI showing Retry and the user running SetMax/ConfirmRetry. Treat it as an observed terminal-quiet upper bound, not an exact ChatGPT timeout threshold. LConnect still cannot prove which ChatGPT/platform phase caused the Retry.
 
 ## Problem
 
@@ -92,11 +92,14 @@ Keep:
 - `max_observed_gap_ms` includes terminal quiet gap: PASS
 - existing `max_idle_gap_ms` semantics remain compatible: PASS
 - Retry snapshot normalization preserves new fields: PASS
+- pre-LCN-048 Retry snapshots keep unknown new fields as null/none rather than false zero: PASS
 - CLI status/Retry output shows new fields: PASS
 - targeted smoke: PASS
 - `npm run check`: PASS
 - `git diff --check`: PASS
 - dependency audit: PASS — 0 vulnerabilities
-- full test suite: PASS (53.543 s)
-- CI: PENDING
+- primary full test suite: PASS (53.543 s)
+- legacy-snapshot corrective full test suite: PASS (54.669 s)
+- primary CI #131 / run `36330784749`: PASS
+- corrective CI: PENDING
 - installed deployment + direct live validation: PENDING

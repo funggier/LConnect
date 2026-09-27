@@ -231,6 +231,50 @@ try {
   }
 
   writeState({
+    schema_version: 2,
+    measurement_model: "turn_risk_observation_v2",
+    mode: "observe",
+    enforcement_enabled: false,
+    generation: 8,
+    active_budget: {},
+    last_confirmed_retry: {
+      source: "legacy-v2-snapshot",
+      confirmed_at: "2026-01-01T00:00:10.000Z",
+      round_id: 55,
+      round_started_at: "2026-01-01T00:00:00.000Z",
+      round_completed_at: "2026-01-01T00:00:10.000Z",
+      round_wall_clock_ms: 10000,
+      call_count: 1,
+      in_flight_count: 0,
+      handler_sum_ms: 10,
+      max_handler_ms: 10,
+      handler_share_pct: 0.1,
+      observed_idle_ms: 9990,
+      max_idle_gap_ms: 100,
+      unattributed_wall_ms: 9990,
+      result_bytes_total: 1,
+      max_result_bytes: 1,
+      error_count: 0,
+      timeout_count: 0,
+      overlap_start_count: 0,
+      last_tool: "fixture_work",
+    },
+    round: {
+      id: 55,
+      status: "not_started",
+    },
+  });
+
+  const legacyV2Snapshot = controller.status().state.last_confirmed_retry;
+  if (
+    legacyV2Snapshot?.tail_idle_ms !== null ||
+    legacyV2Snapshot?.max_observed_gap_ms !== null ||
+    legacyV2Snapshot?.last_call_completed_at !== null
+  ) {
+    throw new Error("legacy v2 Retry snapshot must preserve unknown new fields as null");
+  }
+
+  writeState({
     schema_version: 1,
     mode: "enforce",
     generation: 9,
@@ -364,6 +408,7 @@ try {
   console.log("observed idle/inter-call gaps captured: PASS");
   console.log("active/confirmed tail idle captured consistently: PASS");
   console.log("max observed gap includes terminal quiet period: PASS");
+  console.log("legacy Retry snapshots preserve unknown tail fields as null: PASS");
   console.log("result-byte metrics captured: PASS");
   console.log("error/timeout counters available: PASS");
   console.log("confirmed Retry creates observation snapshot only: PASS");

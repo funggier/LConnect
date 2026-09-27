@@ -26,7 +26,7 @@ A second real user-visible Retry occurred after LCN-047 was already live in obse
 - errors: `0`
 - local timeouts: `0`
 
-This second real failure further invalidates a fixed handler-sum, call-count, or single fixed wall-clock threshold. The terminal quiet period is a useful observable but not proof of platform causality.
+This second real failure further invalidates a fixed handler-sum, call-count, or single fixed wall-clock threshold. The terminal quiet period is a useful observable but not proof of platform causality. Because its endpoint is the user-confirmation timestamp, it may include a small unknown reaction/click delay after the UI first shows Retry; it is therefore an observed upper bound rather than an exact platform timeout measurement.
 
 ## Repair
 
@@ -55,17 +55,26 @@ Behavior:
 - confirmed status/snapshot consistency: PASS
 - max observed gap includes terminal quiet period: PASS
 - observation-only/no blocking behavior preserved: PASS
+- legacy schema-v2 Retry snapshots without tail fields normalize them as null/none rather than false zero: PASS
 
 ## Local validation
 
 - `npm run check`: PASS
 - dependency audit: PASS — 0 vulnerabilities
 - `git diff --check`: PASS
-- full `npm test`: PASS (53.543 s)
+- primary full `npm test`: PASS (53.543 s)
+- legacy-snapshot corrective full `npm test`: PASS (54.669 s)
+
+## Implementation evidence
+
+- implementation commit: `ec62ae32efa9f8a8f63f25ffd6d2ed774d27daaa`
+- GitHub CI #131 / run `36330784749`: PASS
+- pre-deployment delta: 185/194 equal, 7 changed, 2 missing — exactly the 9 LCN-048 files
+- preserved local paths: config/dependencies/logs/runtime present
 
 ## Pending
 
-- commit + CI
+- CI completion
 - installed sync
 - controlled restart
 - live direct validation

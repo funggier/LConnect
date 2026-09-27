@@ -93,17 +93,15 @@ function normalizeRetrySnapshot(value) {
     max_handler_ms: clampNonNegative(normalizeNumber(value.max_handler_ms, 0)),
     handler_share_pct: clampNonNegative(normalizeNumber(value.handler_share_pct, 0)),
     observed_idle_ms: clampNonNegative(normalizeNumber(value.observed_idle_ms, 0)),
-    tail_idle_ms: clampNonNegative(normalizeNumber(value.tail_idle_ms, 0)),
+    tail_idle_ms:
+      value.tail_idle_ms == null
+        ? null
+        : clampNonNegative(normalizeNumber(value.tail_idle_ms, 0)),
     max_idle_gap_ms: clampNonNegative(normalizeNumber(value.max_idle_gap_ms, 0)),
-    max_observed_gap_ms: clampNonNegative(
-      normalizeNumber(
-        value.max_observed_gap_ms,
-        Math.max(
-          normalizeNumber(value.max_idle_gap_ms, 0),
-          normalizeNumber(value.tail_idle_ms, 0)
-        )
-      )
-    ),
+    max_observed_gap_ms:
+      value.max_observed_gap_ms == null
+        ? null
+        : clampNonNegative(normalizeNumber(value.max_observed_gap_ms, 0)),
     unattributed_wall_ms: clampNonNegative(normalizeNumber(value.unattributed_wall_ms, 0)),
     result_bytes_total: Math.max(0, Math.floor(normalizeNumber(value.result_bytes_total, 0))),
     max_result_bytes: Math.max(0, Math.floor(normalizeNumber(value.max_result_bytes, 0))),
