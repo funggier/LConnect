@@ -160,6 +160,24 @@ function normalizeRun(run) {
   };
 }
 
+function compactRun(run) {
+  return {
+    id: run?.id ?? null,
+    number: run?.number ?? null,
+    workflow_name: run?.workflow_name ?? null,
+    display_title: run?.display_title ?? null,
+    event: run?.event ?? null,
+    head_branch: run?.head_branch ?? null,
+    head_sha: run?.head_sha ?? null,
+    status: run?.status ?? null,
+    conclusion: run?.conclusion ?? null,
+    created_at: run?.created_at ?? null,
+    started_at: run?.started_at ?? null,
+    updated_at: run?.updated_at ?? null,
+    url: run?.url ?? null,
+  };
+}
+
 function failedJobs(run) {
   return (run.jobs || [])
     .filter((job) => job.conclusion && job.conclusion !== "success" && job.conclusion !== "skipped")
@@ -296,6 +314,23 @@ async function readRun(runGhRaw, repo, runId, timeoutSeconds = 10) {
     { timeout_seconds: timeoutSeconds, max_output_chars: 240000 }
   );
   return normalizeRun(parseJsonResult(result, "gh run view"));
+}
+
+async function readRunSummary(runGhRaw, repo, runId, timeoutSeconds = 5) {
+  const result = await checkedGh(
+    runGhRaw,
+    [
+      "run",
+      "view",
+      String(runId),
+      "--repo",
+      repo,
+      "--json",
+      "databaseId,number,workflowName,displayTitle,event,headBranch,headSha,status,conclusion,createdAt,startedAt,updatedAt,url",
+    ],
+    { timeout_seconds: timeoutSeconds, max_output_chars: 32000 }
+  );
+  return compactRun(normalizeRun(parseJsonResult(result, "gh run view summary")));
 }
 
 async function readRelease(runGhRaw, repo, tag) {
@@ -486,7 +521,7 @@ export function registerGitHubTools(server, config, dependencies = {}) {
     }
   });
 
-  server.tool("github_run_wait", "Observe one GitHub Actions run with a short wait window (default 1s, maximum 3s). The wait window is separate from the bounded gh status-fetch timeout. The workflow is never cancelled.", {
+  server.tool("github_run_wait", "Observe one GitHub Actions run with a short wait window (default 1s, maximum 3s) using compact top-level run metadata only. Jobs/steps are intentionally omitted; use github_run_view for full detail. The wait window is separate from the bounded gh status-fetch timeout. The workflow is never cancelled.", {
     repo: z.string().min(3),
     run_id: z.number().int().positive(),
     wait_seconds: z.number().min(0).max(3).optional(),
@@ -514,7 +549,7 @@ export function registerGitHubTools(server, config, dependencies = {}) {
       await ensureGhReadyCached(authTimeoutSeconds);
 
       let statusChecks = 0;
-      let run = await readRun(
+      let run = await readRunSummary(
         runGhRaw,
         repo,
         run_id,
@@ -642,7 +677,7 @@ export function registerGitHubTools(server, config, dependencies = {}) {
           });
         }
 
-        run = await readRun(
+        run = await readRunSummary(
           runGhRaw,
           repo,
           run_id,

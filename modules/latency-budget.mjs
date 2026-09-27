@@ -613,6 +613,36 @@ export function createLatencyBudgetController(config = {}) {
     const loaded = ensurePersisted();
     let state = loaded.state;
     const startedAt = nowIso();
+    let autoStartedAfterRetry = false;
+
+    if (state.round.status === "confirmed_retry") {
+      const previousRetryRoundId = state.round.id;
+      state = {
+        ...state,
+        mode: "observe",
+        enforcement_enabled: false,
+        active_budget: emptyActiveBudget(),
+        round: {
+          ...emptyRound(previousRetryRoundId + 1),
+          status: "active",
+          started_at: startedAt,
+          start_source: "post_retry_first_work_tool",
+        },
+      };
+      state = writeJson(statePath, state);
+      appendHistory(historyPath, {
+        event: "round_started",
+        source: "post_retry_first_work_tool",
+        round_id: state.round.id,
+        previous_retry_round_id: previousRetryRoundId,
+        auto_started_after_retry: true,
+        mode: "observe",
+        generation: state.generation,
+        measurement_model: MEASUREMENT_MODEL,
+      });
+      autoStartedAfterRetry = true;
+    }
+
     const track = state.round.status === "active";
     let idleGapMs = 0;
 
@@ -645,6 +675,7 @@ export function createLatencyBudgetController(config = {}) {
       started_at_ms: performance.now(),
       started_at: startedAt,
       idle_gap_ms: idleGapMs,
+      auto_started_after_retry: autoStartedAfterRetry,
     };
   }
 
@@ -789,6 +820,8 @@ export function registerLatencyBudgetTools(server, controller) {
                 latency_budget: value.latency_budget,
                 state_path: value.state_path,
                 history_path: value.history_path,
+                next_work_tool_auto_starts_round:
+                  value.state.round.status === "confirmed_retry",
                 ...(value.state_error
                   ? { state_warning: value.state_error }
                   : {}),

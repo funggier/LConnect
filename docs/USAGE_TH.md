@@ -139,7 +139,7 @@ npm test
 4. ถ้าเห็น Retry / message-delivery failure ให้กด **`ConfirmRetry-LConnect.cmd`**
 5. ใช้ `StatusTurnRisk-LConnect.cmd` เมื่อต้องการดู telemetry ปัจจุบัน
 
-`ConfirmRetry-LConnect.cmd` เป็นคำสั่งเดียวสำหรับยืนยัน Retry ระบบจะเก็บ snapshot ของรอบปัจจุบัน เช่น:
+`ConfirmRetry-LConnect.cmd` เป็นคำสั่งเดียวสำหรับยืนยัน Retry ระบบจะเก็บ snapshot ของรอบปัจจุบัน หลังยืนยันแล้ว **ไม่ต้องกด ResetRound และไม่ต้องรอ AI เรียก `latency_round_start` เพื่อให้ระบบกลับมา track** — LConnect work tool ตัวแรกถัดไปจะเริ่ม observation round ใหม่อัตโนมัติและถูกนับเป็น call 1 เช่น:
 
 - round wall-clock
 - completed handler sum / max handler

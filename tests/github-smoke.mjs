@@ -29,6 +29,7 @@ const otherCommit = "89abcdef0123456789abcdef0123456789abcdef";
 let wait43Calls = 0;
 let authCalls = 0;
 let lastWaitStatusTimeout = null;
+let lastWaitJsonFields = null;
 let lastDispatchArgs = null;
 let lastCommitListArgs = null;
 
@@ -120,6 +121,10 @@ async function fakeGh(args, options = {}) {
 
   if (args[0] === "run" && args[1] === "view") {
     const id = Number(args[2]);
+    if ([43, 44, 45].includes(id)) {
+      const jsonIndex = args.indexOf("--json");
+      lastWaitJsonFields = jsonIndex >= 0 ? String(args[jsonIndex + 1] || "") : null;
+    }
     if (id === 40) {
       return ok(JSON.stringify(runJson(40, "completed", "success", [], {
         headSha: fixtureCommit,
@@ -366,9 +371,12 @@ try {
     waited.timed_out !== false ||
     waited.requested_wait_ms !== 1000 ||
     waited.effective_wait_ms > 1000 ||
-    waited.run.conclusion !== "success"
+    waited.run.conclusion !== "success" ||
+    Object.prototype.hasOwnProperty.call(waited.run, "jobs") ||
+    String(lastWaitJsonFields || "").includes("jobs") ||
+    JSON.stringify(waited).length > 5000
   ) {
-    throw new Error("github_run_wait completion failed");
+    throw new Error("github_run_wait compact completion failed");
   }
 
   const timed = await call(client, "github_run_wait", {
@@ -535,6 +543,8 @@ try {
   console.log("github_run_wait 1s default / 3s maximum: PASS");
   console.log("github_run_wait status-fetch/wait budget separation: PASS");
   console.log("github_run_wait completion/timeout: PASS");
+  console.log("github_run_wait compact status query/result (no jobs/steps): PASS");
+  console.log("github_run_view retains full jobs/steps detail: PASS");
   console.log("github_run_failed_logs bounds/redaction: PASS");
   console.log("github_workflow_dispatch explicit inputs/redaction: PASS");
   console.log("github_release_view metadata/assets: PASS");

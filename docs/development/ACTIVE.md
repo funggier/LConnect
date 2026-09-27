@@ -1,6 +1,6 @@
 # ACTIVE — LConnect Development
 
-Last updated: 2026-09-27
+Last updated: 2026-09-28
 
 ## Current state
 
@@ -16,11 +16,16 @@ Last updated: 2026-09-27
 - LCN-047: COMPLETE — Turn-Risk Telemetry Model Repair / observation-only live GREEN
 - LCN-048: COMPLETE — Retry Tail-Gap Telemetry Refinement / live GREEN
 - LCN-049: COMPLETE — Legacy MaxLatency compatibility surface removed / live GREEN
+- LCN-050: ACTIVE — Post-Retry Auto-Round and GitHub Wait Payload Containment
 - LCN-018–023: DEFERRED — Desktop Control / Browser Automation
 
 ## Active task
 
-No active development task.
+### LCN-050 — Post-Retry Auto-Round and GitHub Wait Payload Containment
+
+Status: **ACTIVE**
+
+Task: [tasks/LCN-050-post-retry-auto-round-and-github-wait-payload-containment.md](tasks/LCN-050-post-retry-auto-round-and-github-wait-payload-containment.md)
 
 Latest completed task: [LCN-049 — Remove Legacy MaxLatency Compatibility Surface](tasks/LCN-049-remove-legacy-maxlatency-compatibility-surface.md)
 
@@ -46,4 +51,4 @@ Current reliability state:
 
 ## Next action
 
-Complete LCN-049 cleanup, then use `ConfirmRetry-LConnect.cmd` as the sole Retry-confirmation command. Keep `ResetRound-LConnect.cmd` and `StatusTurnRisk-LConnect.cmd` only for their separate round/status roles.
+Complete LCN-050: auto-start the next observation round on the first work tool after ConfirmRetry and reduce `github_run_wait` polling to compact top-level status payloads. Validate with the latest Retry evidence before closure.

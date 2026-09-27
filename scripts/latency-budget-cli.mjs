@@ -30,6 +30,10 @@ function showStatus(title, value) {
   line("Generation:", value.state.generation);
   line("Round ID:", value.state.round.id);
   line("Round status:", value.state.round.status);
+  line(
+    "Next work auto-start:",
+    value.state.round.status === "confirmed_retry" ? "YES" : "no"
+  );
   line("Calls this round:", value.state.round.call_count);
   line("In-flight calls:", value.state.round.in_flight_count);
   line("Round wall-clock:", ms(meta.round_wall_clock_ms));
@@ -104,6 +108,7 @@ function captureRetry(source) {
   console.log("");
   console.log("No latency ceiling was calculated and no enforcement was enabled.");
   console.log("This snapshot is observation evidence only; history is not combined into an active budget.");
+  console.log("The next LConnect work tool will automatically start a fresh observation round.");
 }
 
 try {

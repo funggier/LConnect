@@ -1133,7 +1133,7 @@ list Actions runs แบบ structured/bounded
 
 อ่าน run/job/step evidence, short bounded wait และ failed logs
 
-`github_run_wait` ใช้ short wait window แยกจาก status-fetch timeout และไม่ cancel workflow
+`github_run_wait` ใช้ short wait window แยกจาก status-fetch timeout และไม่ cancel workflow โดย query/ผลลัพธ์จะเป็น **compact top-level run status** เท่านั้นและไม่รวม jobs/steps เพื่อลด payload ระหว่าง polling; ถ้าต้องการ job/step detail ให้ใช้ `github_run_view`
 
 ### github_workflow_dispatch
 

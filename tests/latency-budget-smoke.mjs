@@ -200,14 +200,32 @@ try {
     throw new Error("user-confirmed Retry observation snapshot/tail-gap consistency failed");
   }
 
-  const executionsBeforePostRetry = executions;
-  const postRetryWork = await call("fixture_work", { delay_ms: 1 });
-  if (postRetryWork.isError || executions !== executionsBeforePostRetry + 1) {
-    throw new Error("observation-only mode unexpectedly blocked work");
+  const controlAfterConfirm = JSON.parse(textOf(await call("latency_budget_status")));
+  if (
+    controlAfterConfirm.round.status !== "confirmed_retry" ||
+    controlAfterConfirm.next_work_tool_auto_starts_round !== true
+  ) {
+    throw new Error("control/status tool unexpectedly started the post-Retry work round");
   }
 
-  await call("latency_round_start");
-  await call("fixture_work", { delay_ms: 5 });
+  const executionsBeforePostRetry = executions;
+  const postRetryWork = await call("fixture_work", { delay_ms: 1 });
+  const postRetryMeta = latencyMeta(postRetryWork);
+  const autoRound = controller.status().state.round;
+  if (
+    postRetryWork.isError ||
+    executions !== executionsBeforePostRetry + 1 ||
+    postRetryMeta?.tracked !== true ||
+    postRetryMeta?.round_id !== failedRound.id + 1 ||
+    postRetryMeta?.calls_this_round !== 1 ||
+    autoRound.status !== "active" ||
+    autoRound.id !== failedRound.id + 1 ||
+    autoRound.call_count !== 1 ||
+    autoRound.start_source !== "post_retry_first_work_tool"
+  ) {
+    throw new Error("first work tool after confirmed Retry did not auto-start/track next round");
+  }
+
   const confirmed2 = controller.confirmRetryCurrentRound("test-confirmed-retry-2");
   const snap2 = confirmed2.retry_snapshot;
   if (
@@ -347,7 +365,8 @@ try {
     !cliConfirm.stdout.includes("Enforcement:") ||
     !cliConfirm.stdout.includes("Tail idle:") ||
     !cliConfirm.stdout.includes("Max observed gap:") ||
-    !cliConfirm.stdout.includes("DISABLED")
+    !cliConfirm.stdout.includes("DISABLED") ||
+    !cliConfirm.stdout.includes("next LConnect work tool")
   ) {
     throw new Error("CLI confirm-retry observation behavior failed: " + (cliConfirm.stderr || cliConfirm.stdout));
   }
@@ -356,9 +375,20 @@ try {
   if (
     postCli.mode !== "observe" ||
     postCli.last_confirmed_retry?.round_id !== externalRound.id ||
-    postCli.active_budget.failure_ceiling_ms !== null
+    postCli.active_budget.failure_ceiling_ms !== null ||
+    postCli.round.status !== "confirmed_retry"
   ) {
     throw new Error("CLI Retry snapshot was not reloaded by controller");
+  }
+
+  const postCliWork = await call("fixture_work", { delay_ms: 1 });
+  const postCliMeta = latencyMeta(postCliWork);
+  if (
+    postCliMeta?.tracked !== true ||
+    postCliMeta?.round_id !== externalRound.id + 1 ||
+    postCliMeta?.calls_this_round !== 1
+  ) {
+    throw new Error("first work tool after CLI ConfirmRetry did not auto-start next round");
   }
 
   for (const [name, action] of [
@@ -425,6 +455,9 @@ try {
   console.log("error/timeout counters available: PASS");
   console.log("confirmed Retry creates observation snapshot only: PASS");
   console.log("confirmed Retry never enables blocking: PASS");
+  console.log("control/status call after Retry does not auto-start work round: PASS");
+  console.log("first work tool after Retry auto-starts and is tracked as call 1: PASS");
+  console.log("second Retry can be confirmed without manual round reset: PASS");
   console.log("latest Retry snapshot replaces active comparison point: PASS");
   console.log("current CMD wrappers use shared CLI: PASS");
   console.log("legacy MaxLatency CMD/CLI surface removed: PASS");

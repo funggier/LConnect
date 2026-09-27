@@ -118,7 +118,7 @@ Node ESM modules ถูกโหลดตอน Core start
 
 เมื่อเกิด Retry:
 
-1. ให้แน่ใจว่ารอบงานถูกเริ่มด้วย `latency_round_start` หรือ `ResetRound-LConnect.cmd`
+1. รอบแรก/รอบที่ต้องการบังคับขอบเขตยังเริ่มได้ด้วย `latency_round_start` หรือ `ResetRound-LConnect.cmd`; **หลัง ConfirmRetry รอบก่อนหน้า LConnect work tool ตัวแรกจะเริ่มรอบใหม่ให้อัตโนมัติ**
 2. ใช้งานตามปกติ
 3. เมื่อเห็น Retry / message-delivery failure ให้กด **`ConfirmRetry-LConnect.cmd`**
 4. ตรวจ snapshot ด้วย `StatusTurnRisk-LConnect.cmd`
@@ -135,7 +135,7 @@ snapshot จะช่วยดู:
 
 ข้อสำคัญ:
 
-- `ConfirmRetry-LConnect.cmd` เป็นคำสั่งเดียวสำหรับยืนยัน Retry
+- `ConfirmRetry-LConnect.cmd` เป็นคำสั่งเดียวสำหรับยืนยัน Retry; หลังยืนยันแล้ว work tool ตัวแรกถัดไปจะ auto-start รอบใหม่ จึงไม่ควรเกิด `NO_ACTIVE_ROUND` ใน Retry ถัดไปเพียงเพราะไม่ได้ ResetRound เอง
 - mode เป็น `OBSERVE`
 - enforcement ปิดอยู่
 - ไม่มี MaxLatency / safe max / predicted-next blocking

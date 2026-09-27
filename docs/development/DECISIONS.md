@@ -449,3 +449,17 @@ It preserves local configuration, tunnel client, dependencies, source, Scheduled
 **Decision:** Historical LCN-046–048 task/report text is retained as audit history and does not define the current operational interface.
 
 **Why:** The MaxLatency model is no longer active. Keeping compatibility names suggests ceiling/enforcement behavior that no longer exists and creates avoidable ambiguity for both the operator and AI.
+
+---
+
+## D-037 — ConfirmRetry auto-recovers tracking; GitHub wait is compact
+
+**Decision:** After a user-confirmed Retry, LConnect does not require a manual ResetRound or explicit AI round-start call merely to resume telemetry. The first subsequent non-control work tool starts round N+1 at that tool's start timestamp and is recorded as call 1.
+
+**Decision:** This is a deterministic transition from persisted `confirmed_retry` state, not inference from request ID, idle time or message timing.
+
+**Decision:** Control/status tools do not trigger the transition.
+
+**Decision:** `github_run_wait` is a compact polling primitive. Its underlying `gh run view --json` query omits `jobs`, and its MCP result omits jobs/steps. Full job/step details remain available only through `github_run_view`.
+
+**Why:** A real post-Confirm Retry exposed an untracked lifecycle gap and correlated with 98 `github_run_wait` calls returning ~5.64 MB. Removing unnecessary jobs/steps from polling reduces result-volume and network/parsing pressure without inventing a timeout threshold or autonomous retry policy.
