@@ -14,11 +14,18 @@ Last updated: 2026-09-27
 - ChatGPT-visible catalog after reconnect: **122 tools**
 - LCN-046: COMPLETE — original round-boundary implementation; handler-sum enforcement superseded by LCN-047 evidence
 - LCN-047: COMPLETE — Turn-Risk Telemetry Model Repair / observation-only live GREEN
+- LCN-048: ACTIVE — Retry Tail-Gap Telemetry Refinement
 - LCN-018–023: DEFERRED — Desktop Control / Browser Automation
 
 ## Active task
 
-No active development task.
+### LCN-048 — Retry Tail-Gap Telemetry Refinement
+
+Status: **ACTIVE**
+
+Task: [tasks/LCN-048-retry-tail-gap-telemetry-refinement.md](tasks/LCN-048-retry-tail-gap-telemetry-refinement.md)
+
+A second real Retry was captured in round 13. It showed a terminal quiet gap of ~80.980 s after the final LConnect call; LCN-048 exposes that gap directly without reintroducing automatic enforcement.
 
 Latest completed task: [LCN-047 — Turn-Risk Telemetry Model Repair](tasks/LCN-047-turn-risk-telemetry-model-repair.md)
 

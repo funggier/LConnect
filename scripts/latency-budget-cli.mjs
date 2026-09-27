@@ -36,7 +36,9 @@ function showStatus(title, value) {
   line("Completed handler sum:", ms(meta.handler_sum_ms));
   line("Handler share:", String(meta.handler_share_pct) + "%");
   line("Observed idle time:", ms(meta.observed_idle_ms));
+  line("Tail idle:", ms(meta.tail_idle_ms));
   line("Max idle gap:", ms(meta.max_idle_gap_ms));
+  line("Max observed gap:", ms(meta.max_observed_gap_ms));
   line("Unattributed wall time:", ms(meta.unattributed_wall_ms));
   line("Result bytes total:", bytes(value.state.round.result_bytes_total));
   line("Max result bytes:", bytes(value.state.round.max_result_bytes));
@@ -54,7 +56,9 @@ function showStatus(title, value) {
     line("Completed handler sum:", ms(retry.handler_sum_ms));
     line("Handler share:", String(retry.handler_share_pct) + "%");
     line("Observed idle time:", ms(retry.observed_idle_ms));
+    line("Tail idle:", ms(retry.tail_idle_ms));
     line("Max idle gap:", ms(retry.max_idle_gap_ms));
+    line("Max observed gap:", ms(retry.max_observed_gap_ms));
     line("Unattributed wall time:", ms(retry.unattributed_wall_ms));
     line("Result bytes total:", bytes(retry.result_bytes_total));
     line("Max result bytes:", bytes(retry.max_result_bytes));
@@ -88,7 +92,9 @@ function captureRetry(source) {
   line("Completed handler sum:", ms(retry.handler_sum_ms));
   line("Handler share:", String(retry.handler_share_pct) + "%");
   line("Observed idle time:", ms(retry.observed_idle_ms));
+  line("Tail idle:", ms(retry.tail_idle_ms));
   line("Max idle gap:", ms(retry.max_idle_gap_ms));
+  line("Max observed gap:", ms(retry.max_observed_gap_ms));
   line("Unattributed wall time:", ms(retry.unattributed_wall_ms));
   line("Calls completed:", retry.call_count);
   line("In-flight at confirm:", retry.in_flight_count);

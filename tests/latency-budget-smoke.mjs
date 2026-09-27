@@ -147,6 +147,16 @@ try {
     throw new Error("round 1 persisted telemetry failed");
   }
 
+  await sleep(12);
+  const activeGap = controller.status().latency_budget;
+  if (
+    activeGap.tail_idle_ms < 8 ||
+    activeGap.max_observed_gap_ms < activeGap.tail_idle_ms ||
+    activeGap.max_observed_gap_ms < activeGap.max_idle_gap_ms
+  ) {
+    throw new Error("active tail/max observed gap telemetry failed");
+  }
+
   const r2 = await call("latency_round_start");
   const r2Json = JSON.parse(textOf(r2));
   if (
@@ -167,6 +177,7 @@ try {
   const failedRound = controller.status().state.round;
   const confirmed1 = controller.setMaxFromCurrentRound("test-confirmed-retry-1");
   const snap1 = confirmed1.retry_snapshot;
+  const postConfirm1 = controller.status();
 
   if (
     confirmed1.state.mode !== "observe" ||
@@ -177,9 +188,16 @@ try {
     snap1.round_wall_clock_ms <= snap1.handler_sum_ms ||
     snap1.handler_share_pct >= 100 ||
     snap1.observed_idle_ms <= 0 ||
-    snap1.result_bytes_total <= 0
+    snap1.tail_idle_ms < 10 ||
+    snap1.max_observed_gap_ms < snap1.tail_idle_ms ||
+    snap1.max_observed_gap_ms < snap1.max_idle_gap_ms ||
+    typeof snap1.last_call_completed_at !== "string" ||
+    snap1.result_bytes_total <= 0 ||
+    postConfirm1.latency_budget.observed_idle_ms !== snap1.observed_idle_ms ||
+    postConfirm1.latency_budget.tail_idle_ms !== snap1.tail_idle_ms ||
+    postConfirm1.latency_budget.max_observed_gap_ms !== snap1.max_observed_gap_ms
   ) {
-    throw new Error("user-confirmed Retry observation snapshot failed");
+    throw new Error("user-confirmed Retry observation snapshot/tail-gap consistency failed");
   }
 
   const executionsBeforePostRetry = executions;
@@ -293,6 +311,8 @@ try {
     cliConfirm.status !== 0 ||
     !cliConfirm.stdout.includes("Retry Snapshot Captured") ||
     !cliConfirm.stdout.includes("Enforcement:") ||
+    !cliConfirm.stdout.includes("Tail idle:") ||
+    !cliConfirm.stdout.includes("Max observed gap:") ||
     !cliConfirm.stdout.includes("DISABLED")
   ) {
     throw new Error("CLI confirm-retry observation behavior failed: " + (cliConfirm.stderr || cliConfirm.stdout));
@@ -342,6 +362,8 @@ try {
   console.log("previous-round metrics never carry: PASS");
   console.log("round wall-clock vs handler sum separated: PASS");
   console.log("observed idle/inter-call gaps captured: PASS");
+  console.log("active/confirmed tail idle captured consistently: PASS");
+  console.log("max observed gap includes terminal quiet period: PASS");
   console.log("result-byte metrics captured: PASS");
   console.log("error/timeout counters available: PASS");
   console.log("confirmed Retry creates observation snapshot only: PASS");

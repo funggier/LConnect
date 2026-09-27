@@ -93,13 +93,25 @@ function normalizeRetrySnapshot(value) {
     max_handler_ms: clampNonNegative(normalizeNumber(value.max_handler_ms, 0)),
     handler_share_pct: clampNonNegative(normalizeNumber(value.handler_share_pct, 0)),
     observed_idle_ms: clampNonNegative(normalizeNumber(value.observed_idle_ms, 0)),
+    tail_idle_ms: clampNonNegative(normalizeNumber(value.tail_idle_ms, 0)),
     max_idle_gap_ms: clampNonNegative(normalizeNumber(value.max_idle_gap_ms, 0)),
+    max_observed_gap_ms: clampNonNegative(
+      normalizeNumber(
+        value.max_observed_gap_ms,
+        Math.max(
+          normalizeNumber(value.max_idle_gap_ms, 0),
+          normalizeNumber(value.tail_idle_ms, 0)
+        )
+      )
+    ),
     unattributed_wall_ms: clampNonNegative(normalizeNumber(value.unattributed_wall_ms, 0)),
     result_bytes_total: Math.max(0, Math.floor(normalizeNumber(value.result_bytes_total, 0))),
     max_result_bytes: Math.max(0, Math.floor(normalizeNumber(value.max_result_bytes, 0))),
     error_count: Math.max(0, Math.floor(normalizeNumber(value.error_count, 0))),
     timeout_count: Math.max(0, Math.floor(normalizeNumber(value.timeout_count, 0))),
     overlap_start_count: Math.max(0, Math.floor(normalizeNumber(value.overlap_start_count, 0))),
+    last_call_completed_at:
+      typeof value.last_call_completed_at === "string" ? value.last_call_completed_at : null,
     last_tool: typeof value.last_tool === "string" ? value.last_tool : null,
   };
 }
@@ -278,15 +290,20 @@ function isoDiffMs(later, earlier) {
 }
 
 function currentRoundView(round, at = nowIso()) {
+  const endpoint = round.completed_at || at;
   const wall =
     round.status === "not_started" || !round.started_at
       ? 0
-      : isoDiffMs(round.completed_at || at, round.started_at);
+      : isoDiffMs(endpoint, round.started_at);
 
   let tailIdle = 0;
-  if (round.status === "active" && round.in_flight_count === 0) {
+  if (
+    round.status !== "not_started" &&
+    round.started_at &&
+    round.in_flight_count === 0
+  ) {
     const anchor = round.last_call_completed_at || round.started_at;
-    tailIdle = isoDiffMs(at, anchor);
+    tailIdle = isoDiffMs(endpoint, anchor);
   }
 
   const observedIdle = round3(round.idle_gap_total_ms + tailIdle);
@@ -294,13 +311,17 @@ function currentRoundView(round, at = nowIso()) {
   const unattributed = round3(Math.max(0, wall - handlerSum));
   const handlerShare =
     wall > 0 ? round3(Math.min(100, (handlerSum / wall) * 100)) : 0;
+  const maxIdleGap = round3(round.max_idle_gap_ms);
+  const tailIdleRounded = round3(tailIdle);
 
   return {
     round_wall_clock_ms: round3(wall),
     handler_sum_ms: handlerSum,
     handler_share_pct: handlerShare,
     observed_idle_ms: observedIdle,
-    max_idle_gap_ms: round3(round.max_idle_gap_ms),
+    tail_idle_ms: tailIdleRounded,
+    max_idle_gap_ms: maxIdleGap,
+    max_observed_gap_ms: round3(Math.max(maxIdleGap, tailIdleRounded)),
     unattributed_wall_ms: unattributed,
   };
 }
@@ -327,13 +348,16 @@ function retrySnapshot(round, source, confirmedAt) {
     max_handler_ms: round3(round.max_handler_ms),
     handler_share_pct: view.handler_share_pct,
     observed_idle_ms: view.observed_idle_ms,
+    tail_idle_ms: view.tail_idle_ms,
     max_idle_gap_ms: view.max_idle_gap_ms,
+    max_observed_gap_ms: view.max_observed_gap_ms,
     unattributed_wall_ms: view.unattributed_wall_ms,
     result_bytes_total: round.result_bytes_total,
     max_result_bytes: round.max_result_bytes,
     error_count: round.error_count,
     timeout_count: round.timeout_count,
     overlap_start_count: round.overlap_start_count,
+    last_call_completed_at: round.last_call_completed_at,
     last_tool: round.last_tool,
   };
 }
@@ -358,7 +382,9 @@ function budgetMetadata(state, {
     current_round_ms: view.handler_sum_ms,
     handler_share_pct: view.handler_share_pct,
     observed_idle_ms: view.observed_idle_ms,
+    tail_idle_ms: view.tail_idle_ms,
     max_idle_gap_ms: view.max_idle_gap_ms,
+    max_observed_gap_ms: view.max_observed_gap_ms,
     unattributed_wall_ms: view.unattributed_wall_ms,
     result_bytes_total: state.round.result_bytes_total,
     max_result_bytes: state.round.max_result_bytes,

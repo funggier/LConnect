@@ -4,7 +4,7 @@ Last updated: 2026-09-27
 
 ## Overall
 
-Current project state: **BASIC CORE STABLE / LCN-047 TURN-RISK TELEMETRY COMPLETE AT CURRENT EVIDENCE / v1.2.0 PUBLISHED**
+Current project state: **BASIC CORE STABLE / LCN-048 RETRY TAIL-GAP TELEMETRY ACTIVE / v1.2.0 PUBLISHED**
 
 Current published release: **v1.2.0 — Reliability & Verification**
 
@@ -44,7 +44,7 @@ Agent Operations Reliability LCN-025–030 ปิดครบ, Delivery/Turn Rel
 | Developer Foundation | COMPLETE | LCN-012–014 | Git + Development + HTTP complete |
 | Observation | COMPLETE | LCN-015–017 | Log Tail + File Watcher + Scheduled Tasks complete |
 | Agent Operations Reliability | COMPLETE | LCN-025–034 | LCN-025–030 and LCN-031–034 complete |
-| Delivery / Turn Reliability | COMPLETE AT CURRENT EVIDENCE | LCN-031–039, LCN-046–047 | Failed round 6 disproved handler-sum ceiling assumptions; LCN-047 is live as observation-only `turn_risk_observation_v2`, with Retry snapshots user-confirmed and no automatic blocking |
+| Delivery / Turn Reliability | ACTIVE FOLLOW-UP | LCN-031–039, LCN-046–048 | Round 13 produced a second real Retry with ~80.980 s terminal quiet gap; LCN-048 makes terminal tail-gap evidence explicit while preserving observation-only/no-blocking semantics |
 | Execution Ergonomics | COMPLETE AT CURRENT NEED | LCN-040–044 | LCN-044 Deployment Verification Snapshot PASS on installed tree; 178/178 tracked parity, runtime 1.2.0 / 120 tools |
 | Desktop Control | DEFERRED | LCN-018–020 | Explicitly paused |
 | Browser Automation | DEFERRED | LCN-021–023 | Explicitly paused |
