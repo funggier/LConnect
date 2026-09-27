@@ -127,50 +127,41 @@ npm test
 
 `deployment_verification_snapshot` เป็น evidence-only tool: มันไม่ copy/install/restart/release และไม่ตัดสินแทนผู้ใช้ว่า deployment พร้อมหรือไม่
 
-## Adaptive Latency Budget
+## Turn-Risk Observation
 
-LCN-046 แยก latency เป็น **round ต่อ round** และไม่สะสมข้าม user turn
+ระบบปัจจุบันใช้โมเดล `turn_risk_observation_v2` แบบ **OBSERVE only** เพื่อเก็บหลักฐานของแต่ละรอบโดยไม่สร้าง MaxLatency, safe max หรือ automatic blocking
 
-### Calibration ครั้งแรก
+### การใช้งาน
 
-1. กด `ResetRound-LConnect.cmd`
-2. ใช้งาน ChatGPT/LConnect ตามปกติในรอบที่ต้องการวัด
-3. ถ้า ChatGPT เกิด Retry / message-delivery failure ให้กด `SetMaxLatency-LConnect.cmd` ก่อนเริ่มรอบใหม่
-4. SetMaxLatency จะใช้เฉพาะ round ปัจจุบันและคำนวณ:
-   - failure ceiling = cumulative tool latency ของ round ที่ยืนยัน
-   - average call = failure ceiling / จำนวน work-tool calls ใน round นั้น
-   - safe max = failure ceiling - average call
-5. หลัง Set ระบบเปลี่ยนเป็น ENFORCE
+1. AI ใช้ `latency_round_start` เพื่อเริ่มรอบใหม่จากศูนย์ก่อนงาน LConnect ของ user turn ใหม่
+2. ผู้ใช้สามารถกด `ResetRound-LConnect.cmd` เมื่อต้องการบังคับเริ่มรอบใหม่เอง
+3. ใช้งาน ChatGPT/LConnect ตามปกติ
+4. ถ้าเห็น Retry / message-delivery failure ให้กด **`ConfirmRetry-LConnect.cmd`**
+5. ใช้ `StatusTurnRisk-LConnect.cmd` เมื่อต้องการดู telemetry ปัจจุบัน
 
-### การใช้งานปกติหลังมี MaxLatency
+`ConfirmRetry-LConnect.cmd` เป็นคำสั่งเดียวสำหรับยืนยัน Retry ระบบจะเก็บ snapshot ของรอบปัจจุบัน เช่น:
 
-ผู้ใช้ไม่ต้องกด ResetRound ทุกครั้ง
+- round wall-clock
+- completed handler sum / max handler
+- observed idle
+- `tail_idle_ms`
+- `max_idle_gap_ms`
+- `max_observed_gap_ms`
+- result bytes
+- error / local timeout count
 
-AI ต้องเรียก `latency_round_start` ก่อน LConnect work tool ตัวแรกของ user turn ใหม่ ระบบจะเริ่ม round ใหม่ด้วย:
+หลักสำคัญ:
 
-- calls = 0
-- current round latency = 0
-- active MaxLatency/safe max เดิมยังอยู่
-
-latency ของ round ก่อนหน้าไม่ถูกนำมาบวก
-
-### ถ้าใกล้ชน Safe Max
-
-LConnect ประเมิน next-call latency จาก average ของ confirmed failed round ล่าสุด
-
-ถ้า predicted call จะทำให้เกิน safe max จะไม่รัน handler และคืน:
-
-`LATENCY_BUDGET_EXCEEDED`
-
-ถ้าอยู่ใน ENFORCE แต่ AI ยังไม่ได้เริ่ม round ใหม่ จะคืน:
-
-`ROUND_NOT_STARTED`
+- mode คงเป็น `OBSERVE`
+- enforcement ปิดอยู่
+- ไม่มี failure ceiling / safe max / predicted-next blocking
+- history เป็น audit-only
+- telemetry ของรอบก่อนหน้าไม่ถูกนำมาบวกกับรอบใหม่
+- state อยู่ใน `runtime/latency-budget-state.json`
+- history อยู่ใน `runtime/latency-budget-history.jsonl`
 
 ### Manual controls
 
-- `ResetRound-LConnect.cmd` — force เริ่ม round ใหม่จากศูนย์
-- `SetMaxLatency-LConnect.cmd` — ยืนยันว่า current round คือรอบที่เกิด Retry และแทน active ceiling
-- `ResetMaxLatency-LConnect.cmd` — ล้าง MaxLatency กลับ OBSERVE
-- `StatusMaxLatency-LConnect.cmd` — ดูค่าปัจจุบัน
-
-state อยู่ใน `runtime/latency-budget-state.json`; history อยู่ใน `runtime/latency-budget-history.jsonl` และเป็น audit-only ไม่ถูกใช้คำนวณ active budget
+- `ResetRound-LConnect.cmd` — เริ่ม observation round ใหม่จากศูนย์
+- `ConfirmRetry-LConnect.cmd` — ยืนยันว่า current round คือรอบที่ผู้ใช้เห็น Retry
+- `StatusTurnRisk-LConnect.cmd` — ดู turn-risk telemetry ปัจจุบัน

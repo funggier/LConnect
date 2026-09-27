@@ -115,18 +115,11 @@ try {
     });
   } else if (action === "confirm-retry") {
     captureRetry("ConfirmRetry-LConnect.cmd");
-  } else if (action === "set-max") {
-    captureRetry("SetMaxLatency-LConnect.cmd (compatibility alias)");
-  } else if (action === "reset-max") {
-    const value = controller.resetMax("ResetMaxLatency-LConnect.cmd");
-    showStatus("LConnect Turn-Risk Observation Reset", value);
-    console.log("");
-    console.log("Observation state cleared. Enforcement remains disabled.");
   } else if (action === "status") {
     showStatus("LConnect Turn-Risk Telemetry", controller.status());
   } else {
     console.error("Unknown action: " + action);
-    console.error("Supported: reset-round | confirm-retry | set-max | reset-max | status");
+    console.error("Supported: reset-round | confirm-retry | status");
     process.exitCode = 2;
   }
 } catch (error) {

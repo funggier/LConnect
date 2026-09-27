@@ -433,3 +433,19 @@ It preserves local configuration, tunnel client, dependencies, source, Scheduled
 **Decision:** In ENFORCE mode, LConnect may reject a work tool before handler execution with `ROUND_NOT_STARTED` or `LATENCY_BUDGET_EXCEEDED`. LConnect still does not infer that ChatGPT actually timed out; only the user can confirm that event through SetMaxLatency.
 
 **Why:** This preserves the LConnect execution/evidence boundary while preventing multi-turn latency accumulation and providing the AI a deterministic local budget signal after a user-confirmed retry.
+
+---
+
+## D-036 — Retry confirmation has one current command; MaxLatency compatibility is removed
+
+**Decision:** D-035's MaxLatency enforcement/calibration commands are superseded by the observation-only model introduced in LCN-047–048.
+
+**Decision:** `ConfirmRetry-LConnect.cmd` is the only user-facing command that confirms a Retry.
+
+**Decision:** `SetMaxLatency-LConnect.cmd`, `ResetMaxLatency-LConnect.cmd`, `StatusMaxLatency-LConnect.cmd`, CLI actions `set-max` / `reset-max`, and their controller compatibility methods are removed rather than retained as aliases.
+
+**Decision:** `ResetRound-LConnect.cmd` and `StatusTurnRisk-LConnect.cmd` remain because they have distinct current roles: explicit round boundary and telemetry status.
+
+**Decision:** Historical LCN-046–048 task/report text is retained as audit history and does not define the current operational interface.
+
+**Why:** The MaxLatency model is no longer active. Keeping compatibility names suggests ceiling/enforcement behavior that no longer exists and creates avoidable ambiguity for both the operator and AI.

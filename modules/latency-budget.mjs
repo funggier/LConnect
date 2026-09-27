@@ -609,39 +609,6 @@ export function createLatencyBudgetController(config = {}) {
     };
   }
 
-  function setMaxFromCurrentRound(source = "SetMaxLatency-LConnect.cmd") {
-    return confirmRetryCurrentRound(source);
-  }
-
-  function resetMax(source = "manual_reset") {
-    const loaded = ensurePersisted();
-    const state = loaded.state;
-    const next = {
-      ...defaultState(),
-      generation: state.generation + 1,
-      round: emptyRound(state.round.id),
-    };
-
-    const saved = writeJson(statePath, next);
-    appendHistory(historyPath, {
-      event: "turn_risk_state_reset",
-      source,
-      previous_generation: state.generation,
-      generation: saved.generation,
-      previous_last_confirmed_retry: state.last_confirmed_retry,
-      previous_round: state.round,
-    });
-
-    return {
-      state: saved,
-      state_error: loaded.error,
-      latency_budget: budgetMetadata(saved, {
-        tracked: false,
-        stateError: loaded.error,
-      }),
-    };
-  }
-
   function beforeTool(toolName) {
     const loaded = ensurePersisted();
     let state = loaded.state;
@@ -729,8 +696,6 @@ export function createLatencyBudgetController(config = {}) {
     startRound,
     status,
     confirmRetryCurrentRound,
-    setMaxFromCurrentRound,
-    resetMax,
     beforeTool,
     afterTool,
   };

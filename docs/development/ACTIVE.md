@@ -15,11 +15,18 @@ Last updated: 2026-09-27
 - LCN-046: COMPLETE — original round-boundary implementation; handler-sum enforcement superseded by LCN-047 evidence
 - LCN-047: COMPLETE — Turn-Risk Telemetry Model Repair / observation-only live GREEN
 - LCN-048: COMPLETE — Retry Tail-Gap Telemetry Refinement / live GREEN
+- LCN-049: ACTIVE — Remove Legacy MaxLatency Compatibility Surface
 - LCN-018–023: DEFERRED — Desktop Control / Browser Automation
 
 ## Active task
 
-No active development task.
+### LCN-049 — Remove Legacy MaxLatency Compatibility Surface
+
+Status: **ACTIVE**
+
+Task: [tasks/LCN-049-remove-legacy-maxlatency-compatibility-surface.md](tasks/LCN-049-remove-legacy-maxlatency-compatibility-surface.md)
+
+Goal: keep `ConfirmRetry-LConnect.cmd` as the only Retry-confirmation command and remove obsolete MaxLatency wrappers/actions/methods.
 
 Latest completed task: [LCN-048 — Retry Tail-Gap Telemetry Refinement](tasks/LCN-048-retry-tail-gap-telemetry-refinement.md)
 
@@ -43,4 +50,4 @@ Current reliability state:
 
 ## Next action
 
-Use LConnect normally. If a real Retry/message-delivery failure occurs, prefer `ConfirmRetry-LConnect.cmd` (legacy `SetMaxLatency-LConnect.cmd` remains compatible). The new snapshot will record the terminal tail gap directly; continue treating it as evidence rather than an automatic timeout threshold.
+Complete LCN-049 cleanup, then use `ConfirmRetry-LConnect.cmd` as the sole Retry-confirmation command. Keep `ResetRound-LConnect.cmd` and `StatusTurnRisk-LConnect.cmd` only for their separate round/status roles.

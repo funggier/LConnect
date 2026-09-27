@@ -175,7 +175,7 @@ try {
   await sleep(15);
 
   const failedRound = controller.status().state.round;
-  const confirmed1 = controller.setMaxFromCurrentRound("test-confirmed-retry-1");
+  const confirmed1 = controller.confirmRetryCurrentRound("test-confirmed-retry-1");
   const snap1 = confirmed1.retry_snapshot;
   const postConfirm1 = controller.status();
 
@@ -218,16 +218,6 @@ try {
     confirmed2.state.active_budget.failure_ceiling_ms !== null
   ) {
     throw new Error("latest Retry snapshot replacement semantics failed");
-  }
-
-  const reset = controller.resetMax("test-reset");
-  if (
-    reset.state.mode !== "observe" ||
-    reset.state.enforcement_enabled !== false ||
-    reset.state.last_confirmed_retry !== null ||
-    reset.state.round.status !== "not_started"
-  ) {
-    throw new Error("observation reset failed");
   }
 
   writeState({
@@ -374,16 +364,38 @@ try {
   for (const [name, action] of [
     ["ResetRound-LConnect.cmd", "reset-round"],
     ["ConfirmRetry-LConnect.cmd", "confirm-retry"],
-    ["SetMaxLatency-LConnect.cmd", "set-max"],
-    ["ResetMaxLatency-LConnect.cmd", "reset-max"],
     ["StatusTurnRisk-LConnect.cmd", "status"],
-    ["StatusMaxLatency-LConnect.cmd", "status"],
   ]) {
     const cmdPath = path.join(root, name);
     if (!fs.existsSync(cmdPath)) throw new Error(name + " missing");
     const cmd = fs.readFileSync(cmdPath, "utf8");
     if (!cmd.includes("latency-budget-cli.mjs") || !cmd.includes(action)) {
       throw new Error(name + " does not invoke shared turn-risk CLI action " + action);
+    }
+  }
+
+  for (const legacyName of [
+    "SetMaxLatency-LConnect.cmd",
+    "ResetMaxLatency-LConnect.cmd",
+    "StatusMaxLatency-LConnect.cmd",
+  ]) {
+    if (fs.existsSync(path.join(root, legacyName))) {
+      throw new Error(legacyName + " must be removed");
+    }
+  }
+
+  for (const legacyAction of ["set-max", "reset-max"]) {
+    const rejected = spawnSync(process.execPath, [cli, legacyAction], {
+      cwd: root,
+      env,
+      encoding: "utf8",
+      windowsHide: true,
+    });
+    if (
+      rejected.status !== 2 ||
+      !rejected.stderr.includes("Unknown action: " + legacyAction)
+    ) {
+      throw new Error("legacy CLI action still accepted: " + legacyAction);
     }
   }
 
@@ -414,7 +426,8 @@ try {
   console.log("confirmed Retry creates observation snapshot only: PASS");
   console.log("confirmed Retry never enables blocking: PASS");
   console.log("latest Retry snapshot replaces active comparison point: PASS");
-  console.log("compatibility and preferred CMD wrappers use shared CLI: PASS");
+  console.log("current CMD wrappers use shared CLI: PASS");
+  console.log("legacy MaxLatency CMD/CLI surface removed: PASS");
   console.log("history remains audit-only: PASS");
 } catch (error) {
   console.error("FAIL", error);
