@@ -1,5 +1,7 @@
 # LCN 2026-09-27 — LCN-046 User-Confirmed Adaptive Turn Latency Budget
 
+> Post-closure correction (LCN-047): explicit round boundaries remain valid, but a later real user-confirmed Retry showed that completed handler-sum is not a valid proxy for end-to-end Retry risk. Failed round 6 lasted ~563.973 s from explicit round start to confirmation while completed handler time summed to ~36.899 s (~6.54%). The LCN-046 handler-sum ceiling/ENFORCE interpretation is superseded by LCN-047 observation-only turn-risk telemetry.
+
 ## Status
 
 **COMPLETE — DIRECT CHATGPT TOOL VALIDATION PASS**

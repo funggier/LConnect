@@ -4,7 +4,7 @@ Last updated: 2026-09-27
 
 ## Overall
 
-Current project state: **BASIC CORE STABLE / LCN-046 COMPLETE / v1.2.0 PUBLISHED**
+Current project state: **BASIC CORE STABLE / LCN-047 TURN-RISK TELEMETRY REPAIR ACTIVE / v1.2.0 PUBLISHED**
 
 Current published release: **v1.2.0 — Reliability & Verification**
 
@@ -33,7 +33,7 @@ LConnect มี Core ที่ใช้งานจริงแล้วแล�
 - Thai documentation
 - GitHub releases
 
-Agent Operations Reliability LCN-025–030 ปิดครบ, Delivery/Turn Reliability LCN-031–039 และ LCN-046 ปิดที่ current need, Execution Ergonomics LCN-040–044 ปิดที่ current need และ v1.2.0 ถูก publish/verify แล้ว; Desktop/Browser automation ยังพักไว้
+Agent Operations Reliability LCN-025–030 ปิดครบ, Delivery/Turn Reliability LCN-031–039 ปิดที่ evidence boundary เดิม, LCN-046 round-boundary work เสร็จแต่ handler-sum enforcement ถูก supersede โดย LCN-047 หลังพบ Retry จริง, Execution Ergonomics LCN-040–044 ปิดที่ current need และ v1.2.0 ถูก publish/verify แล้ว; Desktop/Browser automation ยังพักไว้
 
 ## Workstream status
 
@@ -44,7 +44,7 @@ Agent Operations Reliability LCN-025–030 ปิดครบ, Delivery/Turn Rel
 | Developer Foundation | COMPLETE | LCN-012–014 | Git + Development + HTTP complete |
 | Observation | COMPLETE | LCN-015–017 | Log Tail + File Watcher + Scheduled Tasks complete |
 | Agent Operations Reliability | COMPLETE | LCN-025–034 | LCN-025–030 and LCN-031–034 complete |
-| Delivery / Turn Reliability | COMPLETE AT CURRENT NEED | LCN-031–039, LCN-046 | LCN-046 direct ChatGPT validation PASS at 122 visible tools; explicit new rounds start from zero and real Retry calibration remains user-confirmed only |
+| Delivery / Turn Reliability | ACTIVE FOLLOW-UP | LCN-031–039, LCN-046–047 | Real failed round 6 showed 563.973 s explicit-round wall time vs 36.899 s handler sum; LCN-047 disables speculative handler-sum enforcement and replaces it with observation-only turn-risk telemetry |
 | Execution Ergonomics | COMPLETE AT CURRENT NEED | LCN-040–044 | LCN-044 Deployment Verification Snapshot PASS on installed tree; 178/178 tracked parity, runtime 1.2.0 / 120 tools |
 | Desktop Control | DEFERRED | LCN-018–020 | Explicitly paused |
 | Browser Automation | DEFERRED | LCN-021–023 | Explicitly paused |

@@ -351,7 +351,15 @@ Key rules:
 - no request-ID or idle-time turn inference
 - preflight returns `ROUND_NOT_STARTED` or `LATENCY_BUDGET_EXCEEDED` before work-handler execution when applicable
 
-Closure evidence: ChatGPT reconnect exposed all 122 tools; direct `latency_budget_status` and `latency_round_start` both passed; a fresh direct round began at zero without historical carry-over. Real MaxLatency calibration is intentionally deferred until an actual user-observed Retry.
+Closure evidence: ChatGPT reconnect exposed all 122 tools; direct `latency_budget_status` and `latency_round_start` both passed; a fresh direct round began at zero without historical carry-over.
+
+Post-closure evidence from a real user-confirmed Retry showed that the handler-sum-based adaptive ceiling is not a valid proxy for end-to-end Retry risk: failed round 6 lasted ~563.973 s wall-clock while completed handler time summed to only ~36.899 s. The explicit round boundary remains useful, but handler-sum ENFORCE semantics are superseded by LCN-047.
+
+# Phase 4D — Turn-Risk Telemetry Model Repair — ACTIVE
+
+LCN-047 converts the LCN-046 mechanism into observation-only round telemetry. It separates explicit-round wall-clock, handler time, observed idle gaps, result volume, errors/timeouts and in-flight state, and captures user-confirmed Retry snapshots without creating or enforcing a speculative latency ceiling.
+
+The MCP catalog remains 122 tools; existing direct tool names are retained for compatibility.
 
 # Phase 5 — Desktop Control
 

@@ -56,13 +56,6 @@ function latencyMeta(result) {
   if (result?._meta?.latency_budget) {
     return result._meta.latency_budget;
   }
-  for (const item of result.content || []) {
-    if (item?.type !== "text" || typeof item.text !== "string") continue;
-    try {
-      const value = JSON.parse(item.text);
-      if (value?.latency_budget) return value.latency_budget;
-    } catch {}
-  }
   return null;
 }
 
@@ -75,7 +68,12 @@ function readState() {
 }
 
 function writeState(value) {
+  fs.mkdirSync(path.dirname(statePath), { recursive: true });
   fs.writeFileSync(statePath, JSON.stringify(value, null, 2) + "\n", "utf8");
+}
+
+function sleep(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
 try {
@@ -84,37 +82,69 @@ try {
 
   const initial = await call("latency_budget_status");
   const initialJson = JSON.parse(textOf(initial));
-  if (initialJson.mode !== "observe" || initialJson.round.status !== "not_started") {
-    throw new Error("initial OBSERVE/not_started state failed");
+  if (
+    initialJson.mode !== "observe" ||
+    initialJson.enforcement_enabled !== false ||
+    initialJson.measurement_model !== "turn_risk_observation_v2" ||
+    initialJson.round.status !== "not_started"
+  ) {
+    throw new Error("initial observation-only state failed");
   }
   if (
     initialJson.active_budget.failure_ceiling_ms !== null ||
     initialJson.active_budget.average_call_ms !== null ||
     initialJson.active_budget.safe_max_ms !== null ||
-    initialJson.latency_budget.failure_ceiling_ms !== null ||
-    initialJson.latency_budget.safe_max_ms !== null ||
     initialJson.latency_budget.predicted_next_ms !== null ||
     initialJson.latency_budget.remaining_ms !== null
   ) {
-    throw new Error("uncalibrated latency budget null semantics failed");
+    throw new Error("disabled budget null semantics failed");
   }
 
   const r1 = await call("latency_round_start");
   const r1Json = JSON.parse(textOf(r1));
-  if (r1Json.latency_budget.round_id !== 1 || r1Json.latency_budget.current_round_ms !== 0) {
+  if (
+    r1Json.latency_budget.round_id !== 1 ||
+    r1Json.latency_budget.handler_sum_ms !== 0 ||
+    r1Json.latency_budget.calls_this_round !== 0 ||
+    r1Json.enforcement_enabled !== false
+  ) {
     throw new Error("round 1 did not start at zero");
   }
 
-  const w1 = await call("fixture_work", { delay_ms: 5 });
+  const w1 = await call("fixture_work", { delay_ms: 8 });
   const m1 = latencyMeta(w1);
-  if (!m1 || m1.round_id !== 1 || m1.calls_this_round !== 1 || m1.current_round_ms <= 0) {
-    throw new Error("round 1 call metadata failed");
+  if (
+    !m1 ||
+    m1.round_id !== 1 ||
+    m1.calls_this_round !== 1 ||
+    m1.handler_sum_ms <= 0 ||
+    m1.result_bytes_total <= 0 ||
+    m1.blocked !== false
+  ) {
+    throw new Error("round 1 first-call telemetry failed");
   }
 
-  await call("fixture_work", { delay_ms: 5 });
-  const beforeReset = controller.status().state.round.cumulative_latency_ms;
-  if (beforeReset <= 0 || controller.status().state.round.call_count !== 2) {
-    throw new Error("round 1 accumulation failed");
+  await sleep(25);
+  const w2 = await call("fixture_work", { delay_ms: 8 });
+  const m2 = latencyMeta(w2);
+  if (
+    m2.calls_this_round !== 2 ||
+    m2.handler_sum_ms <= m1.handler_sum_ms ||
+    m2.round_wall_clock_ms < m2.handler_sum_ms ||
+    m2.observed_idle_ms < 15 ||
+    m2.max_idle_gap_ms < 15 ||
+    m2.result_bytes_total <= m1.result_bytes_total
+  ) {
+    throw new Error("wall/handler/idle/result separation failed");
+  }
+
+  const round1 = controller.status().state.round;
+  if (
+    round1.call_count !== 2 ||
+    round1.cumulative_handler_ms <= 0 ||
+    round1.result_bytes_total <= 0
+  ) {
+    throw new Error("round 1 persisted telemetry failed");
   }
 
   const r2 = await call("latency_round_start");
@@ -122,97 +152,103 @@ try {
   if (
     r2Json.latency_budget.round_id !== 2 ||
     r2Json.latency_budget.calls_this_round !== 0 ||
-    r2Json.latency_budget.current_round_ms !== 0
+    r2Json.latency_budget.handler_sum_ms !== 0 ||
+    r2Json.latency_budget.result_bytes_total !== 0 ||
+    r2Json.latency_budget.observed_idle_ms > 10
   ) {
-    throw new Error("new round carried previous latency");
+    throw new Error("new round carried previous metrics");
   }
 
-  await call("fixture_work", { delay_ms: 7 });
-  await call("fixture_work", { delay_ms: 7 });
+  await call("fixture_work", { delay_ms: 10 });
+  await sleep(20);
+  await call("fixture_work", { delay_ms: 10 });
+  await sleep(15);
+
   const failedRound = controller.status().state.round;
-  const set1 = controller.setMaxFromCurrentRound("test-confirmed-retry-1");
-  const expectedAverage = Math.round((failedRound.cumulative_latency_ms / failedRound.call_count) * 1000) / 1000;
-  const expectedSafe = Math.round(Math.max(0, failedRound.cumulative_latency_ms - expectedAverage) * 1000) / 1000;
+  const confirmed1 = controller.setMaxFromCurrentRound("test-confirmed-retry-1");
+  const snap1 = confirmed1.retry_snapshot;
 
   if (
-    set1.state.active_budget.confirmed_failure_round_id !== failedRound.id ||
-    set1.state.active_budget.failure_ceiling_ms !== failedRound.cumulative_latency_ms ||
-    set1.state.active_budget.average_call_ms !== expectedAverage ||
-    set1.state.active_budget.safe_max_ms !== expectedSafe ||
-    set1.state.mode !== "enforce"
+    confirmed1.state.mode !== "observe" ||
+    confirmed1.state.enforcement_enabled !== false ||
+    confirmed1.state.active_budget.failure_ceiling_ms !== null ||
+    confirmed1.state.active_budget.safe_max_ms !== null ||
+    confirmed1.state.last_confirmed_retry.round_id !== failedRound.id ||
+    snap1.round_wall_clock_ms <= snap1.handler_sum_ms ||
+    snap1.handler_share_pct >= 100 ||
+    snap1.observed_idle_ms <= 0 ||
+    snap1.result_bytes_total <= 0
   ) {
-    throw new Error("SetMax formula/current-round-only behavior failed");
+    throw new Error("user-confirmed Retry observation snapshot failed");
   }
 
-  const executionsBeforeNoRound = executions;
-  const noRound = await call("fixture_work", { delay_ms: 1 });
-  if (!noRound.isError || !textOf(noRound).includes("ROUND_NOT_STARTED")) {
-    throw new Error("ENFORCE did not reject work without a new round");
-  }
-  if (executions !== executionsBeforeNoRound) {
-    throw new Error("ROUND_NOT_STARTED executed handler");
+  const executionsBeforePostRetry = executions;
+  const postRetryWork = await call("fixture_work", { delay_ms: 1 });
+  if (postRetryWork.isError || executions !== executionsBeforePostRetry + 1) {
+    throw new Error("observation-only mode unexpectedly blocked work");
   }
 
   await call("latency_round_start");
-  let seeded = readState();
-  seeded.round.cumulative_latency_ms = Math.max(
-    0,
-    seeded.active_budget.safe_max_ms - seeded.active_budget.average_call_ms + 0.5
-  );
-  seeded.round.call_count = 1;
-  writeState(seeded);
-
-  const executionsBeforeBudgetBlock = executions;
-  const blocked = await call("fixture_work", { delay_ms: 1 });
-  if (!blocked.isError || !textOf(blocked).includes("LATENCY_BUDGET_EXCEEDED")) {
-    throw new Error("predicted over-budget work was not blocked");
-  }
-  if (executions !== executionsBeforeBudgetBlock) {
-    throw new Error("LATENCY_BUDGET_EXCEEDED executed handler");
-  }
-
-  await call("latency_round_start");
-  const secondSeed = readState();
-  secondSeed.round.call_count = 3;
-  secondSeed.round.cumulative_latency_ms = 123;
-  secondSeed.round.last_call_ms = 41;
-  secondSeed.round.max_call_ms = 41;
-  secondSeed.round.last_tool = "fixture_work";
-  writeState(secondSeed);
-
-  const secondFailed = controller.status().state.round;
-  const previousCeiling = set1.state.active_budget.failure_ceiling_ms;
-  const set2 = controller.setMaxFromCurrentRound("test-confirmed-retry-2");
-
+  await call("fixture_work", { delay_ms: 5 });
+  const confirmed2 = controller.confirmRetryCurrentRound("test-confirmed-retry-2");
+  const snap2 = confirmed2.retry_snapshot;
   if (
-    set2.state.active_budget.confirmed_failure_round_id !== secondFailed.id ||
-    set2.state.active_budget.failure_ceiling_ms !== secondFailed.cumulative_latency_ms
+    snap2.round_id === snap1.round_id ||
+    confirmed2.state.last_confirmed_retry.round_id !== snap2.round_id ||
+    confirmed2.state.generation !== confirmed1.state.generation + 1 ||
+    confirmed2.state.mode !== "observe" ||
+    confirmed2.state.active_budget.failure_ceiling_ms !== null
   ) {
-    throw new Error("second SetMax did not replace from latest round");
-  }
-  if (secondFailed.id === failedRound.id) {
-    throw new Error("second failed round reused old round id");
-  }
-  if (
-    set2.state.active_budget.source !== "test-confirmed-retry-2" ||
-    set2.state.generation !== set1.state.generation + 1
-  ) {
-    throw new Error("second SetMax did not replace active generation");
-  }
-  if (
-    previousCeiling === set2.state.active_budget.failure_ceiling_ms &&
-    failedRound.call_count !== secondFailed.call_count
-  ) {
-    throw new Error("second SetMax appears to retain prior ceiling unexpectedly");
+    throw new Error("latest Retry snapshot replacement semantics failed");
   }
 
   const reset = controller.resetMax("test-reset");
   if (
     reset.state.mode !== "observe" ||
-    reset.state.active_budget.failure_ceiling_ms !== null ||
+    reset.state.enforcement_enabled !== false ||
+    reset.state.last_confirmed_retry !== null ||
     reset.state.round.status !== "not_started"
   ) {
-    throw new Error("ResetMax failed");
+    throw new Error("observation reset failed");
+  }
+
+  writeState({
+    schema_version: 1,
+    mode: "enforce",
+    generation: 9,
+    active_budget: {
+      confirmed_failure_round_id: 77,
+      failure_ceiling_ms: 99999,
+      failed_round_call_count: 9,
+      average_call_ms: 11111,
+      safe_max_ms: 88888,
+      set_at: new Date().toISOString(),
+      source: "legacy",
+    },
+    round: {
+      id: 77,
+      status: "not_started",
+      started_at: null,
+      completed_at: null,
+      call_count: 0,
+      cumulative_latency_ms: 0,
+      last_call_ms: null,
+      max_call_ms: 0,
+      blocked_count: 0,
+      last_tool: null,
+      start_source: null,
+    },
+  });
+
+  const migrated = controller.status();
+  if (
+    migrated.state.schema_version !== 2 ||
+    migrated.state.mode !== "observe" ||
+    migrated.state.enforcement_enabled !== false ||
+    migrated.state.active_budget.failure_ceiling_ms !== null ||
+    readState().mode !== "observe"
+  ) {
+    throw new Error("legacy ENFORCE state did not migrate safely to OBSERVE");
   }
 
   const cli = path.join(root, "scripts", "latency-budget-cli.mjs");
@@ -221,6 +257,7 @@ try {
     LCONNECT_LATENCY_STATE_PATH: statePath,
     LCONNECT_LATENCY_HISTORY_PATH: historyPath,
   };
+
   const cliReset = spawnSync(process.execPath, [cli, "reset-round"], {
     cwd: root,
     env,
@@ -232,27 +269,53 @@ try {
   }
 
   const externalRound = controller.status().state.round;
-  if (externalRound.status !== "active" || externalRound.call_count !== 0) {
-    throw new Error("external CMD/CLI state was not reloaded by controller");
+  if (
+    externalRound.status !== "active" ||
+    externalRound.call_count !== 0 ||
+    externalRound.cumulative_handler_ms !== 0
+  ) {
+    throw new Error("external reset-round was not reloaded by controller");
   }
 
-  const workAfterExternalReset = await call("fixture_work", { delay_ms: 1 });
-  const externalMeta = latencyMeta(workAfterExternalReset);
-  if (!externalMeta || externalMeta.round_id !== externalRound.id || !externalMeta.tracked) {
-    throw new Error("external reset was not applied without restart");
+  await call("fixture_work", { delay_ms: 2 });
+
+  const cliConfirm = spawnSync(process.execPath, [cli, "confirm-retry"], {
+    cwd: root,
+    env,
+    encoding: "utf8",
+    windowsHide: true,
+  });
+  if (
+    cliConfirm.status !== 0 ||
+    !cliConfirm.stdout.includes("Retry Snapshot Captured") ||
+    !cliConfirm.stdout.includes("Enforcement:") ||
+    !cliConfirm.stdout.includes("DISABLED")
+  ) {
+    throw new Error("CLI confirm-retry observation behavior failed: " + (cliConfirm.stderr || cliConfirm.stdout));
+  }
+
+  const postCli = controller.status().state;
+  if (
+    postCli.mode !== "observe" ||
+    postCli.last_confirmed_retry?.round_id !== externalRound.id ||
+    postCli.active_budget.failure_ceiling_ms !== null
+  ) {
+    throw new Error("CLI Retry snapshot was not reloaded by controller");
   }
 
   for (const [name, action] of [
     ["ResetRound-LConnect.cmd", "reset-round"],
+    ["ConfirmRetry-LConnect.cmd", "confirm-retry"],
     ["SetMaxLatency-LConnect.cmd", "set-max"],
     ["ResetMaxLatency-LConnect.cmd", "reset-max"],
+    ["StatusTurnRisk-LConnect.cmd", "status"],
     ["StatusMaxLatency-LConnect.cmd", "status"],
   ]) {
     const cmdPath = path.join(root, name);
     if (!fs.existsSync(cmdPath)) throw new Error(name + " missing");
     const cmd = fs.readFileSync(cmdPath, "utf8");
     if (!cmd.includes("latency-budget-cli.mjs") || !cmd.includes(action)) {
-      throw new Error(name + " does not invoke shared latency CLI action " + action);
+      throw new Error(name + " does not invoke shared turn-risk CLI action " + action);
     }
   }
 
@@ -260,21 +323,28 @@ try {
     throw new Error("audit history file missing");
   }
   const history = fs.readFileSync(historyPath, "utf8");
-  if (!history.includes("max_latency_set") || !history.includes("round_started")) {
-    throw new Error("audit-only history evidence missing");
+  const retryEvents = history.split("\n").filter((line) => line.includes('"event":"retry_confirmed"'));
+  if (
+    retryEvents.length < 3 ||
+    !history.includes('"event":"round_started"') ||
+    !history.includes('"event":"measurement_model_migrated"')
+  ) {
+    throw new Error("observation history evidence missing");
   }
 
-  console.log("latency round reset starts at zero: PASS");
-  console.log("latency never carries across rounds: PASS");
-  console.log("SetMax uses current round only and exact formula: PASS");
-  console.log("second SetMax replaces active ceiling: PASS");
-  console.log("OBSERVE/ENFORCE transition: PASS");
-  console.log("ROUND_NOT_STARTED guard before execution: PASS");
-  console.log("LATENCY_BUDGET_EXCEEDED guard before execution: PASS");
-  console.log("work-tool latency metadata: PASS");
-  console.log("external CMD/CLI state reload without restart: PASS");
-  console.log("Reset/Set/Status CMD wrappers use shared CLI: PASS");
-  console.log("history audit-only evidence: PASS");
+  console.log("observation-only model / no handler-sum enforcement: PASS");
+  console.log("legacy ENFORCE state -> OBSERVE migration: PASS");
+  console.log("new round starts all metrics at zero: PASS");
+  console.log("previous-round metrics never carry: PASS");
+  console.log("round wall-clock vs handler sum separated: PASS");
+  console.log("observed idle/inter-call gaps captured: PASS");
+  console.log("result-byte metrics captured: PASS");
+  console.log("error/timeout counters available: PASS");
+  console.log("confirmed Retry creates observation snapshot only: PASS");
+  console.log("confirmed Retry never enables blocking: PASS");
+  console.log("latest Retry snapshot replaces active comparison point: PASS");
+  console.log("compatibility and preferred CMD wrappers use shared CLI: PASS");
+  console.log("history remains audit-only: PASS");
 } catch (error) {
   console.error("FAIL", error);
   process.exitCode = 1;

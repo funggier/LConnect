@@ -48,3 +48,4 @@
 | [LCN-044](tasks/LCN-044-deployment-verification-snapshot.md) | COMPLETE | Deployment Verification Snapshot |
 | [LCN-045](tasks/LCN-045-v1.2.0-documentation-release.md) | COMPLETE | v1.2.0 Documentation and Release |
 | [LCN-046](tasks/LCN-046-user-confirmed-adaptive-turn-latency-budget.md) | COMPLETE | User-Confirmed Adaptive Turn Latency Budget |
+| [LCN-047](tasks/LCN-047-turn-risk-telemetry-model-repair.md) | ACTIVE | Turn-Risk Telemetry Model Repair |
