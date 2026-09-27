@@ -16,18 +16,16 @@ Last updated: 2026-09-28
 - LCN-047: COMPLETE — Turn-Risk Telemetry Model Repair / observation-only live GREEN
 - LCN-048: COMPLETE — Retry Tail-Gap Telemetry Refinement / live GREEN
 - LCN-049: COMPLETE — Legacy MaxLatency compatibility surface removed / live GREEN
-- LCN-050: ACTIVE — Post-Retry Auto-Round and GitHub Wait Payload Containment
+- LCN-050: COMPLETE — Post-Retry Auto-Round and GitHub Wait Payload Containment / live GREEN
 - LCN-018–023: DEFERRED — Desktop Control / Browser Automation
 
 ## Active task
 
-### LCN-050 — Post-Retry Auto-Round and GitHub Wait Payload Containment
+No active development task.
 
-Status: **ACTIVE**
+Latest completed task: [LCN-050 — Post-Retry Auto-Round and GitHub Wait Payload Containment](tasks/LCN-050-post-retry-auto-round-and-github-wait-payload-containment.md)
 
-Task: [tasks/LCN-050-post-retry-auto-round-and-github-wait-payload-containment.md](tasks/LCN-050-post-retry-auto-round-and-github-wait-payload-containment.md)
-
-Latest completed task: [LCN-049 — Remove Legacy MaxLatency Compatibility Surface](tasks/LCN-049-remove-legacy-maxlatency-compatibility-surface.md)
+Final report: [reports/LCN-20260928-050-post-retry-auto-round-and-github-wait-payload-containment.md](reports/LCN-20260928-050-post-retry-auto-round-and-github-wait-payload-containment.md)
 
 Final report: [reports/LCN-20260927-049-remove-legacy-maxlatency-compatibility-surface.md](reports/LCN-20260927-049-remove-legacy-maxlatency-compatibility-surface.md)
 
@@ -51,4 +49,4 @@ Current reliability state:
 
 ## Next action
 
-Complete LCN-050: auto-start the next observation round on the first work tool after ConfirmRetry and reduce `github_run_wait` polling to compact top-level status payloads. Validate with the latest Retry evidence before closure.
+Use LConnect normally. After any real Retry, press `ConfirmRetry-LConnect.cmd`; the next non-control work tool will automatically start a new observation round. Use `github_run_view` only when full jobs/steps are actually needed; `github_run_wait` remains compact.

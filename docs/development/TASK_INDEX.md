@@ -51,4 +51,4 @@
 | [LCN-047](tasks/LCN-047-turn-risk-telemetry-model-repair.md) | COMPLETE | Turn-Risk Telemetry Model Repair |
 | [LCN-048](tasks/LCN-048-retry-tail-gap-telemetry-refinement.md) | COMPLETE | Retry Tail-Gap Telemetry Refinement |
 | [LCN-049](tasks/LCN-049-remove-legacy-maxlatency-compatibility-surface.md) | COMPLETE | Remove Legacy MaxLatency Compatibility Surface |
-| [LCN-050](tasks/LCN-050-post-retry-auto-round-and-github-wait-payload-containment.md) | ACTIVE | Post-Retry Auto-Round and GitHub Wait Payload Containment |
+| [LCN-050](tasks/LCN-050-post-retry-auto-round-and-github-wait-payload-containment.md) | COMPLETE | Post-Retry Auto-Round and GitHub Wait Payload Containment |

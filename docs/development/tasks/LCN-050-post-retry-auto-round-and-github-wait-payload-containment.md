@@ -1,6 +1,6 @@
 # LCN-050 — Post-Retry Auto-Round and GitHub Wait Payload Containment
 
-Status: **ACTIVE**
+Status: **COMPLETE — POST-RETRY TRACKING + COMPACT WAIT LIVE GREEN**
 
 Date: 2026-09-28
 
@@ -108,6 +108,6 @@ The underlying wait status query also omits the `jobs` JSON field.
 - `npm run check`: PASS
 - full `npm test`: PASS (54.585 s)
 - dependency audit: PASS — 0 vulnerabilities
-- exact-SHA CI: PENDING
-- installed deployment + controlled restart: PENDING
-- live direct validation: PENDING
+- exact-SHA CI #136 / run `36338889503`: PASS
+- installed deployment + controlled restart: PASS — 195/195 tracked equal before closure
+- live direct validation: PASS — real confirmed round 20 transitioned to round 21 on first work tool; compact wait result 832 bytes

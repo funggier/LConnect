@@ -377,13 +377,15 @@ Historical LCN-046–048 task/report records remain as audit evidence and are no
 
 Closure: implementation commit `e39c6575e32ba73232aac84437ec03a40619db0a` / CI #134 PASS, installed cleanup GREEN at 193 tracked files, and direct runtime remains 1.2.0 / 122 tools. MaxLatency wrappers/actions/controller aliases are removed.
 
-# Phase 4G — Post-Retry Auto-Round and GitHub Wait Payload Containment — ACTIVE
+# Phase 4G — Post-Retry Auto-Round and GitHub Wait Payload Containment — COMPLETE AT CURRENT EVIDENCE
 
 LCN-050 is driven by a new real Retry after LCN-049. It repairs the lifecycle gap where `ConfirmRetry-LConnect.cmd` left the round in `confirmed_retry` and all later work ran untracked until an explicit round-start call. The first subsequent non-control work tool now auto-starts the next round and is recorded as call 1.
 
 The same incident showed 98 `github_run_wait` calls returning ~5.64 MB after the previous Confirm. `github_run_wait` is therefore changed to query/return compact top-level run status only; `github_run_view` remains the explicit full jobs/steps surface.
 
 No timeout threshold or automatic blocking is introduced.
+
+Closure: implementation commit `b36f8c5b595ddf4f5d3483eabc8c674e4263c714` / CI #136 PASS; installed source parity 195/195; real persisted round 20 transitioned to round 21 automatically on the first work call; live compact `github_run_wait` returned 832 bytes with no jobs/steps; clean round 22 started after validation.
 
 # Phase 5 — Desktop Control
 

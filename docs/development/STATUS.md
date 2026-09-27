@@ -4,7 +4,7 @@ Last updated: 2026-09-28
 
 ## Overall
 
-Current project state: **BASIC CORE STABLE / LCN-050 POST-RETRY + GITHUB WAIT CONTAINMENT ACTIVE / v1.2.0 PUBLISHED**
+Current project state: **BASIC CORE STABLE / LCN-050 POST-RETRY + GITHUB WAIT CONTAINMENT COMPLETE / v1.2.0 PUBLISHED**
 
 Current published release: **v1.2.0 — Reliability & Verification**
 
@@ -44,7 +44,7 @@ Agent Operations Reliability LCN-025–030 ปิดครบ, Delivery/Turn Rel
 | Developer Foundation | COMPLETE | LCN-012–014 | Git + Development + HTTP complete |
 | Observation | COMPLETE | LCN-015–017 | Log Tail + File Watcher + Scheduled Tasks complete |
 | Agent Operations Reliability | COMPLETE | LCN-025–034 | LCN-025–030 and LCN-031–034 complete |
-| Delivery / Turn Reliability | ACTIVE FOLLOW-UP | LCN-031–039, LCN-046–050 | LCN-050 repairs the post-Confirm untracked-round gap and removes jobs/steps payload from `github_run_wait` after a real Retry correlated with 98 wait calls / ~5.64 MB results |
+| Delivery / Turn Reliability | COMPLETE AT CURRENT EVIDENCE | LCN-031–039, LCN-046–050 | LCN-050 live GREEN: first post-Confirm work tool auto-starts next round; `github_run_wait` returns compact status only, with live result 832 bytes vs ~63 KB pre-fix waits |
 | Execution Ergonomics | COMPLETE AT CURRENT NEED | LCN-040–044 | LCN-044 Deployment Verification Snapshot PASS on installed tree; 178/178 tracked parity, runtime 1.2.0 / 120 tools |
 | Desktop Control | DEFERRED | LCN-018–020 | Explicitly paused |
 | Browser Automation | DEFERRED | LCN-021–023 | Explicitly paused |
