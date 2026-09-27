@@ -1,41 +1,45 @@
 # ACTIVE — LConnect Development
 
-Last updated: 2026-09-24
+Last updated: 2026-09-27
 
 ## Current state
 
 - Repository: `funggier/LConnect`
 - Branch: `main`
-- Latest published release: **v1.2.0 — Reliability & Verification**
-- Release tag target: `043a669a7f421db21586e4fb5cd3645ef0f44c60`
-- Release CI: `36005012233` — PASS
+- Latest published release: **v1.2.0 — Reliability & Verification** (120 tools)
 - Source version: `1.2.0`
-- Source catalog: **120 tools**
-- Installed/running daemon: **1.2.0 / 120 tools**
-- Running daemon catalog digest: `3fe695d2143f49aff416714e5a5d9b89049e6c208f6da2176bb3884e577f20ff`
-- Deployment Verification Snapshot: PASS — tracked parity `178/178`, package/dependencies/preserved paths/runtime checks all PASS
-- LCN-025–030: COMPLETE — Agent Operations Reliability
-- LCN-031–039: COMPLETE AT CURRENT LOCAL EVIDENCE BOUNDARY — Delivery / Turn Reliability
-- LCN-040–044: COMPLETE AT CURRENT NEED — Execution Ergonomics
-- LCN-045: COMPLETE — v1.2.0 Documentation and Release
+- Current source candidate catalog: **122 tools**
+- Installed/running daemon before LCN-046 deployment: **1.2.0 / 120 tools**
+- ChatGPT-visible catalog before LCN-046 deployment/refresh: **120 tools**
+- LCN-046: ACTIVE — User-Confirmed Adaptive Turn Latency Budget
 - LCN-018–023: DEFERRED — Desktop Control / Browser Automation
 
 ## Active task
 
-**NO ACTIVE DEVELOPMENT TASK**
+### LCN-046 — User-Confirmed Adaptive Turn Latency Budget
 
-## Latest completed task
+Status: **ACTIVE — LOCAL GREEN / EXACT-COMMIT CI + LIVE DEPLOYMENT PENDING**
 
-### LCN-045 — v1.2.0 Documentation and Release
+Task: [tasks/LCN-046-user-confirmed-adaptive-turn-latency-budget.md](tasks/LCN-046-user-confirmed-adaptive-turn-latency-budget.md)
 
-Status: **COMPLETE**
+Report: [reports/LCN-20260927-046-user-confirmed-adaptive-turn-latency-budget.md](reports/LCN-20260927-046-user-confirmed-adaptive-turn-latency-budget.md)
 
-Task: [tasks/LCN-045-v1.2.0-documentation-release.md](tasks/LCN-045-v1.2.0-documentation-release.md)
+Current targeted evidence:
 
-Report: [reports/LCN-20260924-045-v1.2.0-documentation-release.md](reports/LCN-20260924-045-v1.2.0-documentation-release.md)
-
-Release: https://github.com/funggier/LConnect/releases/tag/v1.2.0
+- syntax: PASS
+- latency-budget targeted smoke: PASS
+- new round starts at zero: PASS
+- previous-round latency carry-over: none
+- SetMax current-round-only formula: PASS
+- second SetMax replaces prior ceiling: PASS
+- ROUND_NOT_STARTED pre-execution guard: PASS
+- LATENCY_BUDGET_EXCEEDED pre-execution guard: PASS
+- CMD/CLI shared state reload without daemon restart: PASS
+- source smoke: `PASS tools=122`
+- final full `npm test`: PASS (~52.5s)
+- dependency audit: 0 vulnerabilities
+- `git diff --check`: PASS
 
 ## Next action
 
-No additional execution-ergonomics capability is scheduled. Open a new numbered task only when a repeated real workflow exposes a concrete deterministic gap. Desktop/Browser work remains deferred until explicitly reopened.
+Commit/push the exact local-green candidate, require exact-commit GitHub CI PASS, deploy tracked source to the installed tree, restart LConnect, verify runtime catalog 122 and latency controls, then refresh ChatGPT connector/plugin for direct-tool validation.

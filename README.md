@@ -11,11 +11,11 @@
 ## สถานะปัจจุบัน
 
 - Source version: **1.2.0**
-- MCP catalog on current `main`: **120 tools**
+- MCP catalog on current `main`: **122 tools**
 - Latest published release [`v1.2.0 — Reliability & Verification`](https://github.com/funggier/LConnect/releases/tag/v1.2.0): **120 tools**
 - OpenAI tunnel-client minimum: **0.0.14**
 
-LConnect Core ผ่าน runtime acceptance บน Windows 10 แล้ว โดย current `main` แสดง 120 tools ครอบคลุม filesystem, shell, managed process/session, system/network/hardware, Git, GitHub Actions/Release, structured inspection, runtime/delivery evidence และ deployment verification
+LConnect Core ผ่าน runtime acceptance บน Windows 10 แล้ว โดย current `main` แสดง 122 tools ครอบคลุม filesystem, shell, managed process/session, system/network/hardware, Git, GitHub Actions/Release, structured inspection, runtime/delivery evidence, deployment verification และ adaptive per-round latency budgeting
 
 ## โครงสร้าง
 
@@ -75,6 +75,10 @@ Start-LConnect.cmd
 Status-LConnect.cmd
 Stop-LConnect.cmd
 Refresh-LConnect.cmd
+ResetRound-LConnect.cmd
+SetMaxLatency-LConnect.cmd
+ResetMaxLatency-LConnect.cmd
+StatusMaxLatency-LConnect.cmd
 ```
 
 LConnect ต้องใช้ OpenAI tunnel-client `0.0.14` หรือใหม่กว่า เนื่องจากรุ่นเก่ามีปัญหา recovery ของ stdio หลัง response timeout/deadline ซึ่งอาจทำให้ process ยังขึ้นว่า ready แต่ MCP ใช้งานต่อไม่ได้

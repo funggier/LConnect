@@ -32,6 +32,10 @@ import { registerStructuredDataInspectionTool } from "./modules/structured-data-
 import { registerDirectoryIntegrityTools } from "./modules/directory-integrity.mjs";
 import { registerDeploymentVerificationTool } from "./modules/deployment-verification.mjs";
 import { readPackageVersion } from "./modules/version.mjs";
+import {
+  installLatencyBudget,
+  registerLatencyBudgetTools,
+} from "./modules/latency-budget.mjs";
 
 const version = readPackageVersion(import.meta.url);
 const config = loadLConnectConfig(import.meta.url);
@@ -44,6 +48,7 @@ const server = new McpServer({
   version,
 });
 
+const latencyBudget = installLatencyBudget(server, config);
 installToolTelemetry(server, config.telemetry);
 const runtimeCatalog = installRuntimeCatalog(server, { version });
 
@@ -72,6 +77,7 @@ registerDirectoryIntegrityTools(server, config);
 registerDeploymentVerificationTool(server, config, { runtimeCatalog });
 registerBatchInspectionTool(server);
 registerToolTelemetryTool(server);
+registerLatencyBudgetTools(server, latencyBudget);
 const runtimeCatalogState = runtimeCatalog.markReady();
 
 console.error(

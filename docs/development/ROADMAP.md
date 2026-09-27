@@ -337,6 +337,20 @@ After LCN-044, publish **v1.2.0 — Reliability & Verification** from one exact 
 
 ---
 
+# Phase 4C — User-Confirmed Adaptive Turn Latency Budget — ACTIVE
+
+LCN-046 adds a round-scoped guard for retry-prone tool sequences.
+
+Key rules:
+
+- calibration retry is confirmed manually with `SetMaxLatency-LConnect.cmd`
+- active budget uses only the confirmed current round
+- historical rounds are audit-only
+- new rounds start from zero
+- after calibration the AI starts each new user-turn round with `latency_round_start`
+- no request-ID or idle-time turn inference
+- preflight returns `ROUND_NOT_STARTED` or `LATENCY_BUDGET_EXCEEDED` before work-handler execution when applicable
+
 # Phase 5 — Desktop Control
 
 ## LCN-018 Clipboard

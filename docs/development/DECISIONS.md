@@ -411,3 +411,25 @@ It preserves local configuration, tunnel client, dependencies, source, Scheduled
 **Why:** Post-deploy verification was repeated after nearly every reliability/ergonomics task. Combining those observations reduces round trips while preserving the invariant that ChatGPT/operator owns workflow and release decisions.
 
 **Boundary:** Local-only configuration may be checked for existence/type, but secret contents are not read into the snapshot.
+
+---
+
+## D-035 — Adaptive latency budget is user-confirmed and round-scoped
+
+**Decision:** LConnect MUST NOT infer a ChatGPT user turn from MCP request IDs or idle-time gaps. Current connector evidence shows `request_id="0"` across calls and no reliable turn identifier.
+
+**Decision:** A latency round is an explicit boundary. Manual calibration uses `ResetRound-LConnect.cmd`; normal ENFORCE operation uses AI-called `latency_round_start` before the first LConnect work tool of a new user turn.
+
+**Decision:** Current-round cumulative latency starts at zero and MUST NOT include latency from previous rounds.
+
+**Decision:** `SetMaxLatency-LConnect.cmd` is the user-confirmed retry signal. It uses only the current round and replaces the active failure ceiling.
+
+**Decision:** Historical rounds/events are audit-only and MUST NOT participate in active ceiling, average, minimum, EWMA or safe-budget calculations.
+
+**Decision:** Safe max is calculated exactly from the confirmed round:
+
+`safe_max_ms = failure_ceiling_ms - (failure_ceiling_ms / failed_round_call_count)`
+
+**Decision:** In ENFORCE mode, LConnect may reject a work tool before handler execution with `ROUND_NOT_STARTED` or `LATENCY_BUDGET_EXCEEDED`. LConnect still does not infer that ChatGPT actually timed out; only the user can confirm that event through SetMaxLatency.
+
+**Why:** This preserves the LConnect execution/evidence boundary while preventing multi-turn latency accumulation and providing the AI a deterministic local budget signal after a user-confirmed retry.

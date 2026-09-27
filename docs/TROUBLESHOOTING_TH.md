@@ -112,6 +112,32 @@ Node ESM modules ถูกโหลดตอน Core start
 4. ตรวจ `runtime_catalog`
 5. ถ้า tool schema เปลี่ยน ให้ refresh connector/plugin
 
+## เกิด Retry / Message delivery timed out ซ้ำเมื่อเรียกหลาย Tools
+
+LCN-046 มี adaptive per-round latency budget สำหรับลดความเสี่ยงนี้หลังผู้ใช้ยืนยัน failure จริง
+
+Calibration:
+
+1. กด `ResetRound-LConnect.cmd`
+2. ทดลองรอบงาน
+3. เมื่อเห็น Retry ให้กด `SetMaxLatency-LConnect.cmd` ก่อนเริ่มรอบใหม่
+4. ตรวจค่าด้วย `StatusMaxLatency-LConnect.cmd`
+
+ข้อสำคัญ:
+
+- SetMaxLatency ใช้เฉพาะ round ปัจจุบันเท่านั้น
+- previous rounds ไม่ถูกบวก ไม่ถูก average และไม่ถูกนำมาเลือก min/max
+- history เป็น audit-only
+- Set ครั้งใหม่แทนค่าครั้งเก่า
+- หลังมี MaxLatency แล้ว AI ใช้ `latency_round_start` เพื่อเริ่มแต่ละ user turn ใหม่ที่ 0
+- ถ้าต้องการล้าง calibration ให้ใช้ `ResetMaxLatency-LConnect.cmd`
+
+ถ้า `LATENCY_BUDGET_EXCEEDED` ปรากฏ แปลว่า LConnect จงใจไม่เริ่ม handler เพราะ predicted call จะเกิน safe max; ไม่ได้หมายความว่า tool เสีย
+
+ถ้า `ROUND_NOT_STARTED` ปรากฏ แปลว่า ENFORCE เปิดอยู่แต่ยังไม่ได้เริ่ม round ใหม่
+
+ระบบนี้เป็น local mitigation/evidence layer ไม่ได้พิสูจน์ว่า ChatGPT/platform timeout มี root cause อยู่ใน LConnect
+
 ## Start-LConnect บอกว่า mcp-conf.yaml หาย
 
 เป็น behavior ที่ตั้งใจไว้

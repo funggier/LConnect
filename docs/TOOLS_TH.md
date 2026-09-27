@@ -1,6 +1,6 @@
 # รายการ Tools ของ LConnect
 
-LConnect v1.2.0 บน current `main` expose **120 tools** ผ่าน MCP `main` channel เดียว
+LConnect v1.2.0 บน current `main` expose **122 tools** ผ่าน MCP `main` channel เดียว (published v1.2.0 release ยังคง 120 tools)
 
 ## Filesystem
 
@@ -1007,6 +1007,43 @@ arguments:
 คำนวณ digest แบบ streaming และเปรียบเทียบไฟล์สองชุดด้วย structured evidence
 
 ใช้สำหรับ source↔installed parity, artifact verification และ recovery evidence
+
+## Adaptive Latency Budget
+
+### latency_round_start
+
+เริ่มรอบ latency ใหม่จากศูนย์สำหรับ user turn ปัจจุบัน
+
+หลังจากมี MaxLatency แล้ว AI ควรเรียก tool นี้ก่อน LConnect work tool ตัวแรกของ user turn ใหม่ทุกครั้ง เพื่อไม่ให้ latency ของรอบก่อนหน้ามาสะสมกับรอบปัจจุบัน
+
+### latency_budget_status
+
+อ่านสถานะ budget แบบ structured:
+
+- mode: `OBSERVE` / `ENFORCE`
+- round ID / status
+- calls และ cumulative latency ของ **รอบปัจจุบันเท่านั้น**
+- confirmed failure ceiling
+- failed-round average call latency
+- safe max
+- remaining budget
+- generation
+
+หลักสำคัญ:
+
+- history เป็น audit-only
+- `SetMaxLatency-LConnect.cmd` ใช้เฉพาะรอบที่ผู้ใช้ยืนยันล่าสุด
+- Set ครั้งใหม่แทนค่าครั้งเก่า ไม่ average/min/EWMA กับ history
+- สูตร safe max: `failed round total - (failed round total / call count)`
+- เมื่อ ENFORCE และ predicted next call จะเกิน safe max จะคืน `LATENCY_BUDGET_EXCEEDED` ก่อนรัน handler
+- เมื่อ ENFORCE แต่ยังไม่ได้เริ่ม round จะคืน `ROUND_NOT_STARTED`
+
+Manual controls:
+
+- `ResetRound-LConnect.cmd`
+- `SetMaxLatency-LConnect.cmd`
+- `ResetMaxLatency-LConnect.cmd`
+- `StatusMaxLatency-LConnect.cmd`
 
 ## Runtime / Delivery Evidence
 

@@ -141,6 +141,8 @@ const requiredTools = [
   "refresh_state",
   "read_process_events",
   "tool_telemetry",
+  "latency_round_start",
+  "latency_budget_status",
   "batch_inspect",
 ];
 
