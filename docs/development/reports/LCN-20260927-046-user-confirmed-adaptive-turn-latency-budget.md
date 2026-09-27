@@ -70,6 +70,23 @@ Repair:
 - blocked guard responses still return explicit structured error text
 - `batch_inspect` targeted regression returned PASS
 
+### Live null-normalization defect
+
+After first live deployment, `runtime_catalog` correctly reported 122 tools but latency metadata in OBSERVE mode showed uncalibrated ceiling/safe/predicted values as `0` instead of `null`.
+
+Root cause:
+
+- generic numeric normalization called `Number(null)`, which produces `0`
+
+Repair:
+
+- null/undefined/empty values now preserve the configured fallback before numeric conversion
+- targeted regression asserts uncalibrated failure ceiling, average, safe max, prediction and remaining budget are all `null`
+- latency smoke repeated after repair: PASS
+- post-live null-fix full `npm test`: PASS (~52.5s)
+- post-live null-fix dependency audit: 0 vulnerabilities
+- post-live null-fix `git diff --check`: PASS
+
 ### Timing-dependent replacement test
 
 Initial replacement test executed real delayed calls under an already-enforced budget. Scheduler variation could cause the guard to block those fixture calls, leaving no measured calls for the next SetMax.

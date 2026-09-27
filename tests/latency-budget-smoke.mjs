@@ -87,6 +87,17 @@ try {
   if (initialJson.mode !== "observe" || initialJson.round.status !== "not_started") {
     throw new Error("initial OBSERVE/not_started state failed");
   }
+  if (
+    initialJson.active_budget.failure_ceiling_ms !== null ||
+    initialJson.active_budget.average_call_ms !== null ||
+    initialJson.active_budget.safe_max_ms !== null ||
+    initialJson.latency_budget.failure_ceiling_ms !== null ||
+    initialJson.latency_budget.safe_max_ms !== null ||
+    initialJson.latency_budget.predicted_next_ms !== null ||
+    initialJson.latency_budget.remaining_ms !== null
+  ) {
+    throw new Error("uncalibrated latency budget null semantics failed");
+  }
 
   const r1 = await call("latency_round_start");
   const r1Json = JSON.parse(textOf(r1));
