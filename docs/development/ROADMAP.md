@@ -369,11 +369,13 @@ LCN-048 was opened from a second real user-confirmed Retry after LCN-047 deploym
 
 Closure: primary commit `ec62ae32efa9f8a8f63f25ffd6d2ed774d27daaa` / CI #131 PASS, legacy-snapshot corrective commit `04cee51b61cf109c9353c1febb127348ea377c8d` / CI #132 PASS, installed/runtime live GREEN at 122 tools. Pre-LCN-048 Retry snapshots retain unknown new fields as null/none; future confirmed Retries persist tail-gap evidence directly.
 
-# Phase 4F — Remove Legacy MaxLatency Compatibility Surface — ACTIVE
+# Phase 4F — Remove Legacy MaxLatency Compatibility Surface — COMPLETE
 
 LCN-049 removes the obsolete public compatibility surface left from the superseded LCN-046 adaptive MaxLatency model. Current operational commands are `ResetRound-LConnect.cmd`, `ConfirmRetry-LConnect.cmd`, and `StatusTurnRisk-LConnect.cmd`; only `ConfirmRetry-LConnect.cmd` confirms Retry events.
 
 Historical LCN-046–048 task/report records remain as audit evidence and are not current operational instructions.
+
+Closure: implementation commit `e39c6575e32ba73232aac84437ec03a40619db0a` / CI #134 PASS, installed cleanup GREEN at 193 tracked files, and direct runtime remains 1.2.0 / 122 tools. MaxLatency wrappers/actions/controller aliases are removed.
 
 # Phase 5 — Desktop Control
 

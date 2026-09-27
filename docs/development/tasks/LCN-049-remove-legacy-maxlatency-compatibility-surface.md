@@ -1,6 +1,6 @@
 # LCN-049 — Remove Legacy MaxLatency Compatibility Surface
 
-Status: **ACTIVE**
+Status: **COMPLETE — LEGACY MAXLATENCY SURFACE REMOVED / LIVE GREEN**
 
 Date: 2026-09-27
 
@@ -28,7 +28,7 @@ Keep the current observation workflow:
 - MCP `latency_round_start`
 - MCP `latency_budget_status`
 
-Historical LCN-046–048 task/report records are retained as audit evidence. They may mention the old commands because those commands existed at that historical point; they are not current operational instructions.
+Historical LCN-046–048 task/report records and persisted Retry evidence are retained as audit evidence. They may mention the old commands because those commands existed at that historical point; they are not current operational instructions.
 
 ## Invariants
 
@@ -52,6 +52,6 @@ Historical LCN-046–048 task/report records are retained as audit evidence. The
 - `npm run check`: PASS
 - full `npm test`: PASS (53.296 s)
 - dependency audit: PASS — 0 vulnerabilities
-- CI exact-SHA: PENDING
-- installed cleanup/parity: PENDING
-- controlled restart/direct runtime validation: PENDING
+- CI exact-SHA #134 / run `36332464447`: PASS
+- installed cleanup/parity: PASS — 193/193 tracked equal; legacy CMD files absent
+- controlled restart/direct runtime validation: PASS — 1.2.0 / 122 tools

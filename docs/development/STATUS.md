@@ -4,7 +4,7 @@ Last updated: 2026-09-27
 
 ## Overall
 
-Current project state: **BASIC CORE STABLE / LCN-049 LEGACY MAXLATENCY CLEANUP ACTIVE / v1.2.0 PUBLISHED**
+Current project state: **BASIC CORE STABLE / LCN-049 LEGACY MAXLATENCY CLEANUP COMPLETE / v1.2.0 PUBLISHED**
 
 Current published release: **v1.2.0 — Reliability & Verification**
 
@@ -44,7 +44,7 @@ Agent Operations Reliability LCN-025–030 ปิดครบ, Delivery/Turn Rel
 | Developer Foundation | COMPLETE | LCN-012–014 | Git + Development + HTTP complete |
 | Observation | COMPLETE | LCN-015–017 | Log Tail + File Watcher + Scheduled Tasks complete |
 | Agent Operations Reliability | COMPLETE | LCN-025–034 | LCN-025–030 and LCN-031–034 complete |
-| Delivery / Turn Reliability | ACTIVE CLEANUP | LCN-031–039, LCN-046–049 | LCN-049 removes the obsolete MaxLatency compatibility surface; current model remains observation-only and `ConfirmRetry-LConnect.cmd` becomes the sole Retry-confirmation command |
+| Delivery / Turn Reliability | COMPLETE AT CURRENT EVIDENCE | LCN-031–039, LCN-046–049 | LCN-049 removed all MaxLatency compatibility wrappers/actions/methods; `ConfirmRetry-LConnect.cmd` is the sole Retry-confirmation command and observation-only/no-blocking semantics remain live |
 | Execution Ergonomics | COMPLETE AT CURRENT NEED | LCN-040–044 | LCN-044 Deployment Verification Snapshot PASS on installed tree; 178/178 tracked parity, runtime 1.2.0 / 120 tools |
 | Desktop Control | DEFERRED | LCN-018–020 | Explicitly paused |
 | Browser Automation | DEFERRED | LCN-021–023 | Explicitly paused |

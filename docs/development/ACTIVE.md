@@ -15,20 +15,16 @@ Last updated: 2026-09-27
 - LCN-046: COMPLETE — original round-boundary implementation; handler-sum enforcement superseded by LCN-047 evidence
 - LCN-047: COMPLETE — Turn-Risk Telemetry Model Repair / observation-only live GREEN
 - LCN-048: COMPLETE — Retry Tail-Gap Telemetry Refinement / live GREEN
-- LCN-049: ACTIVE — Remove Legacy MaxLatency Compatibility Surface
+- LCN-049: COMPLETE — Legacy MaxLatency compatibility surface removed / live GREEN
 - LCN-018–023: DEFERRED — Desktop Control / Browser Automation
 
 ## Active task
 
-### LCN-049 — Remove Legacy MaxLatency Compatibility Surface
+No active development task.
 
-Status: **ACTIVE**
+Latest completed task: [LCN-049 — Remove Legacy MaxLatency Compatibility Surface](tasks/LCN-049-remove-legacy-maxlatency-compatibility-surface.md)
 
-Task: [tasks/LCN-049-remove-legacy-maxlatency-compatibility-surface.md](tasks/LCN-049-remove-legacy-maxlatency-compatibility-surface.md)
-
-Goal: keep `ConfirmRetry-LConnect.cmd` as the only Retry-confirmation command and remove obsolete MaxLatency wrappers/actions/methods.
-
-Latest completed task: [LCN-048 — Retry Tail-Gap Telemetry Refinement](tasks/LCN-048-retry-tail-gap-telemetry-refinement.md)
+Final report: [reports/LCN-20260927-049-remove-legacy-maxlatency-compatibility-surface.md](reports/LCN-20260927-049-remove-legacy-maxlatency-compatibility-surface.md)
 
 Final report: [reports/LCN-20260927-048-retry-tail-gap-telemetry-refinement.md](reports/LCN-20260927-048-retry-tail-gap-telemetry-refinement.md)
 
