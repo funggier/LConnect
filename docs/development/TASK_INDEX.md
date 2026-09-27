@@ -47,4 +47,4 @@
 | [LCN-043](tasks/LCN-043-exact-commit-github-ci-correlation.md) | COMPLETE | Exact Commit GitHub CI Correlation |
 | [LCN-044](tasks/LCN-044-deployment-verification-snapshot.md) | COMPLETE | Deployment Verification Snapshot |
 | [LCN-045](tasks/LCN-045-v1.2.0-documentation-release.md) | COMPLETE | v1.2.0 Documentation and Release |
-| [LCN-046](tasks/LCN-046-user-confirmed-adaptive-turn-latency-budget.md) | ACTIVE | User-Confirmed Adaptive Turn Latency Budget |
+| [LCN-046](tasks/LCN-046-user-confirmed-adaptive-turn-latency-budget.md) | ACTIVE — LIVE GREEN | User-Confirmed Adaptive Turn Latency Budget |

@@ -14,11 +14,11 @@ Release CI: `36005012233` — PASS
 
 Current main/source MCP catalog: **122 tools** (LCN-046 candidate)
 
-Current installed/running MCP catalog before LCN-046 deployment: **120 tools** (`1.2.0`)
+Current installed/running MCP catalog: **122 tools** (`1.2.0`)
 
-Current running catalog digest: `3fe695d2143f49aff416714e5a5d9b89049e6c208f6da2176bb3884e577f20ff`
+Current running catalog digest: `4a8ef91a83938d4e835a7716c90c8784235708bdf31c5cb763b1d2911fecc525`
 
-Current ChatGPT-visible catalog before LCN-046 deployment/refresh: **120 tools**. The installed/running daemon also remains 120 until the candidate is deployed.
+Current ChatGPT-visible catalog before LCN-046 connector refresh: **120 tools** while installed/running daemon is already 122.
 
 LConnect มี Core ที่ใช้งานจริงแล้วและผ่าน runtime acceptance บน Windows:
 

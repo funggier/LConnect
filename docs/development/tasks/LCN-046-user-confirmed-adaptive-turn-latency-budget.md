@@ -1,8 +1,10 @@
 # LCN-046 — User-Confirmed Adaptive Turn Latency Budget
 
-Status: **ACTIVE — LOCAL GREEN / EXACT-COMMIT CI + LIVE VALIDATION PENDING**
+Status: **ACTIVE — LIVE GREEN / CHATGPT DIRECT-TOOL REFRESH VALIDATION PENDING**
 
 Local gate: `npm test` PASS (`tools=122`, ~52.5s), dependency audit 0 vulnerabilities, `git diff --check` PASS.
+
+Live gate: corrective commit `500b7cb0cad669b087cf8242e5f84d114af2e5fd`, CI #124 PASS, source↔installed 187/187, runtime `1.2.0 / 122 tools`, CLI state `OBSERVE / round 0 / not_started`, uncalibrated ceiling/safe/prediction/remaining preserved as null.
 
 ## Goal
 

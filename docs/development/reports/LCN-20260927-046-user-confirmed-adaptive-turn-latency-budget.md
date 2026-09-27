@@ -2,7 +2,7 @@
 
 ## Status
 
-**LOCAL GREEN — EXACT-COMMIT CI + INSTALLED LIVE VALIDATION PENDING**
+**LIVE GREEN — CHATGPT DIRECT-TOOL REFRESH VALIDATION PENDING**
 
 ## Goal
 
@@ -123,12 +123,30 @@ Targeted acceptance:
 - CMD wrappers share controller implementation: PASS
 - audit-only history: PASS
 
+## Exact commits / CI
+
+- implementation commit: `df66e72ba28f70ef0ed595c3be70bb9863ee5679`
+- implementation CI: run `36318144473` / #123 — PASS
+- corrective null-semantics commit: `500b7cb0cad669b087cf8242e5f84d114af2e5fd`
+- corrective CI: run `36318612471` / #124 — PASS
+
+## Installed live validation
+
+- tracked source↔installed: `187/187` equal
+- source/install manifest digest: `0b27910bcae52bdee5519ca82e2c59ab67bb71cf25ce5bbebdd8e7740fabca96`
+- package version parity: PASS (`1.2.0`)
+- dependency declarations/presence: PASS (4/4)
+- preserved local paths: PASS (`mcp-conf.yaml`, `node_modules`, `logs`, `runtime`)
+- running runtime: `1.2.0 / 122 tools`
+- runtime PID: `13148`
+- runtime catalog digest: `4a8ef91a83938d4e835a7716c90c8784235708bdf31c5cb763b1d2911fecc525`
+- expected tool-count match: PASS
+- live OBSERVE metadata null semantics: PASS
+- `StatusMaxLatency` shared CLI: PASS — round 0 / not_started / no ceiling / unbounded remaining
+
 ## Pending
 
-- candidate commit / push
-- exact-commit GitHub CI PASS
-- tracked deployment to installed tree
-- installed syntax/smoke
-- runtime restart and catalog 122 verification
-- live state/control validation
-- ChatGPT connector refresh for direct visibility of the two new tools
+- ChatGPT connector/plugin refresh
+- direct `latency_budget_status` visibility/call
+- direct `latency_round_start` visibility/call without altering calibration max
+- final LCN-046 closure
