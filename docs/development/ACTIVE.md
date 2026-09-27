@@ -25,6 +25,8 @@ Task: [tasks/LCN-046-user-confirmed-adaptive-turn-latency-budget.md](tasks/LCN-0
 
 Report: [reports/LCN-20260927-046-user-confirmed-adaptive-turn-latency-budget.md](reports/LCN-20260927-046-user-confirmed-adaptive-turn-latency-budget.md)
 
+Full session handoff: [reports/LCN-20260927-046-full-session-handoff-adaptive-latency-budget.md](reports/LCN-20260927-046-full-session-handoff-adaptive-latency-budget.md)
+
 Current targeted evidence:
 
 - syntax: PASS
