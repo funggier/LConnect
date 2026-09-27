@@ -152,7 +152,16 @@ function normalizeState(value) {
   const base = defaultState();
   if (!value || typeof value !== "object") return base;
 
+  const incomingSchemaVersion = Math.max(
+    1,
+    Math.floor(normalizeNumber(value.schema_version, 1))
+  );
   const normalizedRound = normalizeRound(value.round || {});
+  const round =
+    incomingSchemaVersion === 2
+      ? normalizedRound
+      : emptyRound(normalizedRound.id);
+
   return {
     schema_version: 2,
     measurement_model: MEASUREMENT_MODEL,
@@ -160,8 +169,11 @@ function normalizeState(value) {
     enforcement_enabled: false,
     generation: Math.max(0, Math.floor(normalizeNumber(value.generation, 0))),
     active_budget: emptyActiveBudget(),
-    last_confirmed_retry: normalizeRetrySnapshot(value.last_confirmed_retry),
-    round: normalizedRound,
+    last_confirmed_retry:
+      incomingSchemaVersion === 2
+        ? normalizeRetrySnapshot(value.last_confirmed_retry)
+        : null,
+    round,
     updated_at: typeof value.updated_at === "string" ? value.updated_at : nowIso(),
   };
 }
@@ -170,11 +182,14 @@ function safeReadJson(filePath) {
   try {
     if (!fs.existsSync(filePath)) return { state: defaultState(), error: null };
     const raw = JSON.parse(fs.readFileSync(filePath, "utf8"));
+    const migratedFromSchema = Number(raw?.schema_version || 1);
     return {
       state: normalizeState(raw),
       error: null,
-      migrated_from_schema: Number(raw?.schema_version || 1),
+      migrated_from_schema: migratedFromSchema,
       migrated_from_mode: raw?.mode || null,
+      legacy_round:
+        migratedFromSchema === 2 ? null : normalizeRound(raw?.round || {}),
     };
   } catch (error) {
     return {
@@ -432,6 +447,9 @@ export function createLatencyBudgetController(config = {}) {
           to_mode: "observe",
           measurement_model: MEASUREMENT_MODEL,
           enforcement_enabled: false,
+          legacy_round: loaded.legacy_round,
+          migration_rule:
+            "Legacy round telemetry is audit-only and is not carried into schema v2 because v1 lacks the timestamps/result counters required by the v2 measurement model.",
         });
       }
       return {

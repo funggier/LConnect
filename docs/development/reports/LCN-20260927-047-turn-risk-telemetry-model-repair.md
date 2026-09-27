@@ -118,11 +118,54 @@ Legacy `StatusMaxLatency-LConnect.cmd` remains compatible.
 - dependency audit: PASS — 0 vulnerabilities
 - `git diff --check`: PASS
 
+## Live activation findings
+
+Initial LCN-047 activation loaded schema v2 successfully, but exposed one migration defect in legacy active-round state:
+
+- the v1 round had an old `started_at` and handler counters
+- v1 did not have the v2 call timestamp/result-byte fields
+- preserving that active round caused the first v2 work call to interpret the entire pre-upgrade interval as one observed idle gap
+- this produced a bogus ~19 minute idle measurement in migrated round 11
+
+Corrective rule:
+
+- schema v1 round measurements are audit-only
+- when migrating v1 -> v2, preserve the round ID for sequence continuity but reset the current round to `not_started` with zero v2 metrics
+- record the legacy round inside the migration history event rather than interpreting incomplete telemetry as v2 observations
+- the live runtime was manually moved to clean round 12 at zero immediately after the artifact was identified
+
+Targeted regression for legacy `ENFORCE + active round`: PASS.
+
+Corrective local validation:
+
+- targeted migration smoke: PASS
+- `npm run check`: PASS
+- full `npm test`: PASS (52.178 s)
+- dependency audit: PASS — 0 vulnerabilities
+- `git diff --check`: PASS
+
+## Activation incident
+
+The first activation attempt killed only the MCP child PID under `tunnel-client.exe`, assuming the tunnel supervisor would respawn it. Live evidence disproved that assumption: the tunnel client exited with the child and LConnect went offline.
+
+Recovery used the established `Start-LConnect.ps1` path from the independent BConnect control channel. Existing control-plane credentials were inherited from environment variables without reading, printing, or persisting their values. Doctor PASS and LConnect recovered successfully.
+
+Operational correction: do not activate LConnect by killing only `node lconnect-mcp.mjs`. Use the established Stop/Start flow from an independent control channel when a runtime restart is required.
+
+## Implementation / CI evidence
+
+- primary implementation commit: `70bfa9412d13a1f1e9a77c1a5b870ba3c84622d2`
+- GitHub CI #128 / run `36328927478`: PASS
+- primary installed sync before activation: `192/192` tracked equal
+- primary source/install manifest digest: `7d177f709ab459ccbc64dc5ba275bba65014f0f629bec990708bd1fdbf69d0f8`
+- first v2 runtime after recovery: PID `27788`, version `1.2.0`, 122 tools, catalog digest unchanged
+- direct `latency_budget_status`: PASS — `turn_risk_observation_v2 / OBSERVE / enforcement disabled`
+- clean live round 12 start: PASS — all counters zero at boundary
+
 ## Pending
 
-- source commit + CI
-- installed sync
-- daemon activation
-- live state-schema migration validation
-- live direct-tool validation
+- corrective commit + CI
+- corrective installed sync
+- controlled Stop/Start activation through BConnect
+- final live direct-tool validation
 - final source↔installed parity

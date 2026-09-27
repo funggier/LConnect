@@ -92,7 +92,7 @@ Add preferred aliases:
 ## Acceptance
 
 - old handler-sum enforcement is disabled: PASS (source/local)
-- old persisted ENFORCE state normalizes safely to OBSERVE: PASS (source/local)
+- old persisted ENFORCE/active state normalizes safely to clean OBSERVE without carrying incomplete v1 telemetry: PASS (corrective targeted regression)
 - new round starts all metrics at zero: PASS
 - previous round does not carry into next round: PASS
 - wall-clock and handler-sum are reported separately: PASS
@@ -106,7 +106,8 @@ Add preferred aliases:
 - preferred ConfirmRetry/StatusTurnRisk wrappers exist: PASS
 - targeted smoke: PASS
 - `npm run check`: PASS
-- full `npm test`: PASS (54.344 s)
+- primary full `npm test`: PASS (54.344 s)
+- live-found migration corrective full `npm test`: PASS (52.178 s)
 - dependency audit: PASS (0 vulnerabilities)
 - `git diff --check`: PASS
 - source↔installed deployment parity: PENDING

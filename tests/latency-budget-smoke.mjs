@@ -227,16 +227,16 @@ try {
     },
     round: {
       id: 77,
-      status: "not_started",
-      started_at: null,
+      status: "active",
+      started_at: "2026-01-01T00:00:00.000Z",
       completed_at: null,
-      call_count: 0,
-      cumulative_latency_ms: 0,
-      last_call_ms: null,
-      max_call_ms: 0,
+      call_count: 9,
+      cumulative_latency_ms: 9999,
+      last_call_ms: 1111,
+      max_call_ms: 2222,
       blocked_count: 0,
-      last_tool: null,
-      start_source: null,
+      last_tool: "legacy_tool",
+      start_source: "legacy",
     },
   });
 
@@ -246,9 +246,13 @@ try {
     migrated.state.mode !== "observe" ||
     migrated.state.enforcement_enabled !== false ||
     migrated.state.active_budget.failure_ceiling_ms !== null ||
+    migrated.state.round.status !== "not_started" ||
+    migrated.state.round.started_at !== null ||
+    migrated.state.round.call_count !== 0 ||
+    migrated.state.round.cumulative_handler_ms !== 0 ||
     readState().mode !== "observe"
   ) {
-    throw new Error("legacy ENFORCE state did not migrate safely to OBSERVE");
+    throw new Error("legacy ENFORCE/active state did not migrate safely to clean OBSERVE");
   }
 
   const cli = path.join(root, "scripts", "latency-budget-cli.mjs");
@@ -333,7 +337,7 @@ try {
   }
 
   console.log("observation-only model / no handler-sum enforcement: PASS");
-  console.log("legacy ENFORCE state -> OBSERVE migration: PASS");
+  console.log("legacy ENFORCE/active state -> clean OBSERVE migration: PASS");
   console.log("new round starts all metrics at zero: PASS");
   console.log("previous-round metrics never carry: PASS");
   console.log("round wall-clock vs handler sum separated: PASS");
