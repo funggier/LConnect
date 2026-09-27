@@ -4,7 +4,7 @@ Last updated: 2026-09-27
 
 ## Overall
 
-Current project state: **BASIC CORE STABLE / LCN-048 RETRY TAIL-GAP TELEMETRY ACTIVE / v1.2.0 PUBLISHED**
+Current project state: **BASIC CORE STABLE / LCN-048 RETRY TAIL-GAP TELEMETRY COMPLETE AT CURRENT EVIDENCE / v1.2.0 PUBLISHED**
 
 Current published release: **v1.2.0 — Reliability & Verification**
 
@@ -33,7 +33,7 @@ LConnect มี Core ที่ใช้งานจริงแล้วแล�
 - Thai documentation
 - GitHub releases
 
-Agent Operations Reliability LCN-025–030 ปิดครบ, Delivery/Turn Reliability LCN-031–039 และ LCN-046–047 ปิดที่ current evidence boundary โดย LCN-047 ยกเลิก handler-sum enforcement และเปลี่ยนเป็น observation-only turn-risk telemetry หลังพบ Retry จริง, Execution Ergonomics LCN-040–044 ปิดที่ current need และ v1.2.0 ถูก publish/verify แล้ว; Desktop/Browser automation ยังพักไว้
+Agent Operations Reliability LCN-025–030 ปิดครบ, Delivery/Turn Reliability LCN-031–039 และ LCN-046–048 ปิดที่ current evidence boundary โดย LCN-047 ยกเลิก handler-sum enforcement และ LCN-048 เพิ่ม terminal tail-gap telemetry จาก Retry จริงรอบที่สองโดยยังคง observation-only/no-blocking, Execution Ergonomics LCN-040–044 ปิดที่ current need และ v1.2.0 ถูก publish/verify แล้ว; Desktop/Browser automation ยังพักไว้
 
 ## Workstream status
 
@@ -44,7 +44,7 @@ Agent Operations Reliability LCN-025–030 ปิดครบ, Delivery/Turn Rel
 | Developer Foundation | COMPLETE | LCN-012–014 | Git + Development + HTTP complete |
 | Observation | COMPLETE | LCN-015–017 | Log Tail + File Watcher + Scheduled Tasks complete |
 | Agent Operations Reliability | COMPLETE | LCN-025–034 | LCN-025–030 and LCN-031–034 complete |
-| Delivery / Turn Reliability | ACTIVE FOLLOW-UP | LCN-031–039, LCN-046–048 | Round 13 produced a second real Retry with ~80.980 s terminal quiet gap; LCN-048 makes terminal tail-gap evidence explicit while preserving observation-only/no-blocking semantics |
+| Delivery / Turn Reliability | COMPLETE AT CURRENT EVIDENCE | LCN-031–039, LCN-046–048 | LCN-048 is live with `tail_idle_ms` and `max_observed_gap_ms`; round 13 remains historical evidence, future confirmed Retries persist tail-gap fields directly, and no automatic blocking is active |
 | Execution Ergonomics | COMPLETE AT CURRENT NEED | LCN-040–044 | LCN-044 Deployment Verification Snapshot PASS on installed tree; 178/178 tracked parity, runtime 1.2.0 / 120 tools |
 | Desktop Control | DEFERRED | LCN-018–020 | Explicitly paused |
 | Browser Automation | DEFERRED | LCN-021–023 | Explicitly paused |

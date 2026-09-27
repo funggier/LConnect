@@ -1,6 +1,6 @@
 # LCN-048 — Retry Tail-Gap Telemetry Refinement
 
-Status: **ACTIVE**
+Status: **COMPLETE — RETRY TAIL-GAP TELEMETRY LIVE GREEN**
 
 Date: 2026-09-27
 
@@ -101,5 +101,11 @@ Keep:
 - primary full test suite: PASS (53.543 s)
 - legacy-snapshot corrective full test suite: PASS (54.669 s)
 - primary CI #131 / run `36330784749`: PASS
-- corrective CI: PENDING
-- installed deployment + direct live validation: PENDING
+- corrective CI #132 / run `36331165329`: PASS
+- installed targeted smoke: PASS
+- source↔installed parity before docs-only closure: PASS — 194/194 equal
+- controlled Stop/Start activation via independent BConnect channel: PASS
+- direct runtime validation: PASS — 1.2.0 / 122 tools / catalog digest unchanged
+- pre-LCN-048 round 13 tail fields after live reload: PASS — null/none, not false zero
+- fresh live round 15 zero boundary: PASS
+- live active `tail_idle_ms` / `max_observed_gap_ms`: PASS

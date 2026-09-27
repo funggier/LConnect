@@ -363,9 +363,11 @@ The MCP catalog remains 122 tools; existing direct tool names are retained for c
 
 Closure: primary commit `70bfa9412d13a1f1e9a77c1a5b870ba3c84622d2` / CI #128 PASS, migration corrective commit `708c75a961cfd2b1a41c10cb4c8c8d175b11b1ec` / CI #129 PASS, installed/runtime live GREEN at 122 tools. Future real Retry events are captured as observation snapshots with `ConfirmRetry-LConnect.cmd`; no handler-sum-derived enforcement is active.
 
-# Phase 4E — Retry Tail-Gap Telemetry Refinement — ACTIVE
+# Phase 4E — Retry Tail-Gap Telemetry Refinement — COMPLETE AT CURRENT EVIDENCE
 
 LCN-048 was opened from a second real user-confirmed Retry after LCN-047 deployment. It adds explicit `tail_idle_ms` and `max_observed_gap_ms` so the terminal quiet period after the final LConnect call is visible as a first-class observation. It does not add prediction or enforcement.
+
+Closure: primary commit `ec62ae32efa9f8a8f63f25ffd6d2ed774d27daaa` / CI #131 PASS, legacy-snapshot corrective commit `04cee51b61cf109c9353c1febb127348ea377c8d` / CI #132 PASS, installed/runtime live GREEN at 122 tools. Pre-LCN-048 Retry snapshots retain unknown new fields as null/none; future confirmed Retries persist tail-gap evidence directly.
 
 # Phase 5 — Desktop Control
 

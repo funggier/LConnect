@@ -2,7 +2,7 @@
 
 ## Status
 
-**ACTIVE — TARGETED GREEN / FULL VALIDATION PENDING**
+**COMPLETE — LIVE GREEN / RETRY TAIL-GAP TELEMETRY**
 
 ## Trigger
 
@@ -72,9 +72,31 @@ Behavior:
 - pre-deployment delta: 185/194 equal, 7 changed, 2 missing — exactly the 9 LCN-048 files
 - preserved local paths: config/dependencies/logs/runtime present
 
-## Pending
+## Corrective and deployment evidence
 
-- CI completion
-- installed sync
-- controlled restart
-- live direct validation
+- corrective commit: `04cee51b61cf109c9353c1febb127348ea377c8d`
+- corrective CI #132 / run `36331165329`: PASS
+- installed corrective targeted smoke: PASS
+- source↔installed before docs-only closure: `194/194` tracked equal
+- source/install manifest digest before docs-only closure: `300b8d785199b59c3313eac16f0b6eb40c3a009d023dfbea19fd4e663dd737ab`
+- controlled Stop/Start via independent BConnect: PASS
+- tunnel after restart: PID `23040`
+- direct LConnect runtime after restart: PID `36936`
+- runtime version/catalog: `1.2.0 / 122 tools`
+- runtime catalog digest: `4a8ef91a83938d4e835a7716c90c8784235708bdf31c5cb763b1d2911fecc525`
+- measurement model: `turn_risk_observation_v2`
+- mode: OBSERVE
+- enforcement: disabled
+- pre-LCN-048 Retry round 13 reload:
+  - `tail_idle_ms: null`
+  - `max_observed_gap_ms: null`
+  - `last_call_completed_at: null`
+  - therefore no false zero was invented for fields that did not exist when the snapshot was captured
+- derived round 13 terminal quiet gap remains documented as ~80,980 ms from the retained timeline, not rewritten into the historical snapshot
+- fresh live round 15 started at zero with `tail_idle_ms=0` and `max_observed_gap_ms=0`
+- subsequent live status showed the new dynamic tail fields operating independently from handler time
+- no synthetic Retry was created for closure
+
+## Closure
+
+LCN-048 is COMPLETE at the current evidence boundary. Future real Retry events captured after this deployment will persist terminal tail-gap evidence directly. No automatic timeout threshold, prediction, or handler-sum blocking has been reintroduced.
