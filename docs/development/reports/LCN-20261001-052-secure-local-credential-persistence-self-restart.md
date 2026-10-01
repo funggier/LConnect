@@ -153,9 +153,29 @@ Post-correction local evidence:
 - `npm audit --audit-level=moderate`: PASS / 0 vulnerabilities
 - `git diff --check`: PASS
 
+## CI #142 findings
+
+Corrective commit:
+
+`55e6c96a76d2df9b35c67ca9011ff8882609d478`
+
+Run `36879675672`:
+
+- attempt 1: FAIL at legacy `environment-smoke.mjs` because hosted runner PowerShell exceeded the existing 15 s local execution budget; this test had passed in CI #141, so the same exact commit was rerun without changing timeout policy
+- attempt 2: existing suite and DPAPI/ACL smoke progressed through credential encryption/decryption/restart-preflight successfully; final new assertion failed because the test used a line-ending-sensitive regex against `.gitignore` on CRLF checkout
+- repository `.gitignore` did contain `local-secrets/`; the failure was test portability only
+
+Corrective action:
+
+- change the Git-ignore assertion to read lines, trim line endings/whitespace, and check exact entry membership
+- no credential/runtime behavior changed
+
 ## Pending
 
-- corrective exact implementation commit
+- CRLF-safe Git-ignore assertion local secure smoke: PASS
+- full `npm test`: PASS (~52.0 s)
+- `PASS tools=122`
+- second corrective exact implementation commit
 - GitHub CI PASS
 - deploy tracked files to `T:\Sanbox\openclawspace\tunnel-mcp-ok`
 - create actual encrypted local credential using existing process environment without printing secret values

@@ -118,3 +118,11 @@ Corrective evidence:
 - repair: pure .NET ACL APIs; no PowerShell Security module dependency
 - post-repair targeted smoke: PASS
 - post-repair full `npm test`: PASS (~51.1s)
+
+Second corrective evidence:
+
+- CI #142 attempt 2 reached the new credential smoke and passed DPAPI/ACL/encryption/decryption/restart-preflight
+- failure was only a CRLF-sensitive `.gitignore` regex
+- assertion changed to trimmed line membership
+- CRLF-safe targeted smoke: PASS
+- full `npm test`: PASS (~52.0s)
