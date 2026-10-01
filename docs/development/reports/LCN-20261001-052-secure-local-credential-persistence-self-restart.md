@@ -184,3 +184,16 @@ Corrective action:
 - verify new PID/runtime identity and restart log
 - verify `local-secrets/` survives source deployment and refresh-preservation checks
 - close LCN-052
+
+## CI #143 finding
+
+Commit `569e7450ab79b0c5af45733af612c58afa817671` / run `36896241883` failed at the final `local-secrets/` Git-ignore assertion.
+
+The intended CRLF-safe assertion had been described in the report but was not actually present in the committed test file; the commit contained documentation changes only for that correction. This was verified by reading the exact committed `tests/secure-credential-smoke.ps1`.
+
+Corrective action:
+
+- patch the test itself to read `.gitignore` as lines, trim each line, and use exact membership comparison for `local-secrets/`
+- targeted secure credential smoke after the actual patch: PASS
+
+No production credential/restart code changed in this correction.

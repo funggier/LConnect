@@ -126,3 +126,10 @@ Second corrective evidence:
 - assertion changed to trimmed line membership
 - CRLF-safe targeted smoke: PASS
 - full `npm test`: PASS (~52.0s)
+
+Third corrective evidence:
+
+- CI #143 / run `36896241883`: FAIL at final Git-ignore assertion
+- exact committed test inspection showed the CRLF-safe assertion had not been included in the commit
+- actual test patch applied and targeted secure credential smoke: PASS
+- production credential/restart implementation unchanged by this correction

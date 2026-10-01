@@ -79,8 +79,8 @@ try {
     Assert-True ($RestartOutput -match 'RESTART_CREDENTIAL_NOT_CONFIGURED') 'restart refusal code missing'
     Write-Host 'restart preflight requires stored decryptable credential: PASS'
 
-    $GitIgnore = Get-Content -LiteralPath (Join-Path $SourceRoot '.gitignore') -Raw
-    Assert-True ($GitIgnore -match '(?m)^local-secrets/$') 'local-secrets is not Git-ignored'
+    $GitIgnoreLines = @(Get-Content -LiteralPath (Join-Path $SourceRoot '.gitignore') | ForEach-Object { $_.Trim() })
+    Assert-True ($GitIgnoreLines -contains 'local-secrets/') 'local-secrets is not Git-ignored'
     Assert-True (Test-Path -LiteralPath (Join-Path $SourceRoot 'Setup-LConnectCredential.cmd')) 'Setup wrapper missing'
     Assert-True (Test-Path -LiteralPath (Join-Path $SourceRoot 'Status-LConnectCredential.cmd')) 'Status wrapper missing'
     Assert-True (Test-Path -LiteralPath (Join-Path $SourceRoot 'Clear-LConnectCredential.cmd')) 'Clear wrapper missing'
