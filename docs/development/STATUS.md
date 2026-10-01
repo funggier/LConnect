@@ -4,19 +4,19 @@ Last updated: 2026-10-01
 
 ## Overall
 
-Current project state: **BASIC CORE STABLE / v1.2.1 PUBLISHED / v1.2.2 RELEASE ACTIVE**
+Current project state: **BASIC CORE STABLE / v1.2.2 PUBLISHED / SECURE RESTART LIVE GREEN**
 
-Current published release: **v1.2.1 — Turn-Risk & Retry Reliability**
+Current published release: **v1.2.2 — Secure Restart & Local Credentials**
 
-Release tag target: `5d3c7e5381b1efd188a8f175612f67ee94fe3c86`
+Release tag target: `fcf3d75c6314706e3258b6c5d1345b6f637ac78f`
 
-Release CI: `36850514776` / #138 — PASS
+Release CI: `36903887945` / #146 — PASS
 
 Current source version: **1.2.2**
 
 Current main/source MCP catalog: **122 tools**
 
-Current installed/running MCP catalog: **122 tools** (`1.2.1`)
+Current installed/running MCP catalog: **122 tools** (`1.2.2`)
 
 Current running catalog digest: `4a8ef91a83938d4e835a7716c90c8784235708bdf31c5cb763b1d2911fecc525`
 
@@ -53,9 +53,9 @@ Agent Operations Reliability LCN-025–030 ปิดครบ, Delivery/Turn Rel
 | Browser Automation | DEFERRED | LCN-021–023 | Explicitly paused |
 
 ### LCN-053 — v1.2.2 Secure Restart & Local Credentials Release
-**ACTIVE**
+**COMPLETE**
 
-Preparing a patch release that publishes the LCN-052 secure local credential + detached self-restart capability while retaining the existing 122-tool reliability baseline. Target: exact-commit CI GREEN, installed 1.2.2 / 122 tools, immutable tag/release assets with SHA-256 verification.
+Published and verified v1.2.2 / 122 tools from exact release commit `fcf3d75c6314706e3258b6c5d1345b6f637ac78f`. CI #146 passed, source↔installed parity reached 212/212 exact, DPAPI credential/self-restart remained GREEN after activation, and all 11 release assets passed downloaded-back SHA-256 verification.
 
 ## Completed baseline
 

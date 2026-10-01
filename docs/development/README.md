@@ -88,7 +88,7 @@ reports/LCN-YYYYMMDD-<topic>.md
 - LCN-046–050 Turn-Risk / Retry Reliability follow-up — COMPLETE AT CURRENT EVIDENCE
 - LCN-051: v1.2.1 Current Reliability Release — COMPLETE
 - LCN-052: Secure Local Credential Persistence & Self-Restart — COMPLETE
-- LCN-053: v1.2.2 Secure Restart & Local Credentials Release — ACTIVE
+- LCN-053: v1.2.2 Secure Restart & Local Credentials Release — COMPLETE
 - LCN-018–023 Desktop/Browser: DEFERRED
 
 อย่าเพิ่ม Execution Ergonomics task ใหม่เพียงเพื่อขยาย catalog; สร้างเมื่อมี repeated real workflow ที่ existing deterministic tools/`batch_inspect` ยังแก้ไม่ได้อย่างเหมาะสม

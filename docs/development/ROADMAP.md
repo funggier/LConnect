@@ -567,7 +567,7 @@ Design:
 
 Closure: CI #144 / run `36896931112` PASS at exact commit `20ccdae5deeb3c70b3347337e95768cad194955b`; installed tree 210/210 tracked parity; DPAPI credential decrypt/ACL/plaintext-exclusion PASS; detached live restart PASS; restarted runtime 1.2.1 / 122 tools.
 
-# Phase 4J — v1.2.2 Secure Restart & Local Credentials Release — ACTIVE
+# Phase 4J — v1.2.2 Secure Restart & Local Credentials Release — COMPLETE
 
 LCN-053 packages the completed LCN-052 secure credential/self-restart work into **v1.2.2**.
 
@@ -582,3 +582,5 @@ Release target:
 - detached non-interactive self-restart
 - `local-secrets/` preserved locally and excluded from Git/release archives
 - exact-commit CI, source/install parity, live activation, asset checksums and downloaded-back verification required before closure
+
+Closure: release commit `fcf3d75c6314706e3258b6c5d1345b6f637ac78f`; CI #146 / run `36903887945` PASS; installed/runtime **1.2.2 / 122 tools**; 212/212 tracked parity; DPAPI credential + detached self-restart live GREEN; 11 release assets published and downloaded-back hash verified.
