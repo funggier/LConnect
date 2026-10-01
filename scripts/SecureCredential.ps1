@@ -70,7 +70,7 @@ function Initialize-LConnectSecretDirectory {
     New-Item -ItemType Directory -Force -Path $Directory | Out-Null
 
     try {
-        Set-Acl -LiteralPath $Directory -AclObject (New-LConnectRestrictedDirectorySecurity) -ErrorAction Stop
+        [System.IO.Directory]::SetAccessControl($Directory, (New-LConnectRestrictedDirectorySecurity))
     }
     catch {
         throw "CREDENTIAL_ACL_FAILED: Could not restrict local-secrets ACL. $($_.Exception.Message)"
@@ -94,7 +94,7 @@ function Test-LConnectCredentialAcl {
         $Allowed = @($CurrentSid, 'S-1-5-18')
 
         $Directory = Split-Path -Parent $Path
-        $DirectoryAcl = Get-Acl -LiteralPath $Directory
+        $DirectoryAcl = [System.IO.Directory]::GetAccessControl($Directory)
         if (-not $DirectoryAcl.AreAccessRulesProtected) {
             return $false
         }
@@ -113,7 +113,7 @@ function Test-LConnectCredentialAcl {
             }
         }
 
-        $FileAcl = Get-Acl -LiteralPath $Path
+        $FileAcl = [System.IO.File]::GetAccessControl($Path)
         $FileRules = @($FileAcl.GetAccessRules($true, $true, [System.Security.Principal.SecurityIdentifier]))
         if ($FileRules.Count -eq 0) {
             return $false

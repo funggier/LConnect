@@ -116,9 +116,46 @@ Repository validation:
 - CI PowerShell syntax validation now parses every tracked `*.ps1` instead of a manually maintained list
 - documentation updated for first-start setup, DPAPI limitations, self-restart and troubleshooting
 
+## CI #141 corrective finding
+
+Initial implementation commit:
+
+`bb4880a8683cfdb6bdb65c5b9fdbd3a5dee1d8c3`
+
+GitHub Actions run:
+
+- CI #141
+- run `36878591081`
+- result: **FAIL**
+
+The failure was isolated to the new secure-credential smoke after every existing runtime smoke had passed.
+
+GitHub runner diagnostic:
+
+`Set-Acl` was discoverable through `Microsoft.PowerShell.Security`, but that module could not be loaded by the Windows PowerShell process launched from `npm test`.
+
+This was an ACL implementation portability problem, not a DPAPI failure.
+
+Corrective action:
+
+- removed runtime dependence on PowerShell `Set-Acl` / `Get-Acl`
+- use .NET `System.IO.Directory.SetAccessControl`, `Directory.GetAccessControl`, and `File.GetAccessControl` directly
+- ACL semantics remain current Windows SID + SYSTEM only, inheritance disabled on `local-secrets/`
+
+Post-correction local evidence:
+
+- direct .NET ACL set/read probe: PASS
+- secure credential smoke: PASS
+- PowerShell parse: PASS
+- `npm run check`: PASS
+- full `npm test`: PASS (~51.1 s)
+- `PASS tools=122`
+- `npm audit --audit-level=moderate`: PASS / 0 vulnerabilities
+- `git diff --check`: PASS
+
 ## Pending
 
-- exact implementation commit
+- corrective exact implementation commit
 - GitHub CI PASS
 - deploy tracked files to `T:\Sanbox\openclawspace\tunnel-mcp-ok`
 - create actual encrypted local credential using existing process environment without printing secret values

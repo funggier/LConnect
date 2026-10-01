@@ -109,3 +109,12 @@ Local implementation gate:
 - dependency audit: 0 vulnerabilities
 - `git diff --check`: PASS
 - exact-commit CI / installed live restart: pending
+
+Corrective evidence:
+
+- initial implementation commit `bb4880a8683cfdb6bdb65c5b9fdbd3a5dee1d8c3`
+- CI #141 / run `36878591081`: FAIL only at new secure-credential smoke
+- cause: GitHub runner Windows PowerShell could not load `Microsoft.PowerShell.Security` for `Set-Acl`
+- repair: pure .NET ACL APIs; no PowerShell Security module dependency
+- post-repair targeted smoke: PASS
+- post-repair full `npm test`: PASS (~51.1s)
