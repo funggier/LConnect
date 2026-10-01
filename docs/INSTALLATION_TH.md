@@ -696,7 +696,13 @@ https://chatgpt.com/#settings/Connectors
 3. กลับเข้า ChatGPT
 4. Refresh connector/plugin หากจำเป็น
 
-LConnect v1.2.0 baseline มี **120 tools**
+LConnect v1.2.1 baseline มี **122 tools**
+
+### ใช้จากสมาร์ทโฟน
+
+ถ้า ChatGPT native mobile app ไม่แสดง LConnect/MCP app ให้เปิด ChatGPT Web ผ่าน browser บนสมาร์ทโฟนด้วย account/workspace เดียวกันแทน เส้นทางนี้ผ่านการทดสอบกับ deployment ปัจจุบันแล้ว
+
+มือถือไม่จำเป็นต้องอยู่เครือข่ายเดียวกับ PC เพราะการเชื่อมต่อยังผ่าน OpenAI Tunnel แต่ PC ต้องเปิดอยู่และ LConnect/tunnel ต้อง online ถ้าเมนู Apps/Tools บน mobile web แสดงไม่ครบ ให้ลองเปิด Desktop site
 
 หลัง refresh ที่ถูกต้อง ChatGPT ควร discover catalog รุ่นใหม่
 
@@ -741,10 +747,10 @@ npm test
 
 `npm test` เปิด child MCP server จริงและทดสอบ integration fixtures
 
-สำหรับ LConnect v1.2.0 release baseline คาดว่าจะเห็น:
+สำหรับ LConnect v1.2.1 release baseline คาดว่าจะเห็น:
 
 ```text
-PASS tools=120
+PASS tools=122
 ```
 
 

@@ -1,10 +1,10 @@
 # STATUS — LConnect Development
 
-Last updated: 2026-09-28
+Last updated: 2026-10-01
 
 ## Overall
 
-Current project state: **BASIC CORE STABLE / LCN-050 POST-RETRY + GITHUB WAIT CONTAINMENT COMPLETE / v1.2.0 PUBLISHED**
+Current project state: **BASIC CORE STABLE / LCN-050 COMPLETE / LCN-051 v1.2.1 RELEASE PREPARATION ACTIVE / v1.2.0 PUBLISHED**
 
 Current published release: **v1.2.0 — Reliability & Verification**
 
@@ -12,9 +12,11 @@ Release tag target: `043a669a7f421db21586e4fb5cd3645ef0f44c60`
 
 Release CI: `36005012233` — PASS
 
+Current source version: **1.2.1**
+
 Current main/source MCP catalog: **122 tools**
 
-Current installed/running MCP catalog: **122 tools** (`1.2.0`)
+Current installed/running MCP catalog before v1.2.1 activation: **122 tools** (`1.2.0`)
 
 Current running catalog digest: `4a8ef91a83938d4e835a7716c90c8784235708bdf31c5cb763b1d2911fecc525`
 
@@ -415,6 +417,12 @@ LCN-034 completion evidence (historical):
 - dependency audit: 0 vulnerabilities
 - GitHub CI `35960766521`: PASS
 
+
+### LCN-051 — v1.2.1 Current Reliability Release
+**ACTIVE**
+
+Preparing a maintenance release for the 122-tool post-v1.2.0 mainline. Scope includes LCN-046–050 turn-risk/Retry reliability, compact GitHub run waiting, current documentation, smartphone browser usage guidance, and stream-error troubleshooting evidence.
+
 ## Next sequence
 
 ```text
@@ -463,6 +471,10 @@ LCN-030 GitHub Actions / Release Integration — COMPLETE
 LCN-040–044 Execution Ergonomics — COMPLETE AT CURRENT NEED
   ↓
 LCN-045 v1.2.0 Documentation & Release — COMPLETE
+  ↓
+LCN-046–050 Turn-Risk / Retry Reliability — COMPLETE AT CURRENT EVIDENCE
+  ↓
+LCN-051 v1.2.1 Current Reliability Release — ACTIVE
   ↓
 LCN-018 Clipboard — DEFERRED
   ↓

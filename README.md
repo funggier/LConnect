@@ -10,12 +10,22 @@
 
 ## สถานะปัจจุบัน
 
-- Source version: **1.2.0**
+- Source version: **1.2.1**
 - MCP catalog on current `main`: **122 tools**
-- Latest published release [`v1.2.0 — Reliability & Verification`](https://github.com/funggier/LConnect/releases/tag/v1.2.0): **120 tools**
+- Release: **v1.2.1 — Turn-Risk & Retry Reliability**
 - OpenAI tunnel-client minimum: **0.0.14**
 
-LConnect Core ผ่าน runtime acceptance บน Windows 10 แล้ว โดย current `main` แสดง 122 tools ครอบคลุม filesystem, shell, managed process/session, system/network/hardware, Git, GitHub Actions/Release, structured inspection, runtime/delivery evidence, deployment verification และ adaptive per-round latency budgeting
+LConnect Core ผ่าน runtime acceptance บน Windows 10 แล้ว โดย current `main` แสดง 122 tools ครอบคลุม filesystem, shell, managed process/session, system/network/hardware, Git, GitHub Actions/Release, structured inspection, runtime/delivery evidence, deployment verification และ turn-risk observation แบบไม่บล็อกการทำงาน
+
+## ไฮไลต์ v1.2.1
+
+- ใช้ `turn_risk_observation_v2` แบบ **OBSERVE only**
+- ไม่มี MaxLatency / safe-max enforcement หรือ automatic blocking
+- `ConfirmRetry-LConnect.cmd` เป็นคำสั่งเดียวสำหรับยืนยัน Retry ที่ผู้ใช้เห็น
+- หลัง ConfirmRetry แล้ว work tool ตัวแรกถัดไปจะเริ่ม observation round ใหม่ให้อัตโนมัติ
+- เก็บ `tail_idle_ms` และ `max_observed_gap_ms` เพื่อใช้เป็นหลักฐานเชิงเวลา
+- `github_run_wait` คืนเฉพาะข้อมูลสถานะแบบ compact; ใช้ `github_run_view` เมื่อต้องการ jobs/steps เต็ม
+- ยังคง 122 tools และชื่อ tools ปัจจุบันโดยไม่เพิ่ม breaking migration
 
 ## โครงสร้าง
 
@@ -50,6 +60,12 @@ ChatGPT
 
 **LConnect ไม่เก็บ Tunnel ID, tunnel profile หรือ Runtime API key ไว้ใน GitHub**
 ไฟล์ `mcp-conf.yaml` ถูก ignore โดย Git และผู้ใช้ต้องสร้าง/ดูแลเองในเครื่อง local
+
+## ใช้จากสมาร์ทโฟน
+
+ถ้า ChatGPT native mobile app ไม่แสดง LConnect/MCP app ให้เปิด **ChatGPT Web ผ่าน browser บนสมาร์ทโฟน** ด้วย account/workspace เดียวกันแทน เส้นทางนี้ผ่านการทดสอบกับ deployment ปัจจุบันแล้วและสามารถเรียก LConnect ที่กำลังรันบน PC ผ่าน OpenAI Tunnel ได้
+
+มือถือไม่จำเป็นต้องอยู่ LAN เดียวกับ PC แต่เครื่อง PC ต้องเปิดอยู่และ LConnect/tunnel ต้อง online
 
 ## เอกสารภาษาไทย
 
@@ -96,7 +112,7 @@ LConnect แยกงาน synchronous สั้นออกจากงาน 
 }
 ```
 
-ค่านี้เป็น **LConnect-side containment budget** ไม่ใช่ timeout ที่ OpenAI/ChatGPT รับประกันหรือเปิดเผย และสามารถ override ได้ด้วย environment variable `LCONNECT_MAX_SYNCHRONOUS_REQUEST_SECONDS`.
+ค่านี้เป็น **LConnect-side containment budget** ไม่ใช่ timeout ที่ OpenAI/ChatGPT รับประกันหรือเปิดเผย และสามารถ override ได้ด้วย environment variable `LCONNECT_MAX_SYNCHRONOUS_REQUEST_SECONDS`
 
 หลักการใช้งาน:
 
@@ -104,7 +120,7 @@ LConnect แยกงาน synchronous สั้นออกจากงาน 
 - `wait_session` ใช้ short bounded wait; timeout ของการรอไม่ terminate process
 - งานที่คาดว่าจะใช้เวลานานควรเริ่มด้วย `start_process` แล้วติดตามด้วย `wait_session`, `read_process_events` หรือ `read_process_output`
 - HTTP timeout ครอบทั้งการรอ response และการอ่าน body/download
-- ถ้า ChatGPT UI/connection timeout เอง LConnect ไม่สามารถป้องกันเหตุการณ์นั้นได้ทั้งหมด แต่ managed local process ที่เริ่มไว้แล้วจะไม่ถูกถือว่าต้องหยุดเพียงเพราะ short wait หมดเวลา
+- ถ้า ChatGPT UI/connection timeout เอง LConnect ไม่สามารถป้องกันเหตุการณ์นั้นได้ทั้งหมด และงาน local ที่เริ่มไว้แล้วอาจยังเดินต่อ
 
 ```text
 short synchronous work
@@ -116,6 +132,18 @@ long local work
   -> process continues independently
   -> short wait/read calls
 ```
+
+## Turn-Risk Observation
+
+ระบบปัจจุบันใช้ `turn_risk_observation_v2` เพื่อเก็บหลักฐานของรอบที่เกิด Retry/message-delivery failure โดยไม่เดา threshold และไม่บล็อก tool calls
+
+- `ResetRound-LConnect.cmd` — บังคับเริ่ม observation round ใหม่
+- `ConfirmRetry-LConnect.cmd` — ยืนยันว่า current round คือรอบที่ผู้ใช้เห็น Retry
+- `StatusTurnRisk-LConnect.cmd` — ดู telemetry ปัจจุบัน
+- หลัง ConfirmRetry แล้ว work tool ตัวแรกถัดไป auto-start round ใหม่
+- telemetry เป็นหลักฐาน correlation ไม่ใช่ข้อพิสูจน์ root cause ของ ChatGPT/platform timeout
+
+หาก UI แสดง `Error in input stream` อย่าถือว่า LConnect หยุดโดยอัตโนมัติ จากการทดสอบจริงพบว่า tunnel/LConnect อาจยังทำงานต่อหลัง UI แจ้ง error ได้ ควรตรวจ activity ก่อนกด Retry โดยเฉพาะงานที่มี side effects เพื่อหลีกเลี่ยงการทำซ้ำ
 
 ตรวจ source และ runtime smoke tests:
 
@@ -223,6 +251,10 @@ npm test
 - `runtime_catalog`
 - `delivery_snapshot`
 
+### Turn-Risk
+- `latency_round_start`
+- `latency_budget_status`
+
 ### Development
 - `detect_project`
 - `detect_build_system`
@@ -315,6 +347,7 @@ Repo นี้ตั้งใจ **ไม่เก็บการกำหนด
 - Windows PowerShell 5.1
 - OpenAI tunnel-client
 - ChatGPT Connector ผ่าน Tunnel
+- ChatGPT Web ผ่าน browser บนสมาร์ทโฟน
 
 โครงสร้างถูกออกแบบให้เพิ่ม module ใหม่ภายหลังได้โดยไม่ต้องเปลี่ยน tunnel-facing architecture
 

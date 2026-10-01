@@ -52,3 +52,4 @@
 | [LCN-048](tasks/LCN-048-retry-tail-gap-telemetry-refinement.md) | COMPLETE | Retry Tail-Gap Telemetry Refinement |
 | [LCN-049](tasks/LCN-049-remove-legacy-maxlatency-compatibility-surface.md) | COMPLETE | Remove Legacy MaxLatency Compatibility Surface |
 | [LCN-050](tasks/LCN-050-post-retry-auto-round-and-github-wait-payload-containment.md) | COMPLETE | Post-Retry Auto-Round and GitHub Wait Payload Containment |
+| [LCN-051](tasks/LCN-051-v1.2.1-current-reliability-release.md) | ACTIVE | v1.2.1 Current Reliability Release |

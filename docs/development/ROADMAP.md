@@ -529,3 +529,20 @@ This pattern should be reused by:
 - browser sessions
 
 These sessions exist to help the external AI work continuously for longer periods. They are not persistent workflows: LConnect does not plan the next step, keep a workflow graph, or autonomously continue a task after the caller disappears.
+
+# Phase 4H — v1.2.1 Current Reliability Release — ACTIVE
+
+LCN-051 publishes the post-v1.2.0 mainline as **v1.2.1 — Turn-Risk & Retry Reliability** with the current **122-tool** catalog.
+
+Release scope:
+
+- LCN-046–050 reliability work
+- observation-only `turn_risk_observation_v2`
+- Retry tail-gap evidence and post-Confirm automatic round start
+- compact `github_run_wait` status payloads
+- removal of obsolete MaxLatency operational surface
+- current-facing documentation refresh
+- smartphone ChatGPT Web usage path
+- `Error in input stream` troubleshooting note that distinguishes stream/delivery failure from local execution state
+
+The program archive must be built from one exact release commit, validated by exact-commit CI, deployed to the installed tree, activated as 1.2.1 / 122 tools, and published with documentation bundle + SHA-256 manifest.

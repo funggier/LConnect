@@ -84,7 +84,9 @@ reports/LCN-YYYYMMDD-<topic>.md
 - LCN-025–030 Agent Operations Reliability: COMPLETE
 - LCN-031–039 Delivery / Turn Reliability: COMPLETE AT CURRENT LOCAL EVIDENCE BOUNDARY
 - LCN-040–044 Execution Ergonomics: COMPLETE AT CURRENT NEED หลัง final live validation ของ LCN-044
-- LCN-045: v1.2.0 Documentation and Release
+- LCN-045: v1.2.0 Documentation and Release — COMPLETE
+- LCN-046–050 Turn-Risk / Retry Reliability follow-up — COMPLETE AT CURRENT EVIDENCE
+- LCN-051: v1.2.1 Current Reliability Release — ACTIVE
 - LCN-018–023 Desktop/Browser: DEFERRED
 
 อย่าเพิ่ม Execution Ergonomics task ใหม่เพียงเพื่อขยาย catalog; สร้างเมื่อมี repeated real workflow ที่ existing deterministic tools/`batch_inspect` ยังแก้ไม่ได้อย่างเหมาะสม

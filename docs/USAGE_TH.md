@@ -123,7 +123,7 @@ npm test
 5. เรียก `runtime_catalog` หรือ `deployment_verification_snapshot` ยืนยัน running version/catalog/root
 6. refresh ChatGPT connector/plugin ถ้า tool schema เปลี่ยน
 
-สำหรับ v1.2.0 baseline คาดว่า source/runtime catalog หลัง activation จะเป็น **120 tools**
+สำหรับ v1.2.1 baseline คาดว่า source/runtime catalog หลัง activation จะเป็น **122 tools**
 
 `deployment_verification_snapshot` เป็น evidence-only tool: มันไม่ copy/install/restart/release และไม่ตัดสินแทนผู้ใช้ว่า deployment พร้อมหรือไม่
 
@@ -165,3 +165,30 @@ npm test
 - `ResetRound-LConnect.cmd` — เริ่ม observation round ใหม่จากศูนย์
 - `ConfirmRetry-LConnect.cmd` — ยืนยันว่า current round คือรอบที่ผู้ใช้เห็น Retry
 - `StatusTurnRisk-LConnect.cmd` — ดู turn-risk telemetry ปัจจุบัน
+
+## ใช้ LConnect จากสมาร์ทโฟน
+
+ถ้า ChatGPT native mobile app ไม่แสดง LConnect/MCP app ให้เปิด ChatGPT Web ผ่าน browser บนสมาร์ทโฟนด้วย account/workspace เดียวกันแทน เส้นทางนี้ผ่านการทดสอบกับ deployment ปัจจุบันแล้ว
+
+```text
+Smartphone browser
+  -> ChatGPT Web
+  -> LConnect MCP app
+  -> OpenAI Tunnel
+  -> LConnect บน Windows PC
+```
+
+มือถือไม่จำเป็นต้องอยู่เครือข่ายเดียวกับ PC แต่ PC ต้องเปิดอยู่และ LConnect/tunnel ต้อง online
+
+## เมื่อ UI แจ้ง Error in input stream
+
+อย่าถือว่า local execution หยุดทันที จากการตรวจเหตุการณ์จริงพบว่า ChatGPT UI สามารถแสดง `Error in input stream` ขณะที่ OpenAI Tunnel และ LConnect ยัง forward/execute tool calls ต่อได้
+
+แนวทางที่ปลอดภัย:
+
+1. อย่ากด Retry ทันทีถ้างานมี side effects
+2. ตรวจว่า process/session หรือ LConnect activity ยังเดินต่อหรือไม่
+3. แยก stream/delivery failure ออกจาก local tool failure
+4. ใช้ Retry หลังยืนยันแล้วว่าการส่งซ้ำจะไม่ทำให้ action เดิมเกิดซ้ำ
+
+ข้อสังเกตนี้เป็น evidence จาก runtime จริง ไม่ใช่การยืนยัน timeout threshold ของ ChatGPT/OpenAI

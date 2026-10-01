@@ -1,15 +1,16 @@
 # ACTIVE — LConnect Development
 
-Last updated: 2026-09-28
+Last updated: 2026-10-01
 
 ## Current state
 
 - Repository: `funggier/LConnect`
 - Branch: `main`
 - Latest published release: **v1.2.0 — Reliability & Verification** (120 tools)
-- Source version: `1.2.0`
+- Release candidate in progress: **v1.2.1 — Turn-Risk & Retry Reliability** (122 tools)
+- Source version: `1.2.1`
 - Current source candidate catalog: **122 tools**
-- Installed/running daemon: **1.2.0 / 122 tools**
+- Installed/running daemon before v1.2.1 activation: **1.2.0 / 122 tools**
 - Running catalog digest: `4a8ef91a83938d4e835a7716c90c8784235708bdf31c5cb763b1d2911fecc525`
 - ChatGPT-visible catalog after reconnect: **122 tools**
 - LCN-046: COMPLETE — original round-boundary implementation; handler-sum enforcement superseded by LCN-047 evidence
@@ -17,11 +18,12 @@ Last updated: 2026-09-28
 - LCN-048: COMPLETE — Retry Tail-Gap Telemetry Refinement / live GREEN
 - LCN-049: COMPLETE — Legacy MaxLatency compatibility surface removed / live GREEN
 - LCN-050: COMPLETE — Post-Retry Auto-Round and GitHub Wait Payload Containment / live GREEN
+- LCN-051: ACTIVE — v1.2.1 Current Reliability Release
 - LCN-018–023: DEFERRED — Desktop Control / Browser Automation
 
 ## Active task
 
-No active development task.
+[LCN-051 — v1.2.1 Current Reliability Release](tasks/LCN-051-v1.2.1-current-reliability-release.md)
 
 Latest completed task: [LCN-050 — Post-Retry Auto-Round and GitHub Wait Payload Containment](tasks/LCN-050-post-retry-auto-round-and-github-wait-payload-containment.md)
 
@@ -33,7 +35,7 @@ Final report: [reports/LCN-20260927-048-retry-tail-gap-telemetry-refinement.md](
 
 Current reliability state:
 
-- runtime: **1.2.0 / 122 tools**
+- runtime before v1.2.1 activation: **1.2.0 / 122 tools**
 - runtime PID after controlled restart: `36936`
 - measurement model: `turn_risk_observation_v2`
 - mode: **OBSERVE**
@@ -49,4 +51,4 @@ Current reliability state:
 
 ## Next action
 
-Use LConnect normally. After any real Retry, press `ConfirmRetry-LConnect.cmd`; the next non-control work tool will automatically start a new observation round. Use `github_run_view` only when full jobs/steps are actually needed; `github_run_wait` remains compact.
+Complete LCN-051 release gate: validate v1.2.1 / 122 tools, obtain exact-commit CI PASS, deploy to the installed tree, activate and verify the runtime, then publish and verify the release assets.

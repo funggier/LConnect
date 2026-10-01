@@ -1,6 +1,6 @@
 # รายการ Tools ของ LConnect
 
-LConnect v1.2.0 บน current `main` expose **122 tools** ผ่าน MCP `main` channel เดียว (published v1.2.0 release ยังคง 120 tools)
+LConnect v1.2.1 บน current `main` expose **122 tools** ผ่าน MCP `main` channel เดียว และ v1.2.1 release ใช้ catalog เดียวกันที่ **122 tools**
 
 ## Filesystem
 

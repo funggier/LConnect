@@ -102,7 +102,7 @@ Node ESM modules ถูกโหลดตอน Core start
 - daemon เป็น catalog ใหม่ แต่ ChatGPT ยังเห็น tool เก่า → Refresh Plugin/Connector
 - source↔installed tracked parity ไม่ตรง → แก้ deployment ก่อน restart
 
-สำหรับ v1.2.0 baseline runtime ที่ activation สำเร็จควรรายงาน version `1.2.0` และ **120 tools**
+สำหรับ v1.2.1 baseline runtime ที่ activation สำเร็จควรรายงาน version `1.2.1` และ **122 tools**
 
 ดังนั้นเมื่ออัปเดต source:
 
@@ -201,3 +201,47 @@ process sessions อยู่ใน memory ของ LConnect Core
 - process บางตัวอาจยังอยู่ถ้าไม่ได้ terminate ก่อน restart
 
 ใช้ `list_processes` ตรวจ process จริงของ Windows เมื่อจำเป็น
+
+## ChatGPT บนสมาร์ทโฟนไม่เห็น LConnect
+
+ถ้า ChatGPT native mobile app ไม่แสดง LConnect/MCP app แต่ LConnect บน PC และ tunnel ทำงานปกติ ให้ลองใช้ **ChatGPT Web ผ่าน browser บนสมาร์ทโฟน** ด้วย account/workspace เดียวกัน
+
+เส้นทางนี้ผ่านการทดสอบกับ deployment ปัจจุบันแล้ว:
+
+```text
+Smartphone browser
+  -> ChatGPT Web
+  -> LConnect MCP app
+  -> OpenAI Tunnel
+  -> Windows PC
+```
+
+ถ้า browser ยังไม่แสดง Apps/Tools ให้ลองเปิด Desktop site แล้วตรวจใหม่
+
+## Error in input stream แต่ LConnect ยังทำงานต่อ
+
+อาการที่พบจริง:
+
+- ChatGPT UI แสดง `Error in input stream`
+- ไม่มี LConnect local timeout
+- tunnel process และ MCP process ยังอยู่
+- tunnel log ยังมีการ forward command ต่อหลัง UI แจ้ง error
+- tool/session ที่เริ่มไว้ก่อนหน้าอาจยังทำงานต่อ
+
+ดังนั้นอย่าเท่ากับ:
+
+```text
+Error in input stream == LConnect stopped
+```
+
+โดยอัตโนมัติ
+
+แนวทางตรวจ:
+
+1. ตรวจ `Status-LConnect.cmd`
+2. ตรวจ process/session ที่กำลังทำงาน
+3. ดู `logs\tunnel-*.out.log` และ `logs\tunnel-*.err.log`
+4. ตรวจ activity ล่าสุดก่อนกด Retry
+5. ถ้างานมี side effects ให้หลีกเลี่ยงการส่งซ้ำจนแน่ใจว่างานเดิมจบหรือหยุดแล้ว
+
+จาก observation ที่เก็บไว้ พบ quiet gap ระดับประมาณหนึ่งนาทีก่อน UI error มากกว่าหนึ่งครั้ง แต่ข้อมูลนี้เป็นเพียง correlation และ **ไม่ใช่การยืนยัน timeout threshold ของ OpenAI/ChatGPT**
