@@ -2,7 +2,7 @@
 
 ## Result
 
-**IN PROGRESS — LOCAL IMPLEMENTATION GREEN; EXACT-COMMIT CI / INSTALLED LIVE RESTART PENDING**
+**COMPLETE — EXACT-COMMIT CI GREEN / DEPLOYED / LIVE SELF-RESTART GREEN**
 
 ## Goal
 
@@ -170,21 +170,6 @@ Corrective action:
 - change the Git-ignore assertion to read lines, trim line endings/whitespace, and check exact entry membership
 - no credential/runtime behavior changed
 
-## Pending
-
-- CRLF-safe Git-ignore assertion local secure smoke: PASS
-- full `npm test`: PASS (~52.0 s)
-- `PASS tools=122`
-- second corrective exact implementation commit
-- GitHub CI PASS
-- deploy tracked files to `T:\Sanbox\openclawspace\tunnel-mcp-ok`
-- create actual encrypted local credential using existing process environment without printing secret values
-- verify `Status-LConnectCredential.ps1` reports decrypt/ACL PASS
-- live detached restart: caller returns first, old tunnel stops, new tunnel/runtime becomes ready
-- verify new PID/runtime identity and restart log
-- verify `local-secrets/` survives source deployment and refresh-preservation checks
-- close LCN-052
-
 ## CI #143 finding
 
 Commit `569e7450ab79b0c5af45733af612c58afa817671` / run `36896241883` failed at the final `local-secrets/` Git-ignore assertion.
@@ -197,3 +182,77 @@ Corrective action:
 - targeted secure credential smoke after the actual patch: PASS
 
 No production credential/restart code changed in this correction.
+
+## Final qualification and live deployment
+
+Final implementation commit before closure:
+
+`20ccdae5deeb3c70b3347337e95768cad194955b`
+
+GitHub Actions:
+
+- CI #144
+- run `36896931112`
+- exact head SHA: `20ccdae5deeb3c70b3347337e95768cad194955b`
+- PowerShell syntax: PASS
+- Node syntax check: PASS
+- Runtime smoke tests: PASS
+- Dependency audit: PASS
+- conclusion: **SUCCESS**
+
+Deployment:
+
+- source tracked files: **210**
+- copied to installed root: **210**
+- source↔installed tracked parity after deployment: **210/210 exact**
+- source/installed manifest digest: `892588f5a341407a59bbc178cf4731fde8bde9dc7f38a022bf6c9137f6b59fe6`
+- preserved local paths present: `mcp-conf.yaml`, `node_modules/`, `logs/`, `runtime/`, `tunnel-client.exe`, `local-secrets/`
+
+Actual local credential:
+
+- file: `local-secrets/credentials.json.enc`
+- format: `lconnect-secure-credential` v1
+- provider/scope: `windows-dpapi / CurrentUser`
+- decrypt test: PASS
+- Runtime API key configured: PASS
+- Organization ID configured: PASS
+- ACL hardened: PASS
+- plaintext Runtime API key presence in encrypted file: **false**
+- plaintext Organization ID presence in encrypted file: **false**
+
+Live detached restart:
+
+- pre-restart tunnel PID: `5748`
+- restart scheduling returned successfully before tunnel replacement
+- detached worker PID: `6356`
+- worker log: `logs/restart-20261002-001053.log`
+- worker stopped the prior LConnect instance
+- worker invoked `Start-LConnect.ps1 -NonInteractive`
+- worker readiness result: **PASS**
+- new tunnel PID: `11552`
+- new MCP runtime PID: `8864`
+- old tunnel PID after restart: not running
+- restart worker after completion: not running
+- new tunnel/runtime: running
+- direct ChatGPT/LConnect reconnect: PASS
+- runtime version/catalog: **1.2.1 / 122 tools**
+- runtime working directory: installed root
+- catalog digest unchanged: `4a8ef91a83938d4e835a7716c90c8784235708bdf31c5cb763b1d2911fecc525`
+
+Final deployment verification from the restarted LConnect runtime:
+
+- `ok=true`
+- tracked files equal: PASS
+- package version equal: PASS
+- dependency declarations equal: PASS
+- all direct dependencies present: PASS
+- preserved paths all present: PASS
+- runtime working directory matches installed root: PASS
+- runtime version matches installed package: PASS
+- expected tool count 122: PASS
+
+## Closure
+
+LCN-052 is **COMPLETE**.
+
+The published v1.2.1 tag/release remains immutable. LCN-052 is a post-release main/runtime improvement; no new release was created as part of this task.

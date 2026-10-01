@@ -53,4 +53,4 @@
 | [LCN-049](tasks/LCN-049-remove-legacy-maxlatency-compatibility-surface.md) | COMPLETE | Remove Legacy MaxLatency Compatibility Surface |
 | [LCN-050](tasks/LCN-050-post-retry-auto-round-and-github-wait-payload-containment.md) | COMPLETE | Post-Retry Auto-Round and GitHub Wait Payload Containment |
 | [LCN-051](tasks/LCN-051-v1.2.1-current-reliability-release.md) | COMPLETE | v1.2.1 Current Reliability Release |
-| [LCN-052](tasks/LCN-052-secure-local-credential-persistence-self-restart.md) | ACTIVE | Secure Local Credential Persistence & Self-Restart |
+| [LCN-052](tasks/LCN-052-secure-local-credential-persistence-self-restart.md) | COMPLETE | Secure Local Credential Persistence & Self-Restart |

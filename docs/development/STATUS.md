@@ -4,7 +4,7 @@ Last updated: 2026-10-01
 
 ## Overall
 
-Current project state: **BASIC CORE STABLE / v1.2.1 PUBLISHED / LCN-052 SECURE LOCAL CREDENTIAL + SELF-RESTART ACTIVE**
+Current project state: **BASIC CORE STABLE / v1.2.1 PUBLISHED / LCN-052 SECURE LOCAL CREDENTIAL + SELF-RESTART COMPLETE**
 
 Current published release: **v1.2.1 — Turn-Risk & Retry Reliability**
 
@@ -48,6 +48,7 @@ Agent Operations Reliability LCN-025–030 ปิดครบ, Delivery/Turn Rel
 | Agent Operations Reliability | COMPLETE | LCN-025–034 | LCN-025–030 and LCN-031–034 complete |
 | Delivery / Turn Reliability | COMPLETE AT CURRENT EVIDENCE | LCN-031–039, LCN-046–050 | LCN-050 live GREEN: first post-Confirm work tool auto-starts next round; `github_run_wait` returns compact status only, with live result 832 bytes vs ~63 KB pre-fix waits |
 | Execution Ergonomics | COMPLETE AT CURRENT NEED | LCN-040–044 | LCN-044 Deployment Verification Snapshot PASS on installed tree; 178/178 tracked parity, runtime 1.2.0 / 120 tools |
+| Local Credential / Self-Restart | COMPLETE | LCN-052 | DPAPI CurrentUser credential + ACL + detached restart live GREEN; current runtime 1.2.1 / 122 tools; 210/210 tracked parity |
 | Desktop Control | DEFERRED | LCN-018–020 | Explicitly paused |
 | Browser Automation | DEFERRED | LCN-021–023 | Explicitly paused |
 
@@ -483,7 +484,7 @@ LCN-046–050 Turn-Risk / Retry Reliability — COMPLETE AT CURRENT EVIDENCE
   ↓
 LCN-051 v1.2.1 Current Reliability Release — COMPLETE
   ↓
-LCN-052 Secure Local Credential Persistence & Self-Restart — ACTIVE
+LCN-052 Secure Local Credential Persistence & Self-Restart — COMPLETE
   ↓
 LCN-018 Clipboard — DEFERRED
   ↓

@@ -1,6 +1,6 @@
 # LCN-052 — Secure Local Credential Persistence & Self-Restart
 
-Status: **ACTIVE**
+Status: **COMPLETE**
 
 ## Goal
 
@@ -108,7 +108,11 @@ Local implementation gate:
 - catalog: 122 tools
 - dependency audit: 0 vulnerabilities
 - `git diff --check`: PASS
-- exact-commit CI / installed live restart: pending
+- exact-commit CI #144 / run `36896931112`: PASS
+- installed tracked parity: 210/210 exact
+- actual DPAPI credential decrypt/ACL/plaintext-exclusion: PASS
+- live detached restart: PASS
+- post-restart direct LConnect runtime: 1.2.1 / 122 tools, PID 8864
 
 Corrective evidence:
 
@@ -133,3 +137,22 @@ Third corrective evidence:
 - exact committed test inspection showed the CRLF-safe assertion had not been included in the commit
 - actual test patch applied and targeted secure credential smoke: PASS
 - production credential/restart implementation unchanged by this correction
+
+## Closure evidence
+
+- final pre-closure implementation commit: `20ccdae5deeb3c70b3347337e95768cad194955b`
+- CI #144 / run `36896931112`: SUCCESS
+- source↔installed tracked parity: 210/210 exact
+- encrypted local credential created from existing process environment without printing the Runtime API key
+- credential decrypt test: PASS
+- credential ACL hardened: PASS
+- plaintext secret checks: false
+- detached restart scheduled and returned before service replacement
+- old tunnel PID 5748: stopped
+- worker PID 6356: exited after successful completion
+- new tunnel PID 11552: running
+- new runtime PID 8864: running
+- readiness: PASS
+- direct ChatGPT/LConnect reconnect: PASS
+- catalog: 122 tools
+- no release/tag mutation

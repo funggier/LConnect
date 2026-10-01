@@ -21,15 +21,14 @@ Last updated: 2026-10-01
 - LCN-049: COMPLETE — Legacy MaxLatency compatibility surface removed / live GREEN
 - LCN-050: COMPLETE — Post-Retry Auto-Round and GitHub Wait Payload Containment / live GREEN
 - LCN-051: COMPLETE — v1.2.1 published, deployed and verified
+- LCN-052: COMPLETE — DPAPI local credential persistence + detached self-restart / live GREEN
 - LCN-018–023: DEFERRED — Desktop Control / Browser Automation
 
 ## Active task
 
-[LCN-052 — Secure Local Credential Persistence & Self-Restart](tasks/LCN-052-secure-local-credential-persistence-self-restart.md)
+No active development task.
 
-Latest completed task: [LCN-051 — v1.2.1 Current Reliability Release](tasks/LCN-051-v1.2.1-current-reliability-release.md)
-
-- LCN-052: ACTIVE — DPAPI local credential persistence + detached self-restart
+Latest completed task: [LCN-052 — Secure Local Credential Persistence & Self-Restart](tasks/LCN-052-secure-local-credential-persistence-self-restart.md)
 
 Latest report: [reports/LCN-20261001-052-secure-local-credential-persistence-self-restart.md](reports/LCN-20261001-052-secure-local-credential-persistence-self-restart.md)
 
@@ -38,8 +37,8 @@ Previous report: [reports/LCN-20260928-050-post-retry-auto-round-and-github-wait
 ## Current reliability state
 
 - runtime: **1.2.1 / 122 tools**
-- runtime PID at v1.2.1 activation evidence: `1404`
-- tunnel PID at v1.2.1 activation evidence: `5748`
+- current runtime PID after LCN-052 live restart: `8864`
+- current tunnel PID after LCN-052 live restart: `11552`
 - runtime root: `T:\Sanbox\openclawspace\tunnel-mcp-ok`
 - measurement model: `turn_risk_observation_v2`
 - mode: **OBSERVE**
@@ -48,11 +47,13 @@ Previous report: [reports/LCN-20260928-050-post-retry-auto-round-and-github-wait
 - `max_observed_gap_ms`: live
 - first work tool after ConfirmRetry auto-starts the next observation round
 - `github_run_wait`: compact top-level status; jobs/steps remain in `github_run_view`
-- source↔installed release-candidate parity before activation: **197/197 exact**
+- local encrypted credential: DPAPI / CurrentUser, decrypt + ACL PASS
+- detached self-restart: live GREEN; no Runtime API key on restart command line
+- source↔installed current tracked parity after LCN-052 deployment: **210/210 exact**
 - release candidate CI #138: PASS
 - source and installed dependency audit: **0 vulnerabilities**
 - release program/docs/checksum assets: uploaded and downloaded-back hash verified
 
 ## Next action
 
-Implement and validate LCN-052 without changing the published v1.2.1 release. Preserve `local-secrets/` as local-only state and keep the MCP catalog at 122 tools.
+Use LConnect normally. `Start-LConnect.cmd` can resolve the stored DPAPI credential and `Restart-LConnect.cmd` can perform a detached non-interactive restart. Use `Status-LConnectCredential.cmd` to verify credential health without exposing secret values.

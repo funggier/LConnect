@@ -549,7 +549,7 @@ The program archive must be built from one exact release commit, validated by ex
 
 Closure: release commit `5d3c7e5381b1efd188a8f175612f67ee94fe3c86`; CI #138 / run `36850514776` PASS; installed/runtime **1.2.1 / 122 tools**; 197/197 tracked parity at activation; dependency audit 0 vulnerabilities; program/documentation/checksum assets published and downloaded-back hash verified.
 
-# Phase 4I — Secure Local Credential Persistence & Self-Restart — ACTIVE
+# Phase 4I — Secure Local Credential Persistence & Self-Restart — COMPLETE
 
 LCN-052 adds persistent local credential handling without storing the Runtime API key as plaintext and without requiring an external credential manager.
 
@@ -564,3 +564,5 @@ Design:
 - detached restart worker uses only the local encrypted credential and never passes the Runtime API key on its command line
 - `local-secrets/` is Git-ignored and preserved through refresh/deployment
 - no restart loop and no new MCP catalog entry; expected catalog remains 122
+
+Closure: CI #144 / run `36896931112` PASS at exact commit `20ccdae5deeb3c70b3347337e95768cad194955b`; installed tree 210/210 tracked parity; DPAPI credential decrypt/ACL/plaintext-exclusion PASS; detached live restart PASS; restarted runtime 1.2.1 / 122 tools.
