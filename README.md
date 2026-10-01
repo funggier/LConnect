@@ -10,22 +10,25 @@
 
 ## สถานะปัจจุบัน
 
-- Source version: **1.2.1**
+- Source version: **1.2.2**
 - MCP catalog on current `main`: **122 tools**
-- Latest published release: **[v1.2.1 — Turn-Risk & Retry Reliability](https://github.com/funggier/LConnect/releases/tag/v1.2.1)**
+- Latest published release: **[v1.2.2 — Secure Restart & Local Credentials](https://github.com/funggier/LConnect/releases/tag/v1.2.2)**
 - OpenAI tunnel-client minimum: **0.0.14**
 
 LConnect Core ผ่าน runtime acceptance บน Windows 10 แล้ว โดย current `main` แสดง 122 tools ครอบคลุม filesystem, shell, managed process/session, system/network/hardware, Git, GitHub Actions/Release, structured inspection, runtime/delivery evidence, deployment verification และ turn-risk observation แบบไม่บล็อกการทำงาน
 
-## ไฮไลต์ v1.2.1
+## ไฮไลต์ v1.2.2
 
-- ใช้ `turn_risk_observation_v2` แบบ **OBSERVE only**
-- ไม่มี MaxLatency / safe-max enforcement หรือ automatic blocking
-- `ConfirmRetry-LConnect.cmd` เป็นคำสั่งเดียวสำหรับยืนยัน Retry ที่ผู้ใช้เห็น
-- หลัง ConfirmRetry แล้ว work tool ตัวแรกถัดไปจะเริ่ม observation round ใหม่ให้อัตโนมัติ
-- เก็บ `tail_idle_ms` และ `max_observed_gap_ms` เพื่อใช้เป็นหลักฐานเชิงเวลา
-- `github_run_wait` คืนเฉพาะข้อมูลสถานะแบบ compact; ใช้ `github_run_view` เมื่อต้องการ jobs/steps เต็ม
-- ยังคง 122 tools และชื่อ tools ปัจจุบันโดยไม่เพิ่ม breaking migration
+- เก็บ Runtime API key + Organization ID แบบเข้ารหัสใน `local-secrets\credentials.json.enc`
+- ใช้ **Windows DPAPI / CurrentUser** และจำกัด ACL ให้ Windows user ปัจจุบันกับ SYSTEM
+- `Start-LConnect.cmd` ใช้ลำดับ parameter > environment > stored DPAPI > interactive prompt
+- first run สามารถบันทึก credential แบบเข้ารหัสได้โดยไม่เก็บ plaintext secret ใน Git
+- เพิ่ม `Setup-LConnectCredential.cmd`, `Status-LConnectCredential.cmd` และ `Clear-LConnectCredential.cmd`
+- `Restart-LConnect.cmd` ใช้ detached worker เพื่อคืนผลก่อนหยุด tunnel เดิม แล้ว start LConnect ใหม่แบบ non-interactive
+- Runtime API key ไม่ถูกส่งผ่าน restart command line
+- `local-secrets/` ถูก preserve ระหว่าง deploy/update/refresh และไม่รวมใน release ZIP
+- ความสามารถ reliability ของ v1.2.1 ยังคงอยู่: `turn_risk_observation_v2` แบบ OBSERVE-only, post-Retry auto-round และ compact `github_run_wait`
+- MCP catalog ยังคง **122 tools** โดยไม่มี breaking tool migration
 
 ## โครงสร้าง
 

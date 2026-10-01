@@ -123,7 +123,7 @@ npm test
 5. เรียก `runtime_catalog` หรือ `deployment_verification_snapshot` ยืนยัน running version/catalog/root
 6. refresh ChatGPT connector/plugin ถ้า tool schema เปลี่ยน
 
-สำหรับ v1.2.1 baseline คาดว่า source/runtime catalog หลัง activation จะเป็น **122 tools**
+สำหรับ v1.2.2 baseline คาดว่า source/runtime catalog หลัง activation จะเป็น **122 tools**
 
 `deployment_verification_snapshot` เป็น evidence-only tool: มันไม่ copy/install/restart/release และไม่ตัดสินแทนผู้ใช้ว่า deployment พร้อมหรือไม่
 

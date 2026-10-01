@@ -566,3 +566,19 @@ Design:
 - no restart loop and no new MCP catalog entry; expected catalog remains 122
 
 Closure: CI #144 / run `36896931112` PASS at exact commit `20ccdae5deeb3c70b3347337e95768cad194955b`; installed tree 210/210 tracked parity; DPAPI credential decrypt/ACL/plaintext-exclusion PASS; detached live restart PASS; restarted runtime 1.2.1 / 122 tools.
+
+# Phase 4J — v1.2.2 Secure Restart & Local Credentials Release — ACTIVE
+
+LCN-053 packages the completed LCN-052 secure credential/self-restart work into **v1.2.2**.
+
+Release target:
+
+- version/tag: `1.2.2` / `v1.2.2`
+- release name: **LConnect v1.2.2 — Secure Restart & Local Credentials**
+- catalog: **122 tools**
+- Windows DPAPI / CurrentUser encrypted local credential
+- restricted local secret ACL
+- first-run credential save + setup/status/clear commands
+- detached non-interactive self-restart
+- `local-secrets/` preserved locally and excluded from Git/release archives
+- exact-commit CI, source/install parity, live activation, asset checksums and downloaded-back verification required before closure

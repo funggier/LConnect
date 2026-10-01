@@ -4,7 +4,7 @@ Last updated: 2026-10-01
 
 ## Overall
 
-Current project state: **BASIC CORE STABLE / v1.2.1 PUBLISHED / LCN-052 SECURE LOCAL CREDENTIAL + SELF-RESTART COMPLETE**
+Current project state: **BASIC CORE STABLE / v1.2.1 PUBLISHED / v1.2.2 RELEASE ACTIVE**
 
 Current published release: **v1.2.1 — Turn-Risk & Retry Reliability**
 
@@ -12,7 +12,7 @@ Release tag target: `5d3c7e5381b1efd188a8f175612f67ee94fe3c86`
 
 Release CI: `36850514776` / #138 — PASS
 
-Current source version: **1.2.1**
+Current source version: **1.2.2**
 
 Current main/source MCP catalog: **122 tools**
 
@@ -51,6 +51,11 @@ Agent Operations Reliability LCN-025–030 ปิดครบ, Delivery/Turn Rel
 | Local Credential / Self-Restart | COMPLETE | LCN-052 | DPAPI CurrentUser credential + ACL + detached restart live GREEN; current runtime 1.2.1 / 122 tools; 210/210 tracked parity |
 | Desktop Control | DEFERRED | LCN-018–020 | Explicitly paused |
 | Browser Automation | DEFERRED | LCN-021–023 | Explicitly paused |
+
+### LCN-053 — v1.2.2 Secure Restart & Local Credentials Release
+**ACTIVE**
+
+Preparing a patch release that publishes the LCN-052 secure local credential + detached self-restart capability while retaining the existing 122-tool reliability baseline. Target: exact-commit CI GREEN, installed 1.2.2 / 122 tools, immutable tag/release assets with SHA-256 verification.
 
 ## Completed baseline
 
