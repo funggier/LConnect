@@ -4,19 +4,19 @@ Last updated: 2026-10-01
 
 ## Overall
 
-Current project state: **BASIC CORE STABLE / LCN-050 COMPLETE / LCN-051 v1.2.1 RELEASE PREPARATION ACTIVE / v1.2.0 PUBLISHED**
+Current project state: **BASIC CORE STABLE / LCN-051 v1.2.1 RELEASE COMPLETE / v1.2.1 PUBLISHED**
 
-Current published release: **v1.2.0 — Reliability & Verification**
+Current published release: **v1.2.1 — Turn-Risk & Retry Reliability**
 
-Release tag target: `043a669a7f421db21586e4fb5cd3645ef0f44c60`
+Release tag target: `5d3c7e5381b1efd188a8f175612f67ee94fe3c86`
 
-Release CI: `36005012233` — PASS
+Release CI: `36850514776` / #138 — PASS
 
 Current source version: **1.2.1**
 
 Current main/source MCP catalog: **122 tools**
 
-Current installed/running MCP catalog before v1.2.1 activation: **122 tools** (`1.2.0`)
+Current installed/running MCP catalog: **122 tools** (`1.2.1`)
 
 Current running catalog digest: `4a8ef91a83938d4e835a7716c90c8784235708bdf31c5cb763b1d2911fecc525`
 
@@ -419,9 +419,9 @@ LCN-034 completion evidence (historical):
 
 
 ### LCN-051 — v1.2.1 Current Reliability Release
-**ACTIVE**
+**COMPLETE**
 
-Preparing a maintenance release for the 122-tool post-v1.2.0 mainline. Scope includes LCN-046–050 turn-risk/Retry reliability, compact GitHub run waiting, current documentation, smartphone browser usage guidance, and stream-error troubleshooting evidence.
+Published and verified v1.2.1 / 122 tools from exact release commit `5d3c7e5381b1efd188a8f175612f67ee94fe3c86`. CI #138 passed, source↔installed parity reached 197/197 exact, the activated runtime reports 1.2.1 / 122 tools, dependency audit is 0 vulnerabilities, and all release program/documentation/checksum assets were verified after publication.
 
 ## Next sequence
 
@@ -474,7 +474,7 @@ LCN-045 v1.2.0 Documentation & Release — COMPLETE
   ↓
 LCN-046–050 Turn-Risk / Retry Reliability — COMPLETE AT CURRENT EVIDENCE
   ↓
-LCN-051 v1.2.1 Current Reliability Release — ACTIVE
+LCN-051 v1.2.1 Current Reliability Release — COMPLETE
   ↓
 LCN-018 Clipboard — DEFERRED
   ↓

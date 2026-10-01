@@ -530,7 +530,7 @@ This pattern should be reused by:
 
 These sessions exist to help the external AI work continuously for longer periods. They are not persistent workflows: LConnect does not plan the next step, keep a workflow graph, or autonomously continue a task after the caller disappears.
 
-# Phase 4H — v1.2.1 Current Reliability Release — ACTIVE
+# Phase 4H — v1.2.1 Current Reliability Release — COMPLETE
 
 LCN-051 publishes the post-v1.2.0 mainline as **v1.2.1 — Turn-Risk & Retry Reliability** with the current **122-tool** catalog.
 
@@ -546,3 +546,5 @@ Release scope:
 - `Error in input stream` troubleshooting note that distinguishes stream/delivery failure from local execution state
 
 The program archive must be built from one exact release commit, validated by exact-commit CI, deployed to the installed tree, activated as 1.2.1 / 122 tools, and published with documentation bundle + SHA-256 manifest.
+
+Closure: release commit `5d3c7e5381b1efd188a8f175612f67ee94fe3c86`; CI #138 / run `36850514776` PASS; installed/runtime **1.2.1 / 122 tools**; 197/197 tracked parity at activation; dependency audit 0 vulnerabilities; program/documentation/checksum assets published and downloaded-back hash verified.

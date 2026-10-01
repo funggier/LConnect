@@ -12,7 +12,7 @@
 
 - Source version: **1.2.1**
 - MCP catalog on current `main`: **122 tools**
-- Release: **v1.2.1 — Turn-Risk & Retry Reliability**
+- Latest published release: **[v1.2.1 — Turn-Risk & Retry Reliability](https://github.com/funggier/LConnect/releases/tag/v1.2.1)**
 - OpenAI tunnel-client minimum: **0.0.14**
 
 LConnect Core ผ่าน runtime acceptance บน Windows 10 แล้ว โดย current `main` แสดง 122 tools ครอบคลุม filesystem, shell, managed process/session, system/network/hardware, Git, GitHub Actions/Release, structured inspection, runtime/delivery evidence, deployment verification และ turn-risk observation แบบไม่บล็อกการทำงาน
