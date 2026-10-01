@@ -2,7 +2,9 @@
 param(
     [string]$ApiKey,
     [string]$OrganizationId,
-    [switch]$DisableExecution
+    [switch]$DisableExecution,
+    [switch]$NonInteractive,
+    [switch]$NoCredentialSave
 )
 
 $ErrorActionPreference = 'Stop'
@@ -13,9 +15,12 @@ $Runtime = Join-Path $Root 'runtime'
 $LogDir = Join-Path $Root 'logs'
 $State = Join-Path $Runtime 'launcher.pid'
 $Maintenance = Join-Path $Root 'scripts\TunnelClientMaintenance.ps1'
+$CredentialHelper = Join-Path $Root 'scripts\SecureCredential.ps1'
 
 if (-not (Test-Path -LiteralPath $Maintenance)) { throw "Missing maintenance script: $Maintenance" }
+if (-not (Test-Path -LiteralPath $CredentialHelper)) { throw "Missing secure credential helper: $CredentialHelper" }
 . $Maintenance
+. $CredentialHelper
 
 if (-not (Test-Path -LiteralPath $Client)) { throw "Missing tunnel client: $Client. Run Install-LConnect.cmd first." }
 if (-not (Test-Path -LiteralPath $Profile)) {
@@ -42,24 +47,25 @@ if (Test-Path -LiteralPath $State) {
     Remove-Item -LiteralPath $State -Force
 }
 
-if ([string]::IsNullOrWhiteSpace($ApiKey)) {
-    $Secure = Read-Host 'OpenAI Runtime API key (input is hidden)' -AsSecureString
-    $Bstr = [Runtime.InteropServices.Marshal]::SecureStringToBSTR($Secure)
-    try { $ApiKey = [Runtime.InteropServices.Marshal]::PtrToStringBSTR($Bstr) }
-    finally { [Runtime.InteropServices.Marshal]::ZeroFreeBSTR($Bstr) }
-}
-if ([string]::IsNullOrWhiteSpace($ApiKey)) { throw 'A Runtime API key is required.' }
-
-if ([string]::IsNullOrWhiteSpace($OrganizationId)) {
-    $OrganizationId = Read-Host 'OpenAI Organization ID (org_...)'
-}
-if ([string]::IsNullOrWhiteSpace($OrganizationId)) { throw 'An OpenAI Organization ID is required.' }
-
-$env:CONTROL_PLANE_API_KEY = $ApiKey
-$env:CONTROL_PLANE_ORGANIZATION_ID = $OrganizationId
-$env:MCP_ENABLE_POWERSHELL = if ($DisableExecution) { 'false' } else { 'true' }
+$PreviousApiKeyEnvironment = [Environment]::GetEnvironmentVariable('CONTROL_PLANE_API_KEY', 'Process')
+$PreviousOrganizationEnvironment = [Environment]::GetEnvironmentVariable('CONTROL_PLANE_ORGANIZATION_ID', 'Process')
+$PreviousExecutionEnvironment = [Environment]::GetEnvironmentVariable('MCP_ENABLE_POWERSHELL', 'Process')
+$ResolvedCredential = $null
 
 try {
+    $ResolvedCredential = Resolve-LConnectCredential -Root $Root -ApiKey $ApiKey -OrganizationId $OrganizationId -NonInteractive:$NonInteractive -NoCredentialSave:$NoCredentialSave
+    $ApiKey = $ResolvedCredential.RuntimeApiKey
+    $OrganizationId = $ResolvedCredential.OrganizationId
+
+    Write-Host "Credential source: Runtime API key=$($ResolvedCredential.ApiKeySource); Organization ID=$($ResolvedCredential.OrganizationIdSource)"
+    if ($ResolvedCredential.StoredDuringResolution) {
+        Write-Host 'Encrypted credential saved to local-secrets\credentials.json.enc for future non-interactive start/restart.'
+    }
+
+    $env:CONTROL_PLANE_API_KEY = $ApiKey
+    $env:CONTROL_PLANE_ORGANIZATION_ID = $OrganizationId
+    $env:MCP_ENABLE_POWERSHELL = if ($DisableExecution) { 'false' } else { 'true' }
+
     Push-Location -LiteralPath $Root
     try {
         & $Client doctor --profile-file $Profile --control-plane.organization-id $OrganizationId --pid.file (Join-Path $Runtime 'tunnel-client.pid') --explain 2>&1 | Tee-Object -FilePath (Join-Path $LogDir 'doctor-latest.log')
@@ -79,10 +85,10 @@ try {
     Set-Content -LiteralPath $State -Value $Process.Id -NoNewline
 }
 finally {
-    Remove-Item Env:CONTROL_PLANE_API_KEY -ErrorAction SilentlyContinue
-    Remove-Item Env:CONTROL_PLANE_ORGANIZATION_ID -ErrorAction SilentlyContinue
-    Remove-Item Env:MCP_ENABLE_POWERSHELL -ErrorAction SilentlyContinue
-    Remove-Variable ApiKey -ErrorAction SilentlyContinue
+    if ($null -eq $PreviousApiKeyEnvironment) { Remove-Item Env:CONTROL_PLANE_API_KEY -ErrorAction SilentlyContinue } else { $env:CONTROL_PLANE_API_KEY = $PreviousApiKeyEnvironment }
+    if ($null -eq $PreviousOrganizationEnvironment) { Remove-Item Env:CONTROL_PLANE_ORGANIZATION_ID -ErrorAction SilentlyContinue } else { $env:CONTROL_PLANE_ORGANIZATION_ID = $PreviousOrganizationEnvironment }
+    if ($null -eq $PreviousExecutionEnvironment) { Remove-Item Env:MCP_ENABLE_POWERSHELL -ErrorAction SilentlyContinue } else { $env:MCP_ENABLE_POWERSHELL = $PreviousExecutionEnvironment }
+    Remove-Variable ApiKey, OrganizationId, ResolvedCredential -ErrorAction SilentlyContinue
 }
 
 Start-Sleep -Seconds 2
@@ -91,12 +97,6 @@ if (-not (Get-Process -Id $Process.Id -ErrorAction SilentlyContinue)) {
     throw 'LConnect exited during startup. Check the newest logs\tunnel-*.err.log file.'
 }
 
-$Mode = if ($DisableExecution) {
-    'filesystem + system information (execution disabled)'
-}
-else {
-    'FULL CONTROL: filesystem + shell + process + system'
-}
-
+$Mode = if ($DisableExecution) { 'filesystem + system information (execution disabled)' } else { 'FULL CONTROL: filesystem + shell + process + system' }
 Write-Host "LConnect started (PID $($Process.Id), $Mode)."
 Write-Host 'Run Status-LConnect.cmd to check readiness.'

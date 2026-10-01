@@ -90,6 +90,10 @@ Update-TunnelClient.cmd
 Start-LConnect.cmd
 Status-LConnect.cmd
 Stop-LConnect.cmd
+Restart-LConnect.cmd
+Setup-LConnectCredential.cmd
+Status-LConnectCredential.cmd
+Clear-LConnectCredential.cmd
 Refresh-LConnect.cmd
 ResetRound-LConnect.cmd
 ConfirmRetry-LConnect.cmd
@@ -97,6 +101,39 @@ StatusTurnRisk-LConnect.cmd
 ```
 
 LConnect ต้องใช้ OpenAI tunnel-client `0.0.14` หรือใหม่กว่า เนื่องจากรุ่นเก่ามีปัญหา recovery ของ stdio หลัง response timeout/deadline ซึ่งอาจทำให้ process ยังขึ้นว่า ready แต่ MCP ใช้งานต่อไม่ได้
+
+## Secure local credential + self-restart
+
+LConnect รองรับการเก็บ Runtime API key และ Organization ID ไว้ในโฟลเดอร์โปรแกรมแบบเข้ารหัส:
+
+```text
+local-secrets\
+└─ credentials.json.enc
+```
+
+ไฟล์นี้ใช้ **Windows DPAPI / CurrentUser** และโฟลเดอร์ถูกจำกัด ACL ให้ Windows user ปัจจุบันกับ SYSTEM เท่านั้น ค่าจริงไม่ถูกเก็บเป็น plaintext และ DPAPI key material ไม่ถูกเก็บไว้ข้างไฟล์
+
+ลำดับ credential ของ `Start-LConnect.ps1`:
+
+```text
+explicit parameter
+  > process environment
+  > local encrypted DPAPI file
+  > interactive prompt
+```
+
+ถ้าเป็นการเปิดครั้งแรกและไม่มี credential ที่ใช้ได้ `Start-LConnect.cmd` จะถาม Runtime API key / Organization ID และถามว่าจะบันทึกแบบเข้ารหัสไว้หรือไม่ โดยค่าเริ่มต้นคือบันทึก
+
+คำสั่งจัดการ:
+
+- `Setup-LConnectCredential.cmd` — สร้าง/เปลี่ยน encrypted credential
+- `Status-LConnectCredential.cmd` — ทดสอบว่าไฟล์อยู่และ decrypt ได้ โดยไม่แสดง secret
+- `Clear-LConnectCredential.cmd` — ลบ encrypted credential file
+- `Restart-LConnect.cmd` — schedule detached worker ให้ stop → start แบบ non-interactive
+
+`Restart-LConnect.cmd` ต้องมี stored credential ที่ decrypt ได้ เพื่อไม่ต้องส่ง Runtime API key ผ่าน command line ระหว่าง self-restart
+
+> DPAPI `CurrentUser` ผูกกับ Windows user/เครื่องเดิม การ copy `credentials.json.enc` ไปอีก user หรืออีกเครื่องโดยทั่วไปจะ decrypt ไม่ได้ ให้รัน `Setup-LConnectCredential.cmd` ใหม่
 
 ## Timeout containment
 
@@ -331,8 +368,9 @@ Repo นี้ตั้งใจ **ไม่เก็บการกำหนด
 
 - Tunnel ID
 - `mcp-conf.yaml` หรือ tunnel profile อื่น
-- Runtime API key
+- Runtime API key (เก็บ persistent ได้เฉพาะใน `local-secrets/credentials.json.enc` แบบ DPAPI)
 - Organization-specific settings
+- `local-secrets/`
 - logs/runtime state
 
 ใช้เอกสาร official ของ OpenAI tunnel-client สำหรับการสร้างและจัดการ tunnel:

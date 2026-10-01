@@ -100,3 +100,13 @@ LConnect ไม่ได้ตั้งเป้าเป็น security sandbox
 - Windows account แยก
 - VM
 - container/sandbox ที่เหมาะสม
+
+## Local encrypted credential ไม่ใช่ sandbox boundary
+
+`local-secrets\credentials.json.enc` ใช้ Windows DPAPI / `CurrentUser` และ restricted ACL เพื่อไม่เก็บ Runtime API key เป็น plaintext และป้องกันการ copy ไฟล์ไปถอดบน user/เครื่องอื่นได้ง่าย
+
+แต่ผู้ที่สามารถรันโค้ดภายใต้ **Windows user เดียวกัน** ซึ่งสร้าง credential มีสิทธิ์เรียก DPAPI เพื่อ decrypt ได้เช่นกัน นี่เป็นคุณสมบัติของ CurrentUser scope
+
+ดังนั้นระบบนี้ช่วยเรื่อง secret-at-rest และ automatic restart แต่ไม่ได้ป้องกัน attacker ที่ยึด Windows account/session เดียวกันได้แล้ว
+
+ถ้าต้องการ security boundary ที่แข็งกว่า ให้ใช้ Windows account แยก, VM หรือ isolation ของระบบปฏิบัติการ

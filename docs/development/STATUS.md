@@ -4,7 +4,7 @@ Last updated: 2026-10-01
 
 ## Overall
 
-Current project state: **BASIC CORE STABLE / LCN-051 v1.2.1 RELEASE COMPLETE / v1.2.1 PUBLISHED**
+Current project state: **BASIC CORE STABLE / v1.2.1 PUBLISHED / LCN-052 SECURE LOCAL CREDENTIAL + SELF-RESTART ACTIVE**
 
 Current published release: **v1.2.1 — Turn-Risk & Retry Reliability**
 
@@ -423,6 +423,13 @@ LCN-034 completion evidence (historical):
 
 Published and verified v1.2.1 / 122 tools from exact release commit `5d3c7e5381b1efd188a8f175612f67ee94fe3c86`. CI #138 passed, source↔installed parity reached 197/197 exact, the activated runtime reports 1.2.1 / 122 tools, dependency audit is 0 vulnerabilities, and all release program/documentation/checksum assets were verified after publication.
 
+### LCN-052 — Secure Local Credential Persistence & Self-Restart
+**ACTIVE**
+
+Implementing a local-only encrypted credential file under `local-secrets/` using Windows DPAPI / CurrentUser, deterministic credential resolution for non-interactive start, first-run setup/status/clear commands, and a detached restart worker that can stop and start LConnect without placing the Runtime API key on a command line.
+
+Catalog target remains **122 tools**; no new MCP tool is required.
+
 ## Next sequence
 
 ```text
@@ -475,6 +482,8 @@ LCN-045 v1.2.0 Documentation & Release — COMPLETE
 LCN-046–050 Turn-Risk / Retry Reliability — COMPLETE AT CURRENT EVIDENCE
   ↓
 LCN-051 v1.2.1 Current Reliability Release — COMPLETE
+  ↓
+LCN-052 Secure Local Credential Persistence & Self-Restart — ACTIVE
   ↓
 LCN-018 Clipboard — DEFERRED
   ↓

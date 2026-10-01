@@ -548,3 +548,19 @@ Release scope:
 The program archive must be built from one exact release commit, validated by exact-commit CI, deployed to the installed tree, activated as 1.2.1 / 122 tools, and published with documentation bundle + SHA-256 manifest.
 
 Closure: release commit `5d3c7e5381b1efd188a8f175612f67ee94fe3c86`; CI #138 / run `36850514776` PASS; installed/runtime **1.2.1 / 122 tools**; 197/197 tracked parity at activation; dependency audit 0 vulnerabilities; program/documentation/checksum assets published and downloaded-back hash verified.
+
+# Phase 4I — Secure Local Credential Persistence & Self-Restart — ACTIVE
+
+LCN-052 adds persistent local credential handling without storing the Runtime API key as plaintext and without requiring an external credential manager.
+
+Design:
+
+- `local-secrets/credentials.json.enc`
+- Windows DPAPI / `CurrentUser`
+- restricted ACL for current Windows user + SYSTEM
+- parameter > environment > stored DPAPI > interactive precedence
+- first interactive start can save the credential
+- non-interactive missing credential fails deterministically
+- detached restart worker uses only the local encrypted credential and never passes the Runtime API key on its command line
+- `local-secrets/` is Git-ignored and preserved through refresh/deployment
+- no restart loop and no new MCP catalog entry; expected catalog remains 122

@@ -245,3 +245,72 @@ Error in input stream == LConnect stopped
 5. ถ้างานมี side effects ให้หลีกเลี่ยงการส่งซ้ำจนแน่ใจว่างานเดิมจบหรือหยุดแล้ว
 
 จาก observation ที่เก็บไว้ พบ quiet gap ระดับประมาณหนึ่งนาทีก่อน UI error มากกว่าหนึ่งครั้ง แต่ข้อมูลนี้เป็นเพียง correlation และ **ไม่ใช่การยืนยัน timeout threshold ของ OpenAI/ChatGPT**
+
+## Start แบบ non-interactive ขึ้น CREDENTIAL_NOT_CONFIGURED
+
+สาเหตุคือไม่มี explicit parameter, environment credential หรือ stored DPAPI credential ที่ใช้ได้
+
+ให้ตั้งค่า:
+
+```text
+Setup-LConnectCredential.cmd
+```
+
+แล้วตรวจ:
+
+```text
+Status-LConnectCredential.cmd
+```
+
+สถานะปกติควรเป็น:
+
+```text
+Exists: True
+Protection: windows-dpapi / CurrentUser
+Decrypt test: PASS
+Runtime API key: configured
+Organization ID: configured
+ACL hardened: True
+```
+
+## CREDENTIAL_DECRYPT_FAILED หลังย้ายโฟลเดอร์/เปลี่ยน Windows user
+
+เป็น behavior ของ DPAPI `CurrentUser` ที่ตั้งใจไว้ encrypted file ผูกกับ Windows identity/เครื่องที่สร้าง
+
+ให้รัน:
+
+```text
+Setup-LConnectCredential.cmd
+```
+
+แล้วใส่ credential ใหม่ อย่า copy encryption key แยกมาไว้ข้างไฟล์ เพราะ LConnect ไม่ใช้ architecture แบบ key-file คู่กับ ciphertext
+
+## Restart-LConnect ขึ้น RESTART_CREDENTIAL_NOT_CONFIGURED
+
+Self-restart ต้องมี `local-secrets\credentials.json.enc` ที่ decrypt ได้ก่อน เพื่อให้ detached worker start runtime ใหม่โดยไม่ส่ง Runtime API key ผ่าน command line
+
+แก้ด้วย:
+
+```text
+Setup-LConnectCredential.cmd
+Status-LConnectCredential.cmd
+Restart-LConnect.cmd
+```
+
+## Restart ถูก schedule แล้วแต่ LConnect ไม่กลับมา
+
+ตรวจไฟล์ล่าสุด:
+
+```text
+logs\restart-*.log
+logs\doctor-latest.log
+logs\tunnel-*.err.log
+```
+
+แล้วตรวจ:
+
+```text
+Status-LConnect.cmd
+```
+
+worker จะไม่ทำ automatic restart loop ถ้า start/readiness ล้มเหลว จะบันทึก `restart_failed` แล้วจบ เพื่อหลีกเลี่ยงการวนซ้ำไม่สิ้นสุด

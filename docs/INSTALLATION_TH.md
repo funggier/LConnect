@@ -25,6 +25,7 @@ LConnect\
 ├─ node_modules\             <- installer สร้างให้
 ├─ runtime\                  <- installer สร้างให้
 ├─ logs\                     <- installer สร้างให้
+├─ local-secrets\            <- installer สร้างและจำกัด ACL; เก็บ DPAPI credential local-only
 ├─ Install-LConnect.cmd
 ├─ Start-LConnect.cmd
 ├─ Status-LConnect.cmd
@@ -37,6 +38,7 @@ LConnect\
 - Tunnel ID จริงของคุณ
 - `mcp-conf.yaml`
 - Runtime API key
+- `local-secrets/credentials.json.enc` ซึ่งเก็บ credential แบบ Windows DPAPI / CurrentUser
 - Organization-specific secret
 - `runtime/`
 - `logs/`
@@ -170,8 +172,9 @@ Installer จะ:
 3. สร้าง `node_modules/`
 4. สร้าง `runtime/`
 5. สร้าง `logs/`
-6. ดาวน์โหลด official `tunnel-client.exe`
-7. ตรวจ tunnel-client version
+6. สร้าง `local-secrets/` และจำกัด ACL ให้ Windows user ปัจจุบันกับ SYSTEM
+7. ดาวน์โหลด official `tunnel-client.exe`
+8. ตรวจ tunnel-client version
 
 LConnect ต้องใช้ tunnel-client **0.0.14 หรือใหม่กว่า**
 
@@ -197,8 +200,8 @@ Installer ตั้งใจ **ไม่**:
 | ค่า | รูปแบบ | ใช้ตรงไหน |
 |---|---|---|
 | Tunnel ID | `tunnel_...` | ใส่ใน `mcp-conf.yaml` |
-| Runtime API key | secret key | กรอกตอน Start |
-| Organization ID | `org_...` | กรอกตอน Start |
+| Runtime API key | secret key | กรอกตอน Start ครั้งแรก หรือบันทึกแบบ DPAPI ด้วย `Setup-LConnectCredential.cmd` |
+| Organization ID | `org_...` / `org-...` | กรอกตอน Start ครั้งแรก หรือบันทึกใน encrypted credential เดียวกัน |
 
 ## 4.1 Tunnel ID
 
@@ -240,7 +243,39 @@ LConnect ใช้ reference นี้แทน:
 api_key: "env:CONTROL_PLANE_API_KEY"
 ```
 
-`Start-LConnect.ps1` จะนำ key ที่คุณกรอกไปใส่ environment variable ชั่วคราวให้เอง
+`Start-LConnect.ps1` จะนำ key ที่เลือกจาก parameter / environment / encrypted local file / interactive prompt ไปใส่ environment variable ชั่วคราวให้ tunnel-client เอง
+
+### 4.2.1 บันทึก credential แบบเข้ารหัสสำหรับ Start/Restart อัตโนมัติ
+
+ถ้าต้องการไม่กรอก Runtime API key และ Organization ID ใหม่ทุกครั้ง ให้รัน:
+
+```text
+Setup-LConnectCredential.cmd
+```
+
+LConnect จะสร้าง:
+
+```text
+local-secrets\credentials.json.enc
+```
+
+payload ทั้ง Runtime API key และ Organization ID ถูกเข้ารหัสด้วย **Windows DPAPI / CurrentUser** และไฟล์/โฟลเดอร์ถูกจำกัด ACL ให้ user ปัจจุบันกับ SYSTEM เท่านั้น
+
+`Start-LConnect.cmd` ครั้งแรกที่ยังไม่มี credential จะถามข้อมูลที่ขาด และถามว่าจะบันทึกแบบเข้ารหัสไว้หรือไม่ ค่าเริ่มต้น `[Y/n]` คือบันทึก
+
+ตรวจสถานะโดยไม่เปิดเผยค่าจริง:
+
+```text
+Status-LConnectCredential.cmd
+```
+
+ล้าง credential:
+
+```text
+Clear-LConnectCredential.cmd
+```
+
+DPAPI `CurrentUser` ผูกกับ Windows user และเครื่องเดิม หากย้ายโฟลเดอร์ไปเครื่องอื่นหรือใช้ Windows account อื่น ให้ตั้ง credential ใหม่ด้วย `Setup-LConnectCredential.cmd`
 
 ## 4.3 Organization ID
 
@@ -766,16 +801,33 @@ PASS tools=122
 Stop-LConnect.cmd
 ```
 
-เริ่มใหม่:
+เริ่มใหม่แบบปกติ:
 
 ```text
 Start-LConnect.cmd
 ```
 
-ตรวจ:
+ถ้ามี encrypted credential ที่ decrypt ได้ สามารถใช้ self-restart แบบ detached:
+
+```text
+Restart-LConnect.cmd
+```
+
+`Restart-LConnect.cmd` จะ schedule worker ภายนอก process ปัจจุบัน จากนั้น worker จะรอช่วงสั้น ๆ ให้คำสั่งเดิมตอบกลับก่อน แล้วจึง stop tunnel เดิม → start ใหม่ด้วย `Start-LConnect.ps1 -NonInteractive` → รอ readiness
+
+หากยังไม่มี stored credential จะปฏิเสธด้วย `RESTART_CREDENTIAL_NOT_CONFIGURED` แทนการส่ง secret ผ่าน command line
+
+ตรวจหลัง restart:
 
 ```text
 Status-LConnect.cmd
+Status-LConnectCredential.cmd
+```
+
+ดูหลักฐาน restart:
+
+```text
+logs\restart-*.log
 ```
 
 ## Offline clean refresh
@@ -973,10 +1025,12 @@ Start-LConnect.cmd
 
 - [ ] Node.js 20+ ทำงาน
 - [ ] รัน `Install-LConnect.cmd` สำเร็จ
+- [ ] มี `local-secrets/` และเข้าใจว่า `credentials.json.enc` เป็น local-only DPAPI state
 - [ ] มี `tunnel-client.exe` 0.0.14+
 - [ ] มี Tunnel ID จริง
 - [ ] มี Runtime API key ที่มี Tunnels Read + Use
 - [ ] รู้ Organization ID
+- [ ] ถ้าต้องการ automatic restart ให้รัน `Setup-LConnectCredential.cmd` และตรวจ `Status-LConnectCredential.cmd` ผ่าน
 - [ ] สร้าง `mcp-conf.yaml` แล้ว
 - [ ] `tunnel_id` ใน profile ถูกต้อง
 - [ ] `api_key` เป็น `env:CONTROL_PLANE_API_KEY`
@@ -997,7 +1051,8 @@ Start-LConnect.cmd
 
 ห้าม commit หรือแชร์:
 
-- Runtime API key
+- Runtime API key ที่เป็น plaintext
+- `local-secrets/credentials.json.enc` (เก็บ local-only; ห้าม commit แม้ ciphertext จะถูก DPAPI ป้องกัน)
 - Admin API key
 - private certificates/keys
 - `mcp-conf.yaml` ที่มี Tunnel ID จริง
@@ -1009,6 +1064,7 @@ Start-LConnect.cmd
 ```text
 runtime/
 logs/
+local-secrets/
 node_modules/
 tunnel-client.exe
 mcp-conf.yaml

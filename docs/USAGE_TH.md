@@ -192,3 +192,70 @@ Smartphone browser
 4. ใช้ Retry หลังยืนยันแล้วว่าการส่งซ้ำจะไม่ทำให้ action เดิมเกิดซ้ำ
 
 ข้อสังเกตนี้เป็น evidence จาก runtime จริง ไม่ใช่การยืนยัน timeout threshold ของ ChatGPT/OpenAI
+
+## Secure credential และ Self-Restart
+
+LConnect สามารถเก็บ Runtime API key + Organization ID ไว้ในโฟลเดอร์โปรแกรมแบบ encrypted local state:
+
+```text
+local-secrets\credentials.json.enc
+```
+
+รูปแบบปัจจุบัน:
+
+- Windows DPAPI
+- scope: `CurrentUser`
+- payload ทั้งสองค่าถูกเข้ารหัส
+- directory/file ACL จำกัดให้ Windows user ปัจจุบันกับ SYSTEM
+- `local-secrets/` ถูก ignore จาก Git และต้อง preserve ระหว่าง deploy/update/refresh
+
+ตั้งค่าครั้งแรกหรือเปลี่ยนค่า:
+
+```text
+Setup-LConnectCredential.cmd
+```
+
+ตรวจโดยไม่แสดง secret:
+
+```text
+Status-LConnectCredential.cmd
+```
+
+ล้าง:
+
+```text
+Clear-LConnectCredential.cmd
+```
+
+ลำดับที่ `Start-LConnect.ps1` ใช้หา credential:
+
+```text
+parameter
+  > process environment
+  > stored DPAPI credential
+  > interactive prompt
+```
+
+ถ้ารันแบบ non-interactive และยังหา required credential ไม่ได้ จะหยุดด้วย `CREDENTIAL_NOT_CONFIGURED` แทนการค้างรอ `Read-Host`
+
+เมื่อมี stored credential ที่ decrypt ได้ สามารถสั่ง:
+
+```text
+Restart-LConnect.cmd
+```
+
+ได้โดย worker ภายนอกจะทำ:
+
+```text
+schedule detached worker
+  -> return to caller
+  -> wait briefly
+  -> stop old tunnel
+  -> Start-LConnect.ps1 -NonInteractive
+  -> wait for /readyz
+  -> write logs\restart-*.log
+```
+
+ถ้า AI เป็นคนสั่งผ่าน LConnect ให้เรียก `Restart-LConnect.ps1` ผ่าน existing `powershell_run`; script จะคืนผลว่า restart ถูก schedule ก่อน connection เดิมถูกตัด จึงไม่ต้องเพิ่ม MCP tool ใหม่และ catalog ยังคง 122 tools
+
+ข้อจำกัด: DPAPI `CurrentUser` โดยทั่วไปใช้ไม่ได้เมื่อ copy encrypted file ไป Windows user/เครื่องอื่น ให้รัน `Setup-LConnectCredential.cmd` ใหม่บนปลายทาง

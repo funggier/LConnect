@@ -25,11 +25,13 @@ Last updated: 2026-10-01
 
 ## Active task
 
-No active development task.
+[LCN-052 — Secure Local Credential Persistence & Self-Restart](tasks/LCN-052-secure-local-credential-persistence-self-restart.md)
 
 Latest completed task: [LCN-051 — v1.2.1 Current Reliability Release](tasks/LCN-051-v1.2.1-current-reliability-release.md)
 
-Latest report: [reports/LCN-20261001-051-v1.2.1-current-reliability-release.md](reports/LCN-20261001-051-v1.2.1-current-reliability-release.md)
+- LCN-052: ACTIVE — DPAPI local credential persistence + detached self-restart
+
+Latest report: [reports/LCN-20261001-052-secure-local-credential-persistence-self-restart.md](reports/LCN-20261001-052-secure-local-credential-persistence-self-restart.md)
 
 Previous report: [reports/LCN-20260928-050-post-retry-auto-round-and-github-wait-payload-containment.md](reports/LCN-20260928-050-post-retry-auto-round-and-github-wait-payload-containment.md)
 
@@ -53,4 +55,4 @@ Previous report: [reports/LCN-20260928-050-post-retry-auto-round-and-github-wait
 
 ## Next action
 
-Use LConnect normally. After a real Retry, press `ConfirmRetry-LConnect.cmd`; the next non-control work tool will automatically start a fresh observation round. For `Error in input stream`, check whether local/tunnel work is still continuing before retrying side-effecting operations.
+Implement and validate LCN-052 without changing the published v1.2.1 release. Preserve `local-secrets/` as local-only state and keep the MCP catalog at 122 tools.

@@ -73,6 +73,7 @@ Write-Host ''
 $Preserved = @(
     'mcp-conf.yaml',
     'lconnect-config.json',
+    'local-secrets\ (DPAPI encrypted credential)',
     'tunnel-client.exe',
     'node_modules\',
     'source and documentation files'

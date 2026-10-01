@@ -8,3 +8,4 @@ mcp-conf*.yaml
 *.secret
 .env
 .env.*
+local-secrets/
