@@ -23,11 +23,14 @@ Last updated: 2026-10-02
 - LCN-051: COMPLETE — v1.2.1 published, deployed and verified
 - LCN-052: COMPLETE — DPAPI local credential persistence + detached self-restart / live GREEN
 - LCN-018: COMPLETE — Clipboard text control / exact-commit CI + deployed runtime GREEN
-- LCN-019–023: DEFERRED — Window / Keyboard-Mouse / Browser Automation
+- LCN-019: ACTIVE — Native Window Control implementation and qualification
+- LCN-020–023: DEFERRED — Keyboard-Mouse / Browser Automation
 
 ## Active task
 
-No active development task.
+[LCN-019 — Window Control](tasks/LCN-019-window-control.md) — **ACTIVE**
+
+Current gates: implementation → local tests → exact-commit CI → deploy/runtime evidence.
 
 Latest completed task: [LCN-018 — Clipboard](tasks/LCN-018-clipboard.md) — **COMPLETE**
 
@@ -61,4 +64,4 @@ Previous report: [reports/LCN-20261002-full-session-handoff-post-v1.2.2-tool-dev
 
 ## Next action
 
-Begin **LCN-019 Window Control** only after verifying live GitHub/runtime state. Keep the existing v1.2.2 tag/release immutable.
+Complete **LCN-019 Window Control** through local tests, exact-commit CI, deployment, and live runtime evidence before marking it COMPLETE. Keep the existing v1.2.2 tag/release immutable.

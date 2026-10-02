@@ -19,6 +19,7 @@ import { registerScheduledTaskTools } from "./modules/scheduled-tasks.mjs";
 import { registerTransientStateTools } from "./modules/transient-state.mjs";
 import { registerEnvironmentTools } from "./modules/environment.mjs";
 import { registerClipboardTools } from "./modules/clipboard.mjs";
+import { registerWindowControlTools } from "./modules/window-control.mjs";
 import {
   installToolTelemetry,
   registerToolTelemetryTool,
@@ -70,6 +71,7 @@ registerScheduledTaskTools(server, config);
 registerTransientStateTools(server);
 registerEnvironmentTools(server, config);
 registerClipboardTools(server, config);
+registerWindowControlTools(server, config);
 registerStructuredTextSearchTool(server, config);
 registerFileIntegrityTools(server, config);
 registerGitHubTools(server, config);
