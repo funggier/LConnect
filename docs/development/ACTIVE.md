@@ -1,6 +1,6 @@
 # ACTIVE — LConnect Development
 
-Last updated: 2026-10-01
+Last updated: 2026-10-02
 
 ## Current state
 
@@ -32,9 +32,9 @@ Latest completed task: [LCN-053 — v1.2.2 Secure Restart & Local Credentials Re
 
 - LCN-053: COMPLETE — v1.2.2 published, deployed and verified
 
-Latest report: [reports/LCN-20261002-053-v1.2.2-secure-restart-local-credentials-release.md](reports/LCN-20261002-053-v1.2.2-secure-restart-local-credentials-release.md)
+Latest report: [reports/LCN-20261002-full-session-handoff-post-v1.2.2-tool-development-resumption.md](reports/LCN-20261002-full-session-handoff-post-v1.2.2-tool-development-resumption.md)
 
-Previous report: [reports/LCN-20261001-052-secure-local-credential-persistence-self-restart.md](reports/LCN-20261001-052-secure-local-credential-persistence-self-restart.md)
+Previous report: [reports/LCN-20261002-053-v1.2.2-secure-restart-local-credentials-release.md](reports/LCN-20261002-053-v1.2.2-secure-restart-local-credentials-release.md)
 
 ## Current reliability state
 
@@ -58,4 +58,4 @@ Previous report: [reports/LCN-20261001-052-secure-local-credential-persistence-s
 
 ## Next action
 
-Use v1.2.2 normally. Secure local credential persistence and detached self-restart are now part of the published baseline. Desktop Control LCN-018–020 and Browser Automation LCN-021–023 remain deferred.
+Start the next session from the latest full handoff. Verify live GitHub/runtime state first, then resume the deferred tool-development sequence beginning with **LCN-018 Clipboard**. Change LCN-018 to `ACTIVE` only when implementation starts; keep v1.2.2 tag/release immutable.

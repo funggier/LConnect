@@ -1,6 +1,6 @@
 # STATUS — LConnect Development
 
-Last updated: 2026-10-01
+Last updated: 2026-10-02
 
 ## Overall
 
@@ -48,7 +48,7 @@ Agent Operations Reliability LCN-025–030 ปิดครบ, Delivery/Turn Rel
 | Agent Operations Reliability | COMPLETE | LCN-025–034 | LCN-025–030 and LCN-031–034 complete |
 | Delivery / Turn Reliability | COMPLETE AT CURRENT EVIDENCE | LCN-031–039, LCN-046–050 | LCN-050 live GREEN: first post-Confirm work tool auto-starts next round; `github_run_wait` returns compact status only, with live result 832 bytes vs ~63 KB pre-fix waits |
 | Execution Ergonomics | COMPLETE AT CURRENT NEED | LCN-040–044 | LCN-044 Deployment Verification Snapshot PASS on installed tree; 178/178 tracked parity, runtime 1.2.0 / 120 tools |
-| Local Credential / Self-Restart | COMPLETE | LCN-052 | DPAPI CurrentUser credential + ACL + detached restart live GREEN; current runtime 1.2.1 / 122 tools; 210/210 tracked parity |
+| Local Credential / Self-Restart | COMPLETE | LCN-052 | DPAPI CurrentUser credential + ACL + detached restart live GREEN; retained in current v1.2.2 runtime / 122 tools; current tracked parity 212/212 |
 | Desktop Control | DEFERRED | LCN-018–020 | Explicitly paused |
 | Browser Automation | DEFERRED | LCN-021–023 | Explicitly paused |
 

@@ -1,5 +1,7 @@
 # LConnect Session Handoff
 
+Last updated: **2026-10-02**
+
 Use this file when starting a new ChatGPT/agent session.
 
 ## Repository
@@ -8,81 +10,94 @@ Use this file when starting a new ChatGPT/agent session.
 https://github.com/funggier/LConnect
 ```
 
-Default branch:
+Default branch: `main`
+
+Source root:
 
 ```text
-main
+T:\Sanbox\openclawspace\LConnect-github
+```
+
+Installed/runtime root:
+
+```text
+T:\Sanbox\openclawspace\tunnel-mcp-ok
 ```
 
 ## Required first reads
 
-```text
-docs/development/ACTIVE.md
-docs/development/STATUS.md
-docs/development/ROADMAP.md
-docs/development/DECISIONS.md
-docs/development/TASK_INDEX.md
-```
+Read in this order:
 
-Then read the task referenced by `ACTIVE.md` and the latest file under:
-
-```text
-docs/development/reports/
-```
+1. [ACTIVE.md](ACTIVE.md)
+2. [STATUS.md](STATUS.md)
+3. [ROADMAP.md](ROADMAP.md)
+4. [DECISIONS.md](DECISIONS.md)
+5. [TASK_INDEX.md](TASK_INDEX.md)
+6. latest full handoff:
+   [reports/LCN-20261002-full-session-handoff-post-v1.2.2-tool-development-resumption.md](reports/LCN-20261002-full-session-handoff-post-v1.2.2-tool-development-resumption.md)
+7. the task being activated
 
 ## Working rule
 
-GitHub/current repository state is authoritative.
+**GitHub/current repository state and live runtime are authoritative.**
 
-Do not assume the SHA written in old task/report files is still current. Verify:
+Before continuing:
 
-```text
-git status --short --branch
-git rev-parse HEAD
-git fetch
-git status -sb
-```
+- verify current `main` / `origin/main`
+- verify worktree state
+- verify direct `runtime_catalog`
+- do not assume historical SHAs are current
+- do not reset the worktree simply to match an older handoff
+
+## Current published baseline
+
+- release: **v1.2.2 — Secure Restart & Local Credentials**
+- release/tag commit: `fcf3d75c6314706e3258b6c5d1345b6f637ac78f`
+- current post-release main at handoff: `a2fcb4ad1a5dc01cc747536fb89036b7bd5ae60d`
+- runtime: **1.2.2 / 122 tools**
+- secure DPAPI credential + detached self-restart: live GREEN
+
+The tag is immutable release evidence. Do not move or overwrite `v1.2.2`.
 
 ## Current direction
 
-The next expansion sequence begins with:
+Foundation/reliability work through LCN-053 is complete.
+
+Resume the deferred tool expansion in this order:
 
 ```text
-Environment
-Process Advanced
-Windows Services
-Port / Network
-Hardware
-Git
-Development
-HTTP
-Log Tail
-File Watcher
-Scheduled Tasks
-Managed Session Completion
-Incremental Process Output Cursor
-Structured Text Search
-File Integrity
-Exact Git Ref / Ancestry Safety
-GitHub Actions / Release Integration
-Clipboard
-Window Control
-Keyboard / Mouse
-Browser Common Layer
-Firefox
-Chrome
+LCN-018 Clipboard
+LCN-019 Window Control
+LCN-020 Keyboard / Mouse
+LCN-021 Browser Common Layer
+LCN-022 Firefox Adapter
+LCN-023 Chrome Adapter
 ```
 
-The immediate priority is the six-task Agent Operations Reliability phase LCN-025–030. Detailed plan: `docs/development/AGENT_OPERATIONS_RELIABILITY_PLAN.md`.
+Immediate next target: **LCN-018 Clipboard**.
 
-Firefox remains the primary browser target after that phase. Chrome is secondary. Edge is not required.
+When implementation actually begins, change LCN-018 from `DEFERRED` to `ACTIVE` and update coordination docs.
+
+## Browser decisions
+
+- Firefox is primary / first-class
+- Firefox baseline: WebDriver BiDi; geckodriver/Marionette where useful
+- Chrome is secondary through CDP
+- Edge is not required
+- common browser API sits above adapters
+- keyboard/mouse input is fallback, not browser DOM strategy
 
 ## Development expectations
 
 - modular Core
 - one main MCP channel
-- structured tools instead of raw-shell wrappers where practical
-- TDD/acceptance evidence
-- long-running operations should use session/job patterns
+- structured tools rather than ad-hoc raw-shell surfaces where practical
+- bounded output
+- explicit timeout/cancellation semantics
+- tests + exact-commit CI
+- long-running work uses session/job patterns
+- deploy with source/install parity evidence
+- runtime acceptance after production module changes
 - update task/status/history after meaningful work
-- do not commit tunnel configuration or secrets
+- preserve `mcp-conf.yaml`, `node_modules/`, `logs/`, `runtime/`, `tunnel-client.exe`, `local-secrets/`
+- never commit tunnel configuration or secrets
