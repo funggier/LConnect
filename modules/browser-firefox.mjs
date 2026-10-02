@@ -199,6 +199,69 @@ async function stopOwnedProcess(child, timeoutMs = 2000) {
   return { attempted: true, exited: child.exitCode != null, forced, pid, exit_code: child.exitCode };
 }
 
+function firefoxProcessesForProfileRoot(profileRoot) {
+  if (process.platform !== "win32" || !profileRoot) return [];
+  const script = [
+    "$ErrorActionPreference='Stop'",
+    "$target=$env:LCONNECT_FIREFOX_PROFILE_ROOT",
+    "$rows=@(Get-CimInstance Win32_Process -Filter \"Name='firefox.exe'\" | Where-Object {",
+    "  $null -ne $_.CommandLine -and $_.CommandLine.IndexOf($target,[StringComparison]::OrdinalIgnoreCase) -ge 0",
+    "} | Select-Object ProcessId,ParentProcessId,CommandLine)",
+    "$rows | ConvertTo-Json -Compress",
+  ].join("; ");
+  const result = spawnSync("powershell.exe",
+    ["-NoLogo", "-NoProfile", "-NonInteractive", "-ExecutionPolicy", "Bypass", "-Command", script],
+    {
+      encoding: "utf8",
+      windowsHide: true,
+      env: { ...process.env, LCONNECT_FIREFOX_PROFILE_ROOT: path.resolve(profileRoot) },
+      timeout: 5000,
+    });
+  if (result.status !== 0 || !String(result.stdout || "").trim()) return [];
+  try {
+    const parsed = JSON.parse(String(result.stdout).trim());
+    return (Array.isArray(parsed) ? parsed : [parsed]).map((row) => ({
+      pid: Number(row.ProcessId),
+      parent_pid: Number(row.ParentProcessId),
+      command_line: String(row.CommandLine || ""),
+    })).filter((row) => Number.isInteger(row.pid) && row.pid > 0);
+  } catch {
+    return [];
+  }
+}
+
+function cleanupFirefoxProfileProcesses(profileRoot) {
+  const before = firefoxProcessesForProfileRoot(profileRoot);
+  if (!before.length) {
+    return { attempted: false, matched_before: 0, root_pids: [], killed_root_pids: [], matched_after: 0, succeeded: true };
+  }
+  const matchedIds = new Set(before.map((row) => row.pid));
+  const rootPids = before
+    .filter((row) => !matchedIds.has(row.parent_pid))
+    .map((row) => row.pid);
+  const killedRootPids = [];
+  const errors = [];
+  for (const pid of rootPids) {
+    const result = spawnSync("taskkill.exe", ["/PID", String(pid), "/T", "/F"], {
+      windowsHide: true,
+      encoding: "utf8",
+      timeout: 5000,
+    });
+    if (result.status === 0) killedRootPids.push(pid);
+    else errors.push({ pid, status: result.status, message: String(result.stderr || result.stdout || "").trim() });
+  }
+  const after = firefoxProcessesForProfileRoot(profileRoot);
+  return {
+    attempted: true,
+    matched_before: before.length,
+    root_pids: rootPids,
+    killed_root_pids: killedRootPids,
+    matched_after: after.length,
+    succeeded: after.length === 0,
+    ...(errors.length ? { errors } : {}),
+  };
+}
+
 function cleanupRoot(root, enabled = true) {
   const evidence = { attempted: Boolean(root && enabled), succeeded: null, path: root ?? null, residue_exists: null };
   if (!root || !enabled) return { ...evidence, succeeded: false, residue_exists: root ? fs.existsSync(root) : false };
@@ -346,6 +409,7 @@ export class FirefoxAdapter {
       };
     } catch (error) {
       await stopOwnedProcess(child).catch(() => {});
+      cleanupFirefoxProfileProcesses(profileRoot);
       cleanupRoot(profileRoot, !externalProfileRoot);
       throw error?.code ? error : firefoxError("FIREFOX_START_FAILED", "Failed to start managed Firefox session.", error);
     }
@@ -413,6 +477,9 @@ export class FirefoxAdapter {
     const processCleanup = handle.managed
       ? await stopOwnedProcess(handle.driverProcess).catch((error) => ({ attempted: true, exited: false, forced: false, error: error.message }))
       : { attempted: false, exited: null, forced: false, pid: null };
+    const browserProcessCleanup = handle.managed
+      ? cleanupFirefoxProfileProcesses(handle.profileRoot)
+      : { attempted: false, matched_before: 0, root_pids: [], killed_root_pids: [], matched_after: 0, succeeded: true };
     const profileCleanup = handle.managed
       ? cleanupRoot(handle.profileRoot, handle.cleanupProfileRoot)
       : { attempted: false, succeeded: false, path: null, residue_exists: false };
@@ -424,6 +491,7 @@ export class FirefoxAdapter {
       remote_session_closed: !handle.managed ? deleted : null,
       driver_owned: Boolean(handle.managed),
       process_cleanup: processCleanup,
+      browser_process_cleanup: browserProcessCleanup,
       profile_cleanup: profileCleanup,
       ...(deleteError ? { delete_warning: deleteError.message } : {}),
     };

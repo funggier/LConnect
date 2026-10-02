@@ -90,8 +90,9 @@ try {
     try {
       const stopped = await layer.stop({ browser_session_id: sid });
       assert(stopped.result.webdriver_session_deleted === true, "managed Firefox session was not deleted");
+      assert(stopped.result.browser_process_cleanup?.succeeded === true && stopped.result.browser_process_cleanup?.matched_after === 0, "Firefox browser process cleanup evidence mismatch");
       assert(stopped.result.profile_cleanup?.succeeded === true && stopped.result.profile_cleanup?.residue_exists === false, "Firefox profile cleanup evidence mismatch");
-      console.log(`physical stop/cleanup: PASS deleted=${stopped.result.webdriver_session_deleted}`);
+      console.log(`physical stop/cleanup: PASS deleted=${stopped.result.webdriver_session_deleted} browser_residue=${stopped.result.browser_process_cleanup?.matched_after}`);
     } catch (error) {
       console.error("physical stop: FAIL", error);
       process.exitCode = 1;
