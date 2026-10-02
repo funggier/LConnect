@@ -14,13 +14,13 @@ Release CI: `36903887945` / #146 — PASS
 
 Current source version: **1.2.2**
 
-Current main/source MCP catalog: **139 tools**
+Current main/source MCP catalog: **148 tools**
 
-Current installed/running MCP catalog: **139 tools** (`1.2.2`)
+Current installed/running MCP catalog: **148 tools** (`1.2.2`)
 
-Current running catalog digest: `e22b20d161942ff699048c5ede0c56baabf5e27b128bb0edaf3bab61b0819802`
+Current running catalog digest: `22529451eafb21024aa132a0dad5fcbe96651c542234695a0f0db565e078ab7d`
 
-Current runtime catalog after LCN-020 restart: **139 tools**. An existing ChatGPT conversation may require connector/schema reconnect before newly added tool schemas are directly callable.
+Current runtime catalog after LCN-021 restart: **148 tools**. An existing ChatGPT conversation may require connector/schema reconnect before newly added tool schemas are directly callable.
 
 LConnect มี Core ที่ใช้งานจริงแล้วและผ่าน runtime acceptance บน Windows:
 
@@ -35,7 +35,7 @@ LConnect มี Core ที่ใช้งานจริงแล้วแล�
 - Thai documentation
 - GitHub releases
 
-Agent Operations Reliability LCN-025–030 ปิดครบ, Delivery/Turn Reliability LCN-031–039 และ LCN-046–048 ปิดที่ current evidence boundary โดย LCN-047 ยกเลิก handler-sum enforcement และ LCN-048 เพิ่ม terminal tail-gap telemetry จาก Retry จริงรอบที่สองโดยยังคง observation-only/no-blocking, Execution Ergonomics LCN-040–044 ปิดที่ current need และ v1.2.0 ถูก publish/verify แล้ว; Desktop/Browser automation ยังพักไว้
+Agent Operations Reliability LCN-025–030 ปิดครบ, Delivery/Turn Reliability LCN-031–039 และ LCN-046–048 ปิดที่ current evidence boundary โดย LCN-047 ยกเลิก handler-sum enforcement และ LCN-048 เพิ่ม terminal tail-gap telemetry จาก Retry จริงรอบที่สองโดยยังคง observation-only/no-blocking, Execution Ergonomics LCN-040–044 ปิดที่ current need; Desktop Control LCN-018–020 COMPLETE และ Browser Automation เริ่มแล้วโดย LCN-021 Browser Common Layer COMPLETE
 
 ## Workstream status
 
@@ -50,7 +50,7 @@ Agent Operations Reliability LCN-025–030 ปิดครบ, Delivery/Turn Rel
 | Execution Ergonomics | COMPLETE AT CURRENT NEED | LCN-040–044 | LCN-044 Deployment Verification Snapshot PASS on installed tree; 178/178 tracked parity, runtime 1.2.0 / 120 tools |
 | Local Credential / Self-Restart | COMPLETE | LCN-052 | DPAPI CurrentUser credential + ACL + detached restart live GREEN; retained in current v1.2.2 runtime / 122 tools; current tracked parity 212/212 |
 | Desktop Control | COMPLETE | LCN-018–020 | Clipboard, Window Control, and Keyboard/Mouse complete/live GREEN |
-| Browser Automation | DEFERRED | LCN-021–023 | Explicitly paused |
+| Browser Automation | PARTIAL — COMMON LAYER COMPLETE | LCN-021–023 | LCN-021 common layer live GREEN; LCN-022 Firefox and LCN-023 Chrome adapters remain deferred |
 
 ### LCN-053 — v1.2.2 Secure Restart & Local Credentials Release
 **COMPLETE**
@@ -491,13 +491,13 @@ LCN-051 v1.2.1 Current Reliability Release — COMPLETE
   ↓
 LCN-052 Secure Local Credential Persistence & Self-Restart — COMPLETE
   ↓
-LCN-018 Clipboard — DEFERRED
+LCN-018 Clipboard — COMPLETE
   ↓
-LCN-019 Window Control — DEFERRED
+LCN-019 Window Control — COMPLETE
   ↓
-LCN-020 Keyboard / Mouse — DEFERRED
+LCN-020 Keyboard / Mouse — COMPLETE
   ↓
-LCN-021 Browser Common Layer — DEFERRED
+LCN-021 Browser Common Layer — COMPLETE
   ↓
 LCN-022 Firefox Adapter — DEFERRED
   ↓

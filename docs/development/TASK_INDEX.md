@@ -19,10 +19,10 @@
 | [LCN-015](tasks/LCN-015-log-tail.md) | COMPLETE | Log Tail |
 | [LCN-016](tasks/LCN-016-file-watcher.md) | COMPLETE | File Watcher |
 | [LCN-017](tasks/LCN-017-scheduled-tasks.md) | COMPLETE | Scheduled Tasks |
-| [LCN-018](tasks/LCN-018-clipboard.md) | DEFERRED | Clipboard |
-| [LCN-019](tasks/LCN-019-window-control.md) | DEFERRED | Window Control |
-| [LCN-020](tasks/LCN-020-keyboard-mouse.md) | DEFERRED | Keyboard / Mouse |
-| [LCN-021](tasks/LCN-021-browser-common-layer.md) | DEFERRED | Browser Common Layer |
+| [LCN-018](tasks/LCN-018-clipboard.md) | COMPLETE | Clipboard |
+| [LCN-019](tasks/LCN-019-window-control.md) | COMPLETE | Window Control |
+| [LCN-020](tasks/LCN-020-keyboard-mouse.md) | COMPLETE | Keyboard / Mouse |
+| [LCN-021](tasks/LCN-021-browser-common-layer.md) | COMPLETE | Browser Common Layer |
 | [LCN-022](tasks/LCN-022-firefox-adapter.md) | DEFERRED | Firefox Adapter |
 | [LCN-023](tasks/LCN-023-chrome-adapter.md) | DEFERRED | Chrome Adapter |
 | [LCN-024](tasks/LCN-024-first-run-installation-guide-v1.1.0-release.md) | COMPLETE | First-run Installation Guide + v1.1.0 Release |

@@ -1,6 +1,6 @@
 # LCN-021 — Browser Common Layer
 
-Status: **ACTIVE**
+Status: **COMPLETE**
 
 ## Goal
 
@@ -53,6 +53,28 @@ Create a backend-independent browser session API above Firefox/Chrome adapters, 
 - `npm audit --audit-level=high`: PASS / 0 vulnerabilities
 - `git diff --check`: PASS
 - no Firefox/Chrome concrete adapter embedded in LCN-021; LCN-022/023 remain responsible for backend registration
+
+## Final qualification evidence
+
+- implementation commit: `a67979c1fdf66a0ad8442f8995048fa2decd2693`
+- exact implementation CI: #157 / run `36985092594` — **PASS**
+- common adapter registration/capability negotiation: PASS
+- public browser-session registry with private backend handles: PASS
+- all 9 common operations exercised through fake adapter: PASS
+- missing-session / unsupported-capability guards: PASS
+- bounded adapter result guard: PASS
+- production unavailable-backend contract: PASS
+- installed post-restart smoke: PASS
+- deployed tracked parity before closure docs: **224/224 exact**
+- source/install manifest digest: `ce6fa8d175961714d3750627804ca67f6e8fce55d69b7d94b0d406d2dbff48b3`
+- preserved local paths: 6/6 present
+- encrypted credential SHA-256 before/after deployment/restart: `b773cace3931586913b84460c4b00cbd1ce33b78a165fa77355e259470cf2665`
+- live runtime after restart: LConnect `1.2.2`, PID `14632`, **148 tools**
+- live runtime catalog digest: `22529451eafb21024aa132a0dad5fcbe96651c542234695a0f0db565e078ab7d`
+- live runtime catalog contains all 9 Browser Common tool names
+- no concrete Firefox/Chrome backend embedded in LCN-021; LCN-022/023 remain backend implementation tasks
+
+Result: **COMPLETE / DEPLOYED / LIVE GREEN**.
 
 ## Acceptance criteria
 
