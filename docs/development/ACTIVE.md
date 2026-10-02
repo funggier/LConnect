@@ -70,7 +70,7 @@ Previous report: [reports/LCN-20261002-021-browser-common-layer.md](reports/LCN-
 
 - runtime: **1.3.0 / 154 tools**
 - current runtime PID after v1.3.0 activation: `17900`
-- current tunnel PID after v1.2.2 activation: `2216`
+- current tunnel PID after v1.3.0 secure restart: `8940`
 - runtime root: `T:\Sanbox\openclawspace\tunnel-mcp-ok`
 - measurement model: `turn_risk_observation_v2`
 - mode: **OBSERVE**
@@ -81,11 +81,12 @@ Previous report: [reports/LCN-20261002-021-browser-common-layer.md](reports/LCN-
 - `github_run_wait`: compact top-level status; jobs/steps remain in `github_run_view`
 - local encrypted credential: DPAPI / CurrentUser, decrypt + ACL PASS
 - detached self-restart: live GREEN; no Runtime API key on restart command line
-- source↔installed implementation tracked parity after LCN-054 final runtime qualification: **236/236 exact**
-- release candidate CI #146: PASS
+- v1.3.0 release deployment source↔installed tracked parity: **247/247 exact** at release activation; post-release closure/docs commits do not move the immutable v1.3.0 tag
+- v1.3.0 release commit CI #171 / run `37009797481`: PASS
+- LCN-056 closure commit CI #173 / run `37011488110`: PASS
 - source and installed dependency audit: **0 vulnerabilities**
 - release program/docs/checksum assets: uploaded and downloaded-back hash verified
 
 ## Next action
 
-LCN-054 is complete and live GREEN. Before activating the next planned tool-development task, verify live `main`/runtime state again. Keep the existing v1.2.2 tag/release immutable and do not reset the worktree.
+LCN-056 is complete, published, deployed and live GREEN. There is no active development task. Before activating new work, verify live `main`/runtime state again. Keep both v1.3.0 and historical v1.2.2 tag/release evidence immutable and do not reset the worktree.
