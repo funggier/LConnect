@@ -32,11 +32,13 @@ Last updated: 2026-10-02
 
 ## Active task
 
-[LCN-055 — Tool Surface Cleanup & Contract Normalization](tasks/LCN-055-tool-surface-cleanup-contract-normalization.md) — **ACTIVE**
+No active development task.
 
-Activation authority: main/origin at `b96343ed4e3118ed45a24490cac89a11dc86db19`, clean worktree, source/install 237/237 exact, live runtime `1.2.2 / 154 tools`, PID `12736`.
+Latest completed task: [LCN-055 — Tool Surface Cleanup & Contract Normalization](tasks/LCN-055-tool-surface-cleanup-contract-normalization.md) — **COMPLETE / DEPLOYED / LIVE GREEN**
 
-Latest completed task: [LCN-054 — Browser Control Hardening & Live Safety Boundary](tasks/LCN-054-browser-control-hardening-live-safety-boundary.md) — **COMPLETE**
+Implementation: `885229e72380882aa6239996d0647a33e4148400` / CI #167 run `37003411662` SUCCESS. Live runtime: `1.2.2 / 154 tools`, PID `4704`, no duplicate tool names, source/install 245/245 exact.
+
+Next intended task: **LCN-056 — Desktop & Browser Automation Release** after release/version-policy confirmation from current repository state.
 
 Previous completed task: [LCN-023 — Chrome Adapter](tasks/LCN-023-chrome-adapter.md) — **COMPLETE**
 
@@ -63,7 +65,7 @@ Previous report: [reports/LCN-20261002-021-browser-common-layer.md](reports/LCN-
 ## Current reliability state
 
 - runtime: **1.2.2 / 154 tools**
-- current runtime PID at LCN-055 activation authority check: `12736`
+- current runtime PID after LCN-055 deployment/restart: `4704`
 - current tunnel PID after v1.2.2 activation: `2216`
 - runtime root: `T:\Sanbox\openclawspace\tunnel-mcp-ok`
 - measurement model: `turn_risk_observation_v2`

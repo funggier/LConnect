@@ -1,6 +1,8 @@
 # แนวทางพัฒนา LConnect
 
 > สำหรับสถานะงานปัจจุบัน roadmap, numbered tasks, decisions และ session handoff ให้เริ่มที่ [development/README.md](development/README.md)
+>
+> สำหรับ lifecycle ของ public tools, canonical/compatibility/deprecated policy, safety classification และ parameter/result conventions ให้ดู [TOOL_SURFACE_POLICY.md](TOOL_SURFACE_POLICY.md)
 
 ## หลักการ
 
@@ -168,6 +170,8 @@ Agent Operations Reliability plan:
 - Execution Ergonomics LCN-040–044 complete at current need โดยเพิ่มเฉพาะ deterministic primitives ที่เกิดจาก pain point จริง เช่น structured data/directory inspection, Git/GitHub exact verification และ deployment verification
 
 Desktop Control ชุด LCN-018–020 **COMPLETE / live GREEN** แล้ว: Clipboard, Window Control และ Keyboard/Mouse; Browser Automation ตามแผน LCN-021–023 **COMPLETE / live GREEN** แล้ว: Common Layer + Firefox primary + Chrome secondary
+
+LCN-054 Browser Hardening/Live UIA และ LCN-055 Tool Surface Cleanup **COMPLETE / DEPLOYED / LIVE GREEN** แล้ว ปัจจุบัน main/runtime มี **154 tools** โดยมี central tool metadata registry, duplicate-name guard, bounded filesystem surface และ test-runner discovery; published v1.2.2 ยังคงเป็น immutable 122-tool release baseline.
 
 Browser direction:
 

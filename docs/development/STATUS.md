@@ -4,7 +4,7 @@ Last updated: 2026-10-02
 
 ## Overall
 
-Current project state: **BASIC CORE STABLE / v1.2.2 PUBLISHED / BROWSER HARDENING LIVE GREEN**
+Current project state: **BASIC CORE STABLE / v1.2.2 PUBLISHED / TOOL SURFACE NORMALIZED / LIVE GREEN**
 
 Current published release: **v1.2.2 — Secure Restart & Local Credentials**
 
@@ -20,7 +20,7 @@ Current installed/running MCP catalog: **154 tools** (`1.2.2`)
 
 Current running catalog digest: `2ca33225b970dd70e1350d7b4e3d9290116448181031872d643111ae7ab4c374`
 
-Current runtime catalog after LCN-054 final restart: **154 tools**. Managed Firefox/Chrome and 6 `browser_live_*` Windows UI Automation tools are loaded. An existing ChatGPT conversation may require connector/schema reconnect before newly added tool schemas are directly callable.
+Current runtime after LCN-055 deployment/restart: **1.2.2 / 154 tools / PID 4704**, catalog digest `2ca33225b970dd70e1350d7b4e3d9290116448181031872d643111ae7ab4c374`, duplicate public tool names: none. Source↔installed tracked parity is **245/245 exact**.
 
 LConnect มี Core ที่ใช้งานจริงแล้วและผ่าน runtime acceptance บน Windows:
 
@@ -51,6 +51,27 @@ Agent Operations Reliability LCN-025–030 ปิดครบ, Delivery/Turn Rel
 | Local Credential / Self-Restart | COMPLETE | LCN-052 | DPAPI CurrentUser credential + ACL + detached restart remain live GREEN; v1.2.2 release baseline was 122 tools and the feature is retained in current main/runtime 154-tool catalog |
 | Desktop Control | COMPLETE | LCN-018–020 | Clipboard, Window Control, and Keyboard/Mouse complete/live GREEN |
 | Browser Automation | COMPLETE AT CURRENT SCOPE | LCN-021–023, LCN-054 | Managed Firefox/Chrome + browser hardening + live UIA safety boundary deployed/live GREEN; runtime catalog 154 tools |
+| Tool Surface Normalization | COMPLETE / LIVE GREEN | LCN-055 | 154-tool canonical/compatibility/deprecation metadata, catalog guards, filesystem bounds/tests, maintainable test runner; deployed PID 4704 |
+
+### LCN-055 — Tool Surface Cleanup & Contract Normalization
+**COMPLETE / DEPLOYED / LIVE GREEN**
+
+Normalized the mature 154-tool public surface without reducing capability:
+- central tool registry/metadata: 152 canonical, 1 compatibility, 1 deprecated
+- exact source catalog == MCP tools/list guard
+- duplicate-name detection: none
+- direct filesystem regression suite with Unicode/Thai and bounded output
+- auto-discovered syntax/test runners
+- current-vs-release documentation drift guard
+- large clipboard transport repaired to use stdin rather than command-line payloads
+
+Implementation: `885229e72380882aa6239996d0647a33e4148400`
+CI: #167 / run `37003411662` — SUCCESS
+Deployment: 245/245 tracked exact
+Live runtime: 1.2.2 / PID 4704 / 154 tools / no duplicates
+Credential SHA-256 remained `b773cace3931586913b84460c4b00cbd1ce33b78a165fa77355e259470cf2665`.
+
+Report: [reports/LCN-20261002-055-tool-surface-cleanup-contract-normalization.md](reports/LCN-20261002-055-tool-surface-cleanup-contract-normalization.md)
 
 ### LCN-054 — Browser Control Hardening & Live Safety Boundary
 **COMPLETE / DEPLOYED / LIVE GREEN**

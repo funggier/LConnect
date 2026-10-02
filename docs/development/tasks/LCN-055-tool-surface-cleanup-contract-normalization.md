@@ -1,6 +1,6 @@
 # LCN-055 — Tool Surface Cleanup & Contract Normalization
 
-Status: **ACTIVE**
+Status: **COMPLETE / DEPLOYED / LIVE GREEN**
 
 ## Goal
 

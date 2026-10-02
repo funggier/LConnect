@@ -603,3 +603,27 @@ Release target:
 - exact-commit CI, source/install parity, live activation, asset checksums and downloaded-back verification required before closure
 
 Closure: release commit `fcf3d75c6314706e3258b6c5d1345b6f637ac78f`; CI #146 / run `36903887945` PASS; installed/runtime **1.2.2 / 122 tools**; 212/212 tracked parity; DPAPI credential + detached self-restart live GREEN; 11 release assets published and downloaded-back hash verified.
+
+# Phase 7 — Tool Surface Normalization — COMPLETE
+
+## LCN-055 Tool Surface Cleanup & Contract Normalization
+
+The 154-tool current main/runtime surface is treated as a mature API rather than a tool-count target.
+
+Delivered:
+- central expected public-tool registry and metadata
+- canonical / compatibility / deprecated classification
+- safety/family/module/platform/long-running metadata
+- deterministic source expected catalog == actual MCP catalog test
+- duplicate-name runtime evidence and regression guard
+- dedicated filesystem smoke coverage and bounded filesystem outputs
+- maintainable syntax/test runner discovery
+- current-facing documentation count guard
+- explicit managed-browser vs live-browser policy
+- large clipboard payload transport hardening found during full qualification
+
+Compatibility is preserved: public tool count remains **154**.
+
+Closure: implementation commit `885229e72380882aa6239996d0647a33e4148400`; CI #167 / run `37003411662` SUCCESS; deployed tracked parity **245/245 exact**; live runtime **1.2.2 / PID 4704 / 154 tools**, duplicate names none, encrypted credential preserved.
+
+Next intended phase: create a release task for the completed desktop/browser/tool-surface mainline after confirming current release/version policy.

@@ -53,8 +53,11 @@ Before continuing:
 
 - release: **v1.2.2 — Secure Restart & Local Credentials**
 - release/tag commit: `fcf3d75c6314706e3258b6c5d1345b6f637ac78f`
-- current implementation main before LCN-054 closure docs: `0b139a18f6f303025635039f912f3ee16c74eb05`
-- runtime: **1.2.2 / 154 tools**
+- current implementation main after LCN-055 implementation: `885229e72380882aa6239996d0647a33e4148400`
+- implementation CI: #167 / run `37003411662` — SUCCESS
+- runtime: **1.2.2 / 154 tools / PID 4704**
+- source/install tracked parity after LCN-055: **245/245 exact**
+- public duplicate tool names: **none**
 - secure DPAPI credential + detached self-restart: live GREEN
 
 The tag is immutable release evidence. Do not move or overwrite `v1.2.2`.
@@ -73,11 +76,14 @@ LCN-021 Browser Common Layer — COMPLETE
 LCN-022 Firefox Adapter — COMPLETE
 LCN-023 Chrome Adapter — COMPLETE
 LCN-054 Browser Control Hardening & Live Safety Boundary — COMPLETE
+LCN-055 Tool Surface Cleanup & Contract Normalization — COMPLETE
 ```
 
-Browser Automation through LCN-054 is complete at current scope. There is no active browser-development task.
+Next intended task: **LCN-056 — Desktop & Browser Automation Release**. Confirm current version/release policy before changing the version.
 
-LCN-054 is complete at implementation commits `e4612e4497469596551b77a1c6eb763888519e13` and `0b139a18f6f303025635039f912f3ee16c74eb05`; exact-commit CI #164 and #165 PASS; physical Firefox/Chrome and live UIA GREEN; deployed runtime 154 tools.
+Browser Automation through LCN-054 is complete at current scope. LCN-055 normalized and qualified the resulting 154-tool public surface. There is no active capability-development task.
+
+LCN-054 is complete at implementation commits `e4612e4497469596551b77a1c6eb763888519e13` and `0b139a18f6f303025635039f912f3ee16c74eb05`; exact-commit CI #164 and #165 PASS; physical Firefox/Chrome and live UIA GREEN. LCN-055 implementation `885229e72380882aa6239996d0647a33e4148400` / CI #167 SUCCESS is deployed at 245/245 tracked parity; live runtime 154 tools / PID 4704 / no duplicate names.
 
 ## Browser decisions
 

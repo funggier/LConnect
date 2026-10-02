@@ -463,3 +463,31 @@ It preserves local configuration, tunnel client, dependencies, source, Scheduled
 **Decision:** `github_run_wait` is a compact polling primitive. Its underlying `gh run view --json` query omits `jobs`, and its MCP result omits jobs/steps. Full job/step details remain available only through `github_run_view`.
 
 **Why:** A real post-Confirm Retry exposed an untracked lifecycle gap and correlated with 98 `github_run_wait` calls returning ~5.64 MB. Removing unnecessary jobs/steps from polling reduces result-volume and network/parsing pressure without inventing a timeout threshold or autonomous retry policy.
+
+---
+
+## D-038 — Public tool surface has explicit lifecycle metadata
+
+**Decision:** The current public MCP surface is tracked through a central expected tool registry with canonical / compatibility / deprecated status plus module, family, safety, long-running and platform metadata.
+
+**Decision:** Compatibility/deprecated tools remain exposed until a deliberate migration/removal decision; new workflows should prefer their canonical replacement.
+
+**Current compatibility boundary:**
+- `read_process_output` is compatibility; prefer `read_process_events` for cursor-based workflows.
+- `read_file` is deprecated; prefer `read_text_file`.
+
+**Decision:** `runtime_catalog` reports duplicate public names and can expose tool metadata on request. Tests compare the expected registry against actual MCP `tools/list`.
+
+**Why:** At 154 tools, ambiguity and drift are a larger reliability risk than insufficient capability. Explicit lifecycle metadata lets documentation/tests evolve without cosmetic breaking renames.
+
+---
+
+## D-039 — Filesystem and clipboard payloads are bounded without reducing public capability
+
+**Decision:** Legacy filesystem reads/lists/tree/search/media operations use explicit bounded defaults and optional caller bounds.
+
+**Decision:** Large clipboard text is transferred to the PowerShell worker through stdin, not embedded in process command-line arguments.
+
+**Decision:** Clipboard worker output has its own bounded ceiling sized for the public clipboard hard limit instead of inheriting the smaller generic shell-output default.
+
+**Why:** Full qualification found unbounded filesystem surfaces and reproduced Windows `ENAMETOOLONG` plus worker-output truncation for large clipboard payloads. The repairs preserve public tool names while making payload behavior deterministic and testable.
