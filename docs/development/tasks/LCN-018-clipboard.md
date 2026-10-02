@@ -1,6 +1,6 @@
 # LCN-018 — Clipboard
 
-Status: **ACTIVE**
+Status: **COMPLETE**
 
 ## Goal
 
@@ -51,6 +51,26 @@ Use the native Windows clipboard API through a short PowerShell STA process. Thi
 - `npm audit --audit-level=high`: PASS / 0 vulnerabilities
 - `git diff --check`: PASS
 - Windows CI is required to exercise disposable Unicode set → get, bounded read, clear, and empty-state mutation coverage without risking the user's clipboard.
+
+## Final qualification evidence
+
+- implementation commit: `0e36523b0bfa44d225a20dd3508ffae2b920735c`
+- first exact-commit CI: #150 / run `36976782532` — FAIL at Windows Unicode roundtrip
+- diagnosed root cause: Windows PowerShell 5.1 stdout code-page transport corrupted non-ASCII clipboard text between worker and Node
+- fix commit: `1123ec5efee8053ea298cc178a6cff068b25ac34`
+- fix: clipboard text crosses the PowerShell/Node boundary as UTF-8 Base64, avoiding console code-page dependence
+- exact fix-commit CI: #151 / run `36976946009` — **PASS**
+- CI disposable clipboard mutation coverage: Unicode/Thai set→get exact, bounded read/truncation, clear, empty-state, prior-state restore
+- deployed tracked parity: **215/215 exact**
+- source/install manifest digest: `3a406509029c5a4b368b5440e3be4d01c40eaf8bf7c771f610d37f306af21375`
+- preserved local paths: 6/6 present
+- encrypted credential SHA-256 before/after deployment/restart: `b773cace3931586913b84460c4b00cbd1ce33b78a165fa77355e259470cf2665`
+- live runtime after restart: LConnect `1.2.2`, PID `15820`, **125 tools**
+- live runtime catalog digest: `254011dfa1f0a018eed2c754fd79f3932394b5c9988fdf3483b858954b1d57bb`
+- runtime catalog contains `clipboard_get`, `clipboard_set`, `clipboard_clear`
+- installed smoke after restart: PASS; current user clipboard correctly reported `non_text` and was not destructively replaced
+
+Result: **COMPLETE / DEPLOYED / LIVE GREEN**.
 
 ## Constraints
 

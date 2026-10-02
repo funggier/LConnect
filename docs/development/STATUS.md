@@ -14,13 +14,13 @@ Release CI: `36903887945` / #146 — PASS
 
 Current source version: **1.2.2**
 
-Current main/source MCP catalog: **122 tools**
+Current main/source MCP catalog: **125 tools**
 
-Current installed/running MCP catalog: **122 tools** (`1.2.2`)
+Current installed/running MCP catalog: **125 tools** (`1.2.2`)
 
-Current running catalog digest: `4a8ef91a83938d4e835a7716c90c8784235708bdf31c5cb763b1d2911fecc525`
+Current running catalog digest: `254011dfa1f0a018eed2c754fd79f3932394b5c9988fdf3483b858954b1d57bb`
 
-Current ChatGPT-visible catalog after reconnect: **122 tools**, matching the installed/running daemon.
+Current runtime catalog after LCN-018 restart: **125 tools**. A ChatGPT connector reconnect may be required before the three new tool schemas are directly callable in a conversation.
 
 LConnect มี Core ที่ใช้งานจริงแล้วและผ่าน runtime acceptance บน Windows:
 
@@ -49,7 +49,7 @@ Agent Operations Reliability LCN-025–030 ปิดครบ, Delivery/Turn Rel
 | Delivery / Turn Reliability | COMPLETE AT CURRENT EVIDENCE | LCN-031–039, LCN-046–050 | LCN-050 live GREEN: first post-Confirm work tool auto-starts next round; `github_run_wait` returns compact status only, with live result 832 bytes vs ~63 KB pre-fix waits |
 | Execution Ergonomics | COMPLETE AT CURRENT NEED | LCN-040–044 | LCN-044 Deployment Verification Snapshot PASS on installed tree; 178/178 tracked parity, runtime 1.2.0 / 120 tools |
 | Local Credential / Self-Restart | COMPLETE | LCN-052 | DPAPI CurrentUser credential + ACL + detached restart live GREEN; retained in current v1.2.2 runtime / 122 tools; current tracked parity 212/212 |
-| Desktop Control | DEFERRED | LCN-018–020 | Explicitly paused |
+| Desktop Control | PARTIAL — CLIPBOARD COMPLETE | LCN-018–020 | LCN-018 Clipboard complete/live GREEN; LCN-019–020 remain deferred |
 | Browser Automation | DEFERRED | LCN-021–023 | Explicitly paused |
 
 ### LCN-053 — v1.2.2 Secure Restart & Local Credentials Release
