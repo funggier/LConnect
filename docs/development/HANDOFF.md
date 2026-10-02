@@ -53,8 +53,10 @@ Before continuing:
 
 - release: **v1.2.2 — Secure Restart & Local Credentials**
 - release/tag commit: `fcf3d75c6314706e3258b6c5d1345b6f637ac78f`
-- current implementation main after LCN-055 implementation: `885229e72380882aa6239996d0647a33e4148400`
+- LCN-055 implementation: `885229e72380882aa6239996d0647a33e4148400`
 - implementation CI: #167 / run `37003411662` — SUCCESS
+- LCN-055 closure documentation commit: `ea3935eee1ab0f7fa3c2d301487fcc58ecd71390`
+- closure CI: #168 / run `37004582819` — SUCCESS
 - runtime: **1.2.2 / 154 tools / PID 4704**
 - source/install tracked parity after LCN-055: **245/245 exact**
 - public duplicate tool names: **none**

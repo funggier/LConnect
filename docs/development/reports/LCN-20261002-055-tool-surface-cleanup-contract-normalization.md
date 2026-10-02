@@ -234,4 +234,10 @@ Implementation SHA:
 Implementation CI:
 `37003411662` / #167 — SUCCESS
 
-Final closure SHA and closure CI are recorded after the documentation closure commit.
+Closure documentation commit:
+`ea3935eee1ab0f7fa3c2d301487fcc58ecd71390`
+
+Closure CI:
+`37004582819` / #168 — **SUCCESS**
+
+A final evidence-only documentation sync records these exact values; no runtime behavior changes after the qualified implementation.
