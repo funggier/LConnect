@@ -53,8 +53,8 @@ Before continuing:
 
 - release: **v1.2.2 — Secure Restart & Local Credentials**
 - release/tag commit: `fcf3d75c6314706e3258b6c5d1345b6f637ac78f`
-- current implementation main before LCN-019 closure docs: `b11e4240daf7054412b32e10c7a6fb0df7330914`
-- runtime: **1.2.2 / 133 tools**
+- current implementation main before LCN-020 closure docs: `7da92f4fc17968701991032d33b6dc7baf841a0e`
+- runtime: **1.2.2 / 139 tools**
 - secure DPAPI credential + detached self-restart: live GREEN
 
 The tag is immutable release evidence. Do not move or overwrite `v1.2.2`.
@@ -68,15 +68,15 @@ Resume the deferred tool expansion in this order:
 ```text
 LCN-018 Clipboard — COMPLETE
 LCN-019 Window Control — COMPLETE
-LCN-020 Keyboard / Mouse
+LCN-020 Keyboard / Mouse — COMPLETE
 LCN-021 Browser Common Layer
 LCN-022 Firefox Adapter
 LCN-023 Chrome Adapter
 ```
 
-Immediate next target: **LCN-020 Keyboard / Mouse**.
+Immediate next target: **LCN-021 Browser Common Layer**.
 
-LCN-019 is complete at implementation commit `b11e4240daf7054412b32e10c7a6fb0df7330914`, exact-commit CI #153 PASS, deployed runtime 133 tools.
+LCN-020 is complete at implementation commit `7da92f4fc17968701991032d33b6dc7baf841a0e`, exact-commit CI #155 PASS, deployed runtime 139 tools.
 
 ## Browser decisions
 

@@ -1,6 +1,6 @@
 # LCN-020 — Keyboard / Mouse
 
-Status: **ACTIVE**
+Status: **COMPLETE**
 
 ## Goal
 
@@ -44,6 +44,28 @@ Provide a guarded native keyboard/mouse fallback layer for Windows UI control wi
 - `npm audit --audit-level=high`: PASS / 0 vulnerabilities
 - `git diff --check`: PASS
 - full-suite focus race found and repaired without weakening fail-closed foreground targeting: temporary `AttachThreadInput` is used only to acquire/verify the requested HWND, then detached before input continues
+
+## Final qualification evidence
+
+- implementation commit: `7da92f4fc17968701991032d33b6dc7baf841a0e`
+- exact implementation CI: #155 / run `36982304370` — **PASS**
+- disposable Windows Forms input fixture: PASS
+- Unicode/Thai keyboard input: PASS
+- key combo/press: PASS
+- foreground HWND/PID safety guard: PASS
+- full-suite focus race repaired with temporary `AttachThreadInput` while preserving fail-closed target verification
+- mouse point/window guard: PASS
+- mouse move/click/scroll: PASS
+- installed post-restart smoke: PASS
+- deployed tracked parity before closure docs: **221/221 exact**
+- source/install manifest digest: `af661603ff1d215d63f1e89571ef132dd8897bc9ec0885e4d72faf77fafa1e2d`
+- preserved local paths: 6/6 present
+- encrypted credential SHA-256 before/after deployment/restart: `b773cace3931586913b84460c4b00cbd1ce33b78a165fa77355e259470cf2665`
+- live runtime after restart: LConnect `1.2.2`, PID `18436`, **139 tools**
+- live runtime catalog digest: `e22b20d161942ff699048c5ede0c56baabf5e27b128bb0edaf3bab61b0819802`
+- live runtime catalog contains all 6 Keyboard / Mouse tools
+
+Result: **COMPLETE / DEPLOYED / LIVE GREEN**.
 
 ## Acceptance criteria
 
