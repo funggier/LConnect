@@ -116,10 +116,10 @@ try {
   for (const name of expected) assert(catalog.tool_names.includes(name), `catalog missing ${name}`);
   console.log("MCP browser common registration/catalog: PASS");
 
-  const unavailableResult = await client.callTool({ name: "browser_start", arguments: { browser: "firefox" } });
-  const unavailableText = unavailableResult.content?.find((x) => x.type === "text")?.text ?? "";
-  assert(unavailableResult.isError === true && unavailableText.includes("BROWSER_BACKEND_UNAVAILABLE"), "production unavailable backend contract mismatch");
-  console.log("MCP unavailable backend contract: PASS");
+  const firefoxRegistered = await client.callTool({ name: "browser_attach", arguments: { browser: "firefox" } });
+  const firefoxRegisteredText = firefoxRegistered.content?.find((x) => x.type === "text")?.text ?? "";
+  assert(firefoxRegistered.isError === true && firefoxRegisteredText.includes("FIREFOX_ATTACH_REQUIRES_ENDPOINT"), "production Firefox adapter registration contract mismatch");
+  console.log("MCP Firefox adapter registration contract: PASS");
 } catch (error) {
   console.error("FAIL", error);
   if (serverStderr) console.error("\nServer stderr:\n" + serverStderr);

@@ -21,7 +21,8 @@ import { registerEnvironmentTools } from "./modules/environment.mjs";
 import { registerClipboardTools } from "./modules/clipboard.mjs";
 import { registerWindowControlTools } from "./modules/window-control.mjs";
 import { registerInputControlTools } from "./modules/input-control.mjs";
-import { registerBrowserCommonTools } from "./modules/browser-common.mjs";
+import { registerBrowserCommonTools, defaultBrowserCommonLayer } from "./modules/browser-common.mjs";
+import { registerFirefoxAdapter } from "./modules/browser-firefox.mjs";
 import {
   installToolTelemetry,
   registerToolTelemetryTool,
@@ -75,6 +76,7 @@ registerEnvironmentTools(server, config);
 registerClipboardTools(server, config);
 registerWindowControlTools(server, config);
 registerInputControlTools(server, config);
+registerFirefoxAdapter(defaultBrowserCommonLayer);
 registerBrowserCommonTools(server, config);
 registerStructuredTextSearchTool(server, config);
 registerFileIntegrityTools(server, config);

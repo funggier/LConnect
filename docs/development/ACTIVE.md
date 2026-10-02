@@ -26,11 +26,14 @@ Last updated: 2026-10-02
 - LCN-019: COMPLETE — Native Window Control / exact-commit CI + deployed runtime GREEN
 - LCN-020: COMPLETE — Keyboard / Mouse native input / exact-commit CI + deployed runtime GREEN
 - LCN-021: COMPLETE — Browser Common Layer / exact-commit CI + deployed runtime GREEN
-- LCN-022–023: DEFERRED — Firefox / Chrome adapters
+- LCN-022: ACTIVE — Firefox Adapter implementation and physical qualification
+- LCN-023: DEFERRED — Chrome Adapter
 
 ## Active task
 
-No active development task.
+[LCN-022 — Firefox Adapter](tasks/LCN-022-firefox-adapter.md) — **ACTIVE**
+
+Current gates: implementation → local unit/smoke → physical Firefox qualification → exact-commit CI → deploy/runtime evidence.
 
 Latest completed task: [LCN-021 — Browser Common Layer](tasks/LCN-021-browser-common-layer.md) — **COMPLETE**
 
@@ -70,4 +73,4 @@ Previous report: [reports/LCN-20261002-020-keyboard-mouse.md](reports/LCN-202610
 
 ## Next action
 
-Begin **LCN-022 Firefox Adapter** only after verifying live GitHub/runtime state. Keep the existing v1.2.2 tag/release immutable.
+Complete **LCN-022 Firefox Adapter** through local tests, physical Firefox qualification, exact-commit CI, deployment, and live runtime evidence before marking it COMPLETE. Keep the existing v1.2.2 tag/release immutable.
