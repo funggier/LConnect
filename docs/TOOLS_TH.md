@@ -1,6 +1,6 @@
 # รายการ Tools ของ LConnect
 
-LConnect source/runtime บน current `main` expose **154 tools** ผ่าน MCP `main` channel เดียว ขณะที่ published v1.2.2 release ยังคงเป็น immutable baseline ที่ **122 tools**
+LConnect v1.3.0 source/runtime expose **154 tools** ผ่าน MCP `main` channel เดียว โดยเพิ่ม Desktop/Browser/Live UIA capability จาก immutable v1.2.2 baseline ที่ 122 tools แบบ backward-compatible
 
 ## Tool Surface Policy
 

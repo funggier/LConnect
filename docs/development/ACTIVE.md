@@ -10,7 +10,7 @@ Last updated: 2026-10-02
 - Release URL: https://github.com/funggier/LConnect/releases/tag/v1.2.2
 - Release tag target: `fcf3d75c6314706e3258b6c5d1345b6f637ac78f`
 - Release CI: `36903887945` / #146 — PASS
-- Source version: `1.2.2`
+- Source version: `1.3.0` (LCN-056 release candidate)
 - Current source catalog: **154 tools**
 - Installed/running daemon: **1.2.2 / 154 tools**
 - Running catalog digest: `2ca33225b970dd70e1350d7b4e3d9290116448181031872d643111ae7ab4c374`
@@ -34,13 +34,13 @@ Last updated: 2026-10-02
 
 [LCN-056 — v1.3.0 Desktop & Browser Automation Release](tasks/LCN-056-v1.3.0-desktop-browser-automation-release.md) — **ACTIVE**
 
-Release candidate baseline starts from clean synchronized main `3a242414fab447647c85a656552b647f550ca0b5`; live runtime remains `1.2.2 / 154 tools / PID 4704` until the qualified release version is deployed.
+LCN-056 activation commit is `b12fc74c069c5c8be2f9a889f4252880e136df05`; source package/lock are now being qualified as `1.3.0`. Live runtime remains `1.2.2 / 154 tools / PID 4704` until the exact release candidate passes qualification and is deployed.
 
 Latest completed task: [LCN-055 — Tool Surface Cleanup & Contract Normalization](tasks/LCN-055-tool-surface-cleanup-contract-normalization.md) — **COMPLETE / DEPLOYED / LIVE GREEN**
 
 Implementation: `885229e72380882aa6239996d0647a33e4148400` / CI #167 run `37003411662` SUCCESS. Closure docs: `ea3935eee1ab0f7fa3c2d301487fcc58ecd71390` / CI #168 run `37004582819` SUCCESS. Live runtime: `1.2.2 / 154 tools`, PID `4704`, no duplicate tool names, source/install qualified at 245/245 exact before closure-doc sync.
 
-Next intended task: **LCN-056 — Desktop & Browser Automation Release** after release/version-policy confirmation from current repository state.
+Current task: qualify and publish **v1.3.0 — Desktop & Browser Automation** without changing the immutable v1.2.2 tag/release.
 
 Previous completed task: [LCN-023 — Chrome Adapter](tasks/LCN-023-chrome-adapter.md) — **COMPLETE**
 

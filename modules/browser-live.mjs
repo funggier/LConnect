@@ -17,6 +17,9 @@ function textResult(value, isError = false) {
 
 const UIA_SCRIPT = [
   "$ErrorActionPreference = 'Stop'",
+  "$utf8 = New-Object System.Text.UTF8Encoding($false)",
+  "[Console]::OutputEncoding = $utf8",
+  "$OutputEncoding = $utf8",
   "Add-Type -AssemblyName UIAutomationClient",
   "Add-Type -AssemblyName UIAutomationTypes",
   "$json = [Text.Encoding]::UTF8.GetString([Convert]::FromBase64String($env:LCONNECT_BROWSER_LIVE_PAYLOAD))",

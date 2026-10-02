@@ -10,15 +10,15 @@
 
 ## สถานะปัจจุบัน
 
-- Source version: **1.2.2**
+- Source version: **1.3.0**
 - MCP catalog on current `main`: **154 tools**
 - Tool-surface policy: [`docs/TOOL_SURFACE_POLICY.md`](docs/TOOL_SURFACE_POLICY.md)
-- Latest published release: **[v1.2.2 — Secure Restart & Local Credentials](https://github.com/funggier/LConnect/releases/tag/v1.2.2)**
+- Release: **[v1.3.0 — Desktop & Browser Automation](https://github.com/funggier/LConnect/releases/tag/v1.3.0)**
 - OpenAI tunnel-client minimum: **0.0.14**
 
 LConnect Core ผ่าน runtime acceptance บน Windows 10 แล้ว โดย current `main` แสดง 154 tools ครอบคลุม filesystem, shell, managed process/session, system/network/hardware, Git, GitHub Actions/Release, structured inspection, browser automation แบบ isolated, live browser control ผ่าน Windows UI Automation, runtime/delivery evidence, deployment verification และ turn-risk observation แบบไม่บล็อกการทำงาน
 
-## ไฮไลต์ v1.2.2
+## ไฮไลต์ v1.3.0
 
 - เก็บ Runtime API key + Organization ID แบบเข้ารหัสใน `local-secrets\credentials.json.enc`
 - ใช้ **Windows DPAPI / CurrentUser** และจำกัด ACL ให้ Windows user ปัจจุบันกับ SYSTEM
@@ -29,7 +29,11 @@ LConnect Core ผ่าน runtime acceptance บน Windows 10 แล้ว โ
 - Runtime API key ไม่ถูกส่งผ่าน restart command line
 - `local-secrets/` ถูก preserve ระหว่าง deploy/update/refresh และไม่รวมใน release ZIP
 - ความสามารถ reliability ของ v1.2.1 ยังคงอยู่: `turn_risk_observation_v2` แบบ OBSERVE-only, post-Retry auto-round และ compact `github_run_wait`
-- Published **v1.2.2 release baseline** มี **122 tools** โดยไม่มี breaking tool migration; current `main` พัฒนาต่อเป็น **154 tools** แล้ว
+- MCP catalog เพิ่มจาก v1.2.2 baseline **122 tools** เป็น **154 tools** แบบ backward-compatible โดยไม่มีการลบ public tool เดิม
+- เพิ่ม Desktop Control: Clipboard, Window Control และ Keyboard/Mouse
+- เพิ่ม managed Browser Automation สำหรับ Firefox (primary) และ Chrome (secondary) ด้วย isolated temporary profile โดยปริยาย
+- เพิ่ม live browser control ผ่าน Windows UI Automation แยกจาก WebDriver/CDP และไม่เข้าถึง normal browser profile
+- เพิ่ม browser safety hardening, bounded screenshot/result handling, cleanup evidence และ tool-surface metadata/duplicate guards
 
 ## โครงสร้าง
 

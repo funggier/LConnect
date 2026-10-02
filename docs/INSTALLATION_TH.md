@@ -731,7 +731,7 @@ https://chatgpt.com/#settings/Connectors
 3. กลับเข้า ChatGPT
 4. Refresh connector/plugin หากจำเป็น
 
-LConnect v1.2.2 baseline มี **122 tools**
+LConnect v1.3.0 มี **154 tools**
 
 ### ใช้จากสมาร์ทโฟน
 
@@ -782,7 +782,7 @@ npm test
 
 `npm test` เปิด child MCP server จริงและทดสอบ integration fixtures
 
-สำหรับ LConnect v1.2.2 release baseline คาดว่าจะเห็น:
+สำหรับ LConnect v1.3.0 คาดว่าจะเห็น:
 
 ```text
 PASS tools=122

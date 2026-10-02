@@ -4,7 +4,7 @@ Last updated: 2026-10-02
 
 ## Overall
 
-Current project state: **BASIC CORE STABLE / v1.2.2 PUBLISHED / TOOL SURFACE NORMALIZED / LIVE GREEN**
+Current project state: **BASIC CORE STABLE / v1.2.2 PUBLISHED / v1.3.0 RELEASE QUALIFICATION ACTIVE / LIVE GREEN**
 
 Current published release: **v1.2.2 — Secure Restart & Local Credentials**
 
@@ -12,7 +12,7 @@ Release tag target: `fcf3d75c6314706e3258b6c5d1345b6f637ac78f`
 
 Release CI: `36903887945` / #146 — PASS
 
-Current source version: **1.2.2**
+Current source version: **1.3.0 release candidate**
 
 Current main/source MCP catalog: **154 tools**
 

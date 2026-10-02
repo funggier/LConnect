@@ -4,6 +4,8 @@ import os from "node:os";
 import { z } from "zod";
 import { runPowerShell } from "./runtime.mjs";
 
+const NETWORK_ENUM_MAX_OUTPUT_CHARS = 1_000_000;
+
 function textResult(value, isError = false) {
   const text = typeof value === "string" ? value : JSON.stringify(value, null, 2);
   return { content: [{ type: "text", text }], ...(isError ? { isError: true } : {}) };
@@ -94,7 +96,9 @@ async function runNetstat(protocol, config) {
 
   const result = await runPowerShell(script, {
     timeoutSeconds: 30,
-    maxOutputChars: config.shell.maxOutputChars,
+    // netstat enumeration can legitimately exceed the generic shell output cap on busy hosts.
+    // Keep a dedicated bounded ceiling so inspection does not silently lose rows before parsing.
+    maxOutputChars: NETWORK_ENUM_MAX_OUTPUT_CHARS,
   });
 
   if (result.error) throw new Error(`Failed to launch netstat: ${result.error}`);

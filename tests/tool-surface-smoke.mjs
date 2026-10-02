@@ -69,11 +69,11 @@ try {
   }
 
   const toolsDoc = await fsp.readFile(path.join(root, "docs", "TOOLS_TH.md"), "utf8");
-  if (!/current `main` expose \*\*154 tools\*\*/.test(toolsDoc)) {
-    throw new Error("TOOLS_TH current main count is not 154");
+  if (!/v1\.3\.0 source\/runtime expose \*\*154 tools\*\*/.test(toolsDoc)) {
+    throw new Error("TOOLS_TH v1.3.0 release candidate count is not 154");
   }
-  if (!/v1\.2\.2 release[^\n]*\*\*122 tools\*\*/.test(toolsDoc)) {
-    throw new Error("TOOLS_TH release count is not 122");
+  if (!/immutable v1\.2\.2 baseline[^\n]*122 tools/.test(toolsDoc)) {
+    throw new Error("TOOLS_TH previous v1.2.2 baseline is not documented as 122 tools");
   }
 
   console.log("tool metadata registry completeness: PASS");
