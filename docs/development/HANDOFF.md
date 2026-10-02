@@ -51,18 +51,20 @@ Before continuing:
 
 ## Current published baseline
 
-- release: **v1.2.2 — Secure Restart & Local Credentials**
-- release/tag commit: `fcf3d75c6314706e3258b6c5d1345b6f637ac78f`
-- LCN-055 implementation: `885229e72380882aa6239996d0647a33e4148400`
-- implementation CI: #167 / run `37003411662` — SUCCESS
-- LCN-055 closure documentation commit: `ea3935eee1ab0f7fa3c2d301487fcc58ecd71390`
-- closure CI: #168 / run `37004582819` — SUCCESS
-- runtime: **1.2.2 / 154 tools / PID 4704**
-- source/install tracked parity after LCN-055: **245/245 exact**
+- release: **v1.3.0 — Desktop & Browser Automation**
+- release/tag commit: `3e685ba0596bf00b9e4546c0dc8d9293fbdbd761`
+- annotated tag object: `ef06f0eab103acab6f54fabd981278e2f809199d`
+- release CI: #171 / run `37009797481` — SUCCESS
+- runtime: **1.3.0 / 154 tools / PID 17900**
+- source/install release parity: **247/247 exact**
+- catalog digest: `2ca33225b970dd70e1350d7b4e3d9290116448181031872d643111ae7ab4c374`
 - public duplicate tool names: **none**
+- managed Firefox/Chrome physical qualification: GREEN
+- live Windows UIA Thai/Unicode qualification: GREEN
 - secure DPAPI credential + detached self-restart: live GREEN
+- published assets: 12; downloaded-back hash mismatch: 0
 
-The tag is immutable release evidence. Do not move or overwrite `v1.2.2`.
+Both `v1.3.0` and historical `v1.2.2` tags/releases are immutable release evidence. Do not move or overwrite them.
 
 ## Current direction
 
@@ -81,11 +83,13 @@ LCN-054 Browser Control Hardening & Live Safety Boundary — COMPLETE
 LCN-055 Tool Surface Cleanup & Contract Normalization — COMPLETE
 ```
 
-Next intended task: **LCN-056 — Desktop & Browser Automation Release**. Confirm current version/release policy before changing the version.
+LCN-056 v1.3.0 Desktop & Browser Automation Release — **COMPLETE / PUBLISHED / DEPLOYED / LIVE GREEN**.
 
-Browser Automation through LCN-054 is complete at current scope. LCN-055 normalized and qualified the resulting 154-tool public surface. There is no active capability-development task.
+There is no active development task. Future work must open a new numbered LCN task from current GitHub/runtime authority.
 
-LCN-054 is complete at implementation commits `e4612e4497469596551b77a1c6eb763888519e13` and `0b139a18f6f303025635039f912f3ee16c74eb05`; exact-commit CI #164 and #165 PASS; physical Firefox/Chrome and live UIA GREEN. LCN-055 implementation `885229e72380882aa6239996d0647a33e4148400` / CI #167 SUCCESS is deployed at 245/245 tracked parity; live runtime 154 tools / PID 4704 / no duplicate names.
+Browser Automation through LCN-054 is complete at current scope. LCN-055 normalized the resulting 154-tool public surface. LCN-056 published that completed mainline as v1.3.0.
+
+LCN-054 browser hardening and LCN-055 tool-surface normalization are included in v1.3.0. Release commit `3e685ba0596bf00b9e4546c0dc8d9293fbdbd761` / CI #171 is deployed at 247/247 release parity; live runtime is 1.3.0 / 154 tools / PID 17900 / no duplicate names.
 
 ## Browser decisions
 

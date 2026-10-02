@@ -491,3 +491,15 @@ It preserves local configuration, tunnel client, dependencies, source, Scheduled
 **Decision:** Clipboard worker output has its own bounded ceiling sized for the public clipboard hard limit instead of inheriting the smaller generic shell-output default.
 
 **Why:** Full qualification found unbounded filesystem surfaces and reproduced Windows `ENAMETOOLONG` plus worker-output truncation for large clipboard payloads. The repairs preserve public tool names while making payload behavior deterministic and testable.
+
+---
+
+## D-040 — Backward-compatible capability expansion uses a minor release
+
+**Decision:** The 122 → 154 public-tool expansion is released as `v1.3.0`, not another v1.2.x patch.
+
+**Decision:** The exact release tag points to the fully qualified code/documentation commit before post-publication closure reports are added.
+
+**Decision:** Published release tags are immutable audit evidence. Historical `v1.2.2` and current `v1.3.0` must not be moved or overwritten.
+
+**Why:** Desktop/browser/live-UIA capability families are substantial new backward-compatible features. A minor SemVer increment communicates that scope while preserving compatibility, and immutable exact-release tags keep source, CI, deployment and downloadable artifacts auditable.

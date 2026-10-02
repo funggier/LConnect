@@ -626,4 +626,36 @@ Compatibility is preserved: public tool count remains **154**.
 
 Closure: implementation commit `885229e72380882aa6239996d0647a33e4148400`; CI #167 / run `37003411662` SUCCESS; deployed tracked parity **245/245 exact**; live runtime **1.2.2 / PID 4704 / 154 tools**, duplicate names none, encrypted credential preserved.
 
-Next intended phase: create a release task for the completed desktop/browser/tool-surface mainline after confirming current release/version policy.
+# Phase 8 — v1.3.0 Desktop & Browser Automation Release — COMPLETE
+
+## LCN-056 v1.3.0 Desktop & Browser Automation Release
+
+Published the completed Desktop Control + Browser Automation + Tool Surface mainline as the backward-compatible **v1.3.0 / 154-tool** feature release.
+
+Qualification included:
+- local full suite + PowerShell syntax + dependency audit
+- exact GitHub Actions release-candidate CI
+- clean install from exact git archive
+- overlay/local-state preservation
+- managed Firefox and Chrome physical qualification
+- installed live Windows UIA Thai/Unicode type/click/snapshot qualification
+- tracked-only production deployment + secure self-restart
+- exact runtime/source/install parity
+- annotated tag integrity
+- release asset checksum manifest
+- downloaded-back verification of all published assets
+
+Release qualification caught and repaired two issues before publication:
+- large real-world netstat output could exceed the generic shell capture cap before parsing
+- Windows PowerShell 5.1 UIA worker stdout needed explicit UTF-8 encoding for non-ASCII result fidelity
+
+Closure:
+- exact release commit: `3e685ba0596bf00b9e4546c0dc8d9293fbdbd761`
+- CI #171 / run `37009797481`: SUCCESS
+- runtime: **1.3.0 / PID 17900 / 154 tools**
+- release parity: **247/247 exact**
+- tag object: `ef06f0eab103acab6f54fabd981278e2f809199d`
+- published assets: 12
+- downloaded-back hash mismatch: 0
+
+Future capability work must open a new numbered task from the current GitHub/runtime baseline.

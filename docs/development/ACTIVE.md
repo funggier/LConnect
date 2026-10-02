@@ -6,15 +6,15 @@ Last updated: 2026-10-02
 
 - Repository: `funggier/LConnect`
 - Branch: `main`
-- Latest published release: **v1.2.2 — Secure Restart & Local Credentials** (122 tools)
-- Release URL: https://github.com/funggier/LConnect/releases/tag/v1.2.2
-- Release tag target: `fcf3d75c6314706e3258b6c5d1345b6f637ac78f`
-- Release CI: `36903887945` / #146 — PASS
-- Source version: `1.3.0` (LCN-056 release candidate)
+- Latest published release: **v1.3.0 — Desktop & Browser Automation** (154 tools)
+- Release URL: https://github.com/funggier/LConnect/releases/tag/v1.3.0
+- Release tag target: `3e685ba0596bf00b9e4546c0dc8d9293fbdbd761`
+- Release CI: `37009797481` / #171 — PASS
+- Source version: `1.3.0`
 - Current source catalog: **154 tools**
-- Installed/running daemon: **1.2.2 / 154 tools**
+- Installed/running daemon: **1.3.0 / 154 tools** (PID `17900`)
 - Running catalog digest: `2ca33225b970dd70e1350d7b4e3d9290116448181031872d643111ae7ab4c374`
-- Direct ChatGPT/LConnect runtime catalog: **154 tools** after LCN-054 final restart; managed Firefox/Chrome and 6 live-browser UIA tools are loaded. A conversation connected before the catalog expansion may require connector/schema reconnect before the new `browser_live_*` schemas are directly callable
+- Direct ChatGPT/LConnect runtime catalog: **154 tools** on v1.3.0; managed Firefox/Chrome and 6 live-browser UIA tools are loaded. A conversation connected before a schema change may require connector/schema reconnect before newly added schema fields are directly callable
 - LCN-046: COMPLETE — original round-boundary implementation; handler-sum enforcement superseded by LCN-047 evidence
 - LCN-047: COMPLETE — Turn-Risk Telemetry Model Repair / observation-only live GREEN
 - LCN-048: COMPLETE — Retry Tail-Gap Telemetry Refinement / live GREEN
@@ -32,15 +32,17 @@ Last updated: 2026-10-02
 
 ## Active task
 
-[LCN-056 — v1.3.0 Desktop & Browser Automation Release](tasks/LCN-056-v1.3.0-desktop-browser-automation-release.md) — **ACTIVE**
+No active development task.
 
-LCN-056 activation commit is `b12fc74c069c5c8be2f9a889f4252880e136df05`; source package/lock are now being qualified as `1.3.0`. Live runtime remains `1.2.2 / 154 tools / PID 4704` until the exact release candidate passes qualification and is deployed.
+Latest completed task: [LCN-056 — v1.3.0 Desktop & Browser Automation Release](tasks/LCN-056-v1.3.0-desktop-browser-automation-release.md) — **COMPLETE / PUBLISHED / DEPLOYED / LIVE GREEN**
+
+Release commit: `3e685ba0596bf00b9e4546c0dc8d9293fbdbd761`; CI #171 / run `37009797481` SUCCESS; live runtime `1.3.0 / 154 tools / PID 17900`; source/install release parity 247/247 exact; release assets downloaded-back with zero hash mismatch.
 
 Latest completed task: [LCN-055 — Tool Surface Cleanup & Contract Normalization](tasks/LCN-055-tool-surface-cleanup-contract-normalization.md) — **COMPLETE / DEPLOYED / LIVE GREEN**
 
 Implementation: `885229e72380882aa6239996d0647a33e4148400` / CI #167 run `37003411662` SUCCESS. Closure docs: `ea3935eee1ab0f7fa3c2d301487fcc58ecd71390` / CI #168 run `37004582819` SUCCESS. Live runtime: `1.2.2 / 154 tools`, PID `4704`, no duplicate tool names, source/install qualified at 245/245 exact before closure-doc sync.
 
-Current task: qualify and publish **v1.3.0 — Desktop & Browser Automation** without changing the immutable v1.2.2 tag/release.
+Current direction: v1.3.0 is published and verified. Preserve both v1.3.0 and historical v1.2.2 release/tag evidence; open a new numbered task for future capability work.
 
 Previous completed task: [LCN-023 — Chrome Adapter](tasks/LCN-023-chrome-adapter.md) — **COMPLETE**
 
@@ -66,8 +68,8 @@ Previous report: [reports/LCN-20261002-021-browser-common-layer.md](reports/LCN-
 
 ## Current reliability state
 
-- runtime: **1.2.2 / 154 tools**
-- current runtime PID after LCN-055 deployment/restart: `4704`
+- runtime: **1.3.0 / 154 tools**
+- current runtime PID after v1.3.0 activation: `17900`
 - current tunnel PID after v1.2.2 activation: `2216`
 - runtime root: `T:\Sanbox\openclawspace\tunnel-mcp-ok`
 - measurement model: `turn_risk_observation_v2`

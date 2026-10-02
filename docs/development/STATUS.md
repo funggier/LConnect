@@ -4,23 +4,23 @@ Last updated: 2026-10-02
 
 ## Overall
 
-Current project state: **BASIC CORE STABLE / v1.2.2 PUBLISHED / v1.3.0 RELEASE QUALIFICATION ACTIVE / LIVE GREEN**
+Current project state: **BASIC CORE STABLE / v1.3.0 PUBLISHED / DEPLOYED / LIVE GREEN**
 
-Current published release: **v1.2.2 — Secure Restart & Local Credentials**
+Current published release: **v1.3.0 — Desktop & Browser Automation**
 
-Release tag target: `fcf3d75c6314706e3258b6c5d1345b6f637ac78f`
+Release tag target: `3e685ba0596bf00b9e4546c0dc8d9293fbdbd761`
 
-Release CI: `36903887945` / #146 — PASS
+Release CI: `37009797481` / #171 — PASS
 
-Current source version: **1.3.0 release candidate**
+Current source version: **1.3.0**
 
 Current main/source MCP catalog: **154 tools**
 
-Current installed/running MCP catalog: **154 tools** (`1.2.2`)
+Current installed/running MCP catalog: **154 tools** (`1.3.0`, PID `17900`)
 
 Current running catalog digest: `2ca33225b970dd70e1350d7b4e3d9290116448181031872d643111ae7ab4c374`
 
-Current runtime after LCN-055 deployment/restart: **1.2.2 / 154 tools / PID 4704**, catalog digest `2ca33225b970dd70e1350d7b4e3d9290116448181031872d643111ae7ab4c374`, duplicate public tool names: none. Source↔installed tracked parity is **245/245 exact**.
+Current runtime after v1.3.0 activation: **1.3.0 / 154 tools / PID 17900**, catalog digest `2ca33225b970dd70e1350d7b4e3d9290116448181031872d643111ae7ab4c374`, duplicate public tool names: none. Exact release source↔installed tracked parity is **247/247 exact**.
 
 LConnect มี Core ที่ใช้งานจริงแล้วและผ่าน runtime acceptance บน Windows:
 
@@ -51,7 +51,27 @@ Agent Operations Reliability LCN-025–030 ปิดครบ, Delivery/Turn Rel
 | Local Credential / Self-Restart | COMPLETE | LCN-052 | DPAPI CurrentUser credential + ACL + detached restart remain live GREEN; v1.2.2 release baseline was 122 tools and the feature is retained in current main/runtime 154-tool catalog |
 | Desktop Control | COMPLETE | LCN-018–020 | Clipboard, Window Control, and Keyboard/Mouse complete/live GREEN |
 | Browser Automation | COMPLETE AT CURRENT SCOPE | LCN-021–023, LCN-054 | Managed Firefox/Chrome + browser hardening + live UIA safety boundary deployed/live GREEN; runtime catalog 154 tools |
-| Tool Surface Normalization | COMPLETE / LIVE GREEN | LCN-055 | 154-tool canonical/compatibility/deprecation metadata, catalog guards, filesystem bounds/tests, maintainable test runner; deployed PID 4704 |
+| Tool Surface Normalization | COMPLETE / LIVE GREEN | LCN-055 | 154-tool canonical/compatibility/deprecation metadata, catalog guards, filesystem bounds/tests, maintainable test runner |
+| v1.3.0 Release | COMPLETE / PUBLISHED / LIVE GREEN | LCN-056 | Desktop + Browser + Live UIA release; exact commit `3e685ba...`; CI #171; runtime 1.3.0 / 154 tools |
+
+### LCN-056 — v1.3.0 Desktop & Browser Automation Release
+**COMPLETE / PUBLISHED / DEPLOYED / LIVE GREEN**
+
+Published the 154-tool backward-compatible feature release containing Desktop Control, managed Firefox/Chrome automation, live Windows UI Automation, browser safety hardening and LCN-055 tool-surface normalization.
+
+- exact release commit: `3e685ba0596bf00b9e4546c0dc8d9293fbdbd761`
+- CI: #171 / run `37009797481` — SUCCESS
+- annotated tag object: `ef06f0eab103acab6f54fabd981278e2f809199d`
+- live runtime: **1.3.0 / 154 tools / PID 17900**
+- release deployment parity: **247/247 exact**
+- managed Firefox/Chrome physical: PASS
+- installed live UIA Thai/Unicode type/click/snapshot: PASS
+- clean install + overlay preservation: PASS
+- published assets: 12
+- downloaded-back hash mismatches: 0
+- v1.2.2 tag/release remained unchanged
+
+Report: [reports/LCN-20261002-056-v1.3.0-desktop-browser-automation-release.md](reports/LCN-20261002-056-v1.3.0-desktop-browser-automation-release.md)
 
 ### LCN-055 — Tool Surface Cleanup & Contract Normalization
 **COMPLETE / DEPLOYED / LIVE GREEN**
