@@ -32,7 +32,9 @@ Last updated: 2026-10-02
 
 ## Active task
 
-No active development task.
+[LCN-056 — v1.3.0 Desktop & Browser Automation Release](tasks/LCN-056-v1.3.0-desktop-browser-automation-release.md) — **ACTIVE**
+
+Release candidate baseline starts from clean synchronized main `3a242414fab447647c85a656552b647f550ca0b5`; live runtime remains `1.2.2 / 154 tools / PID 4704` until the qualified release version is deployed.
 
 Latest completed task: [LCN-055 — Tool Surface Cleanup & Contract Normalization](tasks/LCN-055-tool-surface-cleanup-contract-normalization.md) — **COMPLETE / DEPLOYED / LIVE GREEN**
 
