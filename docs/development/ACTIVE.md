@@ -27,11 +27,13 @@ Last updated: 2026-10-02
 - LCN-020: COMPLETE — Keyboard / Mouse native input / exact-commit CI + deployed runtime GREEN
 - LCN-021: COMPLETE — Browser Common Layer / exact-commit CI + deployed runtime GREEN
 - LCN-022: COMPLETE — Firefox Adapter / physical Firefox + exact-commit CI + deployed runtime GREEN
-- LCN-023: DEFERRED — Chrome Adapter
+- LCN-023: ACTIVE — Chrome Adapter implementation and physical CDP qualification
 
 ## Active task
 
-No active development task.
+[LCN-023 — Chrome Adapter](tasks/LCN-023-chrome-adapter.md) — **ACTIVE**
+
+Current gates: implementation → local unit/smoke → physical Chrome/CDP qualification → exact-commit CI → deploy/runtime evidence.
 
 Latest completed task: [LCN-022 — Firefox Adapter](tasks/LCN-022-firefox-adapter.md) — **COMPLETE**
 
@@ -73,4 +75,4 @@ Previous report: [reports/LCN-20261002-021-browser-common-layer.md](reports/LCN-
 
 ## Next action
 
-Begin **LCN-023 Chrome Adapter** only after verifying live GitHub/runtime state. Keep the existing v1.2.2 tag/release immutable.
+Complete **LCN-023 Chrome Adapter** through local tests, physical Chrome/CDP qualification, exact-commit CI, deployment, and live runtime evidence before marking it COMPLETE. Keep the existing v1.2.2 tag/release immutable.

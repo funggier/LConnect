@@ -120,6 +120,11 @@ try {
   const firefoxRegisteredText = firefoxRegistered.content?.find((x) => x.type === "text")?.text ?? "";
   assert(firefoxRegistered.isError === true && firefoxRegisteredText.includes("FIREFOX_ATTACH_REQUIRES_ENDPOINT"), "production Firefox adapter registration contract mismatch");
   console.log("MCP Firefox adapter registration contract: PASS");
+
+  const chromeRegistered = await client.callTool({ name: "browser_attach", arguments: { browser: "chrome" } });
+  const chromeRegisteredText = chromeRegistered.content?.find((x) => x.type === "text")?.text ?? "";
+  assert(chromeRegistered.isError === true && chromeRegisteredText.includes("CHROME_ATTACH_REQUIRES_ENDPOINT"), "production Chrome adapter registration contract mismatch");
+  console.log("MCP Chrome adapter registration contract: PASS");
 } catch (error) {
   console.error("FAIL", error);
   if (serverStderr) console.error("\nServer stderr:\n" + serverStderr);

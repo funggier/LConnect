@@ -23,6 +23,7 @@ import { registerWindowControlTools } from "./modules/window-control.mjs";
 import { registerInputControlTools } from "./modules/input-control.mjs";
 import { registerBrowserCommonTools, defaultBrowserCommonLayer } from "./modules/browser-common.mjs";
 import { registerFirefoxAdapter } from "./modules/browser-firefox.mjs";
+import { registerChromeAdapter } from "./modules/browser-chrome.mjs";
 import {
   installToolTelemetry,
   registerToolTelemetryTool,
@@ -77,6 +78,7 @@ registerClipboardTools(server, config);
 registerWindowControlTools(server, config);
 registerInputControlTools(server, config);
 registerFirefoxAdapter(defaultBrowserCommonLayer);
+registerChromeAdapter(defaultBrowserCommonLayer);
 registerBrowserCommonTools(server, config);
 registerStructuredTextSearchTool(server, config);
 registerFileIntegrityTools(server, config);
