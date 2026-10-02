@@ -96,17 +96,20 @@ async function getClipboard(maxChars, config) {
     "$hasText = [System.Windows.Forms.Clipboard]::ContainsText([System.Windows.Forms.TextDataFormat]::UnicodeText)",
     "if ($hasText) {",
     "  $text = [System.Windows.Forms.Clipboard]::GetText([System.Windows.Forms.TextDataFormat]::UnicodeText)",
-    "  $out = [pscustomobject]@{ state = 'text'; text = $text; format_count = $formats.Count }",
+    "  $textBase64 = [Convert]::ToBase64String([Text.Encoding]::UTF8.GetBytes($text))",
+    "  $out = [pscustomobject]@{ state = 'text'; text_base64 = $textBase64; format_count = $formats.Count }",
     "} elseif ($formats.Count -eq 0) {",
-    "  $out = [pscustomobject]@{ state = 'empty'; text = $null; format_count = 0 }",
+    "  $out = [pscustomobject]@{ state = 'empty'; text_base64 = $null; format_count = 0 }",
     "} else {",
-    "  $out = [pscustomobject]@{ state = 'non_text'; text = $null; format_count = $formats.Count }",
+    "  $out = [pscustomobject]@{ state = 'non_text'; text_base64 = $null; format_count = $formats.Count }",
     "}",
     "$out | ConvertTo-Json -Compress",
   ]);
 
   const raw = await runClipboardJson(script, config);
-  const text = typeof raw.text === "string" ? raw.text : null;
+  const text = typeof raw.text_base64 === "string"
+    ? Buffer.from(raw.text_base64, "base64").toString("utf8")
+    : null;
   const originalChars = text?.length ?? 0;
   const truncated = text !== null && originalChars > maxChars;
 
