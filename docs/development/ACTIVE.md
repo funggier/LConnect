@@ -24,11 +24,14 @@ Last updated: 2026-10-02
 - LCN-052: COMPLETE — DPAPI local credential persistence + detached self-restart / live GREEN
 - LCN-018: COMPLETE — Clipboard text control / exact-commit CI + deployed runtime GREEN
 - LCN-019: COMPLETE — Native Window Control / exact-commit CI + deployed runtime GREEN
-- LCN-020–023: DEFERRED — Keyboard-Mouse / Browser Automation
+- LCN-020: ACTIVE — Keyboard / Mouse native input implementation and qualification
+- LCN-021–023: DEFERRED — Browser Automation
 
 ## Active task
 
-No active development task.
+[LCN-020 — Keyboard / Mouse](tasks/LCN-020-keyboard-mouse.md) — **ACTIVE**
+
+Current gates: implementation → local tests → exact-commit CI → deploy/runtime evidence.
 
 Latest completed task: [LCN-019 — Window Control](tasks/LCN-019-window-control.md) — **COMPLETE**
 
@@ -64,4 +67,4 @@ Previous report: [reports/LCN-20261002-018-clipboard.md](reports/LCN-20261002-01
 
 ## Next action
 
-Begin **LCN-020 Keyboard / Mouse** only after verifying live GitHub/runtime state. Keep the existing v1.2.2 tag/release immutable.
+Complete **LCN-020 Keyboard / Mouse** through local tests, exact-commit CI, deployment, and live runtime evidence before marking it COMPLETE. Keep the existing v1.2.2 tag/release immutable.

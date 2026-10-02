@@ -20,6 +20,7 @@ import { registerTransientStateTools } from "./modules/transient-state.mjs";
 import { registerEnvironmentTools } from "./modules/environment.mjs";
 import { registerClipboardTools } from "./modules/clipboard.mjs";
 import { registerWindowControlTools } from "./modules/window-control.mjs";
+import { registerInputControlTools } from "./modules/input-control.mjs";
 import {
   installToolTelemetry,
   registerToolTelemetryTool,
@@ -72,6 +73,7 @@ registerTransientStateTools(server);
 registerEnvironmentTools(server, config);
 registerClipboardTools(server, config);
 registerWindowControlTools(server, config);
+registerInputControlTools(server, config);
 registerStructuredTextSearchTool(server, config);
 registerFileIntegrityTools(server, config);
 registerGitHubTools(server, config);
