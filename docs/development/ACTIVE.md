@@ -22,11 +22,14 @@ Last updated: 2026-10-02
 - LCN-050: COMPLETE — Post-Retry Auto-Round and GitHub Wait Payload Containment / live GREEN
 - LCN-051: COMPLETE — v1.2.1 published, deployed and verified
 - LCN-052: COMPLETE — DPAPI local credential persistence + detached self-restart / live GREEN
-- LCN-018–023: DEFERRED — Desktop Control / Browser Automation
+- LCN-018: ACTIVE — Clipboard text control implementation and qualification
+- LCN-019–023: DEFERRED — Window / Keyboard-Mouse / Browser Automation
 
 ## Active task
 
-No active development task.
+[LCN-018 — Clipboard](tasks/LCN-018-clipboard.md) — **ACTIVE**
+
+Current gates: implementation → local tests → exact-commit CI → deploy/runtime evidence.
 
 Latest completed task: [LCN-053 — v1.2.2 Secure Restart & Local Credentials Release](tasks/LCN-053-v1.2.2-secure-restart-local-credentials-release.md)
 
@@ -58,4 +61,4 @@ Previous report: [reports/LCN-20261002-053-v1.2.2-secure-restart-local-credentia
 
 ## Next action
 
-Start the next session from the latest full handoff. Verify live GitHub/runtime state first, then resume the deferred tool-development sequence beginning with **LCN-018 Clipboard**. Change LCN-018 to `ACTIVE` only when implementation starts; keep v1.2.2 tag/release immutable.
+Complete **LCN-018 Clipboard** through local tests, exact-commit CI, deployment, and live runtime evidence before marking it COMPLETE. Keep the existing v1.2.2 tag/release immutable.
