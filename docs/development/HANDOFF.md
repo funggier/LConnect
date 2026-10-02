@@ -53,8 +53,8 @@ Before continuing:
 
 - release: **v1.2.2 — Secure Restart & Local Credentials**
 - release/tag commit: `fcf3d75c6314706e3258b6c5d1345b6f637ac78f`
-- current implementation main before LCN-023 closure docs: `a0faf6186f57417dabafe049a091ac226176b4db`
-- runtime: **1.2.2 / 148 tools**
+- current implementation main before LCN-054 closure docs: `0b139a18f6f303025635039f912f3ee16c74eb05`
+- runtime: **1.2.2 / 154 tools**
 - secure DPAPI credential + detached self-restart: live GREEN
 
 The tag is immutable release evidence. Do not move or overwrite `v1.2.2`.
@@ -72,11 +72,12 @@ LCN-020 Keyboard / Mouse — COMPLETE
 LCN-021 Browser Common Layer — COMPLETE
 LCN-022 Firefox Adapter — COMPLETE
 LCN-023 Chrome Adapter — COMPLETE
+LCN-054 Browser Control Hardening & Live Safety Boundary — COMPLETE
 ```
 
-Browser Automation through LCN-023 is complete at current scope. There is no active browser-development task.
+Browser Automation through LCN-054 is complete at current scope. There is no active browser-development task.
 
-LCN-023 is complete at implementation commit `a0faf6186f57417dabafe049a091ac226176b4db`, exact-commit CI #161 PASS, physical Chrome 154.0.8037.93 / CDP 1.3 GREEN, deployed runtime 148 tools.
+LCN-054 is complete at implementation commits `e4612e4497469596551b77a1c6eb763888519e13` and `0b139a18f6f303025635039f912f3ee16c74eb05`; exact-commit CI #164 and #165 PASS; physical Firefox/Chrome and live UIA GREEN; deployed runtime 154 tools.
 
 ## Browser decisions
 

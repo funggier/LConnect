@@ -1,6 +1,6 @@
 # LCN-054 — Browser Control Hardening & Live Safety Boundary
 
-Status: **ACTIVE**
+Status: **COMPLETE**
 
 ## Goal
 
@@ -72,4 +72,47 @@ Harden the LCN-021/022/023 browser automation surface so managed sessions cannot
 
 ## Result
 
-In progress.
+**COMPLETE / DEPLOYED / LIVE GREEN**
+
+Delivered:
+- isolated managed Firefox/Chrome profile defaults with explicit external-profile opt-in
+- backend-safe option validation and reserved profile/debugging argument guards
+- truthful profile ownership/isolation/cleanup metadata
+- attached-session detach-by-default semantics with explicit remote-close intent
+- Firefox managed wait semantics for `none` / `interactive` / `complete`
+- Chrome CDP Input click/type fidelity
+- DOM live state plus explicit accessibility snapshot mode
+- file-backed screenshot default with SHA-256; bounded inline base64 remains opt-in
+- managed process/profile cleanup evidence, including Firefox profile-bound process residue cleanup
+- 6 live-browser tools using Windows UI Automation only:
+  - `browser_live_attach`
+  - `browser_live_tabs`
+  - `browser_live_snapshot`
+  - `browser_live_click`
+  - `browser_live_type`
+  - `browser_live_stop`
+- live mode remains separate from WebDriver/CDP and reports `remote_automation=false`, `profile_access="none"`
+- current source/runtime catalog: **154 tools**
+
+Implementation commits:
+- `e4612e4497469596551b77a1c6eb763888519e13` — browser hardening/live safety implementation
+- `0b139a18f6f303025635039f912f3ee16c74eb05` — Firefox profile-process cleanup follow-up
+
+Exact-commit CI:
+- #164 / run `36995259635` — SUCCESS at `e4612e4...`
+- #165 / run `36997595480` — SUCCESS at `0b139a1...`
+
+Final implementation deployment before closure docs:
+- source/install tracked parity: **236/236 exact**
+- manifest digest: `45396e29b88ead2c587835f6993dfcc96f9a3e5e13557fa009f576f993b4e82d`
+- preserved local paths: **6/6**
+- runtime: **1.2.2 / 154 tools**
+- runtime PID: `9356`
+- runtime catalog digest: `2ca33225b970dd70e1350d7b4e3d9290116448181031872d643111ae7ab4c374`
+- installed Firefox physical smoke: PASS, `browser_residue=0`
+- installed Chrome physical smoke: PASS
+- installed live Firefox UIA smoke: PASS; 21 tabs, 25-element bounded snapshot, detach-only, browser process untouched
+- v1.2.2 annotated tag remains unchanged and peels to release commit `fcf3d75c6314706e3258b6c5d1345b6f637ac78f`
+
+Operational note:
+- the running LConnect runtime exposes 154 tools, but a conversation connected before the catalog expansion may still need a connector/schema reconnect before the 6 new `browser_live_*` tool schemas are directly callable.

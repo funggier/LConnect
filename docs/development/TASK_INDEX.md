@@ -55,4 +55,4 @@
 | [LCN-051](tasks/LCN-051-v1.2.1-current-reliability-release.md) | COMPLETE | v1.2.1 Current Reliability Release |
 | [LCN-052](tasks/LCN-052-secure-local-credential-persistence-self-restart.md) | COMPLETE | Secure Local Credential Persistence & Self-Restart |
 | [LCN-053](tasks/LCN-053-v1.2.2-secure-restart-local-credentials-release.md) | COMPLETE | v1.2.2 Secure Restart & Local Credentials Release |
-| [LCN-054](tasks/LCN-054-browser-control-hardening-live-safety-boundary.md) | ACTIVE | Browser Control Hardening & Live Safety Boundary |
+| [LCN-054](tasks/LCN-054-browser-control-hardening-live-safety-boundary.md) | COMPLETE | Browser Control Hardening & Live Safety Boundary |

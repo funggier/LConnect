@@ -4,7 +4,7 @@ Last updated: 2026-10-02
 
 ## Overall
 
-Current project state: **BASIC CORE STABLE / v1.2.2 PUBLISHED / SECURE RESTART LIVE GREEN**
+Current project state: **BASIC CORE STABLE / v1.2.2 PUBLISHED / BROWSER HARDENING LIVE GREEN**
 
 Current published release: **v1.2.2 — Secure Restart & Local Credentials**
 
@@ -14,13 +14,13 @@ Release CI: `36903887945` / #146 — PASS
 
 Current source version: **1.2.2**
 
-Current main/source MCP catalog: **148 tools**
+Current main/source MCP catalog: **154 tools**
 
-Current installed/running MCP catalog: **148 tools** (`1.2.2`)
+Current installed/running MCP catalog: **154 tools** (`1.2.2`)
 
-Current running catalog digest: `22529451eafb21024aa132a0dad5fcbe96651c542234695a0f0db565e078ab7d`
+Current running catalog digest: `2ca33225b970dd70e1350d7b4e3d9290116448181031872d643111ae7ab4c374`
 
-Current runtime catalog after LCN-021 restart: **148 tools**. An existing ChatGPT conversation may require connector/schema reconnect before newly added tool schemas are directly callable.
+Current runtime catalog after LCN-054 final restart: **154 tools**. Managed Firefox/Chrome and 6 `browser_live_*` Windows UI Automation tools are loaded. An existing ChatGPT conversation may require connector/schema reconnect before newly added tool schemas are directly callable.
 
 LConnect มี Core ที่ใช้งานจริงแล้วและผ่าน runtime acceptance บน Windows:
 
@@ -35,7 +35,7 @@ LConnect มี Core ที่ใช้งานจริงแล้วแล�
 - Thai documentation
 - GitHub releases
 
-Agent Operations Reliability LCN-025–030 ปิดครบ, Delivery/Turn Reliability LCN-031–039 และ LCN-046–048 ปิดที่ current evidence boundary โดย LCN-047 ยกเลิก handler-sum enforcement และ LCN-048 เพิ่ม terminal tail-gap telemetry จาก Retry จริงรอบที่สองโดยยังคง observation-only/no-blocking, Execution Ergonomics LCN-040–044 ปิดที่ current need; Desktop Control LCN-018–020 COMPLETE และ Browser Automation เริ่มแล้วโดย LCN-021 Browser Common Layer COMPLETE
+Agent Operations Reliability LCN-025–030 ปิดครบ, Delivery/Turn Reliability LCN-031–039 และ LCN-046–050 ปิดที่ current evidence boundary โดยยังคง observation-only/no-blocking, Execution Ergonomics LCN-040–044 ปิดที่ current need; Desktop Control LCN-018–020 COMPLETE และ Browser Automation LCN-021–023 + LCN-054 COMPLETE AT CURRENT SCOPE / DEPLOYED / LIVE GREEN
 
 ## Workstream status
 
@@ -50,14 +50,45 @@ Agent Operations Reliability LCN-025–030 ปิดครบ, Delivery/Turn Rel
 | Execution Ergonomics | COMPLETE AT CURRENT NEED | LCN-040–044 | LCN-044 Deployment Verification Snapshot PASS on installed tree; 178/178 tracked parity, runtime 1.2.0 / 120 tools |
 | Local Credential / Self-Restart | COMPLETE | LCN-052 | DPAPI CurrentUser credential + ACL + detached restart live GREEN; retained in current v1.2.2 runtime / 122 tools; current tracked parity 212/212 |
 | Desktop Control | COMPLETE | LCN-018–020 | Clipboard, Window Control, and Keyboard/Mouse complete/live GREEN |
-| Browser Automation | ACTIVE HARDENING | LCN-021–023, LCN-054 | LCN-021–023 deployed/live GREEN; LCN-054 hardens profile isolation, attach/stop semantics, interaction fidelity, screenshot/cleanup evidence, accessibility snapshots, and live-browser safety |
+| Browser Automation | COMPLETE AT CURRENT SCOPE | LCN-021–023, LCN-054 | Managed Firefox/Chrome + browser hardening + live UIA safety boundary deployed/live GREEN; runtime catalog 154 tools |
 
 ### LCN-054 — Browser Control Hardening & Live Safety Boundary
-**ACTIVE**
+**COMPLETE / DEPLOYED / LIVE GREEN**
 
-Hardening the deployed Browser Common/Firefox/Chrome stack after physical review. The task closes caller-controlled profile bypasses, makes attached stop non-destructive by default, exposes truthful profile ownership/isolation metadata, improves navigation/interaction semantics, adds accessibility and file-backed screenshot paths, surfaces cleanup evidence, and establishes a native live-browser safety boundary that does not enable WebDriver/CDP on a normal active profile.
+Completed hardening of the Browser Common/Firefox/Chrome stack and added a separate live-browser Windows UI Automation safety domain.
 
-Baseline at activation: main/origin `3955b0688ac18bdebe474be39229e09713eb3463`, clean/equal; installed runtime 1.2.2 / 148 tools. Existing v1.2.2 tag/release remains immutable.
+Delivered:
+- isolated managed profiles by default with explicit external-profile opt-in
+- reserved profile/debugging argument guards
+- truthful profile ownership/isolation/cleanup metadata
+- attached stop = detach by default; remote close explicit
+- Firefox `none` / `interactive` / `complete` wait semantics
+- Chrome CDP Input click/type
+- DOM live state + explicit accessibility snapshots
+- file-backed screenshot default + SHA-256
+- managed cleanup evidence and Firefox profile-bound process residue cleanup
+- 6 live-browser tools that do not enable WebDriver/CDP or access the normal browser profile
+
+Implementation commits:
+- `e4612e4497469596551b77a1c6eb763888519e13`
+- `0b139a18f6f303025635039f912f3ee16c74eb05`
+
+Exact-commit CI:
+- #164 / run `36995259635`: SUCCESS
+- #165 / run `36997595480`: SUCCESS
+
+Final implementation runtime:
+- version/catalog: **1.2.2 / 154 tools**
+- PID: `9356`
+- catalog digest: `2ca33225b970dd70e1350d7b4e3d9290116448181031872d643111ae7ab4c374`
+- source/install implementation parity: **236/236 exact**
+- manifest digest: `45396e29b88ead2c587835f6993dfcc96f9a3e5e13557fa009f576f993b4e82d`
+- preserved local paths: **6/6**
+- installed Firefox physical: PASS, `browser_residue=0`
+- installed Chrome physical: PASS
+- installed live Firefox UIA: PASS, detach-only, process untouched
+
+The existing v1.2.2 annotated tag remains immutable and still peels to release commit `fcf3d75c6314706e3258b6c5d1345b6f637ac78f`.
 
 ### LCN-053 — v1.2.2 Secure Restart & Local Credentials Release
 **COMPLETE**

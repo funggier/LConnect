@@ -11,10 +11,10 @@ Last updated: 2026-10-02
 - Release tag target: `fcf3d75c6314706e3258b6c5d1345b6f637ac78f`
 - Release CI: `36903887945` / #146 — PASS
 - Source version: `1.2.2`
-- Current source catalog: **148 tools**
-- Installed/running daemon: **1.2.2 / 148 tools**
-- Running catalog digest: `22529451eafb21024aa132a0dad5fcbe96651c542234695a0f0db565e078ab7d`
-- Direct ChatGPT/LConnect runtime catalog: **148 tools** after LCN-022 runtime restart; Firefox backend is live behind the existing browser tools; an existing conversation may require connector/schema reconnect before new tool schemas are directly callable
+- Current source catalog: **154 tools**
+- Installed/running daemon: **1.2.2 / 154 tools**
+- Running catalog digest: `2ca33225b970dd70e1350d7b4e3d9290116448181031872d643111ae7ab4c374`
+- Direct ChatGPT/LConnect runtime catalog: **154 tools** after LCN-054 final restart; managed Firefox/Chrome and 6 live-browser UIA tools are loaded. A conversation connected before the catalog expansion may require connector/schema reconnect before the new `browser_live_*` schemas are directly callable
 - LCN-046: COMPLETE — original round-boundary implementation; handler-sum enforcement superseded by LCN-047 evidence
 - LCN-047: COMPLETE — Turn-Risk Telemetry Model Repair / observation-only live GREEN
 - LCN-048: COMPLETE — Retry Tail-Gap Telemetry Refinement / live GREEN
@@ -28,15 +28,15 @@ Last updated: 2026-10-02
 - LCN-021: COMPLETE — Browser Common Layer / exact-commit CI + deployed runtime GREEN
 - LCN-022: COMPLETE — Firefox Adapter / physical Firefox + exact-commit CI + deployed runtime GREEN
 - LCN-023: COMPLETE — Chrome Adapter / physical CDP + exact-commit CI + deployed runtime GREEN
-- LCN-054: ACTIVE — Browser Control Hardening & Live Safety Boundary
+- LCN-054: COMPLETE — Browser Control Hardening & Live Safety Boundary / exact-commit CI + deployed runtime + physical Firefox/Chrome/live UIA GREEN
 
 ## Active task
 
-[LCN-054 — Browser Control Hardening & Live Safety Boundary](tasks/LCN-054-browser-control-hardening-live-safety-boundary.md) — **ACTIVE**
+No active development task.
 
-Scope: harden profile isolation and option schemas, make attached stop non-destructive by default, correct profile ownership metadata, implement truthful wait semantics, improve CDP interaction fidelity, add accessibility snapshot and file-backed screenshot results, surface cleanup evidence, and establish a native/UIA live-browser safety boundary.
+Latest completed task: [LCN-054 — Browser Control Hardening & Live Safety Boundary](tasks/LCN-054-browser-control-hardening-live-safety-boundary.md) — **COMPLETE**
 
-Latest completed task: [LCN-023 — Chrome Adapter](tasks/LCN-023-chrome-adapter.md) — **COMPLETE**
+Previous completed task: [LCN-023 — Chrome Adapter](tasks/LCN-023-chrome-adapter.md) — **COMPLETE**
 
 Previous completed task: [LCN-022 — Firefox Adapter](tasks/LCN-022-firefox-adapter.md) — **COMPLETE**
 
@@ -52,14 +52,16 @@ Previous completed task: [LCN-053 — v1.2.2 Secure Restart & Local Credentials 
 
 - LCN-022: COMPLETE — Firefox backend registered behind the 9 browser-common tools; physical Firefox 140.15.0esr PASS; implementation CI #159 PASS; runtime 148 tools
 
-Latest report: [reports/LCN-20261002-023-chrome-adapter.md](reports/LCN-20261002-023-chrome-adapter.md)
+Latest report: [reports/LCN-20261002-054-browser-control-hardening-live-safety-boundary.md](reports/LCN-20261002-054-browser-control-hardening-live-safety-boundary.md)
+
+Previous report: [reports/LCN-20261002-023-chrome-adapter.md](reports/LCN-20261002-023-chrome-adapter.md)
 
 Previous report: [reports/LCN-20261002-021-browser-common-layer.md](reports/LCN-20261002-021-browser-common-layer.md)
 
 ## Current reliability state
 
-- runtime: **1.2.2 / 148 tools**
-- current runtime PID after LCN-023 deployment/restart: `17012`
+- runtime: **1.2.2 / 154 tools**
+- current runtime PID after LCN-054 final deployment/restart: `9356`
 - current tunnel PID after v1.2.2 activation: `2216`
 - runtime root: `T:\Sanbox\openclawspace\tunnel-mcp-ok`
 - measurement model: `turn_risk_observation_v2`
@@ -71,11 +73,11 @@ Previous report: [reports/LCN-20261002-021-browser-common-layer.md](reports/LCN-
 - `github_run_wait`: compact top-level status; jobs/steps remain in `github_run_view`
 - local encrypted credential: DPAPI / CurrentUser, decrypt + ACL PASS
 - detached self-restart: live GREEN; no Runtime API key on restart command line
-- source↔installed current tracked parity after LCN-023 implementation deployment: **232/232 exact**
+- source↔installed implementation tracked parity after LCN-054 final runtime qualification: **236/236 exact**
 - release candidate CI #146: PASS
 - source and installed dependency audit: **0 vulnerabilities**
 - release program/docs/checksum assets: uploaded and downloaded-back hash verified
 
 ## Next action
 
-Implement and qualify LCN-054 against the clean/equal main baseline. Keep the existing v1.2.2 tag/release immutable; do not reset the worktree.
+LCN-054 is complete and live GREEN. Before activating the next planned tool-development task, verify live `main`/runtime state again. Keep the existing v1.2.2 tag/release immutable and do not reset the worktree.
