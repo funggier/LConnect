@@ -50,7 +50,7 @@ Agent Operations Reliability LCN-025–030 ปิดครบ, Delivery/Turn Rel
 | Execution Ergonomics | COMPLETE AT CURRENT NEED | LCN-040–044 | LCN-044 Deployment Verification Snapshot PASS on installed tree; 178/178 tracked parity, runtime 1.2.0 / 120 tools |
 | Local Credential / Self-Restart | COMPLETE | LCN-052 | DPAPI CurrentUser credential + ACL + detached restart live GREEN; retained in current v1.2.2 runtime / 122 tools; current tracked parity 212/212 |
 | Desktop Control | COMPLETE | LCN-018–020 | Clipboard, Window Control, and Keyboard/Mouse complete/live GREEN |
-| Browser Automation | PARTIAL — COMMON LAYER COMPLETE | LCN-021–023 | LCN-021 common layer live GREEN; LCN-022 Firefox and LCN-023 Chrome adapters remain deferred |
+| Browser Automation | PARTIAL — FIREFOX PRIMARY COMPLETE | LCN-021–023 | LCN-021 common layer and LCN-022 Firefox primary backend live GREEN; LCN-023 Chrome remains deferred |
 
 ### LCN-053 — v1.2.2 Secure Restart & Local Credentials Release
 **COMPLETE**
@@ -499,7 +499,7 @@ LCN-020 Keyboard / Mouse — COMPLETE
   ↓
 LCN-021 Browser Common Layer — COMPLETE
   ↓
-LCN-022 Firefox Adapter — DEFERRED
+LCN-022 Firefox Adapter — COMPLETE
   ↓
 LCN-023 Chrome Adapter — DEFERRED
 ```

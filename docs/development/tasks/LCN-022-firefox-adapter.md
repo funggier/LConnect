@@ -1,6 +1,6 @@
 # LCN-022 — Firefox Adapter
 
-Status: **ACTIVE**
+Status: **COMPLETE**
 
 ## Goal
 
@@ -54,6 +54,31 @@ Make Firefox the primary first-class browser backend behind the LCN-021 Browser 
 - `npm run check`: PASS
 - `npm audit --audit-level=high`: PASS / 0 vulnerabilities
 - `git diff --check`: PASS
+
+## Final qualification evidence
+
+- implementation commit: `d5a864b4fe37c7c48de2e50851aff8de6901c2fd`
+- exact implementation CI: #159 / run `36987829509` — **PASS**
+- Firefox physical baseline: `140.15.0esr`
+- geckodriver local runtime baseline: `0.37.1`
+- geckodriver SHA-256: `e95b4eac7960ffcd5acbfd92bb7d49d48f99c1d01a20ddd297fef8c80821020d`
+- managed Firefox session + private profile root: PASS
+- WebDriver BiDi `webSocketUrl` negotiation: PASS
+- deterministic explicit attach contract: PASS
+- tabs / navigate / snapshot / click / type / screenshot common operations: PASS
+- Unicode/Thai physical type and post-click DOM state verification: PASS
+- installed post-restart physical Firefox smoke: PASS
+- no managed geckodriver process left after acceptance
+- deployed tracked parity before closure docs: **228/228 exact**
+- source/install manifest digest: `80ce64528e9280cd706d33a38421c0bbc46e72ca09c9cf42bfd5e8f85463d4b5`
+- preserved local paths: 6/6 present
+- encrypted credential SHA-256 before/after deployment/restart: `b773cace3931586913b84460c4b00cbd1ce33b78a165fa77355e259470cf2665`
+- live runtime after restart: LConnect `1.2.2`, PID `18280`, **148 tools**
+- live runtime catalog digest: `22529451eafb21024aa132a0dad5fcbe96651c542234695a0f0db565e078ab7d`
+- browser tool count remains unchanged because LCN-022 supplies a backend adapter rather than new MCP names
+- existing user's Firefox process tree was not used as the managed test target
+
+Result: **COMPLETE / DEPLOYED / LIVE GREEN**.
 
 ## Acceptance criteria
 
