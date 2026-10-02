@@ -38,8 +38,19 @@ try { await adapter.attach({ endpoint: "file:///tmp/cdp" }); } catch (error) { s
 assert(schemeError?.message.includes("CHROME_ENDPOINT_INVALID"), "scheme guard mismatch");
 console.log("Chrome endpoint scheme guard: PASS");
 
-let clickGuard = null;
-try { await adapter.click({ endpoint: "http://127.0.0.1:1", timeoutMs: 100 }, { target: "#x", button: "right", click_count: 1 }); }
-catch (error) { clickGuard = error; }
-assert(clickGuard?.message.includes("CHROME_CAPABILITY_LIMIT"), "click guard mismatch");
-console.log("Chrome click capability guard: PASS");
+let externalProfileError = null;
+try { await adapter.start({ options: { user_data_dir: "C:\\unsafe-chrome-profile" } }); }
+catch (error) { externalProfileError = error; }
+assert(externalProfileError?.message.includes("CHROME_EXTERNAL_PROFILE_BLOCKED"), "external Chrome profile guard mismatch");
+
+let reservedArgError = null;
+try { await adapter.start({ options: { chrome_args: ["--user-data-dir=C:\\Users\\me\\Chrome"] } }); }
+catch (error) { reservedArgError = error; }
+assert(reservedArgError?.message.includes("CHROME_RESERVED_ARGUMENT_BLOCKED"), "reserved Chrome argument guard mismatch");
+
+let crossBackendError = null;
+try { await adapter.start({ options: { firefox_binary: "C:\\firefox.exe" } }); }
+catch (error) { crossBackendError = error; }
+assert(crossBackendError?.message.includes("CHROME_OPTION_UNSUPPORTED"), "cross-backend Chrome option guard mismatch");
+
+console.log("Chrome profile/argument option guards: PASS");

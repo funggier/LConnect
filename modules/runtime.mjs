@@ -29,6 +29,7 @@ export function runProcess(program, args = [], options = {}) {
     maxOutputChars = 120000,
     windowsHide = true,
     shell = false,
+    env = process.env,
   } = options;
 
   return new Promise((resolve) => {
@@ -48,6 +49,7 @@ export function runProcess(program, args = [], options = {}) {
       cwd: cwd ? path.resolve(cwd) : undefined,
       windowsHide,
       shell,
+      env,
       stdio: ["ignore", "pipe", "pipe"],
     });
 

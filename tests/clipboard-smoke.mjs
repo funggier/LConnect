@@ -59,7 +59,7 @@ try{
 }finally{
   if(process.platform==="win32" && canRestore && prior){
     try{
-      if(prior.state==="text") await callJson("clipboard_set",{text:prior.text ?? ""});
+      if(prior.state==="text" && prior.text) await callJson("clipboard_set",{text:prior.text});
       else await callJson("clipboard_clear",{});
       console.log("clipboard prior state restore: PASS");
     }catch(e){console.error("clipboard restore failed",e); process.exitCode=1;}

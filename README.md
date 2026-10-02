@@ -11,11 +11,11 @@
 ## สถานะปัจจุบัน
 
 - Source version: **1.2.2**
-- MCP catalog on current `main`: **122 tools**
+- MCP catalog on current `main`: **154 tools**
 - Latest published release: **[v1.2.2 — Secure Restart & Local Credentials](https://github.com/funggier/LConnect/releases/tag/v1.2.2)**
 - OpenAI tunnel-client minimum: **0.0.14**
 
-LConnect Core ผ่าน runtime acceptance บน Windows 10 แล้ว โดย current `main` แสดง 122 tools ครอบคลุม filesystem, shell, managed process/session, system/network/hardware, Git, GitHub Actions/Release, structured inspection, runtime/delivery evidence, deployment verification และ turn-risk observation แบบไม่บล็อกการทำงาน
+LConnect Core ผ่าน runtime acceptance บน Windows 10 แล้ว โดย current `main` แสดง 154 tools ครอบคลุม filesystem, shell, managed process/session, system/network/hardware, Git, GitHub Actions/Release, structured inspection, browser automation แบบ isolated, live browser control ผ่าน Windows UI Automation, runtime/delivery evidence, deployment verification และ turn-risk observation แบบไม่บล็อกการทำงาน
 
 ## ไฮไลต์ v1.2.2
 
@@ -267,6 +267,37 @@ npm test
 - `git_is_ancestor`
 - `git_push_ref`
 - `git_sync_status`
+
+### Browser Automation / Live Browser Control
+
+Browser automation แบบ managed ใช้ common API เดียวสำหรับ Firefox และ Chrome:
+
+- `browser_start`
+- `browser_attach`
+- `browser_stop`
+- `browser_tabs`
+- `browser_navigate`
+- `browser_snapshot`
+- `browser_click`
+- `browser_type`
+- `browser_screenshot`
+
+ค่าเริ่มต้นของ `browser_start` คือ **isolated temporary profile** เท่านั้น Firefox ใช้ WebDriver/Marionette + BiDi negotiation และ Chrome ใช้ native CDP. Caller-supplied profile/user-data directory ถูก block เว้นแต่ opt-in ด้วย `unsafe_allow_external_profile=true` และ profile/debugging flags ที่ LConnect เป็นเจ้าของถูก reject จาก generic browser args.
+
+`browser_stop` ของ attached session เป็น **detach-only โดยปริยาย**; จะปิด remote automation session ต่อเมื่อ caller ระบุ `close_remote_session=true` อย่างชัดเจน
+
+`browser_snapshot` รองรับ `mode="dom"` และ `mode="accessibility"`; Chrome ใช้ CDP Accessibility tree โดยตรง ส่วน Firefox ใช้ bounded accessibility projection จาก DOM. Screenshot คืนไฟล์ + SHA-256 เป็นค่าเริ่มต้นเพื่อลด MCP payload; ใช้ `result_mode="inline"` เมื่อจำเป็นต้องรับ base64 โดยตรง
+
+สำหรับ browser ที่ผู้ใช้กำลังเปิดใช้งานจริง ให้ใช้ live tools:
+
+- `browser_live_attach`
+- `browser_live_tabs`
+- `browser_live_snapshot`
+- `browser_live_click`
+- `browser_live_type`
+- `browser_live_stop`
+
+live mode ใช้ **Windows UI Automation เท่านั้น** และ session จะประกาศ `remote_automation=false`, `profile_access="none"`. มันไม่เปิด WebDriver/CDP, ไม่เพิ่ม remote-debugging port และไม่เข้าถึง profile ของ browser.
 
 ### Structured Inspection / Integrity
 - `search_text`

@@ -1090,6 +1090,88 @@ Manual controls:
 
 ถ้า scan/hash ไม่ครบหรือ unstable จะคืน `comparison_reliable=false` และ `equal=null` แทนการสรุปเกินหลักฐาน
 
+## Browser Automation
+
+LConnect แยก browser control เป็น 2 safety domain:
+
+### Managed / Attached Automation
+
+Tools:
+
+- `browser_start`
+- `browser_attach`
+- `browser_stop`
+- `browser_tabs`
+- `browser_navigate`
+- `browser_snapshot`
+- `browser_click`
+- `browser_type`
+- `browser_screenshot`
+
+`browser_start` สร้าง isolated automation session โดยใช้ temporary profile/user-data directory เป็นค่าเริ่มต้น ไม่ reuse profile ปกติของผู้ใช้
+
+Firefox:
+
+- backend หลัก: WebDriver/Marionette
+- negotiate WebDriver BiDi URL เพื่อรองรับ protocol growth
+- managed navigation ใช้ LConnect-controlled wait semantics: `none`, `interactive`, `complete`
+- caller-supplied `profile_root` ต้องใช้ `unsafe_allow_external_profile=true`
+- reject `-profile`, Profile Manager, Marionette และ remote-debugging arguments จาก `firefox_args`
+
+Chrome:
+
+- backend: native CDP
+- caller-supplied `user_data_dir` ต้องใช้ `unsafe_allow_external_profile=true`
+- reject `--user-data-dir`, `--profile-directory`, `--remote-debugging-port`, `--remote-debugging-address` จาก `chrome_args`
+- click/type ใช้ CDP Input events แทน DOM `.click()`/value mutation
+
+Profile metadata ที่คืนจาก managed/attached session มี:
+
+- `managed_profile`
+- `profile_mode`
+- `profile_owned`
+- `profile_isolated`
+- `profile_cleanup_on_stop`
+
+Attached session ใช้ detach-only เป็นค่าเริ่มต้น. หากต้องการปิด automation session/browser ฝั่ง remote ต้องระบุ `close_remote_session=true` อย่างชัดเจน
+
+`browser_snapshot`:
+
+- `mode="dom"` — DOM + live state เช่น value/checked/selected/disabled/ARIA
+- `mode="accessibility"` — accessibility-oriented snapshot; Chrome ใช้ CDP Accessibility tree และ Firefox ใช้ bounded DOM accessibility projection
+
+`browser_screenshot`:
+
+- ค่าเริ่มต้น `result_mode="file"` — คืน path, bytes, MIME type และ SHA-256
+- `result_mode="inline"` — คืน base64 โดยตรงเมื่อจำเป็น
+- file-backed default ช่วยลด MCP result payload และลดความเสี่ยง timeout จากภาพขนาดใหญ่
+
+Managed stop คืน cleanup evidence สำหรับ process/profile และ residue state
+
+### Live Browser Control — Windows UI Automation
+
+Tools:
+
+- `browser_live_attach`
+- `browser_live_tabs`
+- `browser_live_snapshot`
+- `browser_live_click`
+- `browser_live_type`
+- `browser_live_stop`
+
+ใช้กับ Firefox/Chrome ที่ผู้ใช้เปิดอยู่จริงโดย **ไม่เปิด WebDriver/CDP** และไม่เข้าถึง browser profile
+
+Live session จะประกาศ:
+
+- `mode="live"`
+- `backend="windows-uia"`
+- `remote_automation=false`
+- `profile_access="none"`
+
+`browser_live_stop` เป็น detach-only เสมอและไม่ปิด browser process
+
+live snapshot/click/type อิง Windows UI Automation element identity เช่น control type, name และ AutomationId. ความสามารถจริงขึ้นกับ accessibility tree ที่ browser/version/page นั้น expose
+
 ## Git Verification
 
 ### git_remote_ref

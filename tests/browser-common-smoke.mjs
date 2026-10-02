@@ -1,3 +1,4 @@
+import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { BrowserCommonLayer } from "../modules/browser-common.mjs";
@@ -47,6 +48,11 @@ const typed = await layer.type({ browser_session_id: sid, target: "#q", text: "à
 assert(typed.result.chars === 5 && typed.result.clear === true, "type result mismatch");
 const shot = await layer.screenshot({ browser_session_id: sid, full_page: true, max_bytes: 4096 });
 assert(shot.result.mime_type === "image/png" && shot.result.bytes === 4, "screenshot result mismatch");
+assert(shot.result.result_mode === "file" && fs.existsSync(shot.result.path), "file-backed screenshot result mismatch");
+assert(typeof shot.result.sha256 === "string" && shot.result.sha256.length === 64, "screenshot sha256 missing");
+fs.rmSync(shot.result.path, { force: true });
+const inlineShot = await layer.screenshot({ browser_session_id: sid, full_page: false, max_bytes: 4096, result_mode: "inline" });
+assert(inlineShot.result.result_mode === "inline" && inlineShot.result.data_base64 === "ZmFrZQ==", "inline screenshot opt-in mismatch");
 console.log("tabs/navigate/snapshot/click/type/screenshot dispatch: PASS");
 
 const attached = await layer.attach({ browser: "firefox", endpoint: "ws://127.0.0.1:9000", options: { reuse: true } });
@@ -111,8 +117,8 @@ try {
   const catalogResult = await client.callTool({ name: "runtime_catalog", arguments: { include_names: true } });
   const catalogText = catalogResult.content?.find((x) => x.type === "text")?.text ?? "{}";
   const catalog = JSON.parse(catalogText);
-  const expected = ["browser_start","browser_attach","browser_stop","browser_tabs","browser_navigate","browser_snapshot","browser_click","browser_type","browser_screenshot"];
-  assert(catalog.tool_count === 148, `catalog expected 148 tools, got ${catalog.tool_count}`);
+  const expected = ["browser_start","browser_attach","browser_stop","browser_tabs","browser_navigate","browser_snapshot","browser_click","browser_type","browser_screenshot","browser_live_attach","browser_live_tabs","browser_live_snapshot","browser_live_click","browser_live_type","browser_live_stop"];
+  assert(catalog.tool_count === 154, `catalog expected 154 tools, got ${catalog.tool_count}`);
   for (const name of expected) assert(catalog.tool_names.includes(name), `catalog missing ${name}`);
   console.log("MCP browser common registration/catalog: PASS");
 

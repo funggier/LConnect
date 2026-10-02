@@ -24,6 +24,7 @@ import { registerInputControlTools } from "./modules/input-control.mjs";
 import { registerBrowserCommonTools, defaultBrowserCommonLayer } from "./modules/browser-common.mjs";
 import { registerFirefoxAdapter } from "./modules/browser-firefox.mjs";
 import { registerChromeAdapter } from "./modules/browser-chrome.mjs";
+import { registerBrowserLiveTools } from "./modules/browser-live.mjs";
 import {
   installToolTelemetry,
   registerToolTelemetryTool,
@@ -80,6 +81,7 @@ registerInputControlTools(server, config);
 registerFirefoxAdapter(defaultBrowserCommonLayer);
 registerChromeAdapter(defaultBrowserCommonLayer);
 registerBrowserCommonTools(server, config);
+registerBrowserLiveTools(server, config);
 registerStructuredTextSearchTool(server, config);
 registerFileIntegrityTools(server, config);
 registerGitHubTools(server, config);

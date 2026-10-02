@@ -483,6 +483,25 @@ Primary backend:
 
 Chrome should support the same common Browser API while retaining optional Chrome-specific deep diagnostics.
 
+## LCN-054 Browser Control Hardening & Live Safety Boundary
+
+Harden the completed LCN-021–023 browser stack without changing the immutable v1.2.2 release:
+
+- managed Firefox/Chrome default to isolated temporary profiles
+- external profile roots require explicit unsafe opt-in
+- reserved profile/debugging arguments are blocked
+- attached sessions detach by default and remote close is explicit
+- profile ownership/isolation/cleanup metadata must be truthful
+- navigation wait semantics must represent actual behavior
+- Chrome interaction uses CDP Input for higher-fidelity click/type
+- snapshot exposes DOM live state and accessibility mode
+- screenshot defaults to file + SHA-256 instead of large inline base64
+- managed stop surfaces process/profile cleanup evidence
+- live browser control is a separate Windows UI Automation domain with no WebDriver/CDP or profile access
+- live mode adds `browser_live_attach/tabs/snapshot/click/type/stop`
+
+LCN-054 increases the current source catalog to **154 tools** while leaving v1.2.2 tag/release unchanged.
+
 ## Explicit non-goal for first browser phase
 
 Microsoft Edge is not required.

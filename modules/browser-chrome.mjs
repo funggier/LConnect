@@ -25,6 +25,29 @@ function firstPathFromWhere(command) {
   return result.stdout.split(/\r?\n/).map((x) => x.trim()).find(existsFile) ?? null;
 }
 
+const CHROME_START_OPTIONS = new Set([
+  "chrome_binary", "chrome_args", "user_data_dir", "unsafe_allow_external_profile",
+  "startup_timeout_ms", "timeout_ms",
+]);
+
+function assertChromeStartOptions(options) {
+  for (const key of Object.keys(options || {})) {
+    if (!CHROME_START_OPTIONS.has(key)) {
+      throw chromeError("CHROME_OPTION_UNSUPPORTED", `Chrome does not support browser_start option: ${key}.`);
+    }
+  }
+  if (options.user_data_dir && options.unsafe_allow_external_profile !== true) {
+    throw chromeError("CHROME_EXTERNAL_PROFILE_BLOCKED",
+      "Caller-supplied user_data_dir requires unsafe_allow_external_profile=true. Managed Chrome uses an isolated temporary user-data directory by default.");
+  }
+  for (const raw of options.chrome_args || []) {
+    const arg = String(raw).trim().toLowerCase();
+    if (/^--(?:user-data-dir|profile-directory|remote-debugging-port|remote-debugging-address)(?:=|$)/.test(arg)) {
+      throw chromeError("CHROME_RESERVED_ARGUMENT_BLOCKED", `LConnect owns Chrome profile/debugging arguments; blocked argument: ${raw}`);
+    }
+  }
+}
+
 export function resolveChromeBinary(options = {}) {
   const localAppData = process.env.LOCALAPPDATA;
   const candidates = [
@@ -116,17 +139,39 @@ async function waitCdpReady(endpoint, processHandle, timeoutMs = 15000) {
   throw chromeError("CHROME_CDP_NOT_READY", `Chrome CDP did not become ready within ${timeoutMs} ms.`, lastError);
 }
 
-function killOwnedChrome(child) {
-  if (!child?.pid) return;
+function stopOwnedChrome(child) {
+  if (!child?.pid) return { attempted: false, exited: true, forced: false, pid: null };
+  const pid = child.pid;
+  if (child.exitCode != null) return { attempted: false, exited: true, forced: false, pid, exit_code: child.exitCode };
+  let forced = false;
+  let taskkill_status = null;
   if (process.platform === "win32") {
-    try { spawnSync("taskkill.exe", ["/PID", String(child.pid), "/T", "/F"], { windowsHide: true, stdio: "ignore" }); return; } catch {}
+    forced = true;
+    try {
+      const result = spawnSync("taskkill.exe", ["/PID", String(pid), "/T", "/F"], { windowsHide: true, stdio: "ignore" });
+      taskkill_status = result.status;
+    } catch {
+      taskkill_status = -1;
+    }
+  } else {
+    try { child.kill("SIGKILL"); forced = true; } catch {}
   }
-  try { child.kill("SIGKILL"); } catch {}
+  return { attempted: true, exited: child.exitCode != null || taskkill_status === 0, forced, pid, exit_code: child.exitCode, taskkill_status };
 }
 
-function cleanupRoot(root) {
-  if (!root) return;
-  try { fs.rmSync(root, { recursive: true, force: true, maxRetries: 3, retryDelay: 100 }); } catch {}
+function cleanupRoot(root, enabled = true) {
+  const evidence = { attempted: Boolean(root && enabled), succeeded: null, path: root ?? null, residue_exists: null };
+  if (!root || !enabled) return { ...evidence, succeeded: false, residue_exists: root ? fs.existsSync(root) : false };
+  try {
+    fs.rmSync(root, { recursive: true, force: true, maxRetries: 3, retryDelay: 100 });
+    evidence.succeeded = true;
+  } catch (error) {
+    evidence.succeeded = false;
+    evidence.error = error.message;
+  }
+  evidence.residue_exists = fs.existsSync(root);
+  if (evidence.residue_exists) evidence.succeeded = false;
+  return evidence;
 }
 
 class CdpConnection {
@@ -237,15 +282,16 @@ function jsString(value) {
   return JSON.stringify(String(value));
 }
 
-async function waitReadyState(connection, timeoutMs = 30000) {
+async function waitReadyState(connection, targetState = "complete", timeoutMs = 30000) {
   const deadline = Date.now() + timeoutMs;
   let state = null;
   while (Date.now() < deadline) {
     state = await evaluate(connection, "document.readyState");
-    if (state === "complete") return state;
+    if (targetState === "interactive" && (state === "interactive" || state === "complete")) return state;
+    if (targetState === "complete" && state === "complete") return state;
     await new Promise((resolve) => setTimeout(resolve, 100));
   }
-  throw chromeError("CHROME_NAVIGATION_TIMEOUT", `document.readyState did not reach complete within ${timeoutMs} ms (last=${state}).`);
+  throw chromeError("CHROME_NAVIGATION_TIMEOUT", `document.readyState did not reach ${targetState} within ${timeoutMs} ms (last=${state}).`);
 }
 
 function screenshotResult(base64, maxBytes) {
@@ -263,11 +309,13 @@ export class ChromeAdapter {
   }
 
   async start({ url = null, headless = false, options = {} } = {}) {
+    assertChromeStartOptions(options);
     const chromeBinary = resolveChromeBinary(options);
-    const port = options.port ?? await this.freePortImpl();
+    const port = await this.freePortImpl();
     if (!Number.isInteger(port) || port < 1 || port > 65535) throw chromeError("CHROME_PORT_INVALID", `Invalid CDP port: ${port}`);
 
-    const userDataDir = options.user_data_dir
+    const externalUserDataDir = Boolean(options.user_data_dir);
+    const userDataDir = externalUserDataDir
       ? path.resolve(options.user_data_dir)
       : fs.mkdtempSync(path.join(os.tmpdir(), "lconnect-chrome-"));
     fs.mkdirSync(userDataDir, { recursive: true });
@@ -302,18 +350,22 @@ export class ChromeAdapter {
           managed: true,
           chromeProcess: child,
           userDataDir,
-          cleanupUserDataDir: !options.user_data_dir,
+          cleanupUserDataDir: !externalUserDataDir,
           timeoutMs: options.timeout_ms ?? 10000,
           defaultTargetId: primaryTarget?.id ?? null,
         },
         product: "Chrome",
         browser_version: String(version.Browser || "").replace(/^Chrome\//, "") || null,
         protocol_version: version["Protocol-Version"] ?? null,
-        managed_profile: true,
+        managed_profile: !externalUserDataDir,
+        profile_mode: externalUserDataDir ? "external" : "temporary",
+        profile_owned: !externalUserDataDir,
+        profile_isolated: !externalUserDataDir,
+        profile_cleanup_on_stop: !externalUserDataDir,
       };
     } catch (error) {
-      killOwnedChrome(child);
-      if (!options.user_data_dir) cleanupRoot(userDataDir);
+      stopOwnedChrome(child);
+      cleanupRoot(userDataDir, !externalUserDataDir);
       throw error?.code ? error : chromeError("CHROME_START_FAILED", "Failed to start managed Chrome CDP session.", error);
     }
   }
@@ -342,24 +394,73 @@ export class ChromeAdapter {
       product: version.Browser ?? null,
       protocol_version: version["Protocol-Version"] ?? null,
       tab_count: targets.length,
+      managed_profile: false,
+      profile_mode: "attached-external",
+      profile_owned: false,
+      profile_isolated: null,
+      profile_cleanup_on_stop: false,
     };
   }
 
-  async stop(handle) {
-    if (handle.managed) {
-      try {
-        const version = await fetchJson(`${handle.endpoint}/json/version`, 2500);
-        if (version?.webSocketDebuggerUrl) {
-          const browser = await CdpConnection.connect(version.webSocketDebuggerUrl, 2500);
-          try { await browser.command("Browser.close", {}, 2500).catch(() => {}); }
-          finally { browser.close(); }
-        }
-      } catch {}
-      await new Promise((resolve) => setTimeout(resolve, 250));
-      killOwnedChrome(handle.chromeProcess);
-      if (handle.cleanupUserDataDir) cleanupRoot(handle.userDataDir);
+  async stop(handle, args = {}) {
+    if (!handle.managed && args.close_remote_session !== true) {
+      return {
+        stopped: true,
+        process_owned: false,
+        detached_only: true,
+        remote_session_closed: false,
+        profile_cleanup: { attempted: false, succeeded: false, path: null, residue_exists: false },
+      };
     }
-    return { stopped: true, process_owned: Boolean(handle.managed), detached_only: !handle.managed };
+
+    let closeAttempted = false;
+    let closeSucceeded = false;
+    let closeWarning = null;
+    try {
+      const version = await fetchJson(`${handle.endpoint}/json/version`, 2500);
+      if (version?.webSocketDebuggerUrl) {
+        closeAttempted = true;
+        const browser = await CdpConnection.connect(version.webSocketDebuggerUrl, 2500);
+        try {
+          await browser.command("Browser.close", {}, 2500).catch((error) => {
+            if (error?.code !== "CHROME_CDP_DISCONNECTED") throw error;
+          });
+          closeSucceeded = true;
+        } finally {
+          browser.close();
+        }
+      }
+    } catch (error) {
+      closeWarning = error.message;
+      if (!handle.managed && args.close_remote_session === true) throw error;
+    }
+
+    if (!handle.managed) {
+      return {
+        stopped: true,
+        process_owned: false,
+        detached_only: false,
+        remote_session_closed: closeSucceeded,
+        remote_close_attempted: closeAttempted,
+        ...(closeWarning ? { close_warning: closeWarning } : {}),
+        profile_cleanup: { attempted: false, succeeded: false, path: null, residue_exists: false },
+      };
+    }
+
+    await new Promise((resolve) => setTimeout(resolve, 250));
+    const processCleanup = stopOwnedChrome(handle.chromeProcess);
+    const profileCleanup = cleanupRoot(handle.userDataDir, handle.cleanupUserDataDir);
+    return {
+      stopped: true,
+      process_owned: true,
+      detached_only: false,
+      remote_session_closed: null,
+      browser_close_attempted: closeAttempted,
+      browser_close_succeeded: closeSucceeded,
+      process_cleanup: processCleanup,
+      profile_cleanup: profileCleanup,
+      ...(closeWarning ? { close_warning: closeWarning } : {}),
+    };
   }
 
   async tabs(handle) {
@@ -376,22 +477,68 @@ export class ChromeAdapter {
 
   async navigate(handle, args = {}) {
     return await withTarget(handle, args.tab_id, async (connection) => {
+      const wait = args.wait ?? "complete";
+      const timeoutMs = args.timeout_ms ?? 30000;
       await connection.command("Page.enable");
-      await connection.command("Page.navigate", { url: args.url }, args.timeout_ms ?? 30000);
-      const ready = args.wait === "none" ? null : await waitReadyState(connection, args.timeout_ms ?? 30000);
+      await connection.command("Page.navigate", { url: args.url }, timeoutMs);
+      const ready = wait === "none" ? null : await waitReadyState(connection, wait, timeoutMs);
+      if (wait === "none") {
+        return { url: args.url, title: null, ready_state: null, wait, transport: "cdp" };
+      }
       const [finalUrl, title] = await Promise.all([
         evaluate(connection, "location.href"),
         evaluate(connection, "document.title"),
       ]);
-      return { url: finalUrl, title, ready_state: ready, wait: args.wait ?? "complete" };
+      return { url: finalUrl, title, ready_state: ready, wait, transport: "cdp" };
     });
   }
 
   async snapshot(handle, args = {}) {
     const maxChars = Math.max(1000, Math.min(200000, args.max_chars ?? 100000));
+    const mode = args.mode ?? "dom";
     return await withTarget(handle, args.tab_id, async (connection) => {
+      if (mode === "accessibility") {
+        await connection.command("Accessibility.enable");
+        let axResult;
+        if (args.target) {
+          const selector = jsString(args.target);
+          const remote = await connection.command("Runtime.evaluate", {
+            expression: `document.querySelector(${selector})`,
+            returnByValue: false,
+          });
+          const objectId = remote.result?.objectId;
+          if (!objectId) throw chromeError("CHROME_TARGET_NOT_FOUND", `No element matched CSS selector: ${args.target}`);
+          try {
+            axResult = await connection.command("Accessibility.getPartialAXTree", { objectId, fetchRelatives: false });
+          } finally {
+            await connection.command("Runtime.releaseObject", { objectId }).catch(() => {});
+          }
+        } else {
+          axResult = await connection.command("Accessibility.getFullAXTree");
+        }
+        const maxNodes = Math.max(20, Math.min(500, Math.floor(maxChars / 260)));
+        const nodes = (axResult.nodes || []).slice(0, maxNodes).map((node) => {
+          const properties = {};
+          for (const prop of node.properties || []) {
+            if (["checked","disabled","expanded","focused","level","pressed","selected","required"].includes(prop.name)) {
+              properties[prop.name] = prop.value?.value ?? null;
+            }
+          }
+          return {
+            node_id: node.nodeId ?? null,
+            ignored: Boolean(node.ignored),
+            role: node.role?.value ?? null,
+            name: node.name?.value ?? null,
+            value: node.value?.value ?? null,
+            properties,
+          };
+        });
+        return { mode: "accessibility", source: "cdp-accessibility", target: args.target ?? null, nodes };
+      }
+
       const target = args.target ? jsString(args.target) : "null";
-      const expression = `(()=>{const sel=${target};const el=sel?document.querySelector(sel):document.documentElement;if(!el)return null;const text=(sel?(el.innerText||el.textContent||""):(document.body?.innerText||"")).slice(0,${maxChars});const html=(sel?el.outerHTML:(document.documentElement?.outerHTML||"")).slice(0,${maxChars});return {url:location.href,title:document.title,target:sel,tag:sel?el.tagName:null,text,html};})()`;
+      const includeState = args.include_state !== false ? "true" : "false";
+      const expression = `(()=>{const sel=${target};const el=sel?document.querySelector(sel):document.documentElement;if(!el)return null;const text=(sel?(el.innerText||el.textContent||""):(document.body?.innerText||"")).slice(0,${maxChars});const html=(sel?el.outerHTML:(document.documentElement?.outerHTML||"")).slice(0,${maxChars});let state=null;if(${includeState}){const subject=sel?el:document.activeElement;if(subject){const aria={};for(const a of subject.attributes||[]){if(a.name.startsWith("aria-"))aria[a.name]=a.value;}state={tag:subject.tagName,id:subject.id||null,value:("value"in subject?subject.value:null),checked:("checked"in subject?Boolean(subject.checked):null),selected:("selected"in subject?Boolean(subject.selected):null),disabled:("disabled"in subject?Boolean(subject.disabled):null),role:subject.getAttribute?.("role")||null,aria};}}return {mode:"dom",url:location.href,title:document.title,target:sel,tag:sel?el.tagName:null,text,html,state};})()`;
       const result = await evaluate(connection, expression);
       if (args.target && result == null) throw chromeError("CHROME_TARGET_NOT_FOUND", `No element matched CSS selector: ${args.target}`);
       return result ?? {};
@@ -399,25 +546,47 @@ export class ChromeAdapter {
   }
 
   async click(handle, args = {}) {
-    if (args.button !== "left") throw chromeError("CHROME_CAPABILITY_LIMIT", "browser_click currently supports left-button DOM clicks only for Chrome.");
-    if ((args.click_count ?? 1) !== 1) throw chromeError("CHROME_CAPABILITY_LIMIT", "browser_click currently supports click_count=1 only for Chrome.");
     return await withTarget(handle, args.tab_id, async (connection) => {
       const selector = jsString(args.target);
-      const result = await evaluate(connection, `(()=>{const el=document.querySelector(${selector});if(!el)return false;el.click();return true;})()`);
-      if (!result) throw chromeError("CHROME_TARGET_NOT_FOUND", `No element matched CSS selector: ${args.target}`);
-      return { clicked: true, target: args.target };
+      const point = await evaluate(connection, `(()=>{const el=document.querySelector(${selector});if(!el)return null;el.scrollIntoView({block:"center",inline:"center"});const r=el.getBoundingClientRect();return {x:r.left+r.width/2,y:r.top+r.height/2,disabled:Boolean(el.disabled),tag:el.tagName};})()`);
+      if (!point) throw chromeError("CHROME_TARGET_NOT_FOUND", `No element matched CSS selector: ${args.target}`);
+      if (point.disabled) throw chromeError("CHROME_TARGET_DISABLED", `Target is disabled: ${args.target}`);
+      const button = args.button ?? "left";
+      const clickCount = args.click_count ?? 1;
+      await connection.command("Input.dispatchMouseEvent", { type: "mouseMoved", x: point.x, y: point.y, button: "none" });
+      for (let i = 1; i <= clickCount; i += 1) {
+        await connection.command("Input.dispatchMouseEvent", { type: "mousePressed", x: point.x, y: point.y, button, clickCount: i });
+        await connection.command("Input.dispatchMouseEvent", { type: "mouseReleased", x: point.x, y: point.y, button, clickCount: i });
+      }
+      return { clicked: true, target: args.target, button, click_count: clickCount, input_backend: "cdp-input", point: { x: point.x, y: point.y } };
     });
   }
 
   async type(handle, args = {}) {
     return await withTarget(handle, args.tab_id, async (connection) => {
       const selector = jsString(args.target);
-      const text = jsString(args.text);
-      const clear = args.clear ? "true" : "false";
-      const result = await evaluate(connection, `(()=>{const el=document.querySelector(${selector});if(!el)return false;el.focus();const incoming=${text};const clear=${clear};if("value" in el){el.value=clear?incoming:String(el.value||"")+incoming;}else if(el.isContentEditable){el.textContent=clear?incoming:String(el.textContent||"")+incoming;}else{return null;}el.dispatchEvent(new Event("input",{bubbles:true}));el.dispatchEvent(new Event("change",{bubbles:true}));return true;})()`);
-      if (result === false) throw chromeError("CHROME_TARGET_NOT_FOUND", `No element matched CSS selector: ${args.target}`);
-      if (result == null) throw chromeError("CHROME_TARGET_NOT_EDITABLE", `Element is not editable: ${args.target}`);
-      return { typed: true, target: args.target, chars: Array.from(args.text).length, cleared: Boolean(args.clear) };
+      const prep = await evaluate(connection, `(()=>{const el=document.querySelector(${selector});if(!el)return {found:false};const editable=("value"in el)||el.isContentEditable;if(!editable)return {found:true,editable:false};el.focus();return {found:true,editable:true,tag:el.tagName};})()`);
+      if (!prep?.found) throw chromeError("CHROME_TARGET_NOT_FOUND", `No element matched CSS selector: ${args.target}`);
+      if (!prep.editable) throw chromeError("CHROME_TARGET_NOT_EDITABLE", `Element is not editable: ${args.target}`);
+
+      if (args.clear) {
+        await connection.command("Input.dispatchKeyEvent", { type: "keyDown", key: "Control", code: "ControlLeft", windowsVirtualKeyCode: 17, modifiers: 2 });
+        await connection.command("Input.dispatchKeyEvent", { type: "keyDown", key: "a", code: "KeyA", windowsVirtualKeyCode: 65, modifiers: 2 });
+        await connection.command("Input.dispatchKeyEvent", { type: "keyUp", key: "a", code: "KeyA", windowsVirtualKeyCode: 65, modifiers: 2 });
+        await connection.command("Input.dispatchKeyEvent", { type: "keyUp", key: "Control", code: "ControlLeft", windowsVirtualKeyCode: 17, modifiers: 0 });
+        await connection.command("Input.dispatchKeyEvent", { type: "keyDown", key: "Backspace", code: "Backspace", windowsVirtualKeyCode: 8 });
+        await connection.command("Input.dispatchKeyEvent", { type: "keyUp", key: "Backspace", code: "Backspace", windowsVirtualKeyCode: 8 });
+      }
+      if (args.text) await connection.command("Input.insertText", { text: args.text });
+      const value = await evaluate(connection, `(()=>{const el=document.querySelector(${selector});return el?("value"in el?String(el.value??""):String(el.textContent??"")):null;})()`);
+      return {
+        typed: true,
+        target: args.target,
+        chars: Array.from(args.text).length,
+        cleared: Boolean(args.clear),
+        input_backend: "cdp-input",
+        value,
+      };
     });
   }
 

@@ -26,6 +26,30 @@ function firstPathFromWhere(command) {
   return result.stdout.split(/\r?\n/).map((x) => x.trim()).find(existsFile) ?? null;
 }
 
+const FIREFOX_START_OPTIONS = new Set([
+  "firefox_binary", "geckodriver_path", "firefox_args", "preferences", "profile_root",
+  "unsafe_allow_external_profile", "startup_timeout_ms", "session_timeout_ms",
+  "navigation_timeout_ms", "timeout_ms", "log_level",
+]);
+
+function assertFirefoxStartOptions(options) {
+  for (const key of Object.keys(options || {})) {
+    if (!FIREFOX_START_OPTIONS.has(key)) {
+      throw firefoxError("FIREFOX_OPTION_UNSUPPORTED", `Firefox does not support browser_start option: ${key}.`);
+    }
+  }
+  if (options.profile_root && options.unsafe_allow_external_profile !== true) {
+    throw firefoxError("FIREFOX_EXTERNAL_PROFILE_ROOT_BLOCKED",
+      "Caller-supplied profile_root requires unsafe_allow_external_profile=true. Managed Firefox uses a private temporary profile root by default.");
+  }
+  for (const raw of options.firefox_args || []) {
+    const arg = String(raw).trim().toLowerCase();
+    if (/^(?:--?profile(?:=|$)|-p$|--?profilemanager(?:=|$)|--?marionette(?:=|$)|--?remote-debugging-port(?:=|$)|--?start-debugger-server(?:=|$))/.test(arg)) {
+      throw firefoxError("FIREFOX_RESERVED_ARGUMENT_BLOCKED", `LConnect owns Firefox profile/automation arguments; blocked argument: ${raw}`);
+    }
+  }
+}
+
 export function resolveGeckodriver(options = {}) {
   const candidates = [
     options.geckodriver_path,
@@ -157,14 +181,37 @@ async function waitDriverReady(endpoint, processHandle, timeoutMs = 15000) {
   throw firefoxError("FIREFOX_DRIVER_NOT_READY", `geckodriver did not become ready within ${timeoutMs} ms.`, lastError);
 }
 
-function killDriver(child) {
-  if (!child || child.exitCode != null) return;
+async function stopOwnedProcess(child, timeoutMs = 2000) {
+  if (!child) return { attempted: false, exited: true, forced: false, pid: null };
+  if (child.exitCode != null) return { attempted: false, exited: true, forced: false, pid: child.pid ?? null, exit_code: child.exitCode };
+  const pid = child.pid ?? null;
+  let forced = false;
   try { child.kill(); } catch {}
+  const deadline = Date.now() + timeoutMs;
+  while (child.exitCode == null && Date.now() < deadline) {
+    await new Promise((resolve) => setTimeout(resolve, 50));
+  }
+  if (child.exitCode == null && pid && process.platform === "win32") {
+    forced = true;
+    try { spawnSync("taskkill.exe", ["/PID", String(pid), "/T", "/F"], { windowsHide: true, stdio: "ignore" }); } catch {}
+    await new Promise((resolve) => setTimeout(resolve, 100));
+  }
+  return { attempted: true, exited: child.exitCode != null, forced, pid, exit_code: child.exitCode };
 }
 
-function cleanupRoot(root) {
-  if (!root) return;
-  try { fs.rmSync(root, { recursive: true, force: true }); } catch {}
+function cleanupRoot(root, enabled = true) {
+  const evidence = { attempted: Boolean(root && enabled), succeeded: null, path: root ?? null, residue_exists: null };
+  if (!root || !enabled) return { ...evidence, succeeded: false, residue_exists: root ? fs.existsSync(root) : false };
+  try {
+    fs.rmSync(root, { recursive: true, force: true, maxRetries: 3, retryDelay: 100 });
+    evidence.succeeded = true;
+  } catch (error) {
+    evidence.succeeded = false;
+    evidence.error = error.message;
+  }
+  evidence.residue_exists = fs.existsSync(root);
+  if (evidence.residue_exists) evidence.succeeded = false;
+  return evidence;
 }
 
 function sessionPath(handle, suffix = "") {
@@ -205,14 +252,16 @@ export class FirefoxAdapter {
   }
 
   async start({ url = null, headless = false, options = {} } = {}) {
+    assertFirefoxStartOptions(options);
     const geckodriver = resolveGeckodriver(options);
     const firefoxBinary = resolveFirefoxBinary(options);
-    const port = options.port ?? await this.freePortImpl();
+    const port = await this.freePortImpl();
     if (!Number.isInteger(port) || port < 1 || port > 65535) {
       throw firefoxError("FIREFOX_PORT_INVALID", `Invalid geckodriver port: ${port}`);
     }
 
-    const profileRoot = options.profile_root
+    const externalProfileRoot = Boolean(options.profile_root);
+    const profileRoot = externalProfileRoot
       ? path.resolve(options.profile_root)
       : fs.mkdtempSync(path.join(os.tmpdir(), "lconnect-firefox-"));
     fs.mkdirSync(profileRoot, { recursive: true });
@@ -248,6 +297,7 @@ export class FirefoxAdapter {
           alwaysMatch: {
             browserName: "firefox",
             webSocketUrl: true,
+            pageLoadStrategy: "none",
             "moz:firefoxOptions": {
               binary: firefoxBinary,
               args: firefoxArgs,
@@ -269,11 +319,18 @@ export class FirefoxAdapter {
         driverProcess: child,
         managed: true,
         profileRoot,
-        cleanupProfileRoot: !options.profile_root,
+        cleanupProfileRoot: !externalProfileRoot,
         bidiUrl: caps.webSocketUrl ?? null,
+        pageLoadStrategy: "none",
       };
 
-      if (url) await webdriver(handle, "POST", sessionPath(handle, "/url"), { url }, options.navigation_timeout_ms ?? 30000);
+      if (url) {
+        await this.navigate(handle, {
+          url,
+          wait: "complete",
+          timeout_ms: options.navigation_timeout_ms ?? 30000,
+        });
+      }
 
       return {
         handle,
@@ -281,11 +338,15 @@ export class FirefoxAdapter {
         browser_version: caps.browserVersion ?? null,
         platform_name: caps.platformName ?? null,
         bidi_available: Boolean(handle.bidiUrl),
-        managed_profile: true,
+        managed_profile: !externalProfileRoot,
+        profile_mode: externalProfileRoot ? "external-root" : "temporary",
+        profile_owned: !externalProfileRoot,
+        profile_isolated: true,
+        profile_cleanup_on_stop: !externalProfileRoot,
       };
     } catch (error) {
-      killDriver(child);
-      if (!options.profile_root) cleanupRoot(profileRoot);
+      await stopOwnedProcess(child).catch(() => {});
+      cleanupRoot(profileRoot, !externalProfileRoot);
       throw error?.code ? error : firefoxError("FIREFOX_START_FAILED", "Failed to start managed Firefox session.", error);
     }
   }
@@ -320,10 +381,25 @@ export class FirefoxAdapter {
       current_url: currentUrl,
       tab_count: Array.isArray(caps) ? caps.length : null,
       bidi_available: Boolean(handle.bidiUrl),
+      managed_profile: false,
+      profile_mode: "attached-external",
+      profile_owned: false,
+      profile_isolated: null,
+      profile_cleanup_on_stop: false,
     };
   }
 
-  async stop(handle) {
+  async stop(handle, args = {}) {
+    if (!handle.managed && args.close_remote_session !== true) {
+      return {
+        stopped: true,
+        detached_only: true,
+        remote_session_closed: false,
+        driver_owned: false,
+        profile_cleanup: { attempted: false, succeeded: false, path: null, residue_exists: false },
+      };
+    }
+
     let deleted = false;
     let deleteError = null;
     try {
@@ -332,16 +408,23 @@ export class FirefoxAdapter {
     } catch (error) {
       deleteError = error;
       if (!handle.managed) throw error;
-    } finally {
-      if (handle.managed) {
-        killDriver(handle.driverProcess);
-        if (handle.cleanupProfileRoot) cleanupRoot(handle.profileRoot);
-      }
     }
+
+    const processCleanup = handle.managed
+      ? await stopOwnedProcess(handle.driverProcess).catch((error) => ({ attempted: true, exited: false, forced: false, error: error.message }))
+      : { attempted: false, exited: null, forced: false, pid: null };
+    const profileCleanup = handle.managed
+      ? cleanupRoot(handle.profileRoot, handle.cleanupProfileRoot)
+      : { attempted: false, succeeded: false, path: null, residue_exists: false };
+
     return {
       stopped: true,
+      detached_only: false,
       webdriver_session_deleted: deleted,
+      remote_session_closed: !handle.managed ? deleted : null,
       driver_owned: Boolean(handle.managed),
+      process_cleanup: processCleanup,
+      profile_cleanup: profileCleanup,
       ...(deleteError ? { delete_warning: deleteError.message } : {}),
     };
   }
@@ -369,10 +452,45 @@ export class FirefoxAdapter {
 
   async navigate(handle, args = {}) {
     await selectTab(handle, args.tab_id);
-    if (args.timeout_ms) {
-      await webdriver(handle, "POST", sessionPath(handle, "/timeouts"), { pageLoad: args.timeout_ms }, 5000);
+    const wait = args.wait ?? "complete";
+    const timeoutMs = args.timeout_ms ?? 30000;
+
+    if (!handle.managed && wait !== "complete") {
+      throw firefoxError("FIREFOX_WAIT_MODE_UNAVAILABLE",
+        `Attached Firefox sessions without LConnect-owned pageLoadStrategy only support wait=complete; requested wait=${wait}.`);
     }
-    await webdriver(handle, "POST", sessionPath(handle, "/url"), { url: args.url }, args.timeout_ms ?? 30000);
+
+    if (args.timeout_ms) {
+      await webdriver(handle, "POST", sessionPath(handle, "/timeouts"), { pageLoad: timeoutMs, script: Math.min(timeoutMs, 10000) }, 5000);
+    }
+    await webdriver(handle, "POST", sessionPath(handle, "/url"), { url: args.url }, timeoutMs);
+
+    if (wait !== "none") {
+      const deadline = Date.now() + timeoutMs;
+      let readyState = null;
+      while (Date.now() < deadline) {
+        try {
+          readyState = await webdriver(handle, "POST", sessionPath(handle, "/execute/sync"), {
+            script: "return document.readyState;",
+            args: [],
+          }, Math.min(5000, timeoutMs));
+          if (wait === "interactive" && (readyState === "interactive" || readyState === "complete")) break;
+          if (wait === "complete" && readyState === "complete") break;
+        } catch {}
+        await new Promise((resolve) => setTimeout(resolve, 50));
+      }
+      if (wait === "complete" && readyState !== "complete") {
+        throw firefoxError("FIREFOX_NAVIGATION_TIMEOUT", `document.readyState did not reach complete within ${timeoutMs} ms (last=${readyState}).`);
+      }
+      if (wait === "interactive" && readyState !== "interactive" && readyState !== "complete") {
+        throw firefoxError("FIREFOX_NAVIGATION_TIMEOUT", `document.readyState did not reach interactive within ${timeoutMs} ms (last=${readyState}).`);
+      }
+    }
+
+    if (wait === "none") {
+      return { url: args.url, title: null, ready_state: null, wait, transport: "webdriver-classic/pageLoadStrategy-none" };
+    }
+
     const [finalUrl, title, readyState] = await Promise.all([
       webdriver(handle, "GET", sessionPath(handle, "/url")),
       webdriver(handle, "GET", sessionPath(handle, "/title")),
@@ -381,21 +499,38 @@ export class FirefoxAdapter {
         args: [],
       }),
     ]);
-    return { url: finalUrl, title, ready_state: readyState, wait: args.wait ?? "complete" };
+    return { url: finalUrl, title, ready_state: readyState, wait, transport: "webdriver-classic/pageLoadStrategy-none" };
   }
 
   async snapshot(handle, args = {}) {
     await selectTab(handle, args.tab_id);
     const maxChars = Math.max(1000, Math.min(200000, args.max_chars ?? 100000));
-    const script = args.target
-      ? `const el=document.querySelector(arguments[0]); if(!el) return null; return {url:location.href,title:document.title,target:arguments[0],tag:el.tagName,text:(el.innerText||el.textContent||"").slice(0,arguments[1]),html:el.outerHTML.slice(0,arguments[1])};`
-      : `return {url:location.href,title:document.title,target:null,text:(document.body?.innerText||"").slice(0,arguments[0]),html:(document.documentElement?.outerHTML||"").slice(0,arguments[0])};`;
-    const scriptArgs = args.target ? [args.target, maxChars] : [maxChars];
+    const mode = args.mode ?? "dom";
+
+    if (mode === "accessibility") {
+      const maxNodes = Math.max(20, Math.min(500, Math.floor(maxChars / 240)));
+      const script = "const root=arguments[0]?document.querySelector(arguments[0]):document.body;if(!root)return null;const max=arguments[1];const roleOf=(el)=>el.getAttribute('role')||({A:'link',BUTTON:'button',TEXTAREA:'textbox',SELECT:'combobox',OPTION:'option',IMG:'img',H1:'heading',H2:'heading',H3:'heading',H4:'heading',H5:'heading',H6:'heading'}[el.tagName]||(el.tagName==='INPUT'?(el.type==='checkbox'?'checkbox':el.type==='radio'?'radio':'textbox'):null));const nameOf=(el)=>el.getAttribute('aria-label')||el.getAttribute('alt')||el.getAttribute('title')||((el.innerText||el.textContent||'').trim().replace(/\\s+/g,' ').slice(0,240));const nodes=[];for(const el of [root,...root.querySelectorAll('*')]){const role=roleOf(el);const name=nameOf(el);if(!role&&!name)continue;const item={tag:el.tagName,role,name};if('value'in el)item.value=String(el.value??'').slice(0,500);if('checked'in el)item.checked=Boolean(el.checked);if('selected'in el)item.selected=Boolean(el.selected);if('disabled'in el)item.disabled=Boolean(el.disabled);for(const k of ['aria-expanded','aria-pressed','aria-selected','aria-checked','aria-current','aria-level']){const v=el.getAttribute(k);if(v!==null)item[k]=v;}nodes.push(item);if(nodes.length>=max)break;}return {url:location.href,title:document.title,target:arguments[0]||null,nodes};";
+      const result = await webdriver(handle, "POST", sessionPath(handle, "/execute/sync"), {
+        script,
+        args: [args.target ?? null, maxNodes],
+      });
+      if (args.target && result == null) {
+        throw firefoxError("FIREFOX_TARGET_NOT_FOUND", `No element matched CSS selector: ${args.target}`);
+      }
+      return { mode: "accessibility", source: "dom-accessibility-projection", ...(result ?? { nodes: [] }) };
+    }
+
+    const targetScript = "const el=document.querySelector(arguments[0]);if(!el)return null;const aria={};for(const a of el.attributes||[]){if(a.name.startsWith('aria-'))aria[a.name]=a.value;}const state=arguments[2]?{value:('value'in el?el.value:null),checked:('checked'in el?Boolean(el.checked):null),selected:('selected'in el?Boolean(el.selected):null),disabled:('disabled'in el?Boolean(el.disabled):null),role:el.getAttribute('role'),aria}:null;return {url:location.href,title:document.title,target:arguments[0],tag:el.tagName,text:(el.innerText||el.textContent||'').slice(0,arguments[1]),html:el.outerHTML.slice(0,arguments[1]),state};";
+    const pageScript = "const active=document.activeElement;const state=arguments[1]&&active?{tag:active.tagName,id:active.id||null,value:('value'in active?active.value:null),checked:('checked'in active?Boolean(active.checked):null),disabled:('disabled'in active?Boolean(active.disabled):null)}:null;return {url:location.href,title:document.title,target:null,text:(document.body?.innerText||'').slice(0,arguments[0]),html:(document.documentElement?.outerHTML||'').slice(0,arguments[0]),active_element:state};";
+    const script = args.target ? targetScript : pageScript;
+    const scriptArgs = args.target
+      ? [args.target, maxChars, args.include_state !== false]
+      : [maxChars, args.include_state !== false];
     const result = await webdriver(handle, "POST", sessionPath(handle, "/execute/sync"), { script, args: scriptArgs });
     if (args.target && result == null) {
       throw firefoxError("FIREFOX_TARGET_NOT_FOUND", `No element matched CSS selector: ${args.target}`);
     }
-    return result ?? {};
+    return { mode: "dom", ...(result ?? {}) };
   }
 
   async click(handle, args = {}) {

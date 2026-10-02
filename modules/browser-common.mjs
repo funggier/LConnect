@@ -1,4 +1,7 @@
-import { randomUUID } from "node:crypto";
+import fs from "node:fs";
+import os from "node:os";
+import path from "node:path";
+import { createHash, randomUUID } from "node:crypto";
 import { z } from "zod";
 
 const SUPPORTED_BACKENDS = new Set(["firefox", "chrome"]);
@@ -37,6 +40,32 @@ function jsonCloneBounded(value, maxChars = DEFAULT_RESULT_LIMIT, label = "brows
 function assertOptionsBounded(options) {
   if (options == null) return {};
   return jsonCloneBounded(options, MAX_OPTIONS_CHARS, "browser options");
+}
+
+function screenshotFileResult(record, result, args) {
+  if (!result || typeof result.data_base64 !== "string") {
+    throw browserError("BROWSER_SCREENSHOT_PROTOCOL_ERROR", "Browser adapter did not return screenshot base64 data.");
+  }
+  const data = Buffer.from(result.data_base64, "base64");
+  const expectedBytes = Number(result.bytes);
+  if (Number.isFinite(expectedBytes) && expectedBytes !== data.length) {
+    throw browserError("BROWSER_SCREENSHOT_PROTOCOL_ERROR", `Screenshot byte count mismatch: adapter=${expectedBytes} decoded=${data.length}.`);
+  }
+  const destination = args.output_path
+    ? path.resolve(args.output_path)
+    : path.join(os.tmpdir(), "lconnect-browser-screenshots", `${record.browser}-${Date.now()}-${randomUUID()}.png`);
+  fs.mkdirSync(path.dirname(destination), { recursive: true });
+  if (fs.existsSync(destination) && args.overwrite !== true) {
+    throw browserError("BROWSER_SCREENSHOT_EXISTS", `Screenshot output already exists: ${destination}`);
+  }
+  fs.writeFileSync(destination, data);
+  return {
+    mime_type: result.mime_type || "image/png",
+    bytes: data.length,
+    path: destination,
+    sha256: createHash("sha256").update(data).digest("hex"),
+    result_mode: "file",
+  };
 }
 
 function normalizeBackend(browser) {
@@ -190,9 +219,12 @@ export class BrowserCommonLayer {
     return this._makeSession(backend, "attached", entry, backendResult);
   }
 
-  async stop({ browser_session_id }) {
+  async stop({ browser_session_id, close_remote_session = false }) {
     const { record, entry } = this._requireSession(browser_session_id, "stop");
-    const result = await entry.adapter.stop(record.handle, { browser_session_id });
+    const result = await entry.adapter.stop(record.handle, {
+      browser_session_id,
+      close_remote_session: Boolean(close_remote_session),
+    });
     this.sessions.delete(browser_session_id);
     return {
       ok: true,
@@ -228,6 +260,8 @@ export class BrowserCommonLayer {
       tab_id: args.tab_id ?? null,
       target: args.target ?? null,
       max_chars: args.max_chars ?? 100000,
+      mode: args.mode ?? "dom",
+      include_state: args.include_state ?? true,
     }, Math.min(this.resultLimitChars, (args.max_chars ?? 100000) + 50000));
   }
   click(args) {
@@ -246,14 +280,28 @@ export class BrowserCommonLayer {
       clear: args.clear ?? false,
     });
   }
-  screenshot(args) {
+  async screenshot(args) {
+    const { record, entry } = this._requireSession(args.browser_session_id, "screenshot");
     const maxBytes = args.max_bytes ?? 1000000;
-    const jsonLimit = Math.min(6000000, Math.max(this.resultLimitChars, Math.ceil(maxBytes * 1.45) + 32768));
-    return this._dispatch(args.browser_session_id, "screenshot", {
+    const resultMode = args.result_mode ?? "file";
+    const adapterResult = await entry.adapter.screenshot(record.handle, {
+      browser_session_id: args.browser_session_id,
       tab_id: args.tab_id ?? null,
       full_page: args.full_page ?? false,
       max_bytes: maxBytes,
-    }, jsonLimit);
+    });
+    const result = resultMode === "inline"
+      ? { ...adapterResult, result_mode: "inline" }
+      : screenshotFileResult(record, adapterResult, args);
+    const jsonLimit = resultMode === "inline"
+      ? Math.min(6000000, Math.max(this.resultLimitChars, Math.ceil(maxBytes * 1.45) + 32768))
+      : this.resultLimitChars;
+    return {
+      ok: true,
+      browser_session_id: args.browser_session_id,
+      browser: record.browser,
+      result: jsonCloneBounded(result, jsonLimit, "browser screenshot result"),
+    };
   }
 }
 
@@ -264,32 +312,56 @@ const sessionSchema = z.string().min(1).max(128);
 const tabSchema = z.string().min(1).max(512).optional();
 const targetSchema = z.string().min(1).max(4096);
 const urlSchema = z.string().url().max(8192);
-const optionsSchema = z.record(z.unknown()).optional();
+const primitivePreferenceSchema = z.union([z.string(), z.number(), z.boolean()]);
+const browserStartOptionsSchema = z.object({
+  firefox_binary: z.string().min(1).max(32767).optional(),
+  geckodriver_path: z.string().min(1).max(32767).optional(),
+  firefox_args: z.array(z.string().max(1024)).max(32).optional(),
+  preferences: z.record(primitivePreferenceSchema).optional(),
+  profile_root: z.string().min(1).max(32767).optional(),
+  chrome_binary: z.string().min(1).max(32767).optional(),
+  chrome_args: z.array(z.string().max(1024)).max(32).optional(),
+  user_data_dir: z.string().min(1).max(32767).optional(),
+  unsafe_allow_external_profile: z.boolean().optional(),
+  startup_timeout_ms: z.number().int().min(100).max(120000).optional(),
+  session_timeout_ms: z.number().int().min(100).max(120000).optional(),
+  navigation_timeout_ms: z.number().int().min(100).max(120000).optional(),
+  timeout_ms: z.number().int().min(100).max(120000).optional(),
+  log_level: z.string().min(1).max(32).optional(),
+}).strict().optional();
+
+const browserAttachOptionsSchema = z.object({
+  session_id: z.string().min(1).max(512).optional(),
+  web_socket_url: z.string().min(1).max(8192).optional(),
+  timeout_ms: z.number().int().min(100).max(120000).optional(),
+  allow_remote_endpoint: z.boolean().optional(),
+}).strict().optional();
 
 export function registerBrowserCommonTools(server, _config, layer = defaultBrowserCommonLayer) {
-  server.tool("browser_start", "Start a browser through a registered backend adapter and create a common browser session.", {
+  server.tool("browser_start", "Start an isolated managed browser session. Normal user profiles are never reused unless the caller explicitly opts into an external profile.", {
     browser: browserSchema,
     url: urlSchema.optional(),
     headless: z.boolean().optional(),
-    options: optionsSchema,
+    options: browserStartOptionsSchema,
   }, async ({ browser, url, headless = false, options = {} }) => {
     try { return textResult(await layer.start({ browser, url, headless, options })); }
     catch (error) { return textResult(error.message, true); }
   });
 
-  server.tool("browser_attach", "Attach to an automation-enabled browser through a registered backend adapter.", {
+  server.tool("browser_attach", "Attach to an explicitly automation-enabled browser endpoint. This never discovers or enables automation on a normal live profile.", {
     browser: browserSchema,
     endpoint: z.string().min(1).max(8192).optional(),
-    options: optionsSchema,
+    options: browserAttachOptionsSchema,
   }, async ({ browser, endpoint, options = {} }) => {
     try { return textResult(await layer.attach({ browser, endpoint, options })); }
     catch (error) { return textResult(error.message, true); }
   });
 
-  server.tool("browser_stop", "Stop/detach a common browser session and remove it from the common session registry.", {
+  server.tool("browser_stop", "Stop a managed session or detach an attached session. Attached remote sessions are left running unless close_remote_session=true is explicitly requested.", {
     browser_session_id: sessionSchema,
-  }, async ({ browser_session_id }) => {
-    try { return textResult(await layer.stop({ browser_session_id })); }
+    close_remote_session: z.boolean().optional(),
+  }, async ({ browser_session_id, close_remote_session = false }) => {
+    try { return textResult(await layer.stop({ browser_session_id, close_remote_session })); }
     catch (error) { return textResult(error.message, true); }
   });
 
@@ -311,11 +383,13 @@ export function registerBrowserCommonTools(server, _config, layer = defaultBrows
     catch (error) { return textResult(error.message, true); }
   });
 
-  server.tool("browser_snapshot", "Return a bounded DOM/accessibility snapshot or query result through the active backend.", {
+  server.tool("browser_snapshot", "Return a bounded DOM snapshot or accessibility-oriented snapshot through the active backend.", {
     browser_session_id: sessionSchema,
     tab_id: tabSchema,
     target: z.string().min(1).max(4096).optional(),
     max_chars: z.number().int().min(1000).max(200000).optional(),
+    mode: z.enum(["dom", "accessibility"]).optional(),
+    include_state: z.boolean().optional(),
   }, async (args) => {
     try { return textResult(await layer.snapshot(args)); }
     catch (error) { return textResult(error.message, true); }
@@ -343,11 +417,14 @@ export function registerBrowserCommonTools(server, _config, layer = defaultBrows
     catch (error) { return textResult(error.message, true); }
   });
 
-  server.tool("browser_screenshot", "Capture a bounded screenshot through the active browser backend.", {
+  server.tool("browser_screenshot", "Capture a bounded screenshot. File-backed output is the default to avoid large MCP payloads; inline base64 is opt-in.", {
     browser_session_id: sessionSchema,
     tab_id: tabSchema,
     full_page: z.boolean().optional(),
     max_bytes: z.number().int().min(1024).max(4000000).optional(),
+    result_mode: z.enum(["file", "inline"]).optional(),
+    output_path: z.string().min(1).max(32767).optional(),
+    overwrite: z.boolean().optional(),
   }, async (args) => {
     try { return textResult(await layer.screenshot(args)); }
     catch (error) { return textResult(error.message, true); }
