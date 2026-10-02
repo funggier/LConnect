@@ -167,7 +167,7 @@ Agent Operations Reliability plan:
 - Reliability/diagnostic follow-up LCN-031–039 complete ที่ evidence boundary ปัจจุบัน
 - Execution Ergonomics LCN-040–044 complete at current need โดยเพิ่มเฉพาะ deterministic primitives ที่เกิดจาก pain point จริง เช่น structured data/directory inspection, Git/GitHub exact verification และ deployment verification
 
-Desktop Control ชุด LCN-018–020 **COMPLETE / live GREEN** แล้ว: Clipboard, Window Control และ Keyboard/Mouse; Browser Automation เดินต่อแล้ว: **LCN-021 Browser Common Layer COMPLETE / live GREEN** และ **LCN-022 Firefox Adapter (primary) COMPLETE / live GREEN**; งานถัดไปคือ LCN-023 Chrome Adapter
+Desktop Control ชุด LCN-018–020 **COMPLETE / live GREEN** แล้ว: Clipboard, Window Control และ Keyboard/Mouse; Browser Automation ตามแผน LCN-021–023 **COMPLETE / live GREEN** แล้ว: Common Layer + Firefox primary + Chrome secondary
 
 Browser direction:
 

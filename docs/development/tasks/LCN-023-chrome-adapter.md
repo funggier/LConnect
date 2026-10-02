@@ -1,6 +1,6 @@
 # LCN-023 — Chrome Adapter
 
-Status: **ACTIVE**
+Status: **COMPLETE**
 
 ## Goal
 
@@ -47,6 +47,28 @@ Make Chrome the secondary browser backend behind the LCN-021 Browser Common Laye
 - `npm run check`: PASS
 - `npm audit --audit-level=high`: PASS / 0 vulnerabilities
 - `git diff --check`: PASS
+
+## Final qualification evidence
+
+- implementation commit: `a0faf6186f57417dabafe049a091ac226176b4db`
+- exact implementation CI: #161 / run `36989805413` — **PASS**
+- Chrome physical baseline: `154.0.8037.93`
+- CDP protocol: `1.3`
+- ChromeDriver dependency: none
+- native Node 24 WebSocket CDP probe: PASS
+- managed isolated Chrome profile + loopback CDP: PASS
+- primary target identity repair: PASS
+- tabs / navigate / snapshot / click / type / screenshot / full-page screenshot: PASS
+- Unicode/Thai physical input + post-click DOM verification: PASS
+- installed post-restart physical Chrome smoke: PASS
+- managed Chrome residue matching `lconnect-chrome-`: 0
+- deployed tracked parity before closure docs: **232/232 exact**
+- source/install manifest digest: `1e468c7a742cead2fc944fc271452acd831e46480de5046656439f8c36d864f5`
+- encrypted credential SHA-256 unchanged: `b773cace3931586913b84460c4b00cbd1ce33b78a165fa77355e259470cf2665`
+- live runtime after restart: LConnect `1.2.2`, PID `17012`, **148 tools**
+- runtime catalog digest: `22529451eafb21024aa132a0dad5fcbe96651c542234695a0f0db565e078ab7d`
+
+Result: **COMPLETE / DEPLOYED / LIVE GREEN**.
 
 ## Acceptance criteria
 

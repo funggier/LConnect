@@ -24,7 +24,7 @@
 | [LCN-020](tasks/LCN-020-keyboard-mouse.md) | COMPLETE | Keyboard / Mouse |
 | [LCN-021](tasks/LCN-021-browser-common-layer.md) | COMPLETE | Browser Common Layer |
 | [LCN-022](tasks/LCN-022-firefox-adapter.md) | COMPLETE | Firefox Adapter |
-| [LCN-023](tasks/LCN-023-chrome-adapter.md) | DEFERRED | Chrome Adapter |
+| [LCN-023](tasks/LCN-023-chrome-adapter.md) | COMPLETE | Chrome Adapter |
 | [LCN-024](tasks/LCN-024-first-run-installation-guide-v1.1.0-release.md) | COMPLETE | First-run Installation Guide + v1.1.0 Release |
 | [LCN-025](tasks/LCN-025-managed-session-completion.md) | COMPLETE | Managed Session Completion |
 | [LCN-026](tasks/LCN-026-process-output-cursor.md) | COMPLETE | Incremental Process Output Cursor |

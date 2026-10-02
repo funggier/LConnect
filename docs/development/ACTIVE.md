@@ -27,15 +27,15 @@ Last updated: 2026-10-02
 - LCN-020: COMPLETE — Keyboard / Mouse native input / exact-commit CI + deployed runtime GREEN
 - LCN-021: COMPLETE — Browser Common Layer / exact-commit CI + deployed runtime GREEN
 - LCN-022: COMPLETE — Firefox Adapter / physical Firefox + exact-commit CI + deployed runtime GREEN
-- LCN-023: ACTIVE — Chrome Adapter implementation and physical CDP qualification
+- LCN-023: COMPLETE — Chrome Adapter / physical CDP + exact-commit CI + deployed runtime GREEN
 
 ## Active task
 
-[LCN-023 — Chrome Adapter](tasks/LCN-023-chrome-adapter.md) — **ACTIVE**
+No active development task.
 
-Current gates: implementation → local unit/smoke → physical Chrome/CDP qualification → exact-commit CI → deploy/runtime evidence.
+Latest completed task: [LCN-023 — Chrome Adapter](tasks/LCN-023-chrome-adapter.md) — **COMPLETE**
 
-Latest completed task: [LCN-022 — Firefox Adapter](tasks/LCN-022-firefox-adapter.md) — **COMPLETE**
+Previous completed task: [LCN-022 — Firefox Adapter](tasks/LCN-022-firefox-adapter.md) — **COMPLETE**
 
 Previous completed task: [LCN-021 — Browser Common Layer](tasks/LCN-021-browser-common-layer.md) — **COMPLETE**
 
@@ -49,14 +49,14 @@ Previous completed task: [LCN-053 — v1.2.2 Secure Restart & Local Credentials 
 
 - LCN-022: COMPLETE — Firefox backend registered behind the 9 browser-common tools; physical Firefox 140.15.0esr PASS; implementation CI #159 PASS; runtime 148 tools
 
-Latest report: [reports/LCN-20261002-022-firefox-adapter.md](reports/LCN-20261002-022-firefox-adapter.md)
+Latest report: [reports/LCN-20261002-023-chrome-adapter.md](reports/LCN-20261002-023-chrome-adapter.md)
 
 Previous report: [reports/LCN-20261002-021-browser-common-layer.md](reports/LCN-20261002-021-browser-common-layer.md)
 
 ## Current reliability state
 
 - runtime: **1.2.2 / 148 tools**
-- current runtime PID after LCN-022 deployment/restart: `18280`
+- current runtime PID after LCN-023 deployment/restart: `17012`
 - current tunnel PID after v1.2.2 activation: `2216`
 - runtime root: `T:\Sanbox\openclawspace\tunnel-mcp-ok`
 - measurement model: `turn_risk_observation_v2`
@@ -68,11 +68,11 @@ Previous report: [reports/LCN-20261002-021-browser-common-layer.md](reports/LCN-
 - `github_run_wait`: compact top-level status; jobs/steps remain in `github_run_view`
 - local encrypted credential: DPAPI / CurrentUser, decrypt + ACL PASS
 - detached self-restart: live GREEN; no Runtime API key on restart command line
-- source↔installed current tracked parity after LCN-022 implementation deployment: **228/228 exact**
+- source↔installed current tracked parity after LCN-023 implementation deployment: **232/232 exact**
 - release candidate CI #146: PASS
 - source and installed dependency audit: **0 vulnerabilities**
 - release program/docs/checksum assets: uploaded and downloaded-back hash verified
 
 ## Next action
 
-Complete **LCN-023 Chrome Adapter** through local tests, physical Chrome/CDP qualification, exact-commit CI, deployment, and live runtime evidence before marking it COMPLETE. Keep the existing v1.2.2 tag/release immutable.
+Browser Automation through LCN-023 is complete at current scope. Verify live GitHub/runtime state before activating any new task. Keep the existing v1.2.2 tag/release immutable.

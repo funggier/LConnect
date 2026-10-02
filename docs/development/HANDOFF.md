@@ -53,7 +53,7 @@ Before continuing:
 
 - release: **v1.2.2 — Secure Restart & Local Credentials**
 - release/tag commit: `fcf3d75c6314706e3258b6c5d1345b6f637ac78f`
-- current implementation main before LCN-022 closure docs: `d5a864b4fe37c7c48de2e50851aff8de6901c2fd`
+- current implementation main before LCN-023 closure docs: `a0faf6186f57417dabafe049a091ac226176b4db`
 - runtime: **1.2.2 / 148 tools**
 - secure DPAPI credential + detached self-restart: live GREEN
 
@@ -71,12 +71,12 @@ LCN-019 Window Control — COMPLETE
 LCN-020 Keyboard / Mouse — COMPLETE
 LCN-021 Browser Common Layer — COMPLETE
 LCN-022 Firefox Adapter — COMPLETE
-LCN-023 Chrome Adapter
+LCN-023 Chrome Adapter — COMPLETE
 ```
 
-Immediate next target: **LCN-023 Chrome Adapter**.
+Browser Automation through LCN-023 is complete at current scope. There is no active browser-development task.
 
-LCN-022 is complete at implementation commit `d5a864b4fe37c7c48de2e50851aff8de6901c2fd`, exact-commit CI #159 PASS, physical Firefox 140.15.0esr GREEN, deployed runtime 148 tools.
+LCN-023 is complete at implementation commit `a0faf6186f57417dabafe049a091ac226176b4db`, exact-commit CI #161 PASS, physical Chrome 154.0.8037.93 / CDP 1.3 GREEN, deployed runtime 148 tools.
 
 ## Browser decisions
 
