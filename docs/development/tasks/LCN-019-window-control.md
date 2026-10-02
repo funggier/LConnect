@@ -1,6 +1,6 @@
 # LCN-019 — Window Control
 
-Status: **ACTIVE**
+Status: **COMPLETE**
 
 ## Goal
 
@@ -47,6 +47,23 @@ Control native top-level Windows windows through stable `HWND + PID` identity ra
 - `npm run check`: PASS
 - `npm audit --audit-level=high`: PASS / 0 vulnerabilities
 - `git diff --check`: PASS
+
+## Final qualification evidence
+
+- implementation commit: `b11e4240daf7054412b32e10c7a6fb0df7330914`
+- exact implementation CI: #153 / run `36980540818` — **PASS**
+- Windows CI disposable GUI fixture: PASS
+- full local regression: PASS
+- deployed tracked parity before closure docs: **218/218 exact**
+- source/install manifest digest: `b6f5de9f28418f257699b550dce7d55c37990aa28bfed894765d46814ab76157`
+- preserved local paths: 6/6 present
+- encrypted credential SHA-256 before/after deployment/restart: `b773cace3931586913b84460c4b00cbd1ce33b78a165fa77355e259470cf2665`
+- live runtime after restart: LConnect `1.2.2`, PID `1264`, **133 tools**
+- live runtime catalog digest: `c9e09c413dfaab80b2885fb6b43006bdfe7ac8fc2fee1446f3310480d8a19b89`
+- installed Window Control smoke after restart: PASS
+- live runtime catalog contains all 8 Window Control tools
+
+Result: **COMPLETE / DEPLOYED / LIVE GREEN**.
 
 ## Acceptance criteria
 

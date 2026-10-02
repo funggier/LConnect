@@ -167,7 +167,7 @@ Agent Operations Reliability plan:
 - Reliability/diagnostic follow-up LCN-031–039 complete ที่ evidence boundary ปัจจุบัน
 - Execution Ergonomics LCN-040–044 complete at current need โดยเพิ่มเฉพาะ deterministic primitives ที่เกิดจาก pain point จริง เช่น structured data/directory inspection, Git/GitHub exact verification และ deployment verification
 
-Desktop Control เริ่มเดินต่อแล้ว: **LCN-018 Clipboard COMPLETE / live GREEN** ส่วน LCN-019–020 และ Browser Automation (LCN-021–023) ยังรอเปิด scope ตามลำดับ
+Desktop Control เดินต่อแล้ว: **LCN-018 Clipboard COMPLETE / live GREEN** และ **LCN-019 Window Control COMPLETE / live GREEN**; LCN-020 Keyboard/Mouse และ Browser Automation (LCN-021–023) ยังรอเปิด scope ตามลำดับ
 
 Browser direction:
 
