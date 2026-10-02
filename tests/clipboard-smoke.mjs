@@ -30,9 +30,9 @@ try{
     console.log("clipboard mutation skipped: non-Windows");
   } else {
     prior=first;
-    canRestore=first.state==="text" || first.state==="empty";
+    canRestore=first.state==="empty" || (first.state==="text" && !first.truncated);
     if(!canRestore && String(process.env.CI).toLowerCase()!=="true"){
-      console.log("clipboard mutation skipped: preserve non-text user clipboard");
+      console.log("clipboard mutation skipped: preserve non-text or oversized user clipboard");
     } else {
       const value="LConnect ไทย Unicode ✓ "+Date.now();
       const set=await callJson("clipboard_set",{text:value});
@@ -44,6 +44,13 @@ try{
       const clipped=await callJson("clipboard_get",{max_chars:5});
       if(clipped.text!==value.slice(0,5) || !clipped.truncated || clipped.original_chars!==value.length) throw new Error("bounded read mismatch");
       console.log("clipboard_get bounded output: PASS");
+
+      const largeValue="ก".repeat(100000);
+      const largeSet=await callJson("clipboard_set",{text:largeValue});
+      if(!largeSet.ok || !largeSet.exact || largeSet.chars!==largeValue.length) throw new Error("large set not exact");
+      const largeGot=await callJson("clipboard_get",{max_chars:200000});
+      if(largeGot.state!=="text" || largeGot.text!==largeValue || largeGot.truncated) throw new Error("large clipboard roundtrip mismatch");
+      console.log("clipboard_set large payload via stdin: PASS");
 
       const cleared=await callJson("clipboard_clear",{});
       if(!cleared.ok || cleared.state!=="empty") throw new Error("clear failed");

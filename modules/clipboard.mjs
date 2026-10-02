@@ -44,7 +44,7 @@ function withClipboardRetry(body) {
   ].join("\n");
 }
 
-async function runClipboardJson(script, config) {
+async function runClipboardJson(script, config, stdinText = null) {
   requireWindows();
 
   const result = await runProcess(
@@ -61,7 +61,10 @@ async function runClipboardJson(script, config) {
     ],
     {
       timeoutSeconds: Math.min(10, config.shell.maxTimeoutSeconds),
-      maxOutputChars: Math.max(4096, Math.min(config.shell.maxOutputChars, 1500000)),
+      // Clipboard JSON may contain base64 for up to HARD_MAX_CHARS of Unicode text.
+      // Keep a dedicated bounded worker ceiling instead of inheriting the smaller shell default.
+      maxOutputChars: 1500000,
+      stdinText,
     }
   );
 
@@ -126,13 +129,14 @@ async function getClipboard(maxChars, config) {
 async function setClipboard(value, config) {
   const encoded = Buffer.from(value, "utf8").toString("base64");
   const script = withClipboardRetry([
-    `$bytes = [Convert]::FromBase64String(${psLiteral(encoded)})`,
+    "$encoded = [Console]::In.ReadToEnd()",
+    "$bytes = [Convert]::FromBase64String($encoded)",
     "$value = [Text.Encoding]::UTF8.GetString($bytes)",
     "[System.Windows.Forms.Clipboard]::SetText($value, [System.Windows.Forms.TextDataFormat]::UnicodeText)",
     "$readback = [System.Windows.Forms.Clipboard]::GetText([System.Windows.Forms.TextDataFormat]::UnicodeText)",
     "[pscustomobject]@{ ok = $true; chars = $readback.Length; exact = ($readback -ceq $value) } | ConvertTo-Json -Compress",
   ]);
-  return runClipboardJson(script, config);
+  return runClipboardJson(script, config, encoded);
 }
 
 async function clearClipboard(config) {

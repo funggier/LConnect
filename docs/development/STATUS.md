@@ -48,7 +48,7 @@ Agent Operations Reliability LCN-025–030 ปิดครบ, Delivery/Turn Rel
 | Agent Operations Reliability | COMPLETE | LCN-025–034 | LCN-025–030 and LCN-031–034 complete |
 | Delivery / Turn Reliability | COMPLETE AT CURRENT EVIDENCE | LCN-031–039, LCN-046–050 | LCN-050 live GREEN: first post-Confirm work tool auto-starts next round; `github_run_wait` returns compact status only, with live result 832 bytes vs ~63 KB pre-fix waits |
 | Execution Ergonomics | COMPLETE AT CURRENT NEED | LCN-040–044 | LCN-044 Deployment Verification Snapshot PASS on installed tree; 178/178 tracked parity, runtime 1.2.0 / 120 tools |
-| Local Credential / Self-Restart | COMPLETE | LCN-052 | DPAPI CurrentUser credential + ACL + detached restart live GREEN; retained in current v1.2.2 runtime / 122 tools; current tracked parity 212/212 |
+| Local Credential / Self-Restart | COMPLETE | LCN-052 | DPAPI CurrentUser credential + ACL + detached restart remain live GREEN; v1.2.2 release baseline was 122 tools and the feature is retained in current main/runtime 154-tool catalog |
 | Desktop Control | COMPLETE | LCN-018–020 | Clipboard, Window Control, and Keyboard/Mouse complete/live GREEN |
 | Browser Automation | COMPLETE AT CURRENT SCOPE | LCN-021–023, LCN-054 | Managed Firefox/Chrome + browser hardening + live UIA safety boundary deployed/live GREEN; runtime catalog 154 tools |
 
@@ -79,7 +79,7 @@ Exact-commit CI:
 
 Final implementation runtime:
 - version/catalog: **1.2.2 / 154 tools**
-- PID: `9356`
+- qualification PID at LCN-054 closure: `9356` (historical); current live PID at LCN-055 activation: `12736`
 - catalog digest: `2ca33225b970dd70e1350d7b4e3d9290116448181031872d643111ae7ab4c374`
 - source/install implementation parity: **236/236 exact**
 - manifest digest: `45396e29b88ead2c587835f6993dfcc96f9a3e5e13557fa009f576f993b4e82d`

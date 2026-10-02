@@ -82,11 +82,14 @@ async function walk(root, excludePatterns, visitor, relative = "") {
     const relSlash = rel.replace(/\\/g, "/");
     if (matchesAny(relSlash, excludePatterns)) continue;
     const abs = path.join(root, rel);
-    await visitor(entry, abs, relSlash);
+    const keepGoing = await visitor(entry, abs, relSlash);
+    if (keepGoing === false) return false;
     if (entry.isDirectory()) {
-      await walk(root, excludePatterns, visitor, rel);
+      const childKeepGoing = await walk(root, excludePatterns, visitor, rel);
+      if (childKeepGoing === false) return false;
     }
   }
+  return true;
 }
 
 function mimeFor(filePath) {
@@ -120,14 +123,18 @@ export function registerFilesystemTools(server, config) {
     )
   );
 
-  const readTextHandler = async ({ path: inputPath, head, tail }) => {
+  const readTextHandler = async ({ path: inputPath, head, tail, max_chars = 200000 }) => {
     try {
       if (head && tail) throw new Error("Use either head or tail, not both.");
       const filePath = resolveAllowed(inputPath);
       const text = await fsp.readFile(filePath, "utf8");
-      if (head) return textResult(text.split(/\r?\n/).slice(0, head).join("\n"));
-      if (tail) return textResult(text.split(/\r?\n/).slice(-tail).join("\n"));
-      return textResult(text);
+      let selected = text;
+      if (head) selected = text.split(/\r?\n/).slice(0, head).join("\n");
+      if (tail) selected = text.split(/\r?\n/).slice(-tail).join("\n");
+      if (selected.length > max_chars) {
+        return textResult(selected.slice(0, max_chars) + `\n...[truncated at ${max_chars} chars]`);
+      }
+      return textResult(selected);
     } catch (error) {
       return textResult(error.message, true);
     }
@@ -137,32 +144,53 @@ export function registerFilesystemTools(server, config) {
     path: z.string().min(1),
     head: z.number().int().min(1).optional(),
     tail: z.number().int().min(1).optional(),
+    max_chars: z.number().int().min(1).max(2000000).optional(),
   };
 
-  server.tool("read_text_file", "Read a text file. Supports optional head or tail line limits.", readSchema, readTextHandler);
-  server.tool("read_file", "Deprecated alias of read_text_file.", readSchema, readTextHandler);
+  server.tool("read_text_file", "Read a text file with optional head/tail selection and a bounded text result.", readSchema, readTextHandler);
+  server.tool("read_file", "Deprecated compatibility alias of read_text_file; use read_text_file for new workflows.", readSchema, readTextHandler);
 
-  server.tool("read_multiple_files", "Read multiple text files in one call.", {
-    paths: z.array(z.string().min(1)).min(1),
-  }, async ({ paths }) => {
+  server.tool("read_multiple_files", "Read multiple text files in one call with per-file and total output bounds.", {
+    paths: z.array(z.string().min(1)).min(1).max(100),
+    max_chars_per_file: z.number().int().min(1).max(1000000).optional(),
+    max_total_chars: z.number().int().min(1000).max(5000000).optional(),
+  }, async ({ paths, max_chars_per_file = 100000, max_total_chars = 500000 }) => {
     const blocks = [];
+    let used = 0;
     for (const inputPath of paths) {
+      if (used >= max_total_chars) {
+        blocks.push(`...[truncated: max_total_chars=${max_total_chars}]`);
+        break;
+      }
       try {
         const filePath = resolveAllowed(inputPath);
         const content = await fsp.readFile(filePath, "utf8");
-        blocks.push(`${filePath}:\n${content}`);
+        const clipped = content.length > max_chars_per_file
+          ? content.slice(0, max_chars_per_file) + `\n...[truncated at ${max_chars_per_file} chars]`
+          : content;
+        const block = `${filePath}:\n${clipped}`;
+        const remaining = max_total_chars - used;
+        blocks.push(block.length > remaining ? block.slice(0, remaining) + "\n...[truncated total]" : block);
+        used += Math.min(block.length, remaining);
       } catch (error) {
-        blocks.push(`${inputPath}:\nERROR: ${error.message}`);
+        const block = `${inputPath}:\nERROR: ${error.message}`;
+        blocks.push(block.slice(0, Math.max(0, max_total_chars - used)));
+        used += block.length;
       }
     }
     return textResult(blocks.join("\n\n---\n"));
   });
 
-  server.tool("read_media_file", "Read an image/audio/other file as base64 content.", {
+  server.tool("read_media_file", "Read an image/audio/other file as base64 content with an explicit byte bound.", {
     path: z.string().min(1),
-  }, async ({ path: inputPath }) => {
+    max_bytes: z.number().int().min(1).max(100000000).optional(),
+  }, async ({ path: inputPath, max_bytes = 4000000 }) => {
     try {
       const filePath = resolveAllowed(inputPath);
+      const stat = await fsp.stat(filePath);
+      if (stat.size > max_bytes) {
+        throw new Error(`Media file exceeds max_bytes (${stat.size} > ${max_bytes}).`);
+      }
       const data = await fsp.readFile(filePath);
       const mimeType = mimeFor(filePath);
       const base64 = data.toString("base64");
@@ -235,23 +263,28 @@ export function registerFilesystemTools(server, config) {
     }
   });
 
-  server.tool("list_directory", "List files and directories in one directory.", {
+  server.tool("list_directory", "List files and directories in one directory with a bounded entry count.", {
     path: z.string().min(1),
-  }, async ({ path: inputPath }) => {
+    max_entries: z.number().int().min(1).max(10000).optional(),
+  }, async ({ path: inputPath, max_entries = 2000 }) => {
     try {
       const dirPath = resolveAllowed(inputPath);
       const entries = await fsp.readdir(dirPath, { withFileTypes: true });
       entries.sort((a, b) => a.name.localeCompare(b.name));
-      return textResult(entries.map((e) => `[${e.isDirectory() ? "DIR" : "FILE"}] ${e.name}`).join("\n"));
+      const shown = entries.slice(0, max_entries);
+      const lines = shown.map((e) => `[${e.isDirectory() ? "DIR" : "FILE"}] ${e.name}`);
+      if (entries.length > shown.length) lines.push(`...[truncated: ${shown.length}/${entries.length} entries]`);
+      return textResult(lines.join("\n"));
     } catch (error) {
       return textResult(error.message, true);
     }
   });
 
-  server.tool("list_directory_with_sizes", "List directory entries with file sizes.", {
+  server.tool("list_directory_with_sizes", "List directory entries with file sizes and a bounded entry count.", {
     path: z.string().min(1),
     sortBy: z.enum(["name", "size"]).optional(),
-  }, async ({ path: inputPath, sortBy }) => {
+    max_entries: z.number().int().min(1).max(10000).optional(),
+  }, async ({ path: inputPath, sortBy, max_entries = 2000 }) => {
     try {
       const dirPath = resolveAllowed(inputPath);
       const entries = await fsp.readdir(dirPath, { withFileTypes: true });
@@ -263,24 +296,28 @@ export function registerFilesystemTools(server, config) {
       rows.sort((a, b) => sortBy === "size"
         ? b.size - a.size || a.entry.name.localeCompare(b.entry.name)
         : a.entry.name.localeCompare(b.entry.name));
+      const shown = rows.slice(0, max_entries);
       let total = 0;
-      const lines = rows.map(({ entry, size }) => {
+      const lines = shown.map(({ entry, size }) => {
         total += size;
         return `[${entry.isDirectory() ? "DIR" : "FILE"}] ${entry.name}${entry.isDirectory() ? "" : "  " + formatBytes(size)}`;
       });
-      lines.push("", `Total: ${rows.length} entries`, `Combined file size: ${formatBytes(total)}`);
+      if (rows.length > shown.length) lines.push(`...[truncated: ${shown.length}/${rows.length} entries]`);
+      lines.push("", `Shown: ${shown.length} of ${rows.length} entries`, `Combined shown file size: ${formatBytes(total)}`);
       return textResult(lines.join("\n"));
     } catch (error) {
       return textResult(error.message, true);
     }
   });
 
-  server.tool("directory_tree", "Return a recursive JSON directory tree.", {
+  server.tool("directory_tree", "Return a recursive JSON directory tree with a hard entry bound.", {
     path: z.string().min(1),
     excludePatterns: z.array(z.string()).optional(),
-  }, async ({ path: inputPath, excludePatterns }) => {
+    max_entries: z.number().int().min(1).max(50000).optional(),
+  }, async ({ path: inputPath, excludePatterns, max_entries = 5000 }) => {
     try {
       const root = resolveAllowed(inputPath);
+      let visited = 0;
       async function build(dir, rel = "") {
         const entries = await fsp.readdir(dir, { withFileTypes: true });
         entries.sort((a, b) => a.name.localeCompare(b.name));
@@ -288,6 +325,10 @@ export function registerFilesystemTools(server, config) {
         for (const entry of entries) {
           const childRel = rel ? `${rel}/${entry.name}` : entry.name;
           if (matchesAny(childRel, excludePatterns || [])) continue;
+          visited += 1;
+          if (visited > max_entries) {
+            throw new Error(`Directory tree exceeds max_entries=${max_entries}; narrow the path or exclusions.`);
+          }
           const abs = path.join(dir, entry.name);
           if (entry.isDirectory()) {
             result.push({ name: entry.name, type: "directory", children: await build(abs, childRel) });
@@ -319,19 +360,29 @@ export function registerFilesystemTools(server, config) {
     }
   });
 
-  server.tool("search_files", "Recursively search for files/directories using glob-style patterns.", {
+  server.tool("search_files", "Recursively search for files/directories using glob-style patterns with a bounded match count.", {
     path: z.string().min(1),
     pattern: z.string().min(1),
     excludePatterns: z.array(z.string()).optional(),
-  }, async ({ path: inputPath, pattern, excludePatterns }) => {
+    max_matches: z.number().int().min(1).max(10000).optional(),
+  }, async ({ path: inputPath, pattern, excludePatterns, max_matches = 1000 }) => {
     try {
       const root = resolveAllowed(inputPath);
       const regex = globToRegExp(pattern);
       const found = [];
+      let truncated = false;
       await walk(root, excludePatterns || [], async (_entry, abs, rel) => {
-        if (regex.test(rel)) found.push(abs);
+        if (regex.test(rel)) {
+          found.push(abs);
+          if (found.length >= max_matches) {
+            truncated = true;
+            return false;
+          }
+        }
+        return true;
       });
-      return textResult(found.length ? found.join("\n") : "No matches found.");
+      if (!found.length) return textResult("No matches found.");
+      return textResult(found.join("\n") + (truncated ? `\n...[truncated at max_matches=${max_matches}]` : ""));
     } catch (error) {
       return textResult(error.message, true);
     }

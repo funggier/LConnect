@@ -1,6 +1,10 @@
 # รายการ Tools ของ LConnect
 
-LConnect v1.2.2 บน current `main` expose **122 tools** ผ่าน MCP `main` channel เดียว และ v1.2.2 release ใช้ catalog เดียวกันที่ **122 tools**
+LConnect source/runtime บน current `main` expose **154 tools** ผ่าน MCP `main` channel เดียว ขณะที่ published v1.2.2 release ยังคงเป็น immutable baseline ที่ **122 tools**
+
+## Tool Surface Policy
+
+แนวทาง canonical / compatibility / deprecated, safety classification, parameter/result conventions และ managed-vs-live browser boundary อยู่ที่ [TOOL_SURFACE_POLICY.md](TOOL_SURFACE_POLICY.md)
 
 ## Filesystem
 
@@ -19,7 +23,7 @@ LConnect v1.2.2 บน current `main` expose **122 tools** ผ่าน MCP `mai
 - `head`
 - `tail`
 
-`read_file` เป็น alias เดิมเพื่อ compatibility
+`read_file` เป็น **deprecated compatibility alias**; workflow ใหม่ควรใช้ `read_text_file`
 
 ### read_multiple_files
 
@@ -115,7 +119,7 @@ arguments:
 
 ### read_process_output
 
-อ่าน status และ legacy stdout/stderr buffer ของ session
+**Compatibility path** สำหรับอ่าน status และ legacy stdout/stderr buffer ของ session; workflow ใหม่ที่ต้อง consume output ต่อเนื่องควรใช้ cursor API `read_process_events`
 
 สามารถ `clear` legacy buffer ได้
 

@@ -12,6 +12,7 @@
 
 - Source version: **1.2.2**
 - MCP catalog on current `main`: **154 tools**
+- Tool-surface policy: [`docs/TOOL_SURFACE_POLICY.md`](docs/TOOL_SURFACE_POLICY.md)
 - Latest published release: **[v1.2.2 — Secure Restart & Local Credentials](https://github.com/funggier/LConnect/releases/tag/v1.2.2)**
 - OpenAI tunnel-client minimum: **0.0.14**
 
@@ -28,7 +29,7 @@ LConnect Core ผ่าน runtime acceptance บน Windows 10 แล้ว โ
 - Runtime API key ไม่ถูกส่งผ่าน restart command line
 - `local-secrets/` ถูก preserve ระหว่าง deploy/update/refresh และไม่รวมใน release ZIP
 - ความสามารถ reliability ของ v1.2.1 ยังคงอยู่: `turn_risk_observation_v2` แบบ OBSERVE-only, post-Retry auto-round และ compact `github_run_wait`
-- MCP catalog ยังคง **122 tools** โดยไม่มี breaking tool migration
+- Published **v1.2.2 release baseline** มี **122 tools** โดยไม่มี breaking tool migration; current `main` พัฒนาต่อเป็น **154 tools** แล้ว
 
 ## โครงสร้าง
 

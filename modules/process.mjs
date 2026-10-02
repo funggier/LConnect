@@ -434,7 +434,7 @@ export function registerProcessTools(server, config) {
     return textResult(result);
   });
 
-  server.tool("read_process_output", "Read buffered stdout/stderr and status for a process session.", {
+  server.tool("read_process_output", "Compatibility buffered-output API for a process session. New cursor-based workflows should use read_process_events.", {
     session_id: z.string().min(1),
     clear: z.boolean().optional(),
   }, async ({ session_id, clear }) => {

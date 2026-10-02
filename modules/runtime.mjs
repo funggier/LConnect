@@ -30,6 +30,7 @@ export function runProcess(program, args = [], options = {}) {
     windowsHide = true,
     shell = false,
     env = process.env,
+    stdinText = null,
   } = options;
 
   return new Promise((resolve) => {
@@ -50,8 +51,13 @@ export function runProcess(program, args = [], options = {}) {
       windowsHide,
       shell,
       env,
-      stdio: ["ignore", "pipe", "pipe"],
+      stdio: [stdinText == null ? "ignore" : "pipe", "pipe", "pipe"],
     });
+
+    if (stdinText != null && child.stdin) {
+      child.stdin.on("error", () => {});
+      child.stdin.end(String(stdinText), "utf8");
+    }
 
     const withTimeoutEvidence = (result) => ({
       ...result,

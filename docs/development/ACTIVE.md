@@ -32,7 +32,9 @@ Last updated: 2026-10-02
 
 ## Active task
 
-No active development task.
+[LCN-055 — Tool Surface Cleanup & Contract Normalization](tasks/LCN-055-tool-surface-cleanup-contract-normalization.md) — **ACTIVE**
+
+Activation authority: main/origin at `b96343ed4e3118ed45a24490cac89a11dc86db19`, clean worktree, source/install 237/237 exact, live runtime `1.2.2 / 154 tools`, PID `12736`.
 
 Latest completed task: [LCN-054 — Browser Control Hardening & Live Safety Boundary](tasks/LCN-054-browser-control-hardening-live-safety-boundary.md) — **COMPLETE**
 
@@ -61,7 +63,7 @@ Previous report: [reports/LCN-20261002-021-browser-common-layer.md](reports/LCN-
 ## Current reliability state
 
 - runtime: **1.2.2 / 154 tools**
-- current runtime PID after LCN-054 final deployment/restart: `9356`
+- current runtime PID at LCN-055 activation authority check: `12736`
 - current tunnel PID after v1.2.2 activation: `2216`
 - runtime root: `T:\Sanbox\openclawspace\tunnel-mcp-ok`
 - measurement model: `turn_risk_observation_v2`
