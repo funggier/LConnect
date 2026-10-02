@@ -28,10 +28,13 @@ Last updated: 2026-10-02
 - LCN-021: COMPLETE — Browser Common Layer / exact-commit CI + deployed runtime GREEN
 - LCN-022: COMPLETE — Firefox Adapter / physical Firefox + exact-commit CI + deployed runtime GREEN
 - LCN-023: COMPLETE — Chrome Adapter / physical CDP + exact-commit CI + deployed runtime GREEN
+- LCN-054: ACTIVE — Browser Control Hardening & Live Safety Boundary
 
 ## Active task
 
-No active development task.
+[LCN-054 — Browser Control Hardening & Live Safety Boundary](tasks/LCN-054-browser-control-hardening-live-safety-boundary.md) — **ACTIVE**
+
+Scope: harden profile isolation and option schemas, make attached stop non-destructive by default, correct profile ownership metadata, implement truthful wait semantics, improve CDP interaction fidelity, add accessibility snapshot and file-backed screenshot results, surface cleanup evidence, and establish a native/UIA live-browser safety boundary.
 
 Latest completed task: [LCN-023 — Chrome Adapter](tasks/LCN-023-chrome-adapter.md) — **COMPLETE**
 
@@ -75,4 +78,4 @@ Previous report: [reports/LCN-20261002-021-browser-common-layer.md](reports/LCN-
 
 ## Next action
 
-Browser Automation through LCN-023 is complete at current scope. Verify live GitHub/runtime state before activating any new task. Keep the existing v1.2.2 tag/release immutable.
+Implement and qualify LCN-054 against the clean/equal main baseline. Keep the existing v1.2.2 tag/release immutable; do not reset the worktree.

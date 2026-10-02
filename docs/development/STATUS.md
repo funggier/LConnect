@@ -50,7 +50,14 @@ Agent Operations Reliability LCN-025–030 ปิดครบ, Delivery/Turn Rel
 | Execution Ergonomics | COMPLETE AT CURRENT NEED | LCN-040–044 | LCN-044 Deployment Verification Snapshot PASS on installed tree; 178/178 tracked parity, runtime 1.2.0 / 120 tools |
 | Local Credential / Self-Restart | COMPLETE | LCN-052 | DPAPI CurrentUser credential + ACL + detached restart live GREEN; retained in current v1.2.2 runtime / 122 tools; current tracked parity 212/212 |
 | Desktop Control | COMPLETE | LCN-018–020 | Clipboard, Window Control, and Keyboard/Mouse complete/live GREEN |
-| Browser Automation | COMPLETE AT CURRENT SCOPE | LCN-021–023 | Browser Common Layer + Firefox primary + Chrome secondary backends all deployed/live GREEN |
+| Browser Automation | ACTIVE HARDENING | LCN-021–023, LCN-054 | LCN-021–023 deployed/live GREEN; LCN-054 hardens profile isolation, attach/stop semantics, interaction fidelity, screenshot/cleanup evidence, accessibility snapshots, and live-browser safety |
+
+### LCN-054 — Browser Control Hardening & Live Safety Boundary
+**ACTIVE**
+
+Hardening the deployed Browser Common/Firefox/Chrome stack after physical review. The task closes caller-controlled profile bypasses, makes attached stop non-destructive by default, exposes truthful profile ownership/isolation metadata, improves navigation/interaction semantics, adds accessibility and file-backed screenshot paths, surfaces cleanup evidence, and establishes a native live-browser safety boundary that does not enable WebDriver/CDP on a normal active profile.
+
+Baseline at activation: main/origin `3955b0688ac18bdebe474be39229e09713eb3463`, clean/equal; installed runtime 1.2.2 / 148 tools. Existing v1.2.2 tag/release remains immutable.
 
 ### LCN-053 — v1.2.2 Secure Restart & Local Credentials Release
 **COMPLETE**
