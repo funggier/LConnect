@@ -25,11 +25,14 @@ Last updated: 2026-10-02
 - LCN-018: COMPLETE — Clipboard text control / exact-commit CI + deployed runtime GREEN
 - LCN-019: COMPLETE — Native Window Control / exact-commit CI + deployed runtime GREEN
 - LCN-020: COMPLETE — Keyboard / Mouse native input / exact-commit CI + deployed runtime GREEN
-- LCN-021–023: DEFERRED — Browser Automation
+- LCN-021: ACTIVE — Browser Common Layer implementation and qualification
+- LCN-022–023: DEFERRED — Firefox / Chrome adapters
 
 ## Active task
 
-No active development task.
+[LCN-021 — Browser Common Layer](tasks/LCN-021-browser-common-layer.md) — **ACTIVE**
+
+Current gates: implementation → local tests → exact-commit CI → deploy/runtime evidence.
 
 Latest completed task: [LCN-020 — Keyboard / Mouse](tasks/LCN-020-keyboard-mouse.md) — **COMPLETE**
 
@@ -67,4 +70,4 @@ Previous report: [reports/LCN-20261002-019-window-control.md](reports/LCN-202610
 
 ## Next action
 
-Begin **LCN-021 Browser Common Layer** only after verifying live GitHub/runtime state. Keep the existing v1.2.2 tag/release immutable.
+Complete **LCN-021 Browser Common Layer** through local tests, exact-commit CI, deployment, and live runtime evidence before marking it COMPLETE. Keep the existing v1.2.2 tag/release immutable.
