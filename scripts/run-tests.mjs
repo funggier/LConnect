@@ -28,12 +28,19 @@ for (const name of tests) {
   await run(process.execPath, [path.join("tests", name)]);
 }
 
-if (process.platform === "win32") {
-  console.log("\n=== secure-credential-smoke.ps1 ===");
+const powershellTests =
+  process.platform === "win32"
+    ? (await fsp.readdir(testDir))
+        .filter((name) => name.endsWith("-smoke.ps1"))
+        .sort((a, b) => a.localeCompare(b))
+    : [];
+
+for (const name of powershellTests) {
+  console.log(`\n=== ${name} ===`);
   await run("powershell.exe", [
     "-NoLogo", "-NoProfile", "-NonInteractive", "-ExecutionPolicy", "Bypass",
-    "-File", path.join("tests", "secure-credential-smoke.ps1"),
+    "-File", path.join("tests", name),
   ]);
 }
 
-console.log(`\nTest runner: PASS node_tests=${tests.length} powershell_tests=${process.platform === "win32" ? 1 : 0}`);
+console.log(`\nTest runner: PASS node_tests=${tests.length} powershell_tests=${powershellTests.length}`);

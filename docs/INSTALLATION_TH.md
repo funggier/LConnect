@@ -1019,6 +1019,24 @@ Start-LConnect.cmd
 
 ---
 
+# Optional: เปิด LConnect อัตโนมัติเมื่อ Windows user นี้ Log on
+
+ขั้นนี้ไม่บังคับ และ installer/update จะไม่สร้าง Scheduled Task ให้เอง
+
+ก่อนเปิด autostart ต้องมี `mcp-conf.yaml`, `Start-LConnect.ps1` และ `local-secrets\credentials.json.enc` ที่ decrypt ผ่านด้วย DPAPI `CurrentUser`
+
+ตรวจ credential ก่อนด้วย `Status-LConnectCredential.cmd`
+
+เปิด autostart ด้วย `Install-LConnectAutostart.cmd`
+
+ตรวจ Scheduled Task contract ด้วย `Status-LConnectAutostart.cmd`
+
+ถ้าต้องการยกเลิก ใช้ `Remove-LConnectAutostart.cmd`
+
+Scheduled Task ค่าเริ่มต้นเป็น AtLogOn ของ Windows user ปัจจุบัน, RunLevel `Limited`, LogonType `Interactive` และเรียก `Start-LConnect.ps1 -NonInteractive` โดยไม่ฝัง Runtime API key หรือ Organization ID ไว้ใน task command line
+
+---
+
 # First-run checklist
 
 ก่อนถือว่าติดตั้งเสร็จ ให้เช็ก:
@@ -1030,7 +1048,8 @@ Start-LConnect.cmd
 - [ ] มี Tunnel ID จริง
 - [ ] มี Runtime API key ที่มี Tunnels Read + Use
 - [ ] รู้ Organization ID
-- [ ] ถ้าต้องการ automatic restart ให้รัน `Setup-LConnectCredential.cmd` และตรวจ `Status-LConnectCredential.cmd` ผ่าน
+- [ ] ถ้าต้องการ automatic restart/autostart ให้รัน `Setup-LConnectCredential.cmd` และตรวจ `Status-LConnectCredential.cmd` ผ่าน
+- [ ] ถ้าต้องการ AtLogOn autostart ให้รัน `Install-LConnectAutostart.cmd` และตรวจ `Status-LConnectAutostart.cmd` ผ่าน
 - [ ] สร้าง `mcp-conf.yaml` แล้ว
 - [ ] `tunnel_id` ใน profile ถูกต้อง
 - [ ] `api_key` เป็น `env:CONTROL_PLANE_API_KEY`

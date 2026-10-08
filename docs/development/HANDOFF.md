@@ -85,7 +85,7 @@ LCN-055 Tool Surface Cleanup & Contract Normalization — COMPLETE
 
 LCN-056 v1.3.0 Desktop & Browser Automation Release — **COMPLETE / PUBLISHED / DEPLOYED / LIVE GREEN**.
 
-LCN-057 Security & Operational Hygiene is **COMPLETE / DEPLOYED / LIVE GREEN** at implementation commit `c949c3239cc5ede9e285dfd605b0e62392bdde4b`, CI #175 SUCCESS, 249/249 deployed parity, live runtime 1.3.0 / 154 tools. Next planned task is LCN-058 optional AtLogOn persistence, followed by LCN-059 v1.3.1 release.
+LCN-057 Security & Operational Hygiene is **COMPLETE / DEPLOYED / LIVE GREEN** at implementation commit `c949c3239cc5ede9e285dfd605b0e62392bdde4b`, CI #175 SUCCESS, 249/249 deployed parity, live runtime 1.3.0 / 154 tools. LCN-058 Optional AtLogOn Persistence is ACTIVE with local qualification GREEN; exact-commit CI, tracked-only deployment and disposable physical task qualification remain. LCN-059 v1.3.1 follows after closure.
 
 Browser Automation through LCN-054 is complete at current scope. LCN-055 normalized the resulting 154-tool public surface. LCN-056 published that completed mainline as v1.3.0.
 

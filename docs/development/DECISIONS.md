@@ -521,3 +521,19 @@ It preserves local configuration, tunnel client, dependencies, source, Scheduled
 **Decision:** Documentation must not present an observed PID as permanent current state; live process identity comes from runtime/status evidence.
 
 **Why:** Long-lived LConnect runtimes must remain bounded and diagnostically useful without turning LConnect into an autonomous scheduler or policy engine.
+
+---
+
+## D-042 — AtLogOn persistence is opt-in, current-user scoped and ownership-guarded
+
+**Decision:** LConnect autostart is never enabled by install/update/refresh. The operator must explicitly run `Install-LConnectAutostart.cmd`.
+
+**Decision:** The default Scheduled Task trigger is AtLogOn for the current Windows user, with Interactive logon type and Limited run level. The task invokes only the local `Start-LConnect.ps1 -NonInteractive` path; Runtime API key and Organization ID are resolved from the existing DPAPI CurrentUser credential and are not stored in Task Scheduler.
+
+**Decision:** The scheduled task description carries an ownership marker bound to the normalized LConnect root and current Windows user SID. Install/repair/remove operations refuse an existing same-identity task without the matching marker.
+
+**Decision:** Re-running install is idempotent. A matching owned task is left unchanged; an owned drifted task may be repaired to the exact expected action/trigger/principal contract. Removal is idempotent and never stops a currently running LConnect instance.
+
+**Decision:** No MCP tool is added for this feature; the public catalog remains 154 tools.
+
+**Why:** Persistence changes machine behavior across logons, so it must be an explicit operator choice with a narrow identity boundary and no secret material in task metadata or command lines.

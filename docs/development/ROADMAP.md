@@ -677,9 +677,9 @@ Planned/delivered implementation scope:
 
 Public MCP tool count remains **154**. Closure: implementation `c949c3239cc5ede9e285dfd605b0e62392bdde4b`; CI #175 / run `37810517540` SUCCESS; deployed 249/249 exact; live runtime 1.3.0 / 154 tools / PID 15508; dependency audit 0 vulnerabilities; credential hash preserved.
 
-## LCN-058 Optional AtLogOn Persistence
+## LCN-058 Optional AtLogOn Persistence — ACTIVE
 
-After LCN-057 closes, add an opt-in and removable Windows AtLogOn persistence path that starts LConnect non-interactively using the existing DPAPI CurrentUser credential. It must be idempotent, must not expose credentials on a command line, and must not be enabled by default.
+Add an opt-in and removable Windows AtLogOn persistence path that starts LConnect non-interactively using the existing DPAPI CurrentUser credential. It is idempotent, does not expose credentials on a command line, is disabled by default, refuses unowned task collisions, and repairs drift only for a task carrying the matching LConnect root/user ownership marker.
 
 ## LCN-059 v1.3.1 Operational Hardening Release
 

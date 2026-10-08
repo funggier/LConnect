@@ -102,6 +102,9 @@ Restart-LConnect.cmd
 Setup-LConnectCredential.cmd
 Status-LConnectCredential.cmd
 Clear-LConnectCredential.cmd
+Install-LConnectAutostart.cmd
+Status-LConnectAutostart.cmd
+Remove-LConnectAutostart.cmd
 Refresh-LConnect.cmd
 ResetRound-LConnect.cmd
 ConfirmRetry-LConnect.cmd
@@ -138,8 +141,13 @@ explicit parameter
 - `Status-LConnectCredential.cmd` — ทดสอบว่าไฟล์อยู่และ decrypt ได้ โดยไม่แสดง secret
 - `Clear-LConnectCredential.cmd` — ลบ encrypted credential file
 - `Restart-LConnect.cmd` — schedule detached worker ให้ stop → start แบบ non-interactive
+- `Install-LConnectAutostart.cmd` — เปิด AtLogOn autostart แบบ opt-in สำหรับ Windows user ปัจจุบัน
+- `Status-LConnectAutostart.cmd` — ตรวจ exact task identity / action / trigger / principal / DPAPI readiness
+- `Remove-LConnectAutostart.cmd` — ลบเฉพาะ task ที่มี LConnect ownership marker ตรงกับ root/user นี้
 
-`Restart-LConnect.cmd` ต้องมี stored credential ที่ decrypt ได้ เพื่อไม่ต้องส่ง Runtime API key ผ่าน command line ระหว่าง self-restart
+`Restart-LConnect.cmd` และ AtLogOn autostart ต้องมี stored credential ที่ decrypt ได้ เพื่อไม่ต้องส่ง Runtime API key ผ่าน command line
+
+Autostart **ไม่ถูกเปิดโดย installer/update** ต้องสั่ง `Install-LConnectAutostart.cmd` เองเท่านั้น Scheduled Task ใช้ AtLogOn + Limited/Interactive principal และ action มีเพียง `Start-LConnect.ps1 -NonInteractive`; Runtime API key และ Organization ID ไม่ถูกเก็บไว้ใน Task Scheduler
 
 > DPAPI `CurrentUser` ผูกกับ Windows user/เครื่องเดิม การ copy `credentials.json.enc` ไปอีก user หรืออีกเครื่องโดยทั่วไปจะ decrypt ไม่ได้ ให้รัน `Setup-LConnectCredential.cmd` ใหม่
 

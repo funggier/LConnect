@@ -32,7 +32,11 @@ Last updated: 2026-10-02
 
 ## Active task
 
-No active development task.
+[LCN-058 — Optional AtLogOn Persistence](tasks/LCN-058-optional-atlogon-persistence.md) — **ACTIVE / LOCAL QUALIFICATION GREEN**
+
+Scope: explicit opt-in Windows AtLogOn Scheduled Task for the current Windows user, DPAPI preflight, ownership marker, idempotent install/repair/status/remove, no secrets on task command line, and no public MCP catalog change.
+
+Local qualification is GREEN: syntax PASS (84 files), PowerShell parser PASS (20 files), full test runner PASS (39 Node + 2 PowerShell), npm audit 0 vulnerabilities, tool surface 154/no duplicates, git diff check PASS. Exact-commit CI, tracked-only deployment and disposable physical scheduled-task qualification remain before closure.
 
 Latest completed task: [LCN-057 — Security & Operational Hygiene](tasks/LCN-057-security-operational-hygiene.md) — **COMPLETE / DEPLOYED / LIVE GREEN**
 
@@ -94,4 +98,4 @@ Previous report: [reports/LCN-20261002-021-browser-common-layer.md](reports/LCN-
 
 ## Next action
 
-LCN-057 is complete, deployed and live GREEN. Next planned work is LCN-058 optional AtLogOn persistence, followed by LCN-059 v1.3.1 release qualification. Keep both v1.3.0 and historical v1.2.2 tag/release evidence immutable and do not reset the worktree.
+LCN-058 is active from the LCN-057 closure baseline. It is opt-in only and must not create the default autostart task until explicit install is requested. Next release gate after closure is LCN-059 v1.3.1. Keep both v1.3.0 and historical v1.2.2 tag/release evidence immutable and do not reset the worktree.

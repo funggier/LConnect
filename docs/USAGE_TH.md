@@ -260,6 +260,24 @@ schedule detached worker
 
 ข้อจำกัด: DPAPI `CurrentUser` โดยทั่วไปใช้ไม่ได้เมื่อ copy encrypted file ไป Windows user/เครื่องอื่น ให้รัน `Setup-LConnectCredential.cmd` ใหม่บนปลายทาง
 
+## Optional AtLogOn Autostart
+
+ฟีเจอร์นี้ **ปิดอยู่โดยปริยาย** และ `Install-LConnect.cmd`/update จะไม่เปิดให้เอง
+
+เปิดด้วย `Install-LConnectAutostart.cmd`, ตรวจด้วย `Status-LConnectAutostart.cmd` และยกเลิกด้วย `Remove-LConnectAutostart.cmd`
+
+contract ของ task:
+
+- exact identity ค่าเริ่มต้น `\\LConnect Autostart`
+- trigger: AtLogOn ของ Windows user ปัจจุบัน
+- principal: Interactive + Limited
+- action: Windows PowerShell เรียก local `Start-LConnect.ps1 -NonInteractive`
+- working directory: LConnect root ปัจจุบัน
+- Runtime API key / Organization ID ไม่อยู่ใน task command line หรือ description
+- ownership marker ผูกกับ LConnect root + Windows user SID; install/remove จะปฏิเสธ task ชื่อเดียวกันที่ไม่ใช่ของ root/user นี้
+- install ซ้ำเป็น idempotent; ถ้า task ที่เป็นของ LConnect เอง drift จะ repair กลับสู่ contract
+- remove ไม่ stop LConnect instance ที่กำลังรันอยู่
+
 ## Operational hygiene บน current main
 
 - `list_sessions` ยังเรียกแบบเดิมได้ แต่เพิ่ม `state`, `label_contains`, `offset`, `limit`, `summary_only` สำหรับ runtime ที่มี session จำนวนมาก
