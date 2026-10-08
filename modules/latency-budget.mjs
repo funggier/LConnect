@@ -447,6 +447,11 @@ export function createLatencyBudgetController(config = {}) {
   const historyPath =
     process.env.LCONNECT_LATENCY_HISTORY_PATH ||
     path.join(installRoot, "runtime", "latency-budget-history.jsonl");
+  const idleRolloverSeconds = Math.max(
+    0,
+    Number(process.env.LCONNECT_TURN_RISK_IDLE_ROLLOVER_SECONDS ?? 1800) || 0
+  );
+  const idleRolloverMs = idleRolloverSeconds * 1000;
 
   function read() {
     return safeReadJson(statePath);
@@ -615,6 +620,54 @@ export function createLatencyBudgetController(config = {}) {
     const startedAt = nowIso();
     let autoStartedAfterRetry = false;
 
+    if (
+      state.round.status === "active" &&
+      state.round.call_count > 0 &&
+      state.round.in_flight_count === 0 &&
+      idleRolloverMs > 0
+    ) {
+      const anchor = state.round.last_call_completed_at || state.round.started_at;
+      const idleMs = isoDiffMs(startedAt, anchor);
+      if (idleMs >= idleRolloverMs) {
+        const previousRound = state.round;
+        appendHistory(historyPath, {
+          event: "round_idle_rollover",
+          source: "idle_rollover_first_work_tool",
+          idle_ms: idleMs,
+          idle_rollover_seconds: idleRolloverSeconds,
+          round: previousRound,
+          round_view: currentRoundView(previousRound, startedAt),
+          mode: "observe",
+          generation: state.generation,
+          measurement_model: MEASUREMENT_MODEL,
+        });
+        state = {
+          ...state,
+          mode: "observe",
+          enforcement_enabled: false,
+          active_budget: emptyActiveBudget(),
+          round: {
+            ...emptyRound(previousRound.id + 1),
+            status: "active",
+            started_at: startedAt,
+            start_source: "idle_rollover_first_work_tool",
+          },
+        };
+        state = writeJson(statePath, state);
+        appendHistory(historyPath, {
+          event: "round_started",
+          source: "idle_rollover_first_work_tool",
+          round_id: state.round.id,
+          previous_round_id: previousRound.id,
+          idle_ms: idleMs,
+          idle_rollover_seconds: idleRolloverSeconds,
+          mode: "observe",
+          generation: state.generation,
+          measurement_model: MEASUREMENT_MODEL,
+        });
+      }
+    }
+
     if (state.round.status === "confirmed_retry") {
       const previousRetryRoundId = state.round.id;
       state = {
@@ -724,6 +777,7 @@ export function createLatencyBudgetController(config = {}) {
   return {
     statePath,
     historyPath,
+    idleRolloverSeconds,
     startRound,
     status,
     confirmRetryCurrentRound,
@@ -820,6 +874,7 @@ export function registerLatencyBudgetTools(server, controller) {
                 latency_budget: value.latency_budget,
                 state_path: value.state_path,
                 history_path: value.history_path,
+                idle_rollover_seconds: controller.idleRolloverSeconds,
                 next_work_tool_auto_starts_round:
                   value.state.round.status === "confirmed_retry",
                 ...(value.state_error

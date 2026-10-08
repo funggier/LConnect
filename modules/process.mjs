@@ -5,6 +5,58 @@ import { z } from "zod";
 const sessions = new Map();
 let counter = 0;
 
+function powerShellLiteral(value) {
+  return "'" + String(value).replace(/'/g, "''") + "'";
+}
+
+function managedSpawnSpec(program, args) {
+  if (process.platform !== "win32" || !/\.(?:cmd|bat)$/i.test(program)) {
+    return { program, args, launcher: "direct" };
+  }
+
+  const argList = args.map(powerShellLiteral).join(", ");
+  const script = [
+    `$lconnectArgs = @(${argList})`,
+    `& ${powerShellLiteral(program)} @lconnectArgs`,
+    "if ($null -ne $LASTEXITCODE) { exit $LASTEXITCODE }",
+  ].join("; ");
+
+  return {
+    program: "powershell.exe",
+    args: [
+      "-NoLogo",
+      "-NoProfile",
+      "-NonInteractive",
+      "-ExecutionPolicy",
+      "Bypass",
+      "-Command",
+      script,
+    ],
+    launcher: "windows_powershell_batch_wrapper",
+  };
+}
+
+function enforceSessionRegistryLimit(maxEntries) {
+  const limit = Math.max(10, Math.floor(Number(maxEntries) || 500));
+  if (sessions.size < limit) return [];
+
+  const terminal = [...sessions.values()]
+    .filter((session) => !session.running)
+    .sort((a, b) => {
+      const aa = Date.parse(a.completedAt || a.startedAt) || 0;
+      const bb = Date.parse(b.completedAt || b.startedAt) || 0;
+      return aa - bb;
+    });
+
+  const removed = [];
+  for (const session of terminal) {
+    if (sessions.size < limit) break;
+    sessions.delete(session.id);
+    removed.push(session.id);
+  }
+  return removed;
+}
+
 function textResult(value, isError = false) {
   const text = typeof value === "string" ? value : JSON.stringify(value, null, 2);
   return { content: [{ type: "text", text }], ...(isError ? { isError: true } : {}) };
@@ -80,6 +132,7 @@ function snapshot(session, { includeOutput = true } = {}) {
     pid: session.child.pid ?? null,
     program: session.program,
     args: session.args,
+    launcher: session.launcher || "direct",
     cwd: session.cwd ?? null,
     running: session.running,
     exit_code: session.exitCode,
@@ -117,7 +170,9 @@ export function startManagedProcessSession({
   label = null,
 }) {
   const resolvedCwd = cwd ? path.resolve(cwd) : undefined;
-  const child = spawn(program, args, {
+  const launch = managedSpawnSpec(program, args);
+  enforceSessionRegistryLimit(config.process.maxSessionRegistryEntries);
+  const child = spawn(launch.program, launch.args, {
     cwd: resolvedCwd,
     windowsHide,
     stdio: ["pipe", "pipe", "pipe"],
@@ -131,6 +186,7 @@ export function startManagedProcessSession({
     child,
     program,
     args,
+    launcher: launch.launcher,
     cwd: resolvedCwd,
     running: true,
     exitCode: null,
@@ -222,8 +278,57 @@ export function getManagedProcessSessionStatus(
   };
 }
 
-export function listManagedProcessSessions(options) {
-  return [...sessions.values()].map((session) => snapshot(session, options));
+export function listManagedProcessSessions({
+  includeOutput = false,
+  state = "all",
+  labelContains = null,
+  offset = 0,
+  limit = null,
+  summaryOnly = false,
+} = {}) {
+  let rows = [...sessions.values()];
+
+  if (state === "running") rows = rows.filter((session) => session.running);
+  if (state === "terminal") rows = rows.filter((session) => !session.running);
+  if (labelContains) {
+    const needle = String(labelContains).toLowerCase();
+    rows = rows.filter((session) =>
+      String(session.label || "").toLowerCase().includes(needle)
+    );
+  }
+
+  const total = rows.length;
+  const start = Math.max(0, Math.floor(Number(offset) || 0));
+  const boundedLimit =
+    limit == null ? null : Math.max(1, Math.min(500, Math.floor(Number(limit) || 1)));
+  if (boundedLimit != null) rows = rows.slice(start, start + boundedLimit);
+  else if (start > 0) rows = rows.slice(start);
+
+  if (summaryOnly) {
+    return {
+      total_sessions: sessions.size,
+      matched_sessions: total,
+      returned_sessions: rows.length,
+      running_sessions: [...sessions.values()].filter((session) => session.running).length,
+      terminal_sessions: [...sessions.values()].filter((session) => !session.running).length,
+      offset: start,
+      limit: boundedLimit,
+      has_more: start + rows.length < total,
+      sessions: rows.map((session) => ({
+        session_id: session.id,
+        label: session.label,
+        pid: session.child.pid ?? null,
+        running: session.running,
+        exit_code: session.exitCode,
+        signal: session.signal,
+        started_at: session.startedAt,
+        completed_at: session.completedAt,
+        elapsed_ms: elapsedMs(session),
+      })),
+    };
+  }
+
+  return rows.map((session) => snapshot(session, { includeOutput }));
 }
 
 export function clearManagedProcessSessionOutput(sessionId) {
@@ -518,9 +623,28 @@ export function registerProcessTools(server, config) {
     }
   });
 
-  server.tool("list_sessions", "List process sessions started by this LConnect instance. Buffered stdout/stderr are omitted by default to keep status checks compact.", {
+  server.tool("list_sessions", "List process sessions started by this LConnect instance. Supports filtering/pagination and a compact summary mode; buffered stdout/stderr are omitted by default.", {
     include_output: z.boolean().optional(),
-  }, async ({ include_output = false }) => {
-    return textResult(listManagedProcessSessions({ includeOutput: include_output }));
+    state: z.enum(["all", "running", "terminal"]).optional(),
+    label_contains: z.string().min(1).max(200).optional(),
+    offset: z.number().int().min(0).max(1000000).optional(),
+    limit: z.number().int().min(1).max(500).optional(),
+    summary_only: z.boolean().optional(),
+  }, async ({
+    include_output = false,
+    state = "all",
+    label_contains,
+    offset = 0,
+    limit,
+    summary_only = false,
+  }) => {
+    return textResult(listManagedProcessSessions({
+      includeOutput: include_output,
+      state,
+      labelContains: label_contains || null,
+      offset,
+      limit: limit ?? null,
+      summaryOnly: summary_only,
+    }));
   });
 }

@@ -10,7 +10,8 @@
     "maxTimeoutSeconds": 600
   },
   "process": {
-    "maxBufferedOutputChars": 240000
+    "maxBufferedOutputChars": 240000,
+    "maxSessionRegistryEntries": 500
   },
   "mcp": {
     "maxSynchronousRequestSeconds": 15

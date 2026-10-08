@@ -130,6 +130,22 @@ try {
     throw new Error("list_sessions explicit output compatibility failed");
   }
 
+  const summaryList = await callJson("list_sessions", {
+    state: "running",
+    label_contains: "wait-and-events",
+    offset: 0,
+    limit: 1,
+    summary_only: true,
+  });
+  if (
+    summaryList.data.returned_sessions !== 1 ||
+    summaryList.data.matched_sessions < 1 ||
+    summaryList.data.sessions[0]?.session_id !== staged.session_id ||
+    Object.hasOwn(summaryList.data.sessions[0], "args")
+  ) {
+    throw new Error(`list_sessions filtered summary contract failed: ${JSON.stringify(summaryList.data)}`);
+  }
+
   const firstWait = await callJson("wait_session", {
     session_id: staged.session_id,
     timeout_seconds: 0.03,
@@ -190,6 +206,25 @@ try {
   });
   if (!released.data.released) throw new Error("release_session did not release terminal session");
   cleanup.sessions.delete(staged.session_id);
+
+  if (process.platform === "win32") {
+    const batch = await callJson("start_process", {
+      program: "npm.cmd",
+      args: ["--version"],
+      cwd: root,
+      label: "windows-batch-launcher",
+    });
+    cleanup.sessions.add(batch.data.session_id);
+    if (batch.data.launcher !== "windows_powershell_batch_wrapper") {
+      throw new Error(`Windows batch launcher evidence missing: ${JSON.stringify(batch.data)}`);
+    }
+    const batchDone = await waitComplete(batch.data.session_id, 3);
+    if (batchDone.exit_code !== 0 || !batchDone.output_tail.stdout.trim()) {
+      throw new Error(`Windows batch launcher failed: ${JSON.stringify(batchDone)}`);
+    }
+    await callJson("release_session", { session_id: batch.data.session_id });
+    cleanup.sessions.delete(batch.data.session_id);
+  }
 
   const defaultWaitFixture = await startNode(
     "setTimeout(()=>process.exit(0),1800)",
@@ -398,7 +433,8 @@ try {
   cleanup.watchers.delete(watcher.data.watcher_id);
 
   console.log("session_status compact non-blocking: PASS");
-  console.log("list_sessions compact/full-output contract: PASS");
+  console.log("list_sessions compact/full-output + filtered summary contract: PASS");
+  console.log("start_process Windows .cmd/.bat launcher consistency: PASS");
   console.log("wait_session 1s default / 3s maximum: PASS");
   console.log("wait_session bounded timeout/completion/idempotence: PASS");
   console.log("process label + completed_at: PASS");

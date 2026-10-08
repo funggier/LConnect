@@ -73,6 +73,10 @@ export function loadLConnectConfig(importMetaUrl) {
     },
     process: {
       maxBufferedOutputChars: Number(config.process?.maxBufferedOutputChars ?? 240000),
+      maxSessionRegistryEntries: Math.max(
+        10,
+        Math.floor(Number(config.process?.maxSessionRegistryEntries ?? 500))
+      ),
     },
     mcp: {
       maxSynchronousRequestSeconds,

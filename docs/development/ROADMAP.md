@@ -652,10 +652,35 @@ Release qualification caught and repaired two issues before publication:
 Closure:
 - exact release commit: `3e685ba0596bf00b9e4546c0dc8d9293fbdbd761`
 - CI #171 / run `37009797481`: SUCCESS
-- runtime: **1.3.0 / PID 17900 / 154 tools**
+- release-qualification runtime: **1.3.0 / PID 17900 / 154 tools** (historical PID evidence)
 - release parity: **247/247 exact**
 - tag object: `ef06f0eab103acab6f54fabd981278e2f809199d`
 - published assets: 12
 - downloaded-back hash mismatch: 0
 
 Future capability work must open a new numbered task from the current GitHub/runtime baseline.
+
+# Phase 9 — Post-v1.3.0 Operational Hardening — ACTIVE
+
+## LCN-057 Security & Operational Hygiene
+
+LCN-057 hardens the already-published v1.3.0 capability surface without changing its immutable release tag.
+
+Planned/delivered implementation scope:
+- patch newly disclosed high/critical dependency advisories while avoiding unrelated major upgrades
+- bound recursive `search_files` by entries, depth, elapsed time, matches and output size
+- bound the managed process-session registry and add filtered/paginated compact session inspection
+- make Windows managed `.cmd/.bat` launch semantics consistent with synchronous command execution
+- keep raw tool telemetry bounded while retaining current-runtime lifetime per-tool aggregates
+- roll stale observation-only turn-risk rounds after a configurable idle period; never enforce/block
+- document process IDs as volatile observations rather than durable current state
+
+Public MCP tool count remains **154**. Exact-commit CI, tracked-only deployment, preserved local state, secure restart and live source/install/runtime acceptance are required before closure.
+
+## LCN-058 Optional AtLogOn Persistence
+
+After LCN-057 closes, add an opt-in and removable Windows AtLogOn persistence path that starts LConnect non-interactively using the existing DPAPI CurrentUser credential. It must be idempotent, must not expose credentials on a command line, and must not be enabled by default.
+
+## LCN-059 v1.3.1 Operational Hardening Release
+
+Package qualified LCN-057/058 work as a patch release only after exact-commit CI, install/overlay qualification, deployment/runtime evidence, immutable tag creation, release asset checksums and download-back verification.

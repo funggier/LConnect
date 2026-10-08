@@ -259,3 +259,12 @@ schedule detached worker
 ถ้า AI เป็นคนสั่งผ่าน LConnect ให้เรียก `Restart-LConnect.ps1` ผ่าน existing `powershell_run`; script จะคืนผลว่า restart ถูก schedule ก่อน connection เดิมถูกตัด จึงไม่ต้องเพิ่ม MCP tool ใหม่; ใน v1.3.0 catalog ทั้งหมดอยู่ที่ 154 tools
 
 ข้อจำกัด: DPAPI `CurrentUser` โดยทั่วไปใช้ไม่ได้เมื่อ copy encrypted file ไป Windows user/เครื่องอื่น ให้รัน `Setup-LConnectCredential.cmd` ใหม่บนปลายทาง
+
+## Operational hygiene บน current main
+
+- `list_sessions` ยังเรียกแบบเดิมได้ แต่เพิ่ม `state`, `label_contains`, `offset`, `limit`, `summary_only` สำหรับ runtime ที่มี session จำนวนมาก
+- managed session registry มี high-water mark จาก `process.maxSessionRegistryEntries` (default 500); เมื่อจำเป็นจะลืมเฉพาะ terminal session เก่าสุดและไม่แตะ running session
+- `start_process` บน Windows รองรับ explicit `.cmd/.bat` ผ่าน PowerShell wrapper ที่ quote argument และยังรายงาน program/args ตามที่ caller ขอ
+- `search_files` เพิ่ม `max_entries`, `max_depth`, `timeout_ms`, `max_output_chars` นอกเหนือจาก `max_matches`
+- `tool_telemetry` มี `lifetime_summary` สำหรับ aggregate ของ runtime ปัจจุบัน แม้ raw ring จะหมุนทิ้ง event เก่า
+- turn-risk ยังคง OBSERVE/no-blocking; round ที่ idle ตาม `LCONNECT_TURN_RISK_IDLE_ROLLOVER_SECONDS` (default 1800 วินาที) จะ rollover เมื่อ work tool ถัดไปเริ่ม และเก็บ round เดิมไว้ใน history

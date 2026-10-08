@@ -503,3 +503,21 @@ It preserves local configuration, tunnel client, dependencies, source, Scheduled
 **Decision:** Published release tags are immutable audit evidence. Historical `v1.2.2` and current `v1.3.0` must not be moved or overwritten.
 
 **Why:** Desktop/browser/live-UIA capability families are substantial new backward-compatible features. A minor SemVer increment communicates that scope while preserving compatibility, and immutable exact-release tags keep source, CI, deployment and downloadable artifacts auditable.
+
+---
+
+## D-041 — Operational hygiene is bounded, additive and non-autonomous
+
+**Decision:** Recursive file discovery has hard traversal, depth, elapsed-time, match and output bounds. A bounded/incomplete search reports that boundary rather than continuing an unbounded filesystem walk.
+
+**Decision:** Managed process sessions use a finite registry high-water mark. When capacity is needed, only the oldest terminal sessions may be forgotten automatically; running sessions are never removed. `list_sessions` adds optional filtering/pagination/summary controls while preserving its default array contract.
+
+**Decision:** Windows `.cmd/.bat` managed launches use a safely quoted PowerShell wrapper while preserving the requested program/arguments in session evidence.
+
+**Decision:** Tool telemetry keeps a bounded raw ring plus current-runtime lifetime per-tool aggregates. Raw event eviction does not erase aggregate evidence; explicit clear resets both.
+
+**Decision:** Turn-risk remains observation-only. With no in-flight work, a stale active round may roll to a fresh round after a configurable idle interval (default 1800 seconds); the previous round is appended to history and no work call is blocked.
+
+**Decision:** Documentation must not present an observed PID as permanent current state; live process identity comes from runtime/status evidence.
+
+**Why:** Long-lived LConnect runtimes must remain bounded and diagnostically useful without turning LConnect into an autonomous scheduler or policy engine.

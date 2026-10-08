@@ -106,7 +106,36 @@ try {
   const boundedSizes = await call("list_directory_with_sizes", { path: thaiDir, max_entries: 1 });
   if (!textOf(boundedSizes).includes("[truncated: 1/")) throw new Error("sizes bound failed");
   const boundedSearch = await call("search_files", { path: root, pattern: "**/*.txt", max_matches: 1 });
-  if (!textOf(boundedSearch).includes("[truncated at max_matches=1]")) throw new Error("search bound failed");
+  if (!textOf(boundedSearch).includes("truncated: max_matches=1")) throw new Error("search match bound failed");
+
+  const entryBoundedSearch = await call("search_files", {
+    path: root,
+    pattern: "**/*.txt",
+    max_entries: 1,
+    max_matches: 100,
+  });
+  if (!textOf(entryBoundedSearch).includes("truncated: max_entries=1")) {
+    throw new Error("search traversal bound failed");
+  }
+
+  const depthBoundedSearch = await call("search_files", {
+    path: root,
+    pattern: "**/*.txt",
+    max_depth: 0,
+    max_matches: 100,
+  });
+  if (!textOf(depthBoundedSearch).includes("depth_limited: max_depth=0")) {
+    throw new Error("search depth bound failed");
+  }
+
+  const outputBoundedSearch = await call("search_files", {
+    path: root,
+    pattern: "**/*.txt",
+    max_output_chars: 1000,
+  });
+  if (textOf(outputBoundedSearch).length > 1100) {
+    throw new Error("search output bound failed");
+  }
   await call("directory_tree", { path: root, max_entries: 1 }, true);
   await call("read_media_file", { path: png, max_bytes: 1 }, true);
 
@@ -117,7 +146,7 @@ try {
   console.log("filesystem create/read/alias/multiple/media/write/edit/move/list/sizes/tree/search/metadata: PASS");
   console.log("filesystem Unicode/Thai paths/content: PASS");
   console.log("filesystem restricted-path and failure paths: PASS");
-  console.log("filesystem bounded output/media guards: PASS");
+  console.log("filesystem bounded output/media/search traversal guards: PASS");
 } finally {
   await pair[0].close().catch(() => {});
   await fsp.rm(root, { recursive: true, force: true });

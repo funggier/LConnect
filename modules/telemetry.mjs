@@ -6,6 +6,8 @@ const state = {
   events: [],
   nextSeq: 1,
   droppedEvents: 0,
+  lifetimeEvents: 0,
+  aggregates: new Map(),
   startedAt: new Date().toISOString(),
   installed: false,
 };
@@ -88,13 +90,39 @@ function extractRequestId(handlerArgs) {
   return null;
 }
 
+function updateLifetimeAggregate(event) {
+  let row = state.aggregates.get(event.tool_name);
+  if (!row) {
+    row = {
+      tool_name: event.tool_name,
+      count: 0,
+      error_count: 0,
+      timeout_count: 0,
+      total_handler_ms: 0,
+      max_handler_ms: 0,
+      total_result_bytes: 0,
+    };
+    state.aggregates.set(event.tool_name, row);
+  }
+
+  row.count += 1;
+  if (event.is_error) row.error_count += 1;
+  if (event.timed_out) row.timeout_count += 1;
+  row.total_handler_ms += event.handler_elapsed_ms;
+  row.max_handler_ms = Math.max(row.max_handler_ms, event.handler_elapsed_ms);
+  row.total_result_bytes += event.result_bytes;
+  state.lifetimeEvents += 1;
+}
+
 function pushEvent(event) {
   if (!state.enabled) return;
 
-  state.events.push({
+  const full = {
     seq: state.nextSeq++,
     ...event,
-  });
+  };
+  state.events.push(full);
+  updateLifetimeAggregate(full);
 
   while (state.events.length > state.maxEvents) {
     state.events.shift();
@@ -170,9 +198,27 @@ export function getToolTelemetryState() {
     max_events: state.maxEvents,
     buffered_events: state.events.length,
     dropped_events: state.droppedEvents,
+    lifetime_events: state.lifetimeEvents,
+    lifetime_tool_count: state.aggregates.size,
     next_seq: state.nextSeq,
     started_at: state.startedAt,
   };
+}
+
+function finalizeSummary(rows) {
+  return rows
+    .map((row) => ({
+      ...row,
+      avg_handler_ms:
+        row.count > 0
+          ? Math.round((row.total_handler_ms / row.count) * 1000) / 1000
+          : 0,
+      avg_result_bytes:
+        row.count > 0 ? Math.round(row.total_result_bytes / row.count) : 0,
+      total_handler_ms: Math.round(row.total_handler_ms * 1000) / 1000,
+      max_handler_ms: Math.round(row.max_handler_ms * 1000) / 1000,
+    }))
+    .sort((a, b) => b.total_handler_ms - a.total_handler_ms);
 }
 
 function summarize(events) {
@@ -201,18 +247,11 @@ function summarize(events) {
     row.total_result_bytes += event.result_bytes;
   }
 
-  return [...byTool.values()]
-    .map((row) => ({
-      ...row,
-      avg_handler_ms:
-        row.count > 0
-          ? Math.round((row.total_handler_ms / row.count) * 1000) / 1000
-          : 0,
-      avg_result_bytes:
-        row.count > 0 ? Math.round(row.total_result_bytes / row.count) : 0,
-      total_handler_ms: Math.round(row.total_handler_ms * 1000) / 1000,
-    }))
-    .sort((a, b) => b.total_handler_ms - a.total_handler_ms);
+  return finalizeSummary([...byTool.values()]);
+}
+
+function summarizeLifetime() {
+  return finalizeSummary([...state.aggregates.values()].map((row) => ({ ...row })));
 }
 
 export function snapshotToolTelemetry({
@@ -236,6 +275,7 @@ export function snapshotToolTelemetry({
     matched_events: filtered.length,
     returned_events: includeEvents ? selected.length : 0,
     summary: summarize(filtered),
+    lifetime_summary: summarizeLifetime(),
     events: includeEvents ? selected : [],
   };
 }
@@ -243,13 +283,17 @@ export function snapshotToolTelemetry({
 export function clearToolTelemetry() {
   const previousBuffered = state.events.length;
   const previousDropped = state.droppedEvents;
+  const previousLifetime = state.lifetimeEvents;
   state.events = [];
   state.droppedEvents = 0;
+  state.lifetimeEvents = 0;
+  state.aggregates = new Map();
 
   return {
     cleared: true,
     previous_buffered_events: previousBuffered,
     previous_dropped_events: previousDropped,
+    previous_lifetime_events: previousLifetime,
     next_seq: state.nextSeq,
     cleared_at: new Date().toISOString(),
   };

@@ -124,6 +124,23 @@ try {
   if (!Array.isArray(overflow.summary) || !overflow.summary.length) {
     throw new Error("Telemetry summary missing");
   }
+  if (!Array.isArray(overflow.lifetime_summary) || !overflow.lifetime_summary.length) {
+    throw new Error("Telemetry lifetime summary missing");
+  }
+  if (overflow.lifetime_events <= overflow.buffered_events) {
+    throw new Error(
+      `Telemetry lifetime aggregate did not survive ring eviction: ${JSON.stringify({
+        lifetime_events: overflow.lifetime_events,
+        buffered_events: overflow.buffered_events,
+      })}`
+    );
+  }
+  const lifetimeSystem = overflow.lifetime_summary.find(
+    (row) => row.tool_name === "system_info"
+  );
+  if (!lifetimeSystem || lifetimeSystem.count < 3) {
+    throw new Error("Telemetry lifetime aggregate lost system_info history");
+  }
 
   const clearResult = await call("tool_telemetry", { action: "clear" });
   const clear = jsonOf(clearResult);
@@ -136,14 +153,21 @@ try {
     include_events: true,
   });
   const empty = jsonOf(emptyResult);
-  if (empty.buffered_events !== 0 || empty.events.length !== 0 || empty.dropped_events !== 0) {
-    throw new Error("Telemetry clear did not reset bounded state");
+  if (
+    empty.buffered_events !== 0 ||
+    empty.events.length !== 0 ||
+    empty.dropped_events !== 0 ||
+    empty.lifetime_events !== 0 ||
+    empty.lifetime_summary.length !== 0
+  ) {
+    throw new Error("Telemetry clear did not reset raw + lifetime state");
   }
 
   console.log("tool telemetry request/tool/timing/result-size: PASS");
   console.log("tool telemetry error state: PASS");
   console.log("tool telemetry argument redaction-by-design: PASS");
   console.log("tool telemetry bounded ring overflow: PASS");
+  console.log("tool telemetry lifetime aggregate across raw-ring eviction: PASS");
   console.log("tool telemetry snapshot/clear: PASS");
 } catch (error) {
   console.error("FAIL", error);

@@ -1399,3 +1399,13 @@ options:
 แสดง TCP listening ports และ owning PID
 
 implementation ใช้ PowerShell-hosted `netstat.exe` เพื่อหลีกเลี่ยงปัญหา `Get-NetTCPConnection` ที่พบใน runtime acceptance บางเครื่อง
+
+## LCN-057 contract additions (current main)
+
+Public tool count ยังคง **154 tools** และไม่มีการ rename/remove tool ในงานนี้
+
+- `search_files`: เพิ่ม bounds `max_entries` (default 20000), `max_depth` (64), `timeout_ms` (10000), `max_output_chars` (120000) และยังรองรับ `max_matches`
+- `list_sessions`: เพิ่ม filter/pagination/summary ได้แก่ `state`, `label_contains`, `offset`, `limit`, `summary_only`; default call ยังคืน array แบบเดิม
+- `start_process`: Windows `.cmd/.bat` ใช้ safe PowerShell batch wrapper โดยเพิ่ม field `launcher` ใน session evidence
+- `tool_telemetry`: snapshot เพิ่ม `lifetime_events`, `lifetime_tool_count`, `lifetime_summary`; `clear` ล้างทั้ง raw ring และ lifetime aggregate
+- `latency_budget_status`: เพิ่ม `idle_rollover_seconds`; default 1800 วินาที และยังคง `enforcement_enabled=false`

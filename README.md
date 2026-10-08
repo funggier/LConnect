@@ -428,6 +428,10 @@ Repo นี้ตั้งใจ **ไม่เก็บการกำหนด
 
 โครงสร้างถูกออกแบบให้เพิ่ม module ใหม่ภายหลังได้โดยไม่ต้องเปลี่ยน tunnel-facing architecture
 
+### Post-v1.3.0 operational hardening
+
+Current `main` retains the 154-tool surface while hardening long-lived operation: patched MCP dependencies, bounded `search_files` traversal, bounded managed-session registry with filtered summary inspection, Windows `.cmd/.bat` support in `start_process`, lifetime tool-telemetry aggregates, and observation-only turn-risk idle rollover. Published `v1.3.0` remains immutable; these changes are qualified as LCN-057 before the next patch release.
+
 ## License
 
 LConnect เผยแพร่ภายใต้ **MIT License**

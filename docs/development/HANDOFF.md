@@ -55,7 +55,7 @@ Before continuing:
 - release/tag commit: `3e685ba0596bf00b9e4546c0dc8d9293fbdbd761`
 - annotated tag object: `ef06f0eab103acab6f54fabd981278e2f809199d`
 - release CI: #171 / run `37009797481` — SUCCESS
-- runtime: **1.3.0 / 154 tools / PID 17900**
+- release-qualification runtime: **1.3.0 / 154 tools / PID 17900** (historical; obtain current PID live)
 - source/install release parity: **247/247 exact**
 - catalog digest: `2ca33225b970dd70e1350d7b4e3d9290116448181031872d643111ae7ab4c374`
 - public duplicate tool names: **none**
@@ -85,11 +85,11 @@ LCN-055 Tool Surface Cleanup & Contract Normalization — COMPLETE
 
 LCN-056 v1.3.0 Desktop & Browser Automation Release — **COMPLETE / PUBLISHED / DEPLOYED / LIVE GREEN**.
 
-There is no active development task. Future work must open a new numbered LCN task from current GitHub/runtime authority.
+LCN-057 Security & Operational Hygiene is ACTIVE from the current GitHub/runtime authority. Local qualification is GREEN; exact-commit CI, tracked-only deployment, secure restart and live acceptance remain before closure. Planned follow-ups are LCN-058 optional AtLogOn persistence and LCN-059 v1.3.1 release.
 
 Browser Automation through LCN-054 is complete at current scope. LCN-055 normalized the resulting 154-tool public surface. LCN-056 published that completed mainline as v1.3.0.
 
-LCN-054 browser hardening and LCN-055 tool-surface normalization are included in v1.3.0. Release commit `3e685ba0596bf00b9e4546c0dc8d9293fbdbd761` / CI #171 is deployed at 247/247 release parity; live runtime is 1.3.0 / 154 tools / PID 17900 / no duplicate names.
+LCN-054 browser hardening and LCN-055 tool-surface normalization are included in v1.3.0. Release commit `3e685ba0596bf00b9e4546c0dc8d9293fbdbd761` / CI #171 qualified at 247/247 release parity; release-qualification runtime was 1.3.0 / 154 tools / PID 17900 / no duplicate names. Current runtime identity must be read live.
 
 ## Browser decisions
 

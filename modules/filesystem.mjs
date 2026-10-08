@@ -360,29 +360,94 @@ export function registerFilesystemTools(server, config) {
     }
   });
 
-  server.tool("search_files", "Recursively search for files/directories using glob-style patterns with a bounded match count.", {
+  server.tool("search_files", "Recursively search for files/directories using glob-style patterns with hard traversal, depth, time and output bounds.", {
     path: z.string().min(1),
     pattern: z.string().min(1),
     excludePatterns: z.array(z.string()).optional(),
     max_matches: z.number().int().min(1).max(10000).optional(),
-  }, async ({ path: inputPath, pattern, excludePatterns, max_matches = 1000 }) => {
+    max_entries: z.number().int().min(1).max(200000).optional(),
+    max_depth: z.number().int().min(0).max(256).optional(),
+    timeout_ms: z.number().int().min(100).max(60000).optional(),
+    max_output_chars: z.number().int().min(1000).max(500000).optional(),
+  }, async ({
+    path: inputPath,
+    pattern,
+    excludePatterns,
+    max_matches = 1000,
+    max_entries = 20000,
+    max_depth = 64,
+    timeout_ms = 10000,
+    max_output_chars = 120000,
+  }) => {
     try {
       const root = resolveAllowed(inputPath);
       const regex = globToRegExp(pattern);
+      const excludes = excludePatterns || [];
       const found = [];
-      let truncated = false;
-      await walk(root, excludePatterns || [], async (_entry, abs, rel) => {
-        if (regex.test(rel)) {
-          found.push(abs);
-          if (found.length >= max_matches) {
-            truncated = true;
-            return false;
+      const stack = [{ abs: root, rel: "", depth: 0 }];
+      const startedAt = Date.now();
+      let scannedEntries = 0;
+      let depthLimited = false;
+      let truncatedReason = null;
+
+      while (stack.length && !truncatedReason) {
+        if (Date.now() - startedAt >= timeout_ms) {
+          truncatedReason = `timeout_ms=${timeout_ms}`;
+          break;
+        }
+
+        const current = stack.pop();
+        const entries = await fsp.readdir(current.abs, { withFileTypes: true });
+        entries.sort((a, b) => b.name.localeCompare(a.name));
+
+        for (const entry of entries) {
+          scannedEntries += 1;
+          if (scannedEntries > max_entries) {
+            truncatedReason = `max_entries=${max_entries}`;
+            break;
+          }
+          if (Date.now() - startedAt >= timeout_ms) {
+            truncatedReason = `timeout_ms=${timeout_ms}`;
+            break;
+          }
+
+          const rel = current.rel ? `${current.rel}/${entry.name}` : entry.name;
+          if (matchesAny(rel, excludes)) continue;
+          const abs = path.join(current.abs, entry.name);
+
+          if (regex.test(rel)) {
+            found.push(abs);
+            if (found.length >= max_matches) {
+              truncatedReason = `max_matches=${max_matches}`;
+              break;
+            }
+          }
+
+          if (entry.isDirectory()) {
+            if (current.depth >= max_depth) {
+              depthLimited = true;
+            } else {
+              stack.push({ abs, rel, depth: current.depth + 1 });
+            }
           }
         }
-        return true;
-      });
-      if (!found.length) return textResult("No matches found.");
-      return textResult(found.join("\n") + (truncated ? `\n...[truncated at max_matches=${max_matches}]` : ""));
+      }
+
+      const notes = [];
+      if (truncatedReason) notes.push(`truncated: ${truncatedReason}`);
+      if (depthLimited) notes.push(`depth_limited: max_depth=${max_depth}`);
+      notes.push(`scanned_entries=${Math.min(scannedEntries, max_entries)}`);
+      notes.push(`elapsed_ms=${Date.now() - startedAt}`);
+
+      let output = found.length ? found.join("\n") : "No matches found.";
+      if (truncatedReason || depthLimited) {
+        output += `\n...[search bounded: ${notes.join(", ")}]`;
+      }
+      if (output.length > max_output_chars) {
+        output = output.slice(0, max_output_chars) +
+          `\n...[truncated at max_output_chars=${max_output_chars}]`;
+      }
+      return textResult(output);
     } catch (error) {
       return textResult(error.message, true);
     }

@@ -429,6 +429,54 @@ try {
     }
   }
 
+  // Natural idle rollover must create a fresh observation round without blocking.
+  const idleSandbox = fs.mkdtempSync(path.join(os.tmpdir(), "lconnect-latency-idle-"));
+  const idleStatePath = path.join(idleSandbox, "runtime", "latency-budget-state.json");
+  const idleHistoryPath = path.join(idleSandbox, "runtime", "latency-budget-history.jsonl");
+  const previousStatePath = process.env.LCONNECT_LATENCY_STATE_PATH;
+  const previousHistoryPath = process.env.LCONNECT_LATENCY_HISTORY_PATH;
+  const previousIdleRollover = process.env.LCONNECT_TURN_RISK_IDLE_ROLLOVER_SECONDS;
+  process.env.LCONNECT_LATENCY_STATE_PATH = idleStatePath;
+  process.env.LCONNECT_LATENCY_HISTORY_PATH = idleHistoryPath;
+  process.env.LCONNECT_TURN_RISK_IDLE_ROLLOVER_SECONDS = "0.02";
+
+  try {
+    const idleController = createLatencyBudgetController({ installRoot: idleSandbox });
+    idleController.startRound("idle-rollover-test");
+    const firstDecision = idleController.beforeTool("fixture_idle");
+    idleController.afterTool(firstDecision, "fixture_idle", {
+      result: { content: [{ type: "text", text: "ok" }] },
+    });
+    await sleep(35);
+    const secondDecision = idleController.beforeTool("fixture_idle");
+    idleController.afterTool(secondDecision, "fixture_idle", {
+      result: { content: [{ type: "text", text: "ok" }] },
+    });
+
+    const idleState = idleController.status().state;
+    const idleHistory = fs.readFileSync(idleHistoryPath, "utf8");
+    if (
+      idleState.round.id !== 2 ||
+      idleState.round.call_count !== 1 ||
+      idleState.round.start_source !== "idle_rollover_first_work_tool" ||
+      idleController.idleRolloverSeconds !== 0.02 ||
+      !idleHistory.includes('"event":"round_idle_rollover"')
+    ) {
+      throw new Error(
+        "idle rollover did not create a fresh observation-only round: " +
+        JSON.stringify(idleState.round)
+      );
+    }
+  } finally {
+    if (previousStatePath === undefined) delete process.env.LCONNECT_LATENCY_STATE_PATH;
+    else process.env.LCONNECT_LATENCY_STATE_PATH = previousStatePath;
+    if (previousHistoryPath === undefined) delete process.env.LCONNECT_LATENCY_HISTORY_PATH;
+    else process.env.LCONNECT_LATENCY_HISTORY_PATH = previousHistoryPath;
+    if (previousIdleRollover === undefined) delete process.env.LCONNECT_TURN_RISK_IDLE_ROLLOVER_SECONDS;
+    else process.env.LCONNECT_TURN_RISK_IDLE_ROLLOVER_SECONDS = previousIdleRollover;
+    fs.rmSync(idleSandbox, { recursive: true, force: true });
+  }
+
   if (!fs.existsSync(historyPath)) {
     throw new Error("audit history file missing");
   }
@@ -459,6 +507,7 @@ try {
   console.log("first work tool after Retry auto-starts and is tracked as call 1: PASS");
   console.log("second Retry can be confirmed without manual round reset: PASS");
   console.log("latest Retry snapshot replaces active comparison point: PASS");
+  console.log("idle gap rolls into a fresh observation-only round: PASS");
   console.log("current CMD wrappers use shared CLI: PASS");
   console.log("legacy MaxLatency CMD/CLI surface removed: PASS");
   console.log("history remains audit-only: PASS");

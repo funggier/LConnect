@@ -4,7 +4,7 @@ Last updated: 2026-10-02
 
 ## Overall
 
-Current project state: **BASIC CORE STABLE / v1.3.0 PUBLISHED / DEPLOYED / LIVE GREEN**
+Current project state: **BASIC CORE STABLE / v1.3.0 PUBLISHED / DEPLOYED / LIVE GREEN / LCN-057 HARDENING ACTIVE**
 
 Current published release: **v1.3.0 — Desktop & Browser Automation**
 
@@ -16,11 +16,11 @@ Current source version: **1.3.0**
 
 Current main/source MCP catalog: **154 tools**
 
-Current installed/running MCP catalog: **154 tools** (`1.3.0`, PID `17900`)
+Current installed/running MCP catalog baseline: **154 tools / 1.3.0**. Process IDs are volatile runtime evidence and must be read live from `runtime_catalog` rather than treated as durable documentation.
 
 Current running catalog digest: `2ca33225b970dd70e1350d7b4e3d9290116448181031872d643111ae7ab4c374`
 
-Current runtime after v1.3.0 activation: **1.3.0 / 154 tools / PID 17900**, catalog digest `2ca33225b970dd70e1350d7b4e3d9290116448181031872d643111ae7ab4c374`, duplicate public tool names: none. Exact release source↔installed tracked parity is **247/247 exact**.
+v1.3.0 release-activation evidence: **1.3.0 / 154 tools / PID 17900**, catalog digest `2ca33225b970dd70e1350d7b4e3d9290116448181031872d643111ae7ab4c374`, duplicate public tool names: none, release source↔installed parity **247/247 exact**. The PID is historical qualification evidence; read live PID from `runtime_catalog`.
 
 LConnect มี Core ที่ใช้งานจริงแล้วและผ่าน runtime acceptance บน Windows:
 
@@ -52,7 +52,8 @@ Agent Operations Reliability LCN-025–030 ปิดครบ, Delivery/Turn Rel
 | Desktop Control | COMPLETE | LCN-018–020 | Clipboard, Window Control, and Keyboard/Mouse complete/live GREEN |
 | Browser Automation | COMPLETE AT CURRENT SCOPE | LCN-021–023, LCN-054 | Managed Firefox/Chrome + browser hardening + live UIA safety boundary deployed/live GREEN; runtime catalog 154 tools |
 | Tool Surface Normalization | COMPLETE / LIVE GREEN | LCN-055 | 154-tool canonical/compatibility/deprecation metadata, catalog guards, filesystem bounds/tests, maintainable test runner |
-| v1.3.0 Release | COMPLETE / PUBLISHED / LIVE GREEN | LCN-056 | Desktop + Browser + Live UIA release; exact commit `3e685ba...`; CI #171; runtime 1.3.0 / 154 tools |
+| v1.3.0 Release | COMPLETE / PUBLISHED / LIVE GREEN | LCN-056 | Desktop + Browser + Live UIA release; exact commit `3e685ba...`; CI #171; runtime baseline 1.3.0 / 154 tools |
+| Security / Operational Hygiene | ACTIVE / LOCAL QUALIFICATION GREEN | LCN-057 | patched SDK/transitive security, bounded search traversal, session-registry hygiene, Windows managed batch launch, lifetime telemetry aggregate, idle round rollover |
 
 ### LCN-056 — v1.3.0 Desktop & Browser Automation Release
 **COMPLETE / PUBLISHED / DEPLOYED / LIVE GREEN**
@@ -62,7 +63,7 @@ Published the 154-tool backward-compatible feature release containing Desktop Co
 - exact release commit: `3e685ba0596bf00b9e4546c0dc8d9293fbdbd761`
 - CI: #171 / run `37009797481` — SUCCESS
 - annotated tag object: `ef06f0eab103acab6f54fabd981278e2f809199d`
-- live runtime: **1.3.0 / 154 tools / PID 17900**
+- release-qualification runtime: **1.3.0 / 154 tools / PID 17900** (historical PID evidence)
 - release deployment parity: **247/247 exact**
 - managed Firefox/Chrome physical: PASS
 - installed live UIA Thai/Unicode type/click/snapshot: PASS
