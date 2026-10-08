@@ -32,13 +32,13 @@ Last updated: 2026-10-02
 
 ## Active task
 
-[LCN-057 — Security & Operational Hygiene](tasks/LCN-057-security-operational-hygiene.md) — **ACTIVE / LOCAL QUALIFICATION GREEN**
+No active development task.
 
-Scope: dependency security, bounded `search_files` traversal, managed-session registry hygiene, Windows `.cmd/.bat` managed launch consistency, lifetime telemetry aggregates, observation-only idle round rollover, and volatile-state documentation cleanup.
+Latest completed task: [LCN-057 — Security & Operational Hygiene](tasks/LCN-057-security-operational-hygiene.md) — **COMPLETE / DEPLOYED / LIVE GREEN**
 
-Local qualification on 2026-10-08: syntax PASS (84 files), full test runner PASS (39 Node + 1 PowerShell), `npm audit --audit-level=high` = 0 vulnerabilities, MCP SDK 1.32.1, proxy-addr 2.0.8, `git diff --check` PASS. Exact-commit CI/deployment/runtime acceptance are still required before closure.
+Implementation `c949c3239cc5ede9e285dfd605b0e62392bdde4b`; CI #175 / run `37810517540` SUCCESS; deployed 249/249 exact; live runtime 1.3.0 / 154 tools / PID 15508; npm audit 0 vulnerabilities; credential hash preserved. Report: [LCN-20261008-057-security-operational-hygiene.md](reports/LCN-20261008-057-security-operational-hygiene.md).
 
-Latest completed task: [LCN-056 — v1.3.0 Desktop & Browser Automation Release](tasks/LCN-056-v1.3.0-desktop-browser-automation-release.md) — **COMPLETE / PUBLISHED / DEPLOYED / LIVE GREEN**
+Previous completed task: [LCN-056 — v1.3.0 Desktop & Browser Automation Release](tasks/LCN-056-v1.3.0-desktop-browser-automation-release.md) — **COMPLETE / PUBLISHED / DEPLOYED / LIVE GREEN**
 
 Release commit: `3e685ba0596bf00b9e4546c0dc8d9293fbdbd761`; CI #171 / run `37009797481` SUCCESS; release-qualification runtime was `1.3.0 / 154 tools / PID 17900`; source/install release parity 247/247 exact; release assets downloaded-back with zero hash mismatch.
 
@@ -94,4 +94,4 @@ Previous report: [reports/LCN-20261002-021-browser-common-layer.md](reports/LCN-
 
 ## Next action
 
-LCN-057 is active from the verified post-v1.3.0 baseline. Local qualification is GREEN; next gates are exact-commit CI, tracked-only deployment with preserved local state, secure restart and live runtime/parity acceptance. Keep both v1.3.0 and historical v1.2.2 tag/release evidence immutable and do not reset the worktree.
+LCN-057 is complete, deployed and live GREEN. Next planned work is LCN-058 optional AtLogOn persistence, followed by LCN-059 v1.3.1 release qualification. Keep both v1.3.0 and historical v1.2.2 tag/release evidence immutable and do not reset the worktree.

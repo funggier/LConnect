@@ -662,7 +662,7 @@ Future capability work must open a new numbered task from the current GitHub/run
 
 # Phase 9 — Post-v1.3.0 Operational Hardening — ACTIVE
 
-## LCN-057 Security & Operational Hygiene
+## LCN-057 Security & Operational Hygiene — COMPLETE / DEPLOYED / LIVE GREEN
 
 LCN-057 hardens the already-published v1.3.0 capability surface without changing its immutable release tag.
 
@@ -675,7 +675,7 @@ Planned/delivered implementation scope:
 - roll stale observation-only turn-risk rounds after a configurable idle period; never enforce/block
 - document process IDs as volatile observations rather than durable current state
 
-Public MCP tool count remains **154**. Exact-commit CI, tracked-only deployment, preserved local state, secure restart and live source/install/runtime acceptance are required before closure.
+Public MCP tool count remains **154**. Closure: implementation `c949c3239cc5ede9e285dfd605b0e62392bdde4b`; CI #175 / run `37810517540` SUCCESS; deployed 249/249 exact; live runtime 1.3.0 / 154 tools / PID 15508; dependency audit 0 vulnerabilities; credential hash preserved.
 
 ## LCN-058 Optional AtLogOn Persistence
 

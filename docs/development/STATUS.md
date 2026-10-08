@@ -4,7 +4,7 @@ Last updated: 2026-10-02
 
 ## Overall
 
-Current project state: **BASIC CORE STABLE / v1.3.0 PUBLISHED / DEPLOYED / LIVE GREEN / LCN-057 HARDENING ACTIVE**
+Current project state: **BASIC CORE STABLE / v1.3.0 PUBLISHED / DEPLOYED / LIVE GREEN / LCN-057 COMPLETE**
 
 Current published release: **v1.3.0 — Desktop & Browser Automation**
 
@@ -53,7 +53,7 @@ Agent Operations Reliability LCN-025–030 ปิดครบ, Delivery/Turn Rel
 | Browser Automation | COMPLETE AT CURRENT SCOPE | LCN-021–023, LCN-054 | Managed Firefox/Chrome + browser hardening + live UIA safety boundary deployed/live GREEN; runtime catalog 154 tools |
 | Tool Surface Normalization | COMPLETE / LIVE GREEN | LCN-055 | 154-tool canonical/compatibility/deprecation metadata, catalog guards, filesystem bounds/tests, maintainable test runner |
 | v1.3.0 Release | COMPLETE / PUBLISHED / LIVE GREEN | LCN-056 | Desktop + Browser + Live UIA release; exact commit `3e685ba...`; CI #171; runtime baseline 1.3.0 / 154 tools |
-| Security / Operational Hygiene | ACTIVE / LOCAL QUALIFICATION GREEN | LCN-057 | patched SDK/transitive security, bounded search traversal, session-registry hygiene, Windows managed batch launch, lifetime telemetry aggregate, idle round rollover |
+| Security / Operational Hygiene | COMPLETE / DEPLOYED / LIVE GREEN | LCN-057 | SDK 1.32.1 + proxy-addr 2.0.8, bounded search traversal, session-registry hygiene, Windows managed batch launch, lifetime telemetry aggregate, idle round rollover; CI #175 |
 
 ### LCN-056 — v1.3.0 Desktop & Browser Automation Release
 **COMPLETE / PUBLISHED / DEPLOYED / LIVE GREEN**

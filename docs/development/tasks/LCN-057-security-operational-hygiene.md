@@ -1,6 +1,6 @@
 # LCN-057 — Security & Operational Hygiene
 
-Status: **ACTIVE**
+Status: **COMPLETE / DEPLOYED / LIVE GREEN**
 
 Activated: 2026-10-08
 
@@ -97,3 +97,15 @@ Required before closure:
 - runtime 1.3.0 / expected catalog / no duplicate tool names
 - source/install exact parity
 - live smoke for changed behavior
+
+## Closure evidence
+
+- implementation commit: `c949c3239cc5ede9e285dfd605b0e62392bdde4b`
+- exact-commit CI: #175 / run `37810517540` — SUCCESS
+- local full qualification: 39 Node + 1 PowerShell suites PASS
+- dependency audit: 0 vulnerabilities
+- deployed tracked parity: 249/249 exact
+- live runtime: 1.3.0 / 154 tools / PID 15508
+- live tunnel PID observed: 17752
+- encrypted credential hash preserved exactly
+- report: `../reports/LCN-20261008-057-security-operational-hygiene.md`

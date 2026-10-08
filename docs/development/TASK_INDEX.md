@@ -58,4 +58,4 @@
 | [LCN-054](tasks/LCN-054-browser-control-hardening-live-safety-boundary.md) | COMPLETE | Browser Control Hardening & Live Safety Boundary |
 | [LCN-055](tasks/LCN-055-tool-surface-cleanup-contract-normalization.md) | COMPLETE | Tool Surface Cleanup & Contract Normalization |
 | [LCN-056](tasks/LCN-056-v1.3.0-desktop-browser-automation-release.md) | COMPLETE | v1.3.0 Desktop & Browser Automation Release |
-| [LCN-057](tasks/LCN-057-security-operational-hygiene.md) | ACTIVE | Security & Operational Hygiene |
+| [LCN-057](tasks/LCN-057-security-operational-hygiene.md) | COMPLETE | Security & Operational Hygiene |
