@@ -123,7 +123,7 @@ npm test
 5. เรียก `runtime_catalog` หรือ `deployment_verification_snapshot` ยืนยัน running version/catalog/root
 6. refresh ChatGPT connector/plugin ถ้า tool schema เปลี่ยน
 
-สำหรับ v1.3.0 คาดว่า source/runtime catalog หลัง activation จะเป็น **154 tools**
+สำหรับ v1.3.1 คาดว่า source/runtime catalog หลัง activation จะเป็น **154 tools**
 
 `deployment_verification_snapshot` เป็น evidence-only tool: มันไม่ copy/install/restart/release และไม่ตัดสินแทนผู้ใช้ว่า deployment พร้อมหรือไม่
 
@@ -256,7 +256,7 @@ schedule detached worker
   -> write logs\restart-*.log
 ```
 
-ถ้า AI เป็นคนสั่งผ่าน LConnect ให้เรียก `Restart-LConnect.ps1` ผ่าน existing `powershell_run`; script จะคืนผลว่า restart ถูก schedule ก่อน connection เดิมถูกตัด จึงไม่ต้องเพิ่ม MCP tool ใหม่; ใน v1.3.0 catalog ทั้งหมดอยู่ที่ 154 tools
+ถ้า AI เป็นคนสั่งผ่าน LConnect ให้เรียก `Restart-LConnect.ps1` ผ่าน existing `powershell_run`; script จะคืนผลว่า restart ถูก schedule ก่อน connection เดิมถูกตัด จึงไม่ต้องเพิ่ม MCP tool ใหม่; ใน v1.3.1 catalog ทั้งหมดอยู่ที่ 154 tools
 
 ข้อจำกัด: DPAPI `CurrentUser` โดยทั่วไปใช้ไม่ได้เมื่อ copy encrypted file ไป Windows user/เครื่องอื่น ให้รัน `Setup-LConnectCredential.cmd` ใหม่บนปลายทาง
 

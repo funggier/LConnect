@@ -10,7 +10,7 @@ Last updated: 2026-10-02
 - Release URL: https://github.com/funggier/LConnect/releases/tag/v1.3.0
 - Release tag target: `3e685ba0596bf00b9e4546c0dc8d9293fbdbd761`
 - Release CI: `37009797481` / #171 — PASS
-- Source version: `1.3.0`
+- Source version: `1.3.1`
 - Current source catalog: **154 tools**
 - Installed/running daemon baseline: **1.3.0 / 154 tools**; use `runtime_catalog` for the volatile current PID
 - Running catalog digest: `2ca33225b970dd70e1350d7b4e3d9290116448181031872d643111ae7ab4c374`
@@ -32,7 +32,9 @@ Last updated: 2026-10-02
 
 ## Active task
 
-No active development task.
+[LCN-059 — v1.3.1 Operational Hardening Release](tasks/LCN-059-v1.3.1-operational-hardening-release.md) — **ACTIVE / LOCAL RELEASE QUALIFICATION GREEN**
+
+Release target: v1.3.1 / 154 tools. Scope packages qualified LCN-057 security/operational hardening plus LCN-058 optional AtLogOn persistence; v1.3.0 and v1.2.2 remain immutable. Local release qualification: syntax 84 PASS, PowerShell 20 PASS, 39 Node + 2 PowerShell suites PASS, audit 0 vulnerabilities, tool surface/docs guard 154/no duplicates, diff check PASS.
 
 Latest completed task: [LCN-058 — Optional AtLogOn Persistence](tasks/LCN-058-optional-atlogon-persistence.md) — **COMPLETE / DEPLOYED / PHYSICAL GREEN**
 
@@ -98,4 +100,4 @@ Previous report: [reports/LCN-20261002-021-browser-common-layer.md](reports/LCN-
 
 ## Next action
 
-LCN-058 is complete, deployed and physical GREEN. Default autostart remains disabled/uninstalled. Next planned task is LCN-059 v1.3.1 Operational Hardening Release. Keep both v1.3.0 and historical v1.2.2 tag/release evidence immutable and do not reset the worktree.
+LCN-059 is active. Prepare and qualify v1.3.1 from the verified LCN-057/058 baseline, then deploy/restart, tag, publish, checksum and download-back verify. Keep v1.3.0 and v1.2.2 immutable and do not reset the worktree.

@@ -4,7 +4,7 @@ Last updated: 2026-10-02
 
 ## Overall
 
-Current project state: **BASIC CORE STABLE / v1.3.0 PUBLISHED / DEPLOYED / LIVE GREEN / LCN-058 COMPLETE**
+Current project state: **BASIC CORE STABLE / v1.3.0 PUBLISHED / DEPLOYED / LIVE GREEN / v1.3.1 RELEASE PREPARATION ACTIVE**
 
 Current published release: **v1.3.0 — Desktop & Browser Automation**
 
@@ -12,7 +12,7 @@ Release tag target: `3e685ba0596bf00b9e4546c0dc8d9293fbdbd761`
 
 Release CI: `37009797481` / #171 — PASS
 
-Current source version: **1.3.0**
+Current source version: **1.3.1**
 
 Current main/source MCP catalog: **154 tools**
 
@@ -55,6 +55,7 @@ Agent Operations Reliability LCN-025–030 ปิดครบ, Delivery/Turn Rel
 | v1.3.0 Release | COMPLETE / PUBLISHED / LIVE GREEN | LCN-056 | Desktop + Browser + Live UIA release; exact commit `3e685ba...`; CI #171; runtime baseline 1.3.0 / 154 tools |
 | Security / Operational Hygiene | COMPLETE / DEPLOYED / LIVE GREEN | LCN-057 | SDK 1.32.1 + proxy-addr 2.0.8, bounded search traversal, session-registry hygiene, Windows managed batch launch, lifetime telemetry aggregate, idle round rollover; CI #175 |
 | Optional AtLogOn Persistence | COMPLETE / DEPLOYED / PHYSICAL GREEN | LCN-058 | opt-in current-user AtLogOn task; SID-normalized identity; idempotent install/repair/remove; default task remains absent; CI #178 |
+| v1.3.1 Release | ACTIVE / RELEASE PREPARATION | LCN-059 | package qualified LCN-057/058 hardening as patch release; target remains 154 tools |
 
 ### LCN-056 — v1.3.0 Desktop & Browser Automation Release
 **COMPLETE / PUBLISHED / DEPLOYED / LIVE GREEN**

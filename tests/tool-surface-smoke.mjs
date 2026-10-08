@@ -69,11 +69,19 @@ try {
   }
 
   const toolsDoc = await fsp.readFile(path.join(root, "docs", "TOOLS_TH.md"), "utf8");
-  if (!/v1\.3\.0 source\/runtime expose \*\*154 tools\*\*/.test(toolsDoc)) {
-    throw new Error("TOOLS_TH v1.3.0 release candidate count is not 154");
+  if (!/v1\.3\.1 source\/runtime expose \*\*154 tools\*\*/.test(toolsDoc)) {
+    throw new Error("TOOLS_TH v1.3.1 release candidate count is not 154");
   }
-  if (!/immutable v1\.2\.2 baseline[^\n]*122 tools/.test(toolsDoc)) {
-    throw new Error("TOOLS_TH previous v1.2.2 baseline is not documented as 122 tools");
+
+  const policyDoc = await fsp.readFile(path.join(root, "docs", "TOOL_SURFACE_POLICY.md"), "utf8");
+  if (!/Current release target: \*\*v1\.3\.1 \/ 154 tools\*\*/.test(policyDoc)) {
+    throw new Error("Tool-surface policy current v1.3.1 target is not documented as 154 tools");
+  }
+  if (!/Previous immutable published release: \*\*v1\.3\.0 \/ 154 tools\*\*/.test(policyDoc)) {
+    throw new Error("Tool-surface policy previous immutable v1.3.0 release is not documented as 154 tools");
+  }
+  if (!/Historical immutable baseline: \*\*v1\.2\.2 \/ 122 tools\*\*/.test(policyDoc)) {
+    throw new Error("Tool-surface policy historical v1.2.2 baseline is not documented as 122 tools");
   }
 
   console.log("tool metadata registry completeness: PASS");

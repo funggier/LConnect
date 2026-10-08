@@ -60,3 +60,4 @@
 | [LCN-056](tasks/LCN-056-v1.3.0-desktop-browser-automation-release.md) | COMPLETE | v1.3.0 Desktop & Browser Automation Release |
 | [LCN-057](tasks/LCN-057-security-operational-hygiene.md) | COMPLETE | Security & Operational Hygiene |
 | [LCN-058](tasks/LCN-058-optional-atlogon-persistence.md) | COMPLETE | Optional AtLogOn Persistence |
+| [LCN-059](tasks/LCN-059-v1.3.1-operational-hardening-release.md) | ACTIVE | v1.3.1 Operational Hardening Release |

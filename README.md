@@ -10,15 +10,15 @@
 
 ## สถานะปัจจุบัน
 
-- Source version: **1.3.0**
+- Source version: **1.3.1**
 - MCP catalog on current `main`: **154 tools**
 - Tool-surface policy: [`docs/TOOL_SURFACE_POLICY.md`](docs/TOOL_SURFACE_POLICY.md)
-- Release: **[v1.3.0 — Desktop & Browser Automation](https://github.com/funggier/LConnect/releases/tag/v1.3.0)**
+- Release: **[v1.3.1 — Operational Hardening & Optional Autostart](https://github.com/funggier/LConnect/releases/tag/v1.3.1)**
 - OpenAI tunnel-client minimum: **0.0.14**
 
 LConnect Core ผ่าน runtime acceptance บน Windows 10 แล้ว โดย current `main` แสดง 154 tools ครอบคลุม filesystem, shell, managed process/session, system/network/hardware, Git, GitHub Actions/Release, structured inspection, browser automation แบบ isolated, live browser control ผ่าน Windows UI Automation, runtime/delivery evidence, deployment verification และ turn-risk observation แบบไม่บล็อกการทำงาน
 
-## ไฮไลต์ v1.3.0
+## ไฮไลต์ v1.3.1
 
 - เก็บ Runtime API key + Organization ID แบบเข้ารหัสใน `local-secrets\credentials.json.enc`
 - ใช้ **Windows DPAPI / CurrentUser** และจำกัด ACL ให้ Windows user ปัจจุบันกับ SYSTEM
@@ -34,6 +34,11 @@ LConnect Core ผ่าน runtime acceptance บน Windows 10 แล้ว โ
 - เพิ่ม managed Browser Automation สำหรับ Firefox (primary) และ Chrome (secondary) ด้วย isolated temporary profile โดยปริยาย
 - เพิ่ม live browser control ผ่าน Windows UI Automation แยกจาก WebDriver/CDP และไม่เข้าถึง normal browser profile
 - เพิ่ม browser safety hardening, bounded screenshot/result handling, cleanup evidence และ tool-surface metadata/duplicate guards
+- อัปเดต MCP SDK เป็น patched line และแก้ transitive security advisory; release qualification ต้องมี `npm audit` = 0 vulnerabilities
+- `search_files` มี traversal/depth/time/output bounds, managed process registry มี high-water hygiene และ `list_sessions` รองรับ filtered/paginated summary
+- `start_process` รองรับ `.cmd/.bat` บน Windows อย่าง deterministic; telemetry มี lifetime aggregate และ turn-risk observation rollover round ที่ idle โดยยังไม่บล็อกงาน
+- เพิ่ม **Optional AtLogOn Autostart** แบบ opt-in: current-user/DPAPI, Limited + Interactive, ownership marker, idempotent install/repair/remove และไม่เก็บ secret ใน Task Scheduler
+- Autostart ยังคง **ปิดโดยปริยาย**; installer/update ไม่เปิดให้เอง
 
 ## โครงสร้าง
 
@@ -436,9 +441,9 @@ Repo นี้ตั้งใจ **ไม่เก็บการกำหนด
 
 โครงสร้างถูกออกแบบให้เพิ่ม module ใหม่ภายหลังได้โดยไม่ต้องเปลี่ยน tunnel-facing architecture
 
-### Post-v1.3.0 operational hardening
+### v1.3.1 operational hardening
 
-Current `main` retains the 154-tool surface while hardening long-lived operation: patched MCP dependencies, bounded `search_files` traversal, bounded managed-session registry with filtered summary inspection, Windows `.cmd/.bat` support in `start_process`, lifetime tool-telemetry aggregates, and observation-only turn-risk idle rollover. Published `v1.3.0` remains immutable; these changes are qualified as LCN-057 before the next patch release.
+v1.3.1 retains the 154-tool public surface while hardening long-lived operation: patched MCP dependencies, bounded `search_files` traversal, bounded managed-session registry with filtered summary inspection, Windows `.cmd/.bat` support in `start_process`, lifetime tool-telemetry aggregates, observation-only turn-risk idle rollover, and optional ownership-guarded AtLogOn persistence. Published `v1.3.0` remains immutable as the previous release.
 
 ## License
 

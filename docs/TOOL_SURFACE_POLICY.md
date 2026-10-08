@@ -1,8 +1,9 @@
 # LConnect Tool Surface Policy
 
 Current main/runtime catalog: **154 tools**  
-Current release target: **v1.3.0 / 154 tools**
-Previous immutable published baseline: **v1.2.2 / 122 tools**
+Current release target: **v1.3.1 / 154 tools**
+Previous immutable published release: **v1.3.0 / 154 tools**
+Historical immutable baseline: **v1.2.2 / 122 tools**
 
 ## 1. Status classes
 
