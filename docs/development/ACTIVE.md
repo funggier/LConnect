@@ -32,11 +32,11 @@ Last updated: 2026-10-02
 
 ## Active task
 
-[LCN-058 — Optional AtLogOn Persistence](tasks/LCN-058-optional-atlogon-persistence.md) — **ACTIVE / LOCAL QUALIFICATION GREEN**
+No active development task.
 
-Scope: explicit opt-in Windows AtLogOn Scheduled Task for the current Windows user, DPAPI preflight, ownership marker, idempotent install/repair/status/remove, no secrets on task command line, and no public MCP catalog change.
+Latest completed task: [LCN-058 — Optional AtLogOn Persistence](tasks/LCN-058-optional-atlogon-persistence.md) — **COMPLETE / DEPLOYED / PHYSICAL GREEN**
 
-Local qualification is GREEN: syntax PASS (84 files), PowerShell parser PASS (20 files), full test runner PASS (39 Node + 2 PowerShell), npm audit 0 vulnerabilities, tool surface 154/no duplicates, git diff check PASS. Exact-commit CI, tracked-only deployment and disposable physical scheduled-task qualification remain before closure.
+Authoritative implementation `973328c9dc51ed76ca6ee96517932a64dd75caf6`; CI #178 / run `37817126580` SUCCESS; deployed 259/259 exact before closure docs; disposable physical install/idempotence/drift-repair/remove PASS; default `\\LConnect Autostart` remained absent; credential hash preserved. Report: [LCN-20261009-058-optional-atlogon-persistence.md](reports/LCN-20261009-058-optional-atlogon-persistence.md).
 
 Latest completed task: [LCN-057 — Security & Operational Hygiene](tasks/LCN-057-security-operational-hygiene.md) — **COMPLETE / DEPLOYED / LIVE GREEN**
 
@@ -98,4 +98,4 @@ Previous report: [reports/LCN-20261002-021-browser-common-layer.md](reports/LCN-
 
 ## Next action
 
-LCN-058 is active from the LCN-057 closure baseline. It is opt-in only and must not create the default autostart task until explicit install is requested. Next release gate after closure is LCN-059 v1.3.1. Keep both v1.3.0 and historical v1.2.2 tag/release evidence immutable and do not reset the worktree.
+LCN-058 is complete, deployed and physical GREEN. Default autostart remains disabled/uninstalled. Next planned task is LCN-059 v1.3.1 Operational Hardening Release. Keep both v1.3.0 and historical v1.2.2 tag/release evidence immutable and do not reset the worktree.

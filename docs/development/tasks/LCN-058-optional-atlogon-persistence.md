@@ -1,6 +1,6 @@
 # LCN-058 — Optional AtLogOn Persistence
 
-Status: **ACTIVE**
+Status: **COMPLETE / DEPLOYED / PHYSICAL GREEN**
 
 Activated: 2026-10-08
 
@@ -59,3 +59,17 @@ The feature must never:
 - tracked-only deploy preserving local state
 - no runtime restart required if implementation is scripts/docs/tests only
 - final source/install parity
+
+## Closure evidence
+
+- initial implementation commit: `5c82674a0907ba87980c48c9e3397bbbffda3a14`; CI #177 SUCCESS
+- physical qualification found Windows principal normalization `CDQ-P\\CDQ-P` -> `CDQ-P`
+- authoritative identity-normalization fix commit: `973328c9dc51ed76ca6ee96517932a64dd75caf6`
+- authoritative exact-commit CI: #178 / run `37817126580` — SUCCESS
+- local qualification after fix: 39 Node + 2 PowerShell suites PASS; audit 0 vulnerabilities
+- deployed source/install parity: 259/259 exact before closure docs
+- physical disposable flow: install / idempotence / drift detect / repair / remove / absence — PASS
+- default `\\LConnect Autostart` remained absent throughout qualification
+- runtime restart not required; runtime remained 1.3.0 / 154 tools / PID 15508
+- encrypted credential hash preserved exactly
+- report: `../reports/LCN-20261009-058-optional-atlogon-persistence.md`
