@@ -227,6 +227,35 @@ function Test-LConnectAutostartTaskOwned {
     return ([string]$Task.description).StartsWith([string]$Spec.ownership_marker, [StringComparison]::Ordinal)
 }
 
+function Test-LConnectAutostartIdentityEquivalent {
+    [CmdletBinding()]
+    param(
+        [AllowNull()][string]$Value,
+        [Parameter(Mandatory=$true)]$Spec
+    )
+
+    if ([string]::IsNullOrWhiteSpace($Value)) { return $false }
+    if ($Value -ieq [string]$Spec.current_user) { return $true }
+    if ($Value -ieq [string]$Spec.current_user_sid) { return $true }
+
+    try {
+        $Candidate = $Value
+        if ($Candidate.IndexOf('\') -lt 0 -and ([string]$Spec.current_user).IndexOf('\') -ge 0) {
+            $Parts = ([string]$Spec.current_user).Split('\', 2)
+            if ($Parts.Count -eq 2 -and $Candidate -ieq $Parts[1]) {
+                $Candidate = $Parts[0] + '\' + $Candidate
+            }
+        }
+
+        $Account = New-Object System.Security.Principal.NTAccount($Candidate)
+        $Sid = $Account.Translate([System.Security.Principal.SecurityIdentifier])
+        return ([string]$Sid.Value -eq [string]$Spec.current_user_sid)
+    }
+    catch {
+        return $false
+    }
+}
+
 function Compare-LConnectAutostartTask {
     [CmdletBinding()]
     param(
@@ -252,11 +281,11 @@ function Compare-LConnectAutostartTask {
     if ($Triggers.Count -ne 1) { [void]$Mismatches.Add('trigger_count') }
     else {
         if ([string]$Triggers[0].type -cne [string]$Spec.trigger_type) { [void]$Mismatches.Add('trigger_type') }
-        if (-not ([string]$Triggers[0].user_id -ieq [string]$Spec.trigger_user_id)) { [void]$Mismatches.Add('trigger_user') }
+        if (-not (Test-LConnectAutostartIdentityEquivalent -Value ([string]$Triggers[0].user_id) -Spec $Spec)) { [void]$Mismatches.Add('trigger_user') }
         if ($null -ne $Triggers[0].enabled -and -not [bool]$Triggers[0].enabled) { [void]$Mismatches.Add('trigger_disabled') }
     }
 
-    if (-not ([string]$Task.principal_user_id -ieq [string]$Spec.principal_user_id)) { [void]$Mismatches.Add('principal_user') }
+    if (-not (Test-LConnectAutostartIdentityEquivalent -Value ([string]$Task.principal_user_id) -Spec $Spec)) { [void]$Mismatches.Add('principal_user') }
     if (-not ([string]$Task.principal_logon_type -ieq [string]$Spec.principal_logon_type)) { [void]$Mismatches.Add('principal_logon_type') }
     if (-not ([string]$Task.principal_run_level -ieq [string]$Spec.principal_run_level)) { [void]$Mismatches.Add('principal_run_level') }
     if ($null -ne $Task.enabled -and -not [bool]$Task.enabled) { [void]$Mismatches.Add('task_disabled') }

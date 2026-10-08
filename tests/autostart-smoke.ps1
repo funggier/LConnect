@@ -63,10 +63,14 @@ try {
     }
 
     Assert-True (Test-LConnectAutostartTaskOwned -Task $OwnedTask -Spec $Spec) 'owned task marker was not recognized'
+    Assert-True (Test-LConnectAutostartIdentityEquivalent -Value $Spec.current_user -Spec $Spec) 'full current-user identity did not resolve'
+    Assert-True (Test-LConnectAutostartIdentityEquivalent -Value $Spec.current_user_sid -Spec $Spec) 'current-user SID identity did not resolve'
+    $ShortUser = ([string]$Spec.current_user).Split('\')[-1]
+    Assert-True (Test-LConnectAutostartIdentityEquivalent -Value $ShortUser -Spec $Spec) 'Task Scheduler short current-user identity did not resolve to the current SID'
     $Match = Compare-LConnectAutostartTask -Task $OwnedTask -Spec $Spec
     Assert-True $Match.matches 'expected task contract did not match'
     Assert-True ($Match.mismatches.Count -eq 0) 'expected task produced mismatches'
-    Write-Host 'ownership marker + exact contract match: PASS'
+    Write-Host 'ownership marker + SID-equivalent current-user contract match: PASS'
 
     $DriftTask = $OwnedTask.PSObject.Copy()
     $DriftTask.actions = @([pscustomobject]@{
