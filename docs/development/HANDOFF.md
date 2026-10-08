@@ -85,7 +85,7 @@ LCN-055 Tool Surface Cleanup & Contract Normalization — COMPLETE
 
 LCN-056 v1.3.0 Desktop & Browser Automation Release — **COMPLETE / PUBLISHED / DEPLOYED / LIVE GREEN**.
 
-LCN-057 Security & Operational Hygiene is **COMPLETE / DEPLOYED / LIVE GREEN**. LCN-058 Optional AtLogOn Persistence is **COMPLETE / DEPLOYED / PHYSICAL GREEN** at authoritative implementation `973328c9dc51ed76ca6ee96517932a64dd75caf6`, CI #178 SUCCESS, deployed 259/259 exact before closure docs. Physical disposable task install/idempotence/drift-repair/remove passed and default `\\LConnect Autostart` remains absent. LCN-059 v1.3.1 is the next release task.
+LCN-057 Security & Operational Hygiene is **COMPLETE / DEPLOYED / LIVE GREEN**. LCN-058 Optional AtLogOn Persistence is **COMPLETE / DEPLOYED / PHYSICAL GREEN**. LCN-059 v1.3.1 Operational Hardening Release is **COMPLETE / PUBLISHED / DEPLOYED / LIVE GREEN** at exact release commit `e12bb90b4246ea4bb487894e6f3b6ddb96210d14`, CI #180 SUCCESS, release activation 261/261 exact, runtime 1.3.1 / 154 tools, 12 published assets downloaded-back with zero mismatch, and default `\\LConnect Autostart` still absent. No active development task.
 
 Browser Automation through LCN-054 is complete at current scope. LCN-055 normalized the resulting 154-tool public surface. LCN-056 published that completed mainline as v1.3.0.
 

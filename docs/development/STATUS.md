@@ -1,26 +1,26 @@
 # STATUS — LConnect Development
 
-Last updated: 2026-10-02
+Last updated: 2026-10-09
 
 ## Overall
 
-Current project state: **BASIC CORE STABLE / v1.3.0 PUBLISHED / DEPLOYED / LIVE GREEN / v1.3.1 RELEASE PREPARATION ACTIVE**
+Current project state: **BASIC CORE STABLE / v1.3.1 PUBLISHED / DEPLOYED / LIVE GREEN / LCN-059 COMPLETE**
 
-Current published release: **v1.3.0 — Desktop & Browser Automation**
+Current published release: **v1.3.1 — Operational Hardening & Optional Autostart**
 
-Release tag target: `3e685ba0596bf00b9e4546c0dc8d9293fbdbd761`
+Release tag target: `e12bb90b4246ea4bb487894e6f3b6ddb96210d14`
 
-Release CI: `37009797481` / #171 — PASS
+Release CI: `37819874520` / #180 — PASS
 
 Current source version: **1.3.1**
 
 Current main/source MCP catalog: **154 tools**
 
-Current installed/running MCP catalog baseline: **154 tools / 1.3.0**. Process IDs are volatile runtime evidence and must be read live from `runtime_catalog` rather than treated as durable documentation.
+Current installed/running MCP catalog baseline: **154 tools / 1.3.1**. Process IDs are volatile runtime evidence and must be read live from `runtime_catalog` rather than treated as durable documentation.
 
 Current running catalog digest: `2ca33225b970dd70e1350d7b4e3d9290116448181031872d643111ae7ab4c374`
 
-v1.3.0 release-activation evidence: **1.3.0 / 154 tools / PID 17900**, catalog digest `2ca33225b970dd70e1350d7b4e3d9290116448181031872d643111ae7ab4c374`, duplicate public tool names: none, release source↔installed parity **247/247 exact**. The PID is historical qualification evidence; read live PID from `runtime_catalog`.
+v1.3.1 release-activation evidence: **1.3.1 / 154 tools / PID 14920**, catalog digest `2ca33225b970dd70e1350d7b4e3d9290116448181031872d643111ae7ab4c374`, duplicate public tool names: none, release source↔installed parity **261/261 exact**. The PID is historical qualification evidence; read live PID from `runtime_catalog`.
 
 LConnect มี Core ที่ใช้งานจริงแล้วและผ่าน runtime acceptance บน Windows:
 
@@ -55,7 +55,27 @@ Agent Operations Reliability LCN-025–030 ปิดครบ, Delivery/Turn Rel
 | v1.3.0 Release | COMPLETE / PUBLISHED / LIVE GREEN | LCN-056 | Desktop + Browser + Live UIA release; exact commit `3e685ba...`; CI #171; runtime baseline 1.3.0 / 154 tools |
 | Security / Operational Hygiene | COMPLETE / DEPLOYED / LIVE GREEN | LCN-057 | SDK 1.32.1 + proxy-addr 2.0.8, bounded search traversal, session-registry hygiene, Windows managed batch launch, lifetime telemetry aggregate, idle round rollover; CI #175 |
 | Optional AtLogOn Persistence | COMPLETE / DEPLOYED / PHYSICAL GREEN | LCN-058 | opt-in current-user AtLogOn task; SID-normalized identity; idempotent install/repair/remove; default task remains absent; CI #178 |
-| v1.3.1 Release | ACTIVE / RELEASE PREPARATION | LCN-059 | package qualified LCN-057/058 hardening as patch release; target remains 154 tools |
+| v1.3.1 Release | COMPLETE / PUBLISHED / DEPLOYED / LIVE GREEN | LCN-059 | patch release of LCN-057/058; exact commit `e12bb90...`; CI #180; runtime 1.3.1 / 154 tools; 12 assets verified |
+
+### LCN-059 — v1.3.1 Operational Hardening Release
+**COMPLETE / PUBLISHED / DEPLOYED / LIVE GREEN**
+
+Published the post-v1.3.0 hardening line as a backward-compatible patch release with the public catalog unchanged at 154 tools.
+
+- exact release commit: `e12bb90b4246ea4bb487894e6f3b6ddb96210d14`
+- CI: #180 / run `37819874520` — SUCCESS
+- annotated tag object: `8f0aeb43132e29c4bf8893aa71229f950c2c3208`
+- release runtime: **1.3.1 / 154 tools / PID 14920** (historical qualification PID)
+- release activation parity: **261/261 exact**
+- clean install + overlay qualification: PASS
+- installed changed-path smoke: PASS
+- dependency audit: 0 vulnerabilities
+- default AtLogOn task: absent / opt-in remains disabled
+- published assets: 12
+- downloaded-back hash mismatches: 0
+- v1.3.0 and v1.2.2 tags remained unchanged
+
+Report: [reports/LCN-20261009-059-v1.3.1-operational-hardening-release.md](reports/LCN-20261009-059-v1.3.1-operational-hardening-release.md)
 
 ### LCN-056 — v1.3.0 Desktop & Browser Automation Release
 **COMPLETE / PUBLISHED / DEPLOYED / LIVE GREEN**

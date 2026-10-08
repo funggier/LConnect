@@ -683,6 +683,6 @@ Added an opt-in and removable Windows AtLogOn persistence path that starts LConn
 
 Closure: initial implementation `5c82674a0907ba87980c48c9e3397bbbffda3a14` / CI #177 SUCCESS; physical qualification exposed Task Scheduler principal normalization; authoritative fix `973328c9dc51ed76ca6ee96517932a64dd75caf6` / CI #178 SUCCESS; deployed 259/259 exact; disposable install/idempotence/drift-repair/remove PASS; default autostart remained absent.
 
-## LCN-059 v1.3.1 Operational Hardening Release — ACTIVE
+## LCN-059 v1.3.1 Operational Hardening Release — COMPLETE / PUBLISHED / DEPLOYED / LIVE GREEN
 
-Package qualified LCN-057/058 work as a patch release only after exact-commit CI, install/overlay qualification, deployment/runtime evidence, immutable tag creation, release asset checksums and download-back verification.
+Packaged qualified LCN-057/058 work as patch release v1.3.1 with the public catalog unchanged at 154 tools. Closure: exact release commit `e12bb90b4246ea4bb487894e6f3b6ddb96210d14`; CI #180 SUCCESS; clean install + overlay PASS; production activation 1.3.1 / 154 tools with 261/261 exact parity; annotated tag `v1.3.1`; 12 assets published and downloaded-back with zero hash mismatch; v1.3.0 and v1.2.2 unchanged.

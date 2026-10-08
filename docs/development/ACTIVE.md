@@ -1,20 +1,20 @@
 # ACTIVE — LConnect Development
 
-Last updated: 2026-10-02
+Last updated: 2026-10-09
 
 ## Current state
 
 - Repository: `funggier/LConnect`
 - Branch: `main`
-- Latest published release: **v1.3.0 — Desktop & Browser Automation** (154 tools)
-- Release URL: https://github.com/funggier/LConnect/releases/tag/v1.3.0
-- Release tag target: `3e685ba0596bf00b9e4546c0dc8d9293fbdbd761`
-- Release CI: `37009797481` / #171 — PASS
+- Latest published release: **v1.3.1 — Operational Hardening & Optional Autostart** (154 tools)
+- Release URL: https://github.com/funggier/LConnect/releases/tag/v1.3.1
+- Release tag target: `e12bb90b4246ea4bb487894e6f3b6ddb96210d14`
+- Release CI: `37819874520` / #180 — PASS
 - Source version: `1.3.1`
 - Current source catalog: **154 tools**
-- Installed/running daemon baseline: **1.3.0 / 154 tools**; use `runtime_catalog` for the volatile current PID
+- Installed/running daemon baseline: **1.3.1 / 154 tools**; use `runtime_catalog` for the volatile current PID
 - Running catalog digest: `2ca33225b970dd70e1350d7b4e3d9290116448181031872d643111ae7ab4c374`
-- Direct ChatGPT/LConnect runtime catalog: **154 tools** on v1.3.0; managed Firefox/Chrome and 6 live-browser UIA tools are loaded. A conversation connected before a schema change may require connector/schema reconnect before newly added schema fields are directly callable
+- Direct ChatGPT/LConnect runtime catalog: **154 tools** on v1.3.1; managed Firefox/Chrome and 6 live-browser UIA tools remain loaded. A conversation connected before a schema change may require connector/schema reconnect before newly added schema fields are directly callable
 - LCN-046: COMPLETE — original round-boundary implementation; handler-sum enforcement superseded by LCN-047 evidence
 - LCN-047: COMPLETE — Turn-Risk Telemetry Model Repair / observation-only live GREEN
 - LCN-048: COMPLETE — Retry Tail-Gap Telemetry Refinement / live GREEN
@@ -32,15 +32,17 @@ Last updated: 2026-10-02
 
 ## Active task
 
-[LCN-059 — v1.3.1 Operational Hardening Release](tasks/LCN-059-v1.3.1-operational-hardening-release.md) — **ACTIVE / LOCAL RELEASE QUALIFICATION GREEN**
+No active development task.
 
-Release target: v1.3.1 / 154 tools. Scope packages qualified LCN-057 security/operational hardening plus LCN-058 optional AtLogOn persistence; v1.3.0 and v1.2.2 remain immutable. Local release qualification: syntax 84 PASS, PowerShell 20 PASS, 39 Node + 2 PowerShell suites PASS, audit 0 vulnerabilities, tool surface/docs guard 154/no duplicates, diff check PASS.
+Latest completed task: [LCN-059 — v1.3.1 Operational Hardening Release](tasks/LCN-059-v1.3.1-operational-hardening-release.md) — **COMPLETE / PUBLISHED / DEPLOYED / LIVE GREEN**
 
-Latest completed task: [LCN-058 — Optional AtLogOn Persistence](tasks/LCN-058-optional-atlogon-persistence.md) — **COMPLETE / DEPLOYED / PHYSICAL GREEN**
+Exact release commit `e12bb90b4246ea4bb487894e6f3b6ddb96210d14`; CI #180 / run `37819874520` SUCCESS; runtime 1.3.1 / 154 tools; activation parity 261/261 exact; 12 release assets downloaded-back with zero hash mismatch; default autostart remains absent. Report: [LCN-20261009-059-v1.3.1-operational-hardening-release.md](reports/LCN-20261009-059-v1.3.1-operational-hardening-release.md).
+
+Previous completed task: [LCN-058 — Optional AtLogOn Persistence](tasks/LCN-058-optional-atlogon-persistence.md) — **COMPLETE / DEPLOYED / PHYSICAL GREEN**
 
 Authoritative implementation `973328c9dc51ed76ca6ee96517932a64dd75caf6`; CI #178 / run `37817126580` SUCCESS; deployed 259/259 exact before closure docs; disposable physical install/idempotence/drift-repair/remove PASS; default `\\LConnect Autostart` remained absent; credential hash preserved. Report: [LCN-20261009-058-optional-atlogon-persistence.md](reports/LCN-20261009-058-optional-atlogon-persistence.md).
 
-Latest completed task: [LCN-057 — Security & Operational Hygiene](tasks/LCN-057-security-operational-hygiene.md) — **COMPLETE / DEPLOYED / LIVE GREEN**
+Previous completed task: [LCN-057 — Security & Operational Hygiene](tasks/LCN-057-security-operational-hygiene.md) — **COMPLETE / DEPLOYED / LIVE GREEN**
 
 Implementation `c949c3239cc5ede9e285dfd605b0e62392bdde4b`; CI #175 / run `37810517540` SUCCESS; deployed 249/249 exact; live runtime 1.3.0 / 154 tools / PID 15508; npm audit 0 vulnerabilities; credential hash preserved. Report: [LCN-20261008-057-security-operational-hygiene.md](reports/LCN-20261008-057-security-operational-hygiene.md).
 
@@ -52,7 +54,7 @@ Latest completed task: [LCN-055 — Tool Surface Cleanup & Contract Normalizatio
 
 Implementation: `885229e72380882aa6239996d0647a33e4148400` / CI #167 run `37003411662` SUCCESS. Closure docs: `ea3935eee1ab0f7fa3c2d301487fcc58ecd71390` / CI #168 run `37004582819` SUCCESS. Live runtime: `1.2.2 / 154 tools`, PID `4704`, no duplicate tool names, source/install qualified at 245/245 exact before closure-doc sync.
 
-Current direction: v1.3.0 is published and verified. Preserve both v1.3.0 and historical v1.2.2 release/tag evidence; open a new numbered task for future capability work.
+Current direction: v1.3.1 is published and verified. Preserve v1.3.1, v1.3.0 and historical v1.2.2 release/tag evidence; open a new numbered task for future capability work.
 
 Previous completed task: [LCN-023 — Chrome Adapter](tasks/LCN-023-chrome-adapter.md) — **COMPLETE**
 
@@ -78,7 +80,7 @@ Previous report: [reports/LCN-20261002-021-browser-common-layer.md](reports/LCN-
 
 ## Current reliability state
 
-- runtime: **1.3.0 / 154 tools**
+- runtime: **1.3.1 / 154 tools**
 - v1.3.0 release-qualification runtime PID (historical evidence): `17900`
 - v1.3.0 release-qualification tunnel PID (historical evidence): `8940`
 - live PID values are volatile; use `runtime_catalog` / process/status tools as authoritative current evidence
@@ -95,9 +97,14 @@ Previous report: [reports/LCN-20261002-021-browser-common-layer.md](reports/LCN-
 - v1.3.0 release deployment source↔installed tracked parity: **247/247 exact** at release activation; post-release closure/docs commits do not move the immutable v1.3.0 tag
 - v1.3.0 release commit CI #171 / run `37009797481`: PASS
 - LCN-056 closure commit CI #173 / run `37011488110`: PASS
+- v1.3.1 release deployment source↔installed tracked parity: **261/261 exact** at release activation
+- v1.3.1 release commit CI #180 / run `37819874520`: PASS
+- v1.3.1 release runtime activation: **1.3.1 / 154 tools / PID 14920** (historical qualification PID)
+- v1.3.1 restart tunnel PID: `8984` (historical qualification PID)
+- default `\\LConnect Autostart`: absent after release activation
 - source and installed dependency audit: **0 vulnerabilities**
 - release program/docs/checksum assets: uploaded and downloaded-back hash verified
 
 ## Next action
 
-LCN-059 is active. Prepare and qualify v1.3.1 from the verified LCN-057/058 baseline, then deploy/restart, tag, publish, checksum and download-back verify. Keep v1.3.0 and v1.2.2 immutable and do not reset the worktree.
+LCN-059 is complete, published, deployed and live GREEN. No active development task. Preserve v1.3.1, v1.3.0 and v1.2.2 immutable release/tag evidence and do not reset the worktree.
