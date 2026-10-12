@@ -15,9 +15,12 @@ function resultText(result) {
 
 async function runGitRaw(repoPath, args, config, timeoutSeconds = 60, maxOutputChars) {
   const repo = path.resolve(repoPath);
+  const platformArgs = process.platform === "win32"
+    ? ["-c", "core.longpaths=true"]
+    : [];
   return runProcess(
     gitProgram,
-    ["-C", repo, ...args],
+    [...platformArgs, "-C", repo, ...args],
     {
       timeoutSeconds: Math.min(timeoutSeconds, config.shell.maxTimeoutSeconds),
       maxOutputChars: maxOutputChars ?? config.shell.maxOutputChars,

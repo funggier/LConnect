@@ -1,6 +1,6 @@
 # ACTIVE — LConnect Development
 
-Last updated: 2026-10-09
+Last updated: 2026-10-13
 
 ## Current state
 
@@ -32,7 +32,9 @@ Last updated: 2026-10-09
 
 ## Active task
 
-No active development task.
+[LCN-060 — Windows Long Path Compatibility Hardening](tasks/LCN-060-windows-long-path-compatibility.md) — **ACTIVE**
+
+Confirmed activation evidence: Windows `LongPathsEnabled=1`; LConnect filesystem handled a 418-character absolute path; Git for Windows with `core.longpaths` unset emitted `Filename too long`; the same tree staged successfully with `core.longpaths=true`. Scope is a non-mutating per-invocation Windows Git override plus regression/CI/deployment/live qualification. Public catalog target remains 154 tools.
 
 Latest completed task: [LCN-059 — v1.3.1 Operational Hardening Release](tasks/LCN-059-v1.3.1-operational-hardening-release.md) — **COMPLETE / PUBLISHED / DEPLOYED / LIVE GREEN**
 
@@ -54,7 +56,7 @@ Latest completed task: [LCN-055 — Tool Surface Cleanup & Contract Normalizatio
 
 Implementation: `885229e72380882aa6239996d0647a33e4148400` / CI #167 run `37003411662` SUCCESS. Closure docs: `ea3935eee1ab0f7fa3c2d301487fcc58ecd71390` / CI #168 run `37004582819` SUCCESS. Live runtime: `1.2.2 / 154 tools`, PID `4704`, no duplicate tool names, source/install qualified at 245/245 exact before closure-doc sync.
 
-Current direction: v1.3.1 is published and verified. Preserve v1.3.1, v1.3.0 and historical v1.2.2 release/tag evidence; open a new numbered task for future capability work.
+Current direction: v1.3.1 remains the immutable published baseline. LCN-060 is active to harden Git-for-Windows long-path handling without changing the 154-tool public surface or mutating machine/repository Git configuration.
 
 Previous completed task: [LCN-023 — Chrome Adapter](tasks/LCN-023-chrome-adapter.md) — **COMPLETE**
 
@@ -107,4 +109,4 @@ Previous report: [reports/LCN-20261002-021-browser-common-layer.md](reports/LCN-
 
 ## Next action
 
-LCN-059 is complete, published, deployed and live GREEN. No active development task. Preserve v1.3.1, v1.3.0 and v1.2.2 immutable release/tag evidence and do not reset the worktree.
+LCN-060 is ACTIVE. Implement and qualify per-invocation Git-for-Windows long-path support, then deploy/restart and physically verify a >260-character Git path. Preserve v1.3.1, v1.3.0 and v1.2.2 immutable release/tag evidence and do not reset the worktree.
