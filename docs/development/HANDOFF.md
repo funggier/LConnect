@@ -1,6 +1,6 @@
 # LConnect Session Handoff
 
-Last updated: **2026-10-02**
+Last updated: **2026-10-13**
 
 Use this file when starting a new ChatGPT/agent session.
 
@@ -51,12 +51,12 @@ Before continuing:
 
 ## Current published baseline
 
-- release: **v1.3.0 — Desktop & Browser Automation**
-- release/tag commit: `3e685ba0596bf00b9e4546c0dc8d9293fbdbd761`
-- annotated tag object: `ef06f0eab103acab6f54fabd981278e2f809199d`
-- release CI: #171 / run `37009797481` — SUCCESS
-- release-qualification runtime: **1.3.0 / 154 tools / PID 17900** (historical; obtain current PID live)
-- source/install release parity: **247/247 exact**
+- release: **v1.3.1 — Operational Hardening & Optional Autostart**
+- release/tag commit: `e12bb90b4246ea4bb487894e6f3b6ddb96210d14`
+- annotated tag object: `8f0aeb43132e29c4bf8893aa71229f950c2c3208`
+- release CI: #180 / run `37819874520` — SUCCESS
+- release-qualification runtime: **1.3.1 / 154 tools / PID 14920** (historical; obtain current PID live)
+- source/install release parity: **261/261 exact**
 - catalog digest: `2ca33225b970dd70e1350d7b4e3d9290116448181031872d643111ae7ab4c374`
 - public duplicate tool names: **none**
 - managed Firefox/Chrome physical qualification: GREEN
@@ -64,7 +64,7 @@ Before continuing:
 - secure DPAPI credential + detached self-restart: live GREEN
 - published assets: 12; downloaded-back hash mismatch: 0
 
-Both `v1.3.0` and historical `v1.2.2` tags/releases are immutable release evidence. Do not move or overwrite them.
+`v1.3.1`, `v1.3.0` and historical `v1.2.2` tags/releases are immutable release evidence. Do not move or overwrite them.
 
 ## Current direction
 
@@ -85,7 +85,7 @@ LCN-055 Tool Surface Cleanup & Contract Normalization — COMPLETE
 
 LCN-056 v1.3.0 Desktop & Browser Automation Release — **COMPLETE / PUBLISHED / DEPLOYED / LIVE GREEN**.
 
-LCN-057 Security & Operational Hygiene is **COMPLETE / DEPLOYED / LIVE GREEN**. LCN-058 Optional AtLogOn Persistence is **COMPLETE / DEPLOYED / PHYSICAL GREEN**. LCN-059 v1.3.1 Operational Hardening Release is **COMPLETE / PUBLISHED / DEPLOYED / LIVE GREEN** at exact release commit `e12bb90b4246ea4bb487894e6f3b6ddb96210d14`, CI #180 SUCCESS, release activation 261/261 exact, runtime 1.3.1 / 154 tools, 12 published assets downloaded-back with zero mismatch, and default `\\LConnect Autostart` still absent. No active development task.
+LCN-057 Security & Operational Hygiene is **COMPLETE / DEPLOYED / LIVE GREEN**. LCN-058 Optional AtLogOn Persistence is **COMPLETE / DEPLOYED / PHYSICAL GREEN**. LCN-059 v1.3.1 Operational Hardening Release is **COMPLETE / PUBLISHED / DEPLOYED / LIVE GREEN** at exact release commit `e12bb90b4246ea4bb487894e6f3b6ddb96210d14`, CI #180 SUCCESS. LCN-060 Windows Long Path Compatibility Hardening is **COMPLETE / DEPLOYED / LIVE GREEN** at implementation `1f6bf8b721631bd7fefb1d74eb99c2ade02aea40`, CI #184 SUCCESS, deployed 264/264 exact, runtime 1.3.1 / 154 tools, installed 347-character and live 387-character path acceptance PASS. Default `\\LConnect Autostart` remains absent. No active development task.
 
 Browser Automation through LCN-054 is complete at current scope. LCN-055 normalized the resulting 154-tool public surface. LCN-056 published that completed mainline as v1.3.0.
 

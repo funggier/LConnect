@@ -61,4 +61,4 @@
 | [LCN-057](tasks/LCN-057-security-operational-hygiene.md) | COMPLETE | Security & Operational Hygiene |
 | [LCN-058](tasks/LCN-058-optional-atlogon-persistence.md) | COMPLETE | Optional AtLogOn Persistence |
 | [LCN-059](tasks/LCN-059-v1.3.1-operational-hardening-release.md) | COMPLETE | v1.3.1 Operational Hardening Release |
-| [LCN-060](tasks/LCN-060-windows-long-path-compatibility.md) | ACTIVE | Windows Long Path Compatibility Hardening |
+| [LCN-060](tasks/LCN-060-windows-long-path-compatibility.md) | COMPLETE | Windows Long Path Compatibility Hardening |

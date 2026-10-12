@@ -128,9 +128,9 @@ Design principle:
 
 Prefer stable machine-readable Git formats such as porcelain output instead of parsing human-formatted text.
 
-### LCN-060 Windows Long Path Compatibility Hardening — ACTIVE
+### LCN-060 Windows Long Path Compatibility Hardening — COMPLETE / DEPLOYED / LIVE GREEN
 
-Post-release Git hardening for Windows: all LConnect Git invocations must override `core.longpaths=true` per process so repositories with deep paths do not silently hit the legacy MAX_PATH boundary. The override must not mutate repository/global Git configuration, and the public MCP catalog remains unchanged.
+Post-release Git hardening for Windows: all LConnect Git invocations override `core.longpaths=true` per process so repositories with deep paths do not silently hit the legacy MAX_PATH boundary. The override does not mutate repository/global Git configuration, and the public MCP catalog remains unchanged. Closure: implementation `1f6bf8b721631bd7fefb1d74eb99c2ade02aea40`; CI #184 / run `38284363602` SUCCESS; installed 347-character and live 387-character Git acceptance PASS; deployed 264/264 exact; runtime 1.3.1 / 154 tools.
 
 ## LCN-013 Development Module
 

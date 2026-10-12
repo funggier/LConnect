@@ -1,6 +1,6 @@
 # LCN-060 — Windows Long Path Compatibility Hardening
 
-Status: **ACTIVE**
+Status: **COMPLETE / DEPLOYED / LIVE GREEN**
 
 Activated: 2026-10-13
 
@@ -63,3 +63,17 @@ This isolates the confirmed defect to the Git-for-Windows invocation layer rathe
 - live runtime catalog remains 1.3.1 / 154 tools with no duplicates
 - installed physical long-path Git acceptance
 - source/install tracked parity
+
+## Closure evidence
+
+- implementation commit: `1f6bf8b721631bd7fefb1d74eb99c2ade02aea40`
+- exact-commit CI: #184 / run `38284363602` — SUCCESS
+- local qualification: syntax 85 files PASS; 40 Node + 2 PowerShell suites PASS; npm audit 0 vulnerabilities
+- installed long-path regression: PASS at 347-character absolute path
+- secure detached restart: PASS; live runtime 1.3.1 / 154 tools / PID 14132 at qualification
+- live connector physical acceptance: PASS at 387-character absolute path with repository-local `core.longpaths=false`
+- live physical commit: `fcc5b4f3fc19e949f55fe360ec0e08cf3f71e62b`
+- repository-local `core.longpaths=false` remained unchanged
+- deployed source/install parity: 264/264 exact; manifest digest `51f1bbec79880f5ca9de92b353c2a58eee50ddea9fc484999a2b513d76d1dab5`
+- encrypted credential hash preserved; default `\\LConnect Autostart` remained absent
+- report: `../reports/LCN-20261013-060-windows-long-path-compatibility.md`

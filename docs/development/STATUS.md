@@ -4,7 +4,7 @@ Last updated: 2026-10-13
 
 ## Overall
 
-Current project state: **BASIC CORE STABLE / v1.3.1 PUBLISHED BASELINE / LCN-060 ACTIVE**
+Current project state: **BASIC CORE STABLE / v1.3.1 PUBLISHED BASELINE / LCN-060 COMPLETE / DEPLOYED / LIVE GREEN**
 
 Current published release: **v1.3.1 — Operational Hardening & Optional Autostart**
 
@@ -56,7 +56,7 @@ Agent Operations Reliability LCN-025–030 ปิดครบ, Delivery/Turn Rel
 | Security / Operational Hygiene | COMPLETE / DEPLOYED / LIVE GREEN | LCN-057 | SDK 1.32.1 + proxy-addr 2.0.8, bounded search traversal, session-registry hygiene, Windows managed batch launch, lifetime telemetry aggregate, idle round rollover; CI #175 |
 | Optional AtLogOn Persistence | COMPLETE / DEPLOYED / PHYSICAL GREEN | LCN-058 | opt-in current-user AtLogOn task; SID-normalized identity; idempotent install/repair/remove; default task remains absent; CI #178 |
 | v1.3.1 Release | COMPLETE / PUBLISHED / DEPLOYED / LIVE GREEN | LCN-059 | patch release of LCN-057/058; exact commit `e12bb90...`; CI #180; runtime 1.3.1 / 154 tools; 12 assets verified |
-| Windows Long Path Compatibility | ACTIVE | LCN-060 | confirmed Git-for-Windows `Filename too long` with filesystem path >260; implementing per-invocation `core.longpaths=true` without persistent Git config mutation; catalog remains 154 |
+| Windows Long Path Compatibility | COMPLETE / DEPLOYED / LIVE GREEN | LCN-060 | process-scoped Windows Git `core.longpaths=true`; CI #184 SUCCESS; installed 347-char and live 387-char acceptance PASS; 264/264 exact; catalog remains 154 |
 
 ### LCN-059 — v1.3.1 Operational Hardening Release
 **COMPLETE / PUBLISHED / DEPLOYED / LIVE GREEN**
