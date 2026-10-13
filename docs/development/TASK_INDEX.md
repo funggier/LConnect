@@ -62,4 +62,4 @@
 | [LCN-058](tasks/LCN-058-optional-atlogon-persistence.md) | COMPLETE | Optional AtLogOn Persistence |
 | [LCN-059](tasks/LCN-059-v1.3.1-operational-hardening-release.md) | COMPLETE | v1.3.1 Operational Hardening Release |
 | [LCN-060](tasks/LCN-060-windows-long-path-compatibility.md) | COMPLETE | Windows Long Path Compatibility Hardening |
-| [LCN-061](tasks/LCN-061-godot-development-console-hold.md) | ACTIVE | Godot Development Support & Operator Console Hold UX |
+| [LCN-061](tasks/LCN-061-godot-development-console-hold.md) | COMPLETE | Godot Development Support & Operator Console Hold UX |

@@ -1,6 +1,6 @@
 # LCN-061 — Godot Development Support & Operator Console Hold UX
 
-Status: **ACTIVE**
+Status: **COMPLETE / DEPLOYED / LIVE GREEN**
 
 Activated: 2026-10-13
 
@@ -77,3 +77,17 @@ Replace the fragile plain `pause` boundary in Status/Stop wrappers with a reusab
 - installed/live Godot detection acceptance with fixture
 - installed Status/Stop operator wrapper acceptance
 - source/install parity
+
+## Closure evidence
+
+- implementation: `60f29eae79da3205161bffdf75cb5feefe7e6d4d`
+- exact-commit CI: #186 / run `38326334790` — SUCCESS
+- local: syntax 85 files; 40 Node + 3 PowerShell suites; npm audit 0 vulnerabilities
+- installed Godot/operator/tool-surface qualification: PASS
+- physical Status default hold: remained visible beyond 14 seconds; redirected fallback 15 seconds
+- live Godot detection/project info: PASS
+- live Godot managed import execution: PASS / exit 0 using disposable process-only `GODOT_BIN` fixture
+- runtime: 1.3.1 / 154 tools / PID 18340 at qualification
+- deployed parity: 268/268 exact; digest `36ea87c2729811af4a8393e8b936d30bd439c9b33fa87391cdcf4e1c3d2a90a9`
+- credential hash preserved; default autostart absent
+- report: `../reports/LCN-20261013-061-godot-development-console-hold.md`
