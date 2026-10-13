@@ -675,8 +675,6 @@ PID จะต่างกันในแต่ละเครื่อง
 Status-LConnect.cmd
 ```
 
-หน้าต่าง `Status-LConnect.cmd` จะคงผลลัพธ์ไว้จนกดปุ่มเพื่อให้อ่านสถานะได้ทัน ถ้าเรียกจาก automation/script ให้ใช้ `Status-LConnect.cmd --no-hold`
-
 ---
 
 # ขั้นที่ 11 — อ่านผล Status
@@ -787,7 +785,7 @@ npm test
 สำหรับ LConnect v1.3.1 คาดว่าจะเห็น:
 
 ```text
-PASS tools=154
+PASS tools=122
 ```
 
 
@@ -802,8 +800,6 @@ PASS tools=154
 ```text
 Stop-LConnect.cmd
 ```
-
-หน้าต่าง Stop จะคงผลลัพธ์ไว้เช่นเดียวกับ Status; automation ใช้ `Stop-LConnect.cmd --no-hold` เพื่อไม่ให้รอ input
 
 เริ่มใหม่แบบปกติ:
 

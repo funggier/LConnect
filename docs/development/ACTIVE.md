@@ -34,10 +34,6 @@ Last updated: 2026-10-13
 
 No active development task.
 
-Latest completed task: [LCN-061 — Godot Development Support & Operator Console Hold UX](tasks/LCN-061-godot-development-console-hold.md) — **COMPLETE / DEPLOYED / LIVE GREEN**
-
-Implementation `60f29eae79da3205161bffdf75cb5feefe7e6d4d`; CI #186 / run `38326334790` SUCCESS; Godot detection/import/export/test-runner/lint contracts qualified; installed Status default hold remained visible past 14 seconds; live runtime 1.3.1 / 154 tools; deployment 268/268 exact. Report: [LCN-20261013-061-godot-development-console-hold.md](reports/LCN-20261013-061-godot-development-console-hold.md).
-
 Latest completed task: [LCN-060 — Windows Long Path Compatibility Hardening](tasks/LCN-060-windows-long-path-compatibility.md) — **COMPLETE / DEPLOYED / LIVE GREEN**
 
 Implementation `1f6bf8b721631bd7fefb1d74eb99c2ade02aea40`; CI #184 / run `38284363602` SUCCESS; Windows Git calls use process-scoped `core.longpaths=true`; installed regression PASS at 347 characters; live connector commit PASS at 387 characters; runtime 1.3.1 / 154 tools; deployed 264/264 exact. Report: [LCN-20261013-060-windows-long-path-compatibility.md](reports/LCN-20261013-060-windows-long-path-compatibility.md).
@@ -62,7 +58,7 @@ Latest completed task: [LCN-055 — Tool Surface Cleanup & Contract Normalizatio
 
 Implementation: `885229e72380882aa6239996d0647a33e4148400` / CI #167 run `37003411662` SUCCESS. Closure docs: `ea3935eee1ab0f7fa3c2d301487fcc58ecd71390` / CI #168 run `37004582819` SUCCESS. Live runtime: `1.2.2 / 154 tools`, PID `4704`, no duplicate tool names, source/install qualified at 245/245 exact before closure-doc sync.
 
-Current direction: v1.3.1 remains the immutable published baseline. LCN-061 is deployed/live GREEN; future capability work should open a new numbered task from fresh GitHub/runtime evidence.
+Current direction: v1.3.1 remains the immutable published baseline. LCN-060 long-path hardening is deployed/live GREEN on current main; future work should open a new numbered task from fresh GitHub/runtime evidence.
 
 Previous completed task: [LCN-023 — Chrome Adapter](tasks/LCN-023-chrome-adapter.md) — **COMPLETE**
 
@@ -115,4 +111,4 @@ Previous report: [reports/LCN-20261002-021-browser-common-layer.md](reports/LCN-
 
 ## Next action
 
-LCN-061 is COMPLETE / DEPLOYED / LIVE GREEN. No active development task. Preserve v1.3.1, v1.3.0 and v1.2.2 immutable release/tag evidence and do not reset/clean the worktree.
+LCN-060 is COMPLETE / DEPLOYED / LIVE GREEN. No active development task. Preserve v1.3.1, v1.3.0 and v1.2.2 immutable release/tag evidence and do not reset/clean the worktree.

@@ -48,10 +48,6 @@ async function detectProjectEvidence(root) {
     evidence.push({ type, files });
   };
 
-  const godot = ["project.godot", "export_presets.cfg"]
-    .filter((name) => hasFile(entries, name));
-  if (godot.includes("project.godot")) add("godot", godot);
-
   add("node", hasFile(entries, "package.json") ? ["package.json"] : []);
 
   const python = ["pyproject.toml", "requirements.txt", "setup.py", "Pipfile"]
@@ -85,82 +81,6 @@ async function detectProjectEvidence(root) {
     primary_type: types[0] ?? null,
     types,
     evidence,
-  };
-}
-
-function decodeGodotString(value) {
-  const trimmed = String(value ?? "").trim();
-  if (!trimmed.startsWith('"') || !trimmed.endsWith('"')) return trimmed || null;
-  try {
-    return JSON.parse(trimmed);
-  } catch {
-    return trimmed.slice(1, -1);
-  }
-}
-
-function decodeGodotStringList(value) {
-  const matches = String(value ?? "").match(/"(?:\\.|[^"\\])*"/g) ?? [];
-  return matches.map((item) => decodeGodotString(item)).filter((item) => item !== null);
-}
-
-async function godotProjectInfo(root) {
-  const projectFile = path.join(root, "project.godot");
-  if (!fs.existsSync(projectFile)) return null;
-
-  const raw = await fsp.readFile(projectFile, "utf8");
-  const values = new Map();
-  let section = "";
-
-  for (const rawLine of raw.split(/\r?\n/)) {
-    const line = rawLine.trim();
-    if (!line || line.startsWith(";") || line.startsWith("#")) continue;
-
-    const sectionMatch = line.match(/^\[([^\]]+)\]$/);
-    if (sectionMatch) {
-      section = sectionMatch[1].trim();
-      continue;
-    }
-
-    const equals = line.indexOf("=");
-    if (equals <= 0) continue;
-    const key = line.slice(0, equals).trim();
-    const value = line.slice(equals + 1).trim();
-    values.set(section + "/" + key, value);
-  }
-
-  const entries = await directoryEntries(root);
-  const featuresRaw = values.get("application/config/features") ?? "";
-  const dotnetProjects = matchingFiles(entries, (name) => /\.(?:sln|csproj|fsproj|vbproj)$/i.test(name));
-
-  return {
-    project_file: "project.godot",
-    name: decodeGodotString(values.get("application/config/name")),
-    version: decodeGodotString(values.get("application/config/version")),
-    main_scene: decodeGodotString(values.get("application/run/main_scene")),
-    features: decodeGodotStringList(featuresRaw),
-    export_presets_present: hasFile(entries, "export_presets.cfg"),
-    dotnet_projects: dotnetProjects,
-  };
-}
-
-async function godotBuildSystem(root) {
-  const info = await godotProjectInfo(root);
-  if (!info) return null;
-
-  const configuredProgram = String(process.env.GODOT_BIN ?? "").trim();
-  return {
-    type: "godot",
-    system: "godot",
-    execution_supported: true,
-    project_file: info.project_file,
-    program: configuredProgram || (process.platform === "win32" ? "godot.exe" : "godot"),
-    program_source: configuredProgram ? "GODOT_BIN" : "PATH/default",
-    export_presets_present: info.export_presets_present,
-    operations: {
-      build_modes: ["import", "export-release", "export-debug"],
-      test: "explicit Godot --script runner",
-      lint: "headless import/validation",
-    },
   };
 }
 
@@ -227,9 +147,6 @@ async function detectBuildSystemData(root) {
   const project = await detectProjectEvidence(root);
   const systems = [];
 
-  if (project.types.includes("godot")) {
-    systems.push(await godotBuildSystem(root));
-  }
   if (project.types.includes("node")) {
     systems.push(await nodeBuildSystem(root));
   }
@@ -305,16 +222,6 @@ async function detectBuildSystemData(root) {
   };
 }
 
-function godotProgram(requestedProgram) {
-  const explicit = String(requestedProgram ?? "").trim();
-  if (explicit) return explicit;
-
-  const configured = String(process.env.GODOT_BIN ?? "").trim();
-  if (configured) return configured;
-
-  return process.platform === "win32" ? "godot.exe" : "godot";
-}
-
 function managerProgram(manager) {
   if (!["npm", "pnpm", "yarn", "bun"].includes(manager)) {
     throw new Error(`Unsupported Node package manager: ${manager}`);
@@ -356,7 +263,7 @@ async function requireNodeProject(root, requestedManager) {
     const detected = await detectProjectEvidence(root);
     throw new Error(
       detected.detected
-        ? `Node package-manager execution requires package.json. Detected: ${detected.types.join(", ")}`
+        ? `Execution is currently implemented for Node projects only. Detected: ${detected.types.join(", ")}`
         : "No supported project evidence was found."
     );
   }
@@ -396,131 +303,6 @@ function startDevelopmentSession({
     transport_command: launch.program === logicalProgram ? null : launch,
     session,
   };
-}
-
-function startGodotSession({
-  operation,
-  root,
-  requestedProgram,
-  args,
-  config,
-  env,
-}) {
-  const logicalProgram = godotProgram(requestedProgram);
-  const launch = processLaunchSpec(logicalProgram, args);
-  const session = startManagedProcessSession({
-    program: launch.program,
-    args: launch.args,
-    cwd: root,
-    config,
-    env,
-  });
-
-  return {
-    started: true,
-    operation,
-    project_path: root,
-    system: "godot",
-    command: { program: logicalProgram, args },
-    transport_command: launch.program === logicalProgram ? null : launch,
-    session,
-  };
-}
-
-async function requireGodotProject(root) {
-  const info = await godotProjectInfo(root);
-  if (!info) {
-    const detected = await detectProjectEvidence(root);
-    throw new Error(
-      detected.detected
-        ? `Godot execution requires project.godot. Detected: ${detected.types.join(", ")}`
-        : "No supported project evidence was found."
-    );
-  }
-  return info;
-}
-
-async function startGodotBuild({
-  root,
-  requestedProgram,
-  mode,
-  exportPreset,
-  outputPath,
-  extraArgs,
-  env,
-  config,
-}) {
-  await requireGodotProject(root);
-  const selectedMode = mode || "import";
-  const args = ["--headless", "--path", root];
-
-  if (selectedMode === "import") {
-    args.push("--import");
-  } else {
-    if (!exportPreset || !outputPath) {
-      throw new Error(
-        `Godot ${selectedMode} requires godot_export_preset and godot_output_path.`
-      );
-    }
-    args.push(`--${selectedMode}`, exportPreset, outputPath);
-  }
-
-  args.push(...extraArgs);
-  return startGodotSession({
-    operation: selectedMode === "import" ? "build" : selectedMode,
-    root,
-    requestedProgram,
-    args,
-    config,
-    env,
-  });
-}
-
-async function startGodotTests({
-  root,
-  requestedProgram,
-  script,
-  extraArgs,
-  env,
-  config,
-}) {
-  await requireGodotProject(root);
-  if (!script) {
-    throw new Error(
-      "Godot does not provide a standard project-level test runner. Provide godot_script for your test framework or custom SceneTree/MainLoop runner."
-    );
-  }
-
-  const args = ["--headless", "--path", root, "--script", script];
-  if (extraArgs.length) args.push("--", ...extraArgs);
-
-  return startGodotSession({
-    operation: "test",
-    root,
-    requestedProgram,
-    args,
-    config,
-    env,
-  });
-}
-
-async function startGodotLint({
-  root,
-  requestedProgram,
-  extraArgs,
-  env,
-  config,
-}) {
-  await requireGodotProject(root);
-  const args = ["--headless", "--path", root, "--import", ...extraArgs];
-  return startGodotSession({
-    operation: "lint",
-    root,
-    requestedProgram,
-    args,
-    config,
-    env,
-  });
 }
 
 function installArgs(manager, frozen, ignoreScripts, extraArgs, hasNpmLock) {
@@ -608,7 +390,7 @@ export function registerDevelopmentTools(server, config) {
     }
   });
 
-  server.tool("project_info", "Return structured project metadata. Godot and Node metadata are expanded when present.", {
+  server.tool("project_info", "Return structured project metadata. Node package metadata is expanded when present.", {
     project_path: z.string().min(1),
   }, async ({ project_path }) => {
     try {
@@ -618,13 +400,8 @@ export function registerDevelopmentTools(server, config) {
       const output = {
         ...detected,
         build_systems: build.systems,
-        godot: null,
         node: null,
       };
-
-      if (detected.types.includes("godot")) {
-        output.godot = await godotProjectInfo(root);
-      }
 
       if (detected.types.includes("node")) {
         const packageJson = await readJsonFile(path.join(root, "package.json"));
@@ -693,44 +470,20 @@ export function registerDevelopmentTools(server, config) {
     project_path: z.string().min(1),
     manager: managerSchema.optional(),
     script: z.string().min(1).optional(),
-    godot_program: z.string().min(1).optional(),
-    godot_mode: z.enum(["import", "export-release", "export-debug"]).optional(),
-    godot_export_preset: z.string().min(1).optional(),
-    godot_output_path: z.string().min(1).optional(),
-    godot_script: z.string().min(1).optional(),
     extra_args: z.array(z.string()).optional(),
     env: z.record(z.string()).optional(),
   };
 
-  server.tool("run_build", "Start a Node build script or Godot headless build/import/export operation as a managed process session and return immediately.", scriptSchema, async ({
+  server.tool("run_build", "Start a Node build script as a managed process session and return immediately.", scriptSchema, async ({
     project_path,
     manager,
     script,
-    godot_program,
-    godot_mode,
-    godot_export_preset,
-    godot_output_path,
     extra_args = [],
     env,
   }) => {
     try {
       requireEnabled();
       const root = await resolveProjectRoot(project_path);
-      const detected = await detectProjectEvidence(root);
-
-      if (detected.types.includes("godot")) {
-        return textResult(await startGodotBuild({
-          root,
-          requestedProgram: godot_program,
-          mode: godot_mode,
-          exportPreset: godot_export_preset,
-          outputPath: godot_output_path,
-          extraArgs: extra_args,
-          env,
-          config,
-        }));
-      }
-
       return textResult(await startScript({
         root,
         operation: "build",
@@ -746,31 +499,16 @@ export function registerDevelopmentTools(server, config) {
     }
   });
 
-  server.tool("run_tests", "Start a Node test script or an explicit Godot test-runner script as a managed process session and return immediately.", scriptSchema, async ({
+  server.tool("run_tests", "Start a Node test script as a managed process session and return immediately.", scriptSchema, async ({
     project_path,
     manager,
     script,
-    godot_program,
-    godot_script,
     extra_args = [],
     env,
   }) => {
     try {
       requireEnabled();
       const root = await resolveProjectRoot(project_path);
-      const detected = await detectProjectEvidence(root);
-
-      if (detected.types.includes("godot")) {
-        return textResult(await startGodotTests({
-          root,
-          requestedProgram: godot_program,
-          script: godot_script,
-          extraArgs: extra_args,
-          env,
-          config,
-        }));
-      }
-
       return textResult(await startScript({
         root,
         operation: "test",
@@ -786,29 +524,16 @@ export function registerDevelopmentTools(server, config) {
     }
   });
 
-  server.tool("run_lint", "Start a Node lint script or Godot headless import/validation operation as a managed process session and return immediately.", scriptSchema, async ({
+  server.tool("run_lint", "Start a Node lint script as a managed process session and return immediately.", scriptSchema, async ({
     project_path,
     manager,
     script,
-    godot_program,
     extra_args = [],
     env,
   }) => {
     try {
       requireEnabled();
       const root = await resolveProjectRoot(project_path);
-      const detected = await detectProjectEvidence(root);
-
-      if (detected.types.includes("godot")) {
-        return textResult(await startGodotLint({
-          root,
-          requestedProgram: godot_program,
-          extraArgs: extra_args,
-          env,
-          config,
-        }));
-      }
-
       return textResult(await startScript({
         root,
         operation: "lint",

@@ -116,8 +116,6 @@ ConfirmRetry-LConnect.cmd
 StatusTurnRisk-LConnect.cmd
 ```
 
-`Status-LConnect.cmd` และ `Stop-LConnect.cmd` จะคงหน้าต่างผลลัพธ์ไว้จนผู้ใช้กดปุ่ม โดยมี fallback hold เมื่อ console input ใช้ไม่ได้ ถ้าเรียกจาก automation ให้เติม `--no-hold` เพื่อให้จบทันทีและคง exit code เดิม
-
 LConnect ต้องใช้ OpenAI tunnel-client `0.0.14` หรือใหม่กว่า เนื่องจากรุ่นเก่ามีปัญหา recovery ของ stdio หลัง response timeout/deadline ซึ่งอาจทำให้ process ยังขึ้นว่า ready แต่ MCP ใช้งานต่อไม่ได้
 
 ## Secure local credential + self-restart
@@ -354,8 +352,6 @@ live mode ใช้ **Windows UI Automation เท่านั้น** และ
 - `run_build`
 - `run_tests`
 - `run_lint`
-
-Development Module ปัจจุบันรองรับ execution contract สำหรับ **Node และ Godot** โดย Godot ตรวจจาก `project.godot`; `run_build` รองรับ headless import/validation และ explicit export release/debug, `run_tests` ใช้ explicit `godot_script`, และ `run_lint` ใช้ headless import/validation. สามารถระบุ binary ด้วย `godot_program` หรือ environment `GODOT_BIN` ได้โดยไม่ต้องเพิ่ม public tool ใหม่
 
 ### HTTP
 - `http_request`
