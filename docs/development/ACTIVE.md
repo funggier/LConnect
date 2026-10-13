@@ -32,7 +32,7 @@ Last updated: 2026-10-13
 
 ## Active task
 
-No active development task.
+[LCN-061 — Godot Development Support & Operator Console Hold UX](tasks/LCN-061-godot-development-console-hold.md) — **ACTIVE**
 
 Latest completed task: [LCN-060 — Windows Long Path Compatibility Hardening](tasks/LCN-060-windows-long-path-compatibility.md) — **COMPLETE / DEPLOYED / LIVE GREEN**
 
@@ -58,7 +58,7 @@ Latest completed task: [LCN-055 — Tool Surface Cleanup & Contract Normalizatio
 
 Implementation: `885229e72380882aa6239996d0647a33e4148400` / CI #167 run `37003411662` SUCCESS. Closure docs: `ea3935eee1ab0f7fa3c2d301487fcc58ecd71390` / CI #168 run `37004582819` SUCCESS. Live runtime: `1.2.2 / 154 tools`, PID `4704`, no duplicate tool names, source/install qualified at 245/245 exact before closure-doc sync.
 
-Current direction: v1.3.1 remains the immutable published baseline. LCN-060 long-path hardening is deployed/live GREEN on current main; future work should open a new numbered task from fresh GitHub/runtime evidence.
+Current direction: v1.3.1 remains the immutable published baseline. LCN-061 is active to add Godot Development Module support and harden user-facing Status/Stop console hold behavior without expanding the 154-tool public surface.
 
 Previous completed task: [LCN-023 — Chrome Adapter](tasks/LCN-023-chrome-adapter.md) — **COMPLETE**
 
@@ -111,4 +111,4 @@ Previous report: [reports/LCN-20261002-021-browser-common-layer.md](reports/LCN-
 
 ## Next action
 
-LCN-060 is COMPLETE / DEPLOYED / LIVE GREEN. No active development task. Preserve v1.3.1, v1.3.0 and v1.2.2 immutable release/tag evidence and do not reset/clean the worktree.
+LCN-061 is ACTIVE. Implement Godot development support plus reliable Status/Stop console hold UX, qualify locally/CI/installed/live, and preserve v1.3.1, v1.3.0 and v1.2.2 immutable release/tag evidence.

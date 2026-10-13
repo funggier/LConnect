@@ -90,8 +90,10 @@ try {
   tempRoot = await fsp.mkdtemp(path.join(os.tmpdir(), "lconnect-development-smoke-"));
   const nodeProject = path.join(tempRoot, "node-project");
   const pythonProject = path.join(tempRoot, "python-project");
+  const godotProject = path.join(tempRoot, "godot-project");
   await fsp.mkdir(nodeProject, { recursive: true });
   await fsp.mkdir(pythonProject, { recursive: true });
+  await fsp.mkdir(godotProject, { recursive: true });
 
   const packageJson = {
     name: "lconnect-development-fixture",
@@ -117,6 +119,42 @@ try {
     "utf8"
   );
 
+  await fsp.writeFile(
+    path.join(godotProject, "project.godot"),
+    [
+      "config_version=5",
+      "",
+      "[application]",
+      "config/name=\"Godot Fixture\"",
+      "config/version=\"0.1.0\"",
+      "run/main_scene=\"res://main.tscn\"",
+      "config/features=PackedStringArray(\"4.5\", \"GL Compatibility\")",
+      "",
+    ].join("\n"),
+    "utf8"
+  );
+  await fsp.writeFile(
+    path.join(godotProject, "export_presets.cfg"),
+    '[preset.0]\nname="Windows Desktop"\nplatform="Windows Desktop"\n',
+    "utf8"
+  );
+  await fsp.writeFile(
+    path.join(godotProject, "test_runner.gd"),
+    "extends SceneTree\nfunc _init():\n    print(\"TEST_RUNNER\")\n    quit()\n",
+    "utf8"
+  );
+
+  const fakeGodot = path.join(
+    tempRoot,
+    process.platform === "win32" ? "godot-fixture.cmd" : "godot-fixture.sh"
+  );
+  if (process.platform === "win32") {
+    await fsp.writeFile(fakeGodot, "@echo off\r\necho GODOT_FAKE %*\r\nexit /b 0\r\n", "utf8");
+  } else {
+    await fsp.writeFile(fakeGodot, "#!/bin/sh\necho \"GODOT_FAKE $*\"\nexit 0\n", "utf8");
+    await fsp.chmod(fakeGodot, 0o755);
+  }
+
   const detected = await callJson("detect_project", { project_path: nodeProject });
   if (!detected.data.detected || detected.data.primary_type !== "node") {
     throw new Error(`detect_project did not identify Node project: ${JSON.stringify(detected.data)}`);
@@ -134,6 +172,30 @@ try {
   const info = await callJson("project_info", { project_path: nodeProject });
   if (info.data.node?.name !== "lconnect-development-fixture") {
     throw new Error(`project_info did not return package metadata: ${JSON.stringify(info.data)}`);
+  }
+
+  const godotDetected = await callJson("detect_project", { project_path: godotProject });
+  if (!godotDetected.data.detected || godotDetected.data.primary_type !== "godot") {
+    throw new Error(`detect_project did not identify Godot project: ${JSON.stringify(godotDetected.data)}`);
+  }
+  if (!godotDetected.data.evidence.some((item) => item.type === "godot" && item.files.includes("project.godot"))) {
+    throw new Error("Godot detection did not preserve project.godot evidence");
+  }
+
+  const godotBuildSystem = await callJson("detect_build_system", { project_path: godotProject });
+  const godotSystem = godotBuildSystem.data.systems.find((item) => item.type === "godot");
+  if (!godotSystem || !godotSystem.execution_supported || !godotSystem.export_presets_present) {
+    throw new Error(`Godot build-system detection was incomplete: ${JSON.stringify(godotBuildSystem.data)}`);
+  }
+
+  const godotInfo = await callJson("project_info", { project_path: godotProject });
+  if (
+    godotInfo.data.godot?.name !== "Godot Fixture" ||
+    godotInfo.data.godot?.version !== "0.1.0" ||
+    godotInfo.data.godot?.main_scene !== "res://main.tscn" ||
+    !godotInfo.data.godot?.features?.includes("4.5")
+  ) {
+    throw new Error(`project_info did not return Godot metadata: ${JSON.stringify(godotInfo.data)}`);
   }
 
   const pythonDetected = await callJson("detect_build_system", { project_path: pythonProject });
@@ -172,14 +234,79 @@ try {
     project_path: nodeProject,
   }, "LINT_OK");
 
+  const godotImport = await runAndExpect("run_build", {
+    project_path: godotProject,
+    godot_program: fakeGodot,
+  }, "GODOT_FAKE");
+  if (
+    !godotImport.operation.command.args.includes("--headless") ||
+    !godotImport.operation.command.args.includes("--path") ||
+    !godotImport.operation.command.args.includes("--import")
+  ) {
+    throw new Error(`Godot default build did not use headless import: ${JSON.stringify(godotImport.operation)}`);
+  }
+
+  const godotExport = await runAndExpect("run_build", {
+    project_path: godotProject,
+    godot_program: fakeGodot,
+    godot_mode: "export-release",
+    godot_export_preset: "Windows Desktop",
+    godot_output_path: "build/game.exe",
+  }, "GODOT_FAKE");
+  const exportArgs = godotExport.operation.command.args;
+  if (
+    !exportArgs.includes("--export-release") ||
+    !exportArgs.includes("Windows Desktop") ||
+    !exportArgs.includes("build/game.exe")
+  ) {
+    throw new Error(`Godot export contract was not preserved: ${JSON.stringify(godotExport.operation)}`);
+  }
+
+  const missingGodotRunner = await callJson("run_tests", {
+    project_path: godotProject,
+    godot_program: fakeGodot,
+  }, true);
+  if (!missingGodotRunner.isError || !String(missingGodotRunner.data).includes("godot_script")) {
+    throw new Error(`Godot tests did not require an explicit runner: ${String(missingGodotRunner.data)}`);
+  }
+
+  const godotTests = await runAndExpect("run_tests", {
+    project_path: godotProject,
+    godot_program: fakeGodot,
+    godot_script: "res://test_runner.gd",
+    extra_args: ["--suite", "smoke"],
+  }, "GODOT_FAKE");
+  const godotTestArgs = godotTests.operation.command.args;
+  if (
+    !godotTestArgs.includes("--script") ||
+    !godotTestArgs.includes("res://test_runner.gd") ||
+    !godotTestArgs.includes("--")
+  ) {
+    throw new Error(`Godot test-runner contract was not preserved: ${JSON.stringify(godotTests.operation)}`);
+  }
+
+  const godotLint = await runAndExpect("run_lint", {
+    project_path: godotProject,
+    godot_program: fakeGodot,
+  }, "GODOT_FAKE");
+  if (!godotLint.operation.command.args.includes("--import")) {
+    throw new Error(`Godot lint/validation did not use headless import: ${JSON.stringify(godotLint.operation)}`);
+  }
+
   const sessions = await callJson("list_sessions");
-  if (!Array.isArray(sessions.data) || sessions.data.length < 4) {
+  if (!Array.isArray(sessions.data) || sessions.data.length < 8) {
     throw new Error("Development operations did not use the shared process-session registry");
   }
 
   console.log("detect_project Node evidence: PASS");
   console.log("detect_build_system npm/scripts: PASS");
   console.log("project_info Node metadata: PASS");
+  console.log("Godot project/build-system detection: PASS");
+  console.log("Godot project_info metadata: PASS");
+  console.log("Godot headless import/build managed session: PASS");
+  console.log("Godot export-release argument contract: PASS");
+  console.log("Godot explicit test-runner contract: PASS");
+  console.log("Godot lint/import validation managed session: PASS");
   console.log("unsupported Python execution explicit: PASS");
   console.log("install_dependencies managed session: PASS");
   console.log("run_build managed session: PASS");

@@ -690,3 +690,7 @@ Closure: initial implementation `5c82674a0907ba87980c48c9e3397bbbffda3a14` / CI 
 ## LCN-059 v1.3.1 Operational Hardening Release — COMPLETE / PUBLISHED / DEPLOYED / LIVE GREEN
 
 Packaged qualified LCN-057/058 work as patch release v1.3.1 with the public catalog unchanged at 154 tools. Closure: exact release commit `e12bb90b4246ea4bb487894e6f3b6ddb96210d14`; CI #180 SUCCESS; clean install + overlay PASS; production activation 1.3.1 / 154 tools with 261/261 exact parity; annotated tag `v1.3.1`; 12 assets published and downloaded-back with zero hash mismatch; v1.3.0 and v1.2.2 unchanged.
+
+## LCN-061 Godot Development Support & Operator Console Hold UX — ACTIVE
+
+Extend the existing Development Module without adding public tools: detect `project.godot`, expose Godot project/build metadata, run headless import/validation and explicit release/debug exports, support explicit Godot test-runner scripts, and retain managed-session execution. Replace the fragile plain `pause` boundary in `Status-LConnect.cmd` / `Stop-LConnect.cmd` with a reusable console hold helper that drains buffered keys, has a redirected-input fallback, preserves the original exit code, and provides `--no-hold` for automation. Public MCP catalog target remains 154 tools.

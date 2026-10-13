@@ -708,6 +708,7 @@ remove ไม่ force โดย default
 
 ตรวจ project type จากไฟล์ evidence ใน project root เช่น:
 
+- Godot: `project.godot` (และ `export_presets.cfg` เป็น optional evidence)
 - Node: `package.json`
 - Python: `pyproject.toml`, `requirements.txt`
 - Rust: `Cargo.toml`
@@ -720,7 +721,9 @@ remove ไม่ force โดย default
 
 รายงาน build/package system และ execution support
 
-รุ่นปัจจุบัน execute Node projects ก่อนเป็น baseline
+รุ่นปัจจุบันมี execution contract สำหรับ **Godot และ Node** ส่วน ecosystem อื่นยังรายงาน detection แต่ไม่เดาคำสั่ง execution
+
+Godot ใช้ `project.godot` เป็น identity ของ project และรองรับ binary จาก `godot_program`, environment `GODOT_BIN` หรือ `godot.exe`/`godot` ใน PATH
 
 Node package manager ตรวจจาก:
 
@@ -730,7 +733,7 @@ Node package manager ตรวจจาก:
 
 ### project_info
 
-รวม project evidence + build systems + Node package metadata เช่น scripts, engines และ dependency counts
+รวม project evidence + build systems + metadata ของ Godot/Node โดย Godot รายงานชื่อ project, version, main scene, feature tags, export preset presence และ .NET project evidence; Node รายงาน scripts, engines และ dependency counts
 
 ### install_dependencies
 
@@ -749,15 +752,20 @@ Node managers:
 
 ### run_build / run_tests / run_lint
 
-เริ่ม package script เป็น managed process session
+ทุก operation คืน managed process `session_id` ทันที
 
-ค่า default script:
+Node:
 
-- build
-- test
-- lint
+- ใช้ package script `build`, `test`, `lint` เป็นค่า default
+- รองรับเลือก script/manager/extra args/env
 
-รองรับเลือก script/manager/extra args/env
+Godot:
+
+- `run_build` ค่า default ใช้ `--headless --path <project> --import` สำหรับ import/validation
+- `run_build` รองรับ `godot_mode=export-release|export-debug` เมื่อระบุ `godot_export_preset` และ `godot_output_path`
+- `run_tests` ต้องระบุ `godot_script` สำหรับ test framework/custom SceneTree/MainLoop runner; LConnect ไม่สมมติว่า Godot core มี project-level test framework
+- `run_lint` ใช้ headless import/validation เพื่อจับ project/script import errors โดยไม่เปิด editor window
+- ระบุ executable ได้ด้วย `godot_program`; ถ้าไม่ระบุจะใช้ `GODOT_BIN` หรือค่า PATH/default
 
 ถ้า project ecosystem ตรวจพบแต่ execution contract ยังไม่รองรับ จะคืน error ชัดเจนแทนการเดาคำสั่ง
 
