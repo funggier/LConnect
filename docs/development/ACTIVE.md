@@ -10,9 +10,9 @@ Last updated: 2026-10-17
 - Release URL: https://github.com/funggier/LConnect/releases/tag/v1.3.1
 - Release tag target: `e12bb90b4246ea4bb487894e6f3b6ddb96210d14`
 - Release CI: `37819874520` / #180 — PASS
-- Source version: `1.3.1`
+- Source version: `1.3.2`
 - Current source catalog: **154 tools**
-- Installed/running daemon baseline: **1.3.1 / 154 tools**; use `runtime_catalog` for the volatile current PID
+- Installed/running daemon before v1.3.2 activation: **1.3.1 / 154 tools**; use `runtime_catalog` for the volatile current PID
 - Running catalog digest: `2ca33225b970dd70e1350d7b4e3d9290116448181031872d643111ae7ab4c374`
 - Direct ChatGPT/LConnect runtime catalog: **154 tools** on v1.3.1; managed Firefox/Chrome and 6 live-browser UIA tools remain loaded. A conversation connected before a schema change may require connector/schema reconnect before newly added schema fields are directly callable
 - LCN-046: COMPLETE — original round-boundary implementation; handler-sum enforcement superseded by LCN-047 evidence
@@ -32,9 +32,11 @@ Last updated: 2026-10-17
 
 ## Active task
 
-No active development task.
+[LCN-063 — v1.3.2 Connection Lifecycle & Context Efficiency Release](tasks/LCN-063-v1.3.2-connection-context-efficiency-release.md) — **ACTIVE**
 
-Latest completed task: [LCN-062 — Context Efficiency & Conditional Read Cache](tasks/LCN-062-context-efficiency-conditional-read-cache.md) — **COMPLETE / DEPLOYED / RUNTIME GREEN — CHATGPT SCHEMA REFRESH REQUIRED FOR NEW INPUT FIELDS**
+Release target: **v1.3.2 / 154 tools**. The release packages the already-qualified LCN-060/062 work plus the separated connection-settings/API-key lifecycle. Prior v1.3.1/v1.3.0/v1.2.2 tags and releases remain immutable.
+
+Latest completed development task: [LCN-062 — Context Efficiency & Conditional Read Cache](tasks/LCN-062-context-efficiency-conditional-read-cache.md) — **COMPLETE / DEPLOYED / RUNTIME GREEN**
 
 LCN-062 extends the existing 154-tool `batch_inspect` contract with SHA-256 conditional results and an opt-in bounded digest-only cache. Default remains freshness-first (`cache_max_age_ms: 0`); unchanged fresh reads suppress duplicate result bodies, while positive TTL may skip execution only when the caller supplies a matching `known_digest`. Result content is never retained by this cache.
 
@@ -64,7 +66,7 @@ Latest completed task: [LCN-055 — Tool Surface Cleanup & Contract Normalizatio
 
 Implementation: `885229e72380882aa6239996d0647a33e4148400` / CI #167 run `37003411662` SUCCESS. Closure docs: `ea3935eee1ab0f7fa3c2d301487fcc58ecd71390` / CI #168 run `37004582819` SUCCESS. Live runtime: `1.2.2 / 154 tools`, PID `4704`, no duplicate tool names, source/install qualified at 245/245 exact before closure-doc sync.
 
-Current direction: v1.3.1 remains the immutable published baseline. LCN-060 long-path hardening is deployed/live GREEN on current main; future work should open a new numbered task from fresh GitHub/runtime evidence.
+Current direction: v1.3.1 remains the immutable published baseline while LCN-063 prepares v1.3.2 from the qualified post-v1.3.1 mainline.
 
 Previous completed task: [LCN-023 — Chrome Adapter](tasks/LCN-023-chrome-adapter.md) — **COMPLETE**
 
@@ -117,4 +119,4 @@ Previous report: [reports/LCN-20261002-021-browser-common-layer.md](reports/LCN-
 
 ## Next action
 
-LCN-062 is complete at the source/deployment/runtime boundary. No active development task. Refresh/reload the LConnect connector/plugin when a ChatGPT client needs the new `batch_inspect` input fields. Preserve v1.3.1, v1.3.0 and v1.2.2 immutable release/tag evidence and do not reset/clean the worktree.
+LCN-063 is the active release task. Qualify the exact release commit, activate runtime 1.3.2 / 154 tools, publish immutable v1.3.2 assets, then close the release without moving prior tags. Preserve v1.3.1, v1.3.0 and v1.2.2 immutable evidence.

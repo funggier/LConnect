@@ -171,7 +171,7 @@ Agent Operations Reliability plan:
 
 Desktop Control ชุด LCN-018–020 **COMPLETE / live GREEN** แล้ว: Clipboard, Window Control และ Keyboard/Mouse; Browser Automation ตามแผน LCN-021–023 **COMPLETE / live GREEN** แล้ว: Common Layer + Firefox primary + Chrome secondary
 
-LCN-054 Browser Hardening/Live UIA และ LCN-055 Tool Surface Cleanup **COMPLETE / DEPLOYED / LIVE GREEN** แล้ว; v1.3.0 เผยแพร่ immutable ที่ 154 tools. ปัจจุบัน v1.3.1 release candidate ยังคง **154 tools** โดยรวม LCN-057 security/operational hardening และ LCN-058 optional AtLogOn persistence แบบ opt-in; v1.2.2 ยังคงเป็น immutable historical 122-tool release baseline.
+LCN-054 Browser Hardening/Live UIA และ LCN-055 Tool Surface Cleanup **COMPLETE / DEPLOYED / LIVE GREEN** แล้ว; v1.3.0 เผยแพร่ immutable ที่ 154 tools. ปัจจุบัน v1.3.2 release candidate ยังคง **154 tools** โดยรวม post-v1.3.1 long-path hardening, LCN-062 conditional read cache และ separated connection-settings/API-key lifecycle; v1.2.2 ยังคงเป็น immutable historical 122-tool release baseline.
 
 Browser direction:
 

@@ -1,6 +1,6 @@
 # รายการ Tools ของ LConnect
 
-LConnect v1.3.1 source/runtime expose **154 tools** ผ่าน MCP `main` channel เดียว โดยคง Desktop/Browser/Live UIA capability ของ v1.3.0 และเพิ่ม operational hardening/operator tooling โดยไม่เพิ่ม public MCP tool
+LConnect v1.3.2 source/runtime expose **154 tools** ผ่าน MCP `main` channel เดียว โดยคง Desktop/Browser/Live UIA capability ของ v1.3.0 และเพิ่ม operational hardening/operator tooling โดยไม่เพิ่ม public MCP tool
 
 ## Tool Surface Policy
 

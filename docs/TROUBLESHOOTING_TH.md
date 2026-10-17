@@ -102,7 +102,7 @@ Node ESM modules ถูกโหลดตอน Core start
 - daemon เป็น catalog ใหม่ แต่ ChatGPT ยังเห็น tool เก่า → Refresh Plugin/Connector
 - source↔installed tracked parity ไม่ตรง → แก้ deployment ก่อน restart
 
-สำหรับ v1.3.1 runtime ที่ activation สำเร็จควรรายงาน version `1.3.1` และ **154 tools**; ถ้ายังเห็น `1.3.0 / 154 tools` แสดงว่า source อาจอัปเดตแล้วแต่ daemon ยังไม่ได้ restart หลัง patch upgrade; `1.2.2 / 122 tools` คือ historical baseline ที่เก่ากว่า
+สำหรับ v1.3.2 runtime ที่ activation สำเร็จควรรายงาน version `1.3.2` และ **154 tools**; ถ้ายังเห็น `1.3.1 / 154 tools` แสดงว่า source อัปเดตแล้วแต่ daemon ยังไม่ได้ restart หลัง release activation; `1.2.2 / 122 tools` คือ historical baseline ที่เก่ากว่า
 
 ดังนั้นเมื่ออัปเดต source:
 

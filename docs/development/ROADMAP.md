@@ -698,3 +698,9 @@ Packaged qualified LCN-057/058 work as patch release v1.3.1 with the public cata
 Reduced repeated model-context payload without adding a new public tool. `batch_inspect` now exposes SHA-256 digests; callers can supply a previous digest for conditional not-modified responses. Default TTL is zero and therefore revalidates against live state; unchanged results suppress duplicate bodies. An explicit positive TTL may short-circuit execution through a bounded digest-only metadata cache. The cache never retains result content, errors are not cached, and the public catalog remains 154 tools.
 
 Closure: implementation `4b9f6beeeb12351f42bf44de1362bd2543024f5e`; exact-commit CI #189 / run `39020912202` SUCCESS; tracked-only deployment; installed-tree cache smoke PASS; secure restart to runtime 1.3.1 / PID 30876 / 154 tools; activation parity 267/267 exact; credential hash preserved. An already-open ChatGPT client must refresh/reload the LConnect connector/plugin to expose the new input fields after the schema change.
+
+# Phase 11 — v1.3.2 Connection Lifecycle & Context Efficiency Release — ACTIVE
+
+## LCN-063 v1.3.2 Connection Lifecycle & Context Efficiency Release
+
+Publish the qualified post-v1.3.1 mainline as v1.3.2 while retaining the 154-tool public surface. Scope includes LCN-060 Windows Git long-path compatibility, LCN-062 conditional read/cache support, separated Tunnel/Organization/health-port settings and API-key-only DPAPI credential lifecycle. Exact release-commit CI, tracked deployment, live activation, immutable tag and checksum-verified assets are mandatory.

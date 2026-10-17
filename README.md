@@ -10,21 +10,22 @@
 
 ## สถานะปัจจุบัน
 
-- Source version: **1.3.1**
+- Source version: **1.3.2**
 - MCP catalog on current `main`: **154 tools**
 - Tool-surface policy: [`docs/TOOL_SURFACE_POLICY.md`](docs/TOOL_SURFACE_POLICY.md)
-- Release: **[v1.3.1 — Operational Hardening & Optional Autostart](https://github.com/funggier/LConnect/releases/tag/v1.3.1)**
+- Release target: **v1.3.2 — Connection Lifecycle & Context Efficiency**
 - OpenAI tunnel-client minimum: **0.0.14**
 
 LConnect Core ผ่าน runtime acceptance บน Windows 10 แล้ว โดย current `main` แสดง 154 tools ครอบคลุม filesystem, shell, managed process/session, system/network/hardware, Git, GitHub Actions/Release, structured inspection, browser automation แบบ isolated, live browser control ผ่าน Windows UI Automation, runtime/delivery evidence, deployment verification และ turn-risk observation แบบไม่บล็อกการทำงาน
 
-## ไฮไลต์ v1.3.1
+## ไฮไลต์ v1.3.2
 
 - แยก connection state ออกจาก secret: Tunnel ID / Organization ID / health port อยู่ใน `local-secrets\lconnect-settings.json`
 - เก็บเฉพาะ Runtime API key แบบเข้ารหัสใน `local-secrets\credentials.json.enc` ด้วย **Windows DPAPI / CurrentUser** และ restricted ACL
 - `Setup-LConnect.cmd` ถาม Tunnel ID / Runtime API key / Organization ID / health port ทีละค่าและสร้าง `mcp-conf.yaml` อัตโนมัติ
 - `Start-LConnect.cmd` reuse ค่าที่บันทึกไว้ และถามเฉพาะค่าที่หาย; installation รุ่นเก่าสามารถ migrate profile/credential เดิมได้
 - `Clear-LConnectSettings.cmd` ล้างได้แยก `credential`, `connection`, หรือ `all` โดยล้าง connection แล้วยังเก็บ API key ได้
+- `batch_inspect` รองรับ `known_digest` + `cache_max_age_ms` พร้อม SHA-256 conditional results, freshness-first revalidation และ bounded digest-only metadata cache โดยไม่เก็บ result content
 - `Restart-LConnect.cmd` ใช้ detached worker เพื่อคืนผลก่อนหยุด tunnel เดิม แล้ว start LConnect ใหม่แบบ non-interactive
 - Runtime API key ไม่ถูกส่งผ่าน restart command line
 - `local-secrets/` ถูก preserve ระหว่าง deploy/update/refresh และไม่รวมใน release ZIP
@@ -454,6 +455,10 @@ Repo นี้ตั้งใจ **ไม่เก็บการกำหนด
 - ChatGPT Web ผ่าน browser บนสมาร์ทโฟน
 
 โครงสร้างถูกออกแบบให้เพิ่ม module ใหม่ภายหลังได้โดยไม่ต้องเปลี่ยน tunnel-facing architecture
+
+### v1.3.2 connection lifecycle & context efficiency
+
+v1.3.2 คง public surface ที่ **154 tools** และรวมงานหลัง v1.3.1 ที่ผ่าน qualification แล้ว: Windows Git long-path compatibility, conditional read/cache contract ของ `batch_inspect`, separated Tunnel/Organization/health-port settings, API-key-only DPAPI credential, deterministic Setup/Clear lifecycle และ refreshed schema qualification จาก ChatGPT. v1.3.1 ยังคงเป็น immutable historical release.
 
 ### v1.3.1 operational hardening
 
