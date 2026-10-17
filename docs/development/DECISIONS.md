@@ -537,3 +537,24 @@ It preserves local configuration, tunnel client, dependencies, source, Scheduled
 **Decision:** No MCP tool is added for this feature; the public catalog remains 154 tools.
 
 **Why:** Persistence changes machine behavior across logons, so it must be an explicit operator choice with a narrow identity boundary and no secret material in task metadata or command lines.
+
+
+---
+
+## D-043 — Tunnel connection settings are separated from the Runtime API key
+
+**Decision:** Tunnel ID, Organization ID and local health port are local connection settings stored in `local-secrets/lconnect-settings.json`. The Runtime API key is stored separately in `local-secrets/credentials.json.enc` using Windows DPAPI / CurrentUser.
+
+**Decision:** New credentials are API-key-only. The credential reader remains backward-compatible with the earlier combined API-key + Organization payload so existing installations can migrate without losing their saved secret.
+
+**Decision:** `Setup-LConnect.cmd` is the primary connection setup entry point. It collects Tunnel ID, Runtime API key, Organization ID and health port, then generates `mcp-conf.yaml` from the separated local settings. `Start-LConnect.ps1` may migrate the previous hand-maintained profile + combined credential once, then rewrites the credential to API-key-only.
+
+**Decision:** `Clear-LConnectSettings.cmd` has independent `credential`, `connection` and `all` modes. Clearing connection settings removes Tunnel ID / Organization ID / port and the generated profile while preserving the API key; any legacy Organization value inside the encrypted credential is removed during that operation.
+
+**Decision:** Restart and AtLogOn autostart require both connection settings and a decryptable API-key credential. Neither secret material nor Organization ID is placed in Task Scheduler metadata or command lines.
+
+**Decision:** This operational change adds no MCP tools; the public catalog remains 154 tools.
+
+**Supersedes:** The persistence details in D-025 and D-042 that described Organization ID as being resolved from the encrypted credential. Their local-only and no-secret-in-Task-Scheduler boundaries remain in force.
+
+**Why:** Tunnel identity/configuration and secret credential lifecycle have different reset/reuse needs. Separating them makes first-run, partial clear, reconnect, restart and copied-runtime workflows deterministic without weakening the existing DPAPI secret boundary.

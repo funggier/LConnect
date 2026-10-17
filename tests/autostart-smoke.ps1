@@ -1,6 +1,7 @@
 $ErrorActionPreference = 'Stop'
 $SourceRoot = Split-Path -Parent $PSScriptRoot
 $Helper = Join-Path $SourceRoot 'scripts\LConnectAutostart.ps1'
+$ConnectionHelper = Join-Path $SourceRoot 'scripts\ConnectionSettings.ps1'
 $TempRoot = Join-Path $env:TEMP ('lconnect-autostart-smoke-' + [Guid]::NewGuid().ToString('N'))
 
 function Assert-True {
@@ -11,18 +12,21 @@ function Assert-True {
 try {
     New-Item -ItemType Directory -Force -Path $TempRoot | Out-Null
     Set-Content -LiteralPath (Join-Path $TempRoot 'Start-LConnect.ps1') -Value 'param([switch]$NonInteractive)' -Encoding UTF8
-    Set-Content -LiteralPath (Join-Path $TempRoot 'mcp-conf.yaml') -Value 'fixture: true' -Encoding UTF8
 
+    . $ConnectionHelper
     . $Helper
 
     $SyntheticKey = 'synthetic-runtime-key-LCN058-smoke'
     $SyntheticOrg = 'org-synthetic-LCN058-smoke'
-    Write-LConnectStoredCredential -Root $TempRoot -RuntimeApiKey $SyntheticKey -OrganizationId $SyntheticOrg | Out-Null
+    Save-LConnectConnectionSettings -Root $TempRoot -TunnelId 'tunnel-synthetic-LCN058-smoke' -OrganizationId $SyntheticOrg -HealthPort 18125 | Out-Null
+    Write-LConnectProfile -Root $TempRoot | Out-Null
+    Write-LConnectStoredCredential -Root $TempRoot -RuntimeApiKey $SyntheticKey | Out-Null
 
     $Preflight = Test-LConnectAutostartPreflight -Root $TempRoot
-    Assert-True $Preflight.ok 'autostart preflight should pass with local profile/start/DPAPI credential'
+    Assert-True $Preflight.ok 'autostart preflight should pass with local settings/profile/start/DPAPI credential'
+    Assert-True $Preflight.connection_settings_ready 'autostart preflight connection settings check failed'
     Assert-True $Preflight.credential_decrypt_pass 'autostart preflight credential decrypt failed'
-    Write-Host 'autostart DPAPI/profile/start preflight: PASS'
+    Write-Host 'autostart settings/DPAPI/profile/start preflight: PASS'
 
     $Spec = Get-LConnectAutostartSpec -Root $TempRoot
     Assert-True ($Spec.task_name -eq 'LConnect Autostart') 'default task name mismatch'

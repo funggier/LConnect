@@ -1,6 +1,7 @@
 $ErrorActionPreference = 'Stop'
 $SourceRoot = Split-Path -Parent $PSScriptRoot
 $Helper = Join-Path $SourceRoot 'scripts\SecureCredential.ps1'
+$ConnectionHelper = Join-Path $SourceRoot 'scripts\ConnectionSettings.ps1'
 $TempRoot = Join-Path $env:TEMP ('lconnect-secure-credential-smoke-' + [Guid]::NewGuid().ToString('N'))
 
 function Assert-True {
@@ -70,7 +71,10 @@ try {
     New-Item -ItemType Directory -Force -Path (Join-Path $FixtureRoot 'scripts') | Out-Null
     Copy-Item -LiteralPath (Join-Path $SourceRoot 'Restart-LConnect.ps1') -Destination (Join-Path $FixtureRoot 'Restart-LConnect.ps1')
     Copy-Item -LiteralPath $Helper -Destination (Join-Path $FixtureRoot 'scripts\SecureCredential.ps1')
+    Copy-Item -LiteralPath $ConnectionHelper -Destination (Join-Path $FixtureRoot 'scripts\ConnectionSettings.ps1')
     Copy-Item -LiteralPath (Join-Path $SourceRoot 'scripts\Restart-LConnectWorker.ps1') -Destination (Join-Path $FixtureRoot 'scripts\Restart-LConnectWorker.ps1')
+    . $ConnectionHelper
+    Save-LConnectConnectionSettings -Root $FixtureRoot -TunnelId 'tunnel-restart-fixture' -OrganizationId 'org-restart-fixture' -HealthPort 18126 | Out-Null
     $PreviousErrorActionPreference = $ErrorActionPreference
     $ErrorActionPreference = 'Continue'
     $RestartOutput = & powershell.exe -NoLogo -NoProfile -NonInteractive -ExecutionPolicy Bypass -File (Join-Path $FixtureRoot 'Restart-LConnect.ps1') 2>&1 | Out-String

@@ -6,10 +6,15 @@ $script:LConnectAutostartOwnerVersion = 1
 $script:LConnectAutostartOwnerPrefix = 'LConnect.Autostart.Owner'
 
 $CredentialHelper = Join-Path $PSScriptRoot 'SecureCredential.ps1'
+$ConnectionHelper = Join-Path $PSScriptRoot 'ConnectionSettings.ps1'
 if (-not (Test-Path -LiteralPath $CredentialHelper -PathType Leaf)) {
     throw "AUTOSTART_HELPER_INVALID: Missing secure credential helper: $CredentialHelper"
 }
+if (-not (Test-Path -LiteralPath $ConnectionHelper -PathType Leaf)) {
+    throw "AUTOSTART_HELPER_INVALID: Missing connection settings helper: $ConnectionHelper"
+}
 . $CredentialHelper
+. $ConnectionHelper
 
 function Normalize-LConnectAutostartRoot {
     [CmdletBinding()]
@@ -150,10 +155,13 @@ function Test-LConnectAutostartPreflight {
     $Start = Join-Path $NormalizedRoot 'Start-LConnect.ps1'
     $Profile = Join-Path $NormalizedRoot 'mcp-conf.yaml'
     $Credential = Get-LConnectCredentialStatus -Root $NormalizedRoot
+    $ConnectionSettings = $null
+    try { $ConnectionSettings = Get-LConnectConnectionSettings -Root $NormalizedRoot } catch {}
     $Result = [ordered]@{
         ok = $false
         root = $NormalizedRoot
         start_script_exists = (Test-Path -LiteralPath $Start -PathType Leaf)
+        connection_settings_ready = ($null -ne $ConnectionSettings)
         profile_exists = (Test-Path -LiteralPath $Profile -PathType Leaf)
         credential_exists = [bool]$Credential.exists
         credential_decrypt_pass = [bool]$Credential.decrypt_pass
@@ -162,6 +170,9 @@ function Test-LConnectAutostartPreflight {
     }
     if (-not $Result.start_script_exists) {
         $Result.error_code = 'AUTOSTART_START_SCRIPT_MISSING'
+    }
+    elseif (-not $Result.connection_settings_ready) {
+        $Result.error_code = 'AUTOSTART_CONNECTION_SETTINGS_NOT_CONFIGURED'
     }
     elseif (-not $Result.profile_exists) {
         $Result.error_code = 'AUTOSTART_PROFILE_MISSING'
@@ -326,6 +337,7 @@ function Get-LConnectAutostartStatus {
         principal_logon_type = if ($Task.found) { $Task.principal_logon_type } else { $null }
         principal_run_level = if ($Task.found) { $Task.principal_run_level } else { $null }
         credential_ready = [bool]$Preflight.credential_decrypt_pass
+        connection_settings_ready = [bool]$Preflight.connection_settings_ready
         profile_ready = [bool]$Preflight.profile_exists
         start_script_ready = [bool]$Preflight.start_script_exists
         preflight_ok = [bool]$Preflight.ok
@@ -353,7 +365,7 @@ function Install-LConnectAutostart {
     $Spec = Get-LConnectAutostartSpec -Root $Root -TaskName $TaskName -TaskPath $TaskPath
     $Preflight = Test-LConnectAutostartPreflight -Root $Spec.root
     if (-not $Preflight.ok) {
-        throw "$($Preflight.error_code): Autostart preflight failed. Configure mcp-conf.yaml and a decryptable DPAPI CurrentUser credential first."
+        throw "$($Preflight.error_code): Autostart preflight failed. Run Setup-LConnect.cmd so connection settings/profile and a decryptable DPAPI CurrentUser API key are available."
     }
 
     $Before = Get-LConnectAutostartTaskDetails -TaskName $Spec.task_name -TaskPath $Spec.task_path

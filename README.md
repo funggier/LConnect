@@ -20,11 +20,11 @@ LConnect Core ผ่าน runtime acceptance บน Windows 10 แล้ว โ
 
 ## ไฮไลต์ v1.3.1
 
-- เก็บ Runtime API key + Organization ID แบบเข้ารหัสใน `local-secrets\credentials.json.enc`
-- ใช้ **Windows DPAPI / CurrentUser** และจำกัด ACL ให้ Windows user ปัจจุบันกับ SYSTEM
-- `Start-LConnect.cmd` ใช้ลำดับ parameter > environment > stored DPAPI > interactive prompt
-- first run สามารถบันทึก credential แบบเข้ารหัสได้โดยไม่เก็บ plaintext secret ใน Git
-- เพิ่ม `Setup-LConnectCredential.cmd`, `Status-LConnectCredential.cmd` และ `Clear-LConnectCredential.cmd`
+- แยก connection state ออกจาก secret: Tunnel ID / Organization ID / health port อยู่ใน `local-secrets\lconnect-settings.json`
+- เก็บเฉพาะ Runtime API key แบบเข้ารหัสใน `local-secrets\credentials.json.enc` ด้วย **Windows DPAPI / CurrentUser** และ restricted ACL
+- `Setup-LConnect.cmd` ถาม Tunnel ID / Runtime API key / Organization ID / health port ทีละค่าและสร้าง `mcp-conf.yaml` อัตโนมัติ
+- `Start-LConnect.cmd` reuse ค่าที่บันทึกไว้ และถามเฉพาะค่าที่หาย; installation รุ่นเก่าสามารถ migrate profile/credential เดิมได้
+- `Clear-LConnectSettings.cmd` ล้างได้แยก `credential`, `connection`, หรือ `all` โดยล้าง connection แล้วยังเก็บ API key ได้
 - `Restart-LConnect.cmd` ใช้ detached worker เพื่อคืนผลก่อนหยุด tunnel เดิม แล้ว start LConnect ใหม่แบบ non-interactive
 - Runtime API key ไม่ถูกส่งผ่าน restart command line
 - `local-secrets/` ถูก preserve ระหว่าง deploy/update/refresh และไม่รวมใน release ZIP
@@ -64,15 +64,15 @@ ChatGPT
 1. Release ZIP vs Git clone
 2. การรัน `Install-LConnect.cmd`
 3. การหา Tunnel ID, Runtime API key และ Organization ID
-4. การสร้าง `mcp-conf.yaml` ด้วย `tunnel-client init`
-5. การเปิดไฟล์ตรวจ/แก้ค่า `tunnel_id`, `api_key`, `health.url_file` และ `main` MCP command
+4. การใช้ `Setup-LConnect.cmd` เพื่อกำหนด Tunnel ID / API key / Organization / health port
+5. การล้างค่าแบบแยก credential / connection / all และการสร้าง `mcp-conf.yaml` อัตโนมัติ
 6. การตรวจ `lconnect-config.json` และ Full-machine access
 7. การ Start / Status / อ่าน expected output
 8. การเชื่อม ChatGPT Connector และ refresh tool catalog
 9. First-run checklist และ troubleshooting
 
-**LConnect ไม่เก็บ Tunnel ID, tunnel profile หรือ Runtime API key ไว้ใน GitHub**
-ไฟล์ `mcp-conf.yaml` ถูก ignore โดย Git และผู้ใช้ต้องสร้าง/ดูแลเองในเครื่อง local
+**LConnect ไม่เก็บ Tunnel ID, Organization ID, tunnel profile หรือ Runtime API key ไว้ใน GitHub**
+`Setup-LConnect.cmd` เก็บค่า local-only ใต้ `local-secrets/` และสร้าง `mcp-conf.yaml` ให้อัตโนมัติ; ทั้งสองส่วนถูก ignore โดย Git
 
 ## ใช้จากสมาร์ทโฟน
 
@@ -100,10 +100,12 @@ ChatGPT
 ```text
 Install-LConnect.cmd
 Update-TunnelClient.cmd
+Setup-LConnect.cmd
 Start-LConnect.cmd
 Status-LConnect.cmd
 Stop-LConnect.cmd
 Restart-LConnect.cmd
+Clear-LConnectSettings.cmd
 Setup-LConnectCredential.cmd
 Status-LConnectCredential.cmd
 Clear-LConnectCredential.cmd
@@ -118,9 +120,19 @@ StatusTurnRisk-LConnect.cmd
 
 LConnect ต้องใช้ OpenAI tunnel-client `0.0.14` หรือใหม่กว่า เนื่องจากรุ่นเก่ามีปัญหา recovery ของ stdio หลัง response timeout/deadline ซึ่งอาจทำให้ process ยังขึ้นว่า ready แต่ MCP ใช้งานต่อไม่ได้
 
-## Secure local credential + self-restart
+## Local connection settings + secure Runtime API key
 
-LConnect รองรับการเก็บ Runtime API key และ Organization ID ไว้ในโฟลเดอร์โปรแกรมแบบเข้ารหัส:
+LConnect แยกข้อมูล connection ออกจาก secret:
+
+```text
+local-secrets\
+├─ lconnect-settings.json      # Tunnel ID / Organization ID / health port
+└─ credentials.json.enc        # Runtime API key, Windows DPAPI / CurrentUser
+```
+
+Runtime API key ถูกเก็บแบบเข้ารหัส ส่วน Organization ID ไม่จำเป็นต้องอยู่ใน encrypted credential รุ่นใหม่ และ `mcp-conf.yaml` ถูก generate จาก settings local โดยอัตโนมัติ
+
+ไฟล์ encrypted credential อยู่ในโฟลเดอร์โปรแกรมแบบ local-only:
 
 ```text
 local-secrets\
@@ -138,11 +150,13 @@ explicit parameter
   > interactive prompt
 ```
 
-ถ้าเป็นการเปิดครั้งแรกและไม่มี credential ที่ใช้ได้ `Start-LConnect.cmd` จะถาม Runtime API key / Organization ID และถามว่าจะบันทึกแบบเข้ารหัสไว้หรือไม่ โดยค่าเริ่มต้นคือบันทึก
+ถ้าเป็นการเปิดครั้งแรกหรือมีค่าบางส่วนถูกล้าง `Start-LConnect.cmd` จะเรียก setup แบบ `FillMissing` และถามเฉพาะค่าที่หาย
 
 คำสั่งจัดการ:
 
-- `Setup-LConnectCredential.cmd` — สร้าง/เปลี่ยน encrypted credential
+- `Setup-LConnect.cmd` — กำหนด Tunnel ID / API key / Organization ID / health port และสร้าง profile
+- `Clear-LConnectSettings.cmd` — ล้าง API key, connection settings หรือทั้งหมดแบบเลือกได้
+- `Setup-LConnectCredential.cmd` — compatibility/advanced helper สำหรับ encrypted credential
 - `Status-LConnectCredential.cmd` — ทดสอบว่าไฟล์อยู่และ decrypt ได้ โดยไม่แสดง secret
 - `Clear-LConnectCredential.cmd` — ลบ encrypted credential file
 - `Restart-LConnect.cmd` — schedule detached worker ให้ stop → start แบบ non-interactive
@@ -150,11 +164,11 @@ explicit parameter
 - `Status-LConnectAutostart.cmd` — ตรวจ exact task identity / action / trigger / principal / DPAPI readiness
 - `Remove-LConnectAutostart.cmd` — ลบเฉพาะ task ที่มี LConnect ownership marker ตรงกับ root/user นี้
 
-`Restart-LConnect.cmd` และ AtLogOn autostart ต้องมี stored credential ที่ decrypt ได้ เพื่อไม่ต้องส่ง Runtime API key ผ่าน command line
+`Restart-LConnect.cmd` และ AtLogOn autostart ต้องมีทั้ง separated connection settings และ stored API-key credential ที่ decrypt ได้ เพื่อไม่ต้องส่ง Runtime API key ผ่าน command line
 
-Autostart **ไม่ถูกเปิดโดย installer/update** ต้องสั่ง `Install-LConnectAutostart.cmd` เองเท่านั้น Scheduled Task ใช้ AtLogOn + Limited/Interactive principal และ action มีเพียง `Start-LConnect.ps1 -NonInteractive`; Runtime API key และ Organization ID ไม่ถูกเก็บไว้ใน Task Scheduler
+Autostart **ไม่ถูกเปิดโดย installer/update** ต้องสั่ง `Install-LConnectAutostart.cmd` เองเท่านั้น Scheduled Task ใช้ AtLogOn + Limited/Interactive principal และ action มีเพียง `Start-LConnect.ps1 -NonInteractive`; Runtime API key และ Organization ID ไม่ถูกเก็บไว้ใน Task Scheduler โดย Organization ID มาจาก local connection settings
 
-> DPAPI `CurrentUser` ผูกกับ Windows user/เครื่องเดิม การ copy `credentials.json.enc` ไปอีก user หรืออีกเครื่องโดยทั่วไปจะ decrypt ไม่ได้ ให้รัน `Setup-LConnectCredential.cmd` ใหม่
+> DPAPI `CurrentUser` ผูกกับ Windows user/เครื่องเดิม การ copy `credentials.json.enc` ไปอีก user หรืออีกเครื่องโดยทั่วไปจะ decrypt ไม่ได้ ให้รัน `Setup-LConnect.cmd` ใหม่
 
 ## Timeout containment
 

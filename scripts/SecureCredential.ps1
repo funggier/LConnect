@@ -140,16 +140,12 @@ function Write-LConnectStoredCredential {
     param(
         [Parameter(Mandatory=$true)][string]$Root,
         [Parameter(Mandatory=$true)][string]$RuntimeApiKey,
-        [Parameter(Mandatory=$true)][string]$OrganizationId
+        [string]$OrganizationId
     )
 
     if ([string]::IsNullOrWhiteSpace($RuntimeApiKey)) {
         throw 'CREDENTIAL_INVALID: Runtime API key is empty.'
     }
-    if ([string]::IsNullOrWhiteSpace($OrganizationId)) {
-        throw 'CREDENTIAL_INVALID: Organization ID is empty.'
-    }
-
     Initialize-LConnectDpapi
     $Directory = Initialize-LConnectSecretDirectory -Root $Root
     $Path = Get-LConnectCredentialPath -Root $Root
@@ -162,7 +158,9 @@ function Write-LConnectStoredCredential {
     try {
         $Payload = [ordered]@{
             runtime_api_key = $RuntimeApiKey
-            organization_id = $OrganizationId
+        }
+        if (-not [string]::IsNullOrWhiteSpace($OrganizationId)) {
+            $Payload.organization_id = $OrganizationId
         }
 
         $PlainJson = $Payload | ConvertTo-Json -Compress
@@ -288,14 +286,15 @@ function Read-LConnectStoredCredential {
             throw "CREDENTIAL_FORMAT_INVALID: Decrypted credential payload is invalid. $($_.Exception.Message)"
         }
 
-        if ([string]::IsNullOrWhiteSpace([string]$Payload.runtime_api_key) -or
-            [string]::IsNullOrWhiteSpace([string]$Payload.organization_id)) {
+        if ([string]::IsNullOrWhiteSpace([string]$Payload.runtime_api_key)) {
             throw 'CREDENTIAL_FORMAT_INVALID: Decrypted credential payload is incomplete.'
         }
 
+        $StoredOrganizationId = if ($Payload.PSObject.Properties.Name -contains 'organization_id') { [string]$Payload.organization_id } else { $null }
+
         return [pscustomobject]@{
             RuntimeApiKey = [string]$Payload.runtime_api_key
-            OrganizationId = [string]$Payload.organization_id
+            OrganizationId = $StoredOrganizationId
             Path = $Path
             Format = [string]$Envelope.format
             Version = [int]$Envelope.version
@@ -476,7 +475,7 @@ function Resolve-LConnectCredential {
     if ($Prompted -and -not $NoCredentialSave) {
         $Answer = Read-Host 'Save these values encrypted in local-secrets\credentials.json.enc for automatic restart? [Y/n]'
         if ([string]::IsNullOrWhiteSpace($Answer) -or $Answer -match '^(?i)y(es)?$') {
-            Write-LConnectStoredCredential -Root $Root -RuntimeApiKey $ApiKey -OrganizationId $OrganizationId | Out-Null
+            Write-LConnectStoredCredential -Root $Root -RuntimeApiKey $ApiKey | Out-Null
             $Saved = $true
         }
     }

@@ -303,195 +303,76 @@ Organization ID ไม่ใช่ชื่อ Organization
 
 ---
 
-# ขั้นที่ 5 — สร้าง `mcp-conf.yaml`
+# ขั้นที่ 5 — ตั้งค่า Tunnel / API key / Organization
 
-ไฟล์นี้ต้องอยู่ที่ root ของ LConnect:
-
-```text
-<LConnect folder>\mcp-conf.yaml
-```
-
-ตัวอย่าง:
+หลังติดตั้ง ให้รัน:
 
 ```text
-T:\LConnect\mcp-conf.yaml
+Setup-LConnect.cmd
 ```
 
-## 5.1 วิธีแนะนำ — ให้ tunnel-client สร้าง profile ให้
-
-เปิด PowerShell ในโฟลเดอร์ LConnect
-
-ตัวอย่าง:
+หรือ:
 
 ```powershell
-cd T:\LConnect
+.\Setup-LConnect.ps1
 ```
 
-จากนั้นรันคำสั่งนี้ โดยเปลี่ยน `<YOUR_TUNNEL_ID>` เป็น Tunnel ID จริงก่อน:
+Setup จะถามทีละค่า:
 
-```powershell
-.\tunnel-client.exe init `
-  --profile mcp-conf `
-  --profile-dir "." `
-  --tunnel-id "<YOUR_TUNNEL_ID>" `
-  --mcp-command 'node "lconnect-mcp.mjs"' `
-  --health-listen-addr "127.0.0.1:18020"
-```
+1. Tunnel ID เช่น `tunnel_...`
+2. Runtime API key — ช่องกรอกถูกซ่อน
+3. Organization ID เช่น `org_...` หรือ `org-...`
+4. Local health port — ค่าเริ่มต้น `18020`
 
-เหตุผลที่ใช้:
+เมื่อบันทึกสำเร็จ LConnect จะแยกข้อมูลออกเป็นสองส่วน:
 
-```text
---profile mcp-conf
---profile-dir "."
-```
+- `local-secrets\lconnect-settings.json` — Tunnel ID / Organization ID / health port
+- `local-secrets\credentials.json.enc` — Runtime API key ที่ป้องกันด้วย Windows DPAPI / CurrentUser
 
-คือเพื่อให้ tunnel-client สร้างไฟล์:
-
-```text
-mcp-conf.yaml
-```
-
-ตรง root ของ LConnect
-
-ถ้ามีไฟล์นี้อยู่แล้ว tunnel-client จะไม่ overwrite โดย default
-
-อย่าใช้ `--force` จนกว่าคุณตั้งใจเขียนทับ profile เดิมจริง ๆ
-
----
-
-# ขั้นที่ 6 — เปิด `mcp-conf.yaml` แล้วตรวจ 4 จุด
-
-เปิดด้วย Notepad:
-
-```powershell
-notepad .\mcp-conf.yaml
-```
-
-ไฟล์ที่สร้างจาก `tunnel-client init` จะมีโครงสร้างใกล้เคียงตัวอย่างด้านล่าง
-
-> ตัวอย่างนี้เป็น reference ที่ใช้ placeholder เท่านั้น
->
-> Repo ไม่แจก profile จริง และ profile ของคุณต้องอยู่เฉพาะเครื่อง local
-
-```yaml
-config_version: 1
-
-control_plane:
-  base_url: "https://api.openai.com"
-  tunnel_id: "<YOUR_TUNNEL_ID>"
-  api_key: "env:CONTROL_PLANE_API_KEY"
-
-health:
-  listen_addr: "127.0.0.1:18020"
-  url_file: "runtime/health-url.txt"
-
-admin_ui:
-  open_browser: false
-
-log:
-  level: info
-  format: json
-
-mcp:
-  commands:
-    - channel: main
-      command: 'node "lconnect-mcp.mjs"'
-```
-
-## จุดที่ 1 — `control_plane.tunnel_id`
-
-ต้องเป็น Tunnel ID จริงของคุณ
-
-ถูก:
-
-```yaml
-tunnel_id: "<YOUR_REAL_TUNNEL_ID>"
-```
-
-ผิด:
-
-```yaml
-tunnel_id: "<YOUR_TUNNEL_ID>"
-```
-
-ถ้ายังเป็น placeholder แปลว่ายังไม่ได้ใส่ค่าจริง
-
-## จุดที่ 2 — `control_plane.api_key`
-
-ควรเป็น:
+จากนั้น LConnect จะสร้าง `mcp-conf.yaml` ให้อัตโนมัติ โดยไฟล์ profile จะอ้าง Runtime API key ผ่าน:
 
 ```yaml
 api_key: "env:CONTROL_PLANE_API_KEY"
 ```
 
-**อย่าเขียน secret key จริงตรงนี้**
+Runtime API key จะไม่ถูกเขียนเป็น plaintext ลง `mcp-conf.yaml`
 
-## จุดที่ 3 — MCP channel และ command
+> `local-secrets/` และ `mcp-conf.yaml` เป็น local-only state และอยู่ใน `.gitignore`
 
-ต้องมี channel:
-
-```yaml
-channel: main
-```
-
-command ต้องเปิด LConnect MCP server:
-
-```yaml
-command: 'node "lconnect-mcp.mjs"'
-```
-
-รูปแบบที่ `tunnel-client init` สร้างเป็น:
-
-```yaml
-command: "node lconnect-mcp.mjs"
-```
-
-ก็ใช้ได้ เพราะ `Start-LConnect.ps1` เปิด tunnel-client จาก root ของ LConnect
-
-## จุดที่ 4 — `health.url_file`
-
-ให้เพิ่มบรรทัดนี้ใต้ `health:` ถ้ายังไม่มี:
-
-```yaml
-url_file: "runtime/health-url.txt"
-```
-
-ตัวอย่าง:
-
-```yaml
-health:
-  listen_addr: "127.0.0.1:18020"
-  url_file: "runtime/health-url.txt"
-```
-
-LConnect ใช้ไฟล์นี้ให้ `Status-LConnect.cmd` หา health endpoint
-
-## ถ้า port 18020 ถูกใช้แล้ว
-
-เปลี่ยน:
-
-```yaml
-listen_addr: "127.0.0.1:18020"
-```
-
-เป็น:
-
-```yaml
-listen_addr: "127.0.0.1:0"
-```
-
-เลข `0` หมายถึงให้ Windows เลือก port ว่างให้
-
-กรณีนี้ต้องมี:
-
-```yaml
-url_file: "runtime/health-url.txt"
-```
-
-เพื่อให้ Status รู้ว่า port จริงคืออะไร
+สำหรับ installation รุ่นเก่าที่มี `mcp-conf.yaml` และ encrypted credential เดิมอยู่แล้ว `Start-LConnect.ps1` สามารถ migrate Tunnel ID / port / Organization เดิมมาเป็น separated settings ได้ครั้งเดียว แล้วเปลี่ยน credential เป็น API-key-only โดยอัตโนมัติ
 
 ---
 
+# ขั้นที่ 6 — ล้างหรือเปลี่ยนค่าการเชื่อมต่อ
+
+ใช้:
+
+```text
+Clear-LConnectSettings.cmd
+```
+
+จะมีตัวเลือก:
+
+1. Clear API key only
+2. Clear connection settings — Tunnel ID / Organization ID / port
+3. Clear ALL local LConnect settings
+
+พฤติกรรมสำคัญ:
+
+- ล้าง `credential` จะลบเฉพาะ encrypted API key
+- ล้าง `connection` จะลบ `lconnect-settings.json` และ `mcp-conf.yaml` แต่เก็บ API key ไว้
+- หาก credential รุ่นเก่ายังมี Organization ID อยู่ การล้าง connection จะ rewrite credential ให้เหลือ API key เท่านั้นก่อน
+- ล้าง `all` จะลบทั้ง credential + connection settings + generated `runtime/` และ `logs/`
+
+หลังล้างบางส่วนแล้ว เมื่อรัน `Start-LConnect.cmd` แบบ interactive ระบบจะถามเฉพาะค่าที่หาย และ reuse ค่าที่ยังเหลืออยู่
+
+สำหรับ automation ใช้:
+
+```powershell
+.\Clear-LConnectSettings.ps1 -Mode credential -Force
+.\Clear-LConnectSettings.ps1 -Mode connection -Force
+.\Clear-LConnectSettings.ps1 -Mode all -Force
+```
 # ขั้นที่ 7 — ตรวจ `lconnect-config.json`
 
 เปิด:
@@ -573,25 +454,19 @@ config\lconnect-config.restricted.example.json
 
 # ขั้นที่ 8 — ตรวจไฟล์สำคัญก่อน Start
 
-รัน:
+หลัง Setup สำเร็จ ตรวจ:
 
 ```powershell
 Test-Path .\tunnel-client.exe
 Test-Path .\mcp-conf.yaml
+Test-Path .\local-secrets\lconnect-settings.json
+Test-Path .\local-secrets\credentials.json.enc
 Test-Path .\lconnect-mcp.mjs
 Test-Path .\lconnect-config.json
 Test-Path .\node_modules
 ```
 
-ควรได้:
-
-```text
-True
-True
-True
-True
-True
-```
+ควรได้ `True` ทุกไฟล์ที่จำเป็น
 
 ตรวจ tunnel-client version:
 
@@ -603,7 +478,7 @@ True
 
 ---
 
-# ขั้นที่ 9 — Start LConnect ครั้งแรก
+# ขั้นที่ 9 — Start LConnect
 
 รัน:
 
@@ -617,46 +492,18 @@ Start-LConnect.cmd
 .\Start-LConnect.ps1
 ```
 
-Launcher จะถาม 2 ค่า
+Start จะ:
 
-## คำถามที่ 1
+1. ตรวจ tunnel-client / Node / npm / dependencies
+2. โหลด `lconnect-settings.json`
+3. ถ้าค่าการเชื่อมต่อหาย จะเรียก `Setup-LConnect.ps1 -FillMissing` และถามเฉพาะค่าที่หาย
+4. สร้าง `mcp-conf.yaml` ใหม่จาก settings ที่บันทึกไว้
+5. โหลด Runtime API key จาก DPAPI credential
+6. ใช้ Organization ID จาก connection settings
+7. รัน `tunnel-client doctor`
+8. ถ้า doctor ผ่านจึง start tunnel
 
-```text
-OpenAI Runtime API key (input is hidden)
-```
-
-วาง Runtime API key
-
-ตอนวางจะไม่เห็นตัวอักษรบนหน้าจอ เป็นพฤติกรรมปกติ
-
-Key ถูกใช้ผ่าน environment variable ชั่วคราว และ LConnect ไม่เขียนลง profile/repo
-
-## คำถามที่ 2
-
-```text
-OpenAI Organization ID (org_...)
-```
-
-วาง Organization ID จริงของคุณ
-
-## สิ่งที่ Start script ทำก่อนเปิด daemon
-
-Start script จะ:
-
-1. ตรวจ `tunnel-client.exe`
-2. ตรวจ tunnel-client version
-3. ตรวจ `mcp-conf.yaml`
-4. ตรวจ Node/npm
-5. ตรวจ dependency
-6. รัน `tunnel-client doctor`
-7. ถ้า doctor ผ่านจึงเริ่ม tunnel-client
-8. เก็บ PID ใน `runtime/`
-9. เก็บ stdout/stderr ใน `logs/`
-
-ถ้า doctor ไม่ผ่าน LConnect จะไม่ฝืน Start
-
----
-
+เมื่อใช้ `-NonInteractive` ค่าทั้ง connection settings และ encrypted API key ต้องพร้อมอยู่แล้ว มิฉะนั้น Start จะหยุดด้วย error ที่ระบุว่าค่าใดขาด
 # ขั้นที่ 10 — ถ้า Start สำเร็จควรเห็นอะไร
 
 ตัวอย่าง:

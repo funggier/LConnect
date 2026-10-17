@@ -7,16 +7,27 @@ param(
 $ErrorActionPreference = 'Stop'
 $Root = $PSScriptRoot
 $CredentialHelper = Join-Path $Root 'scripts\SecureCredential.ps1'
+$ConnectionHelper = Join-Path $Root 'scripts\ConnectionSettings.ps1'
 $WorkerScript = Join-Path $Root 'scripts\Restart-LConnectWorker.ps1'
 
 if (-not (Test-Path -LiteralPath $CredentialHelper -PathType Leaf)) {
     throw "Missing secure credential helper: $CredentialHelper"
+}
+if (-not (Test-Path -LiteralPath $ConnectionHelper -PathType Leaf)) {
+    throw "Missing connection settings helper: $ConnectionHelper"
 }
 if (-not (Test-Path -LiteralPath $WorkerScript -PathType Leaf)) {
     throw "Missing restart worker: $WorkerScript"
 }
 
 . $CredentialHelper
+. $ConnectionHelper
+
+$ConnectionSettings = $null
+try { $ConnectionSettings = Get-LConnectConnectionSettings -Root $Root } catch {}
+if (-not $ConnectionSettings) {
+    throw 'RESTART_CONNECTION_NOT_CONFIGURED: Tunnel ID, Organization ID, and health port are not configured. Run Setup-LConnect.cmd first.'
+}
 
 $CredentialStatus = Get-LConnectCredentialStatus -Root $Root
 if (-not $CredentialStatus.exists -or -not $CredentialStatus.decrypt_pass) {

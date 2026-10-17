@@ -16,9 +16,9 @@ if (-not (Test-Path -LiteralPath $Helper -PathType Leaf)) {
 
 $Existing = Get-LConnectCredentialStatus -Root $Root
 if ($Existing.exists -and -not $Force) {
-    $Answer = Read-Host 'An encrypted LConnect credential already exists. Replace it? [y/N]'
+    $Answer = Read-Host 'An encrypted LConnect Runtime API key already exists. Replace it? [y/N]'
     if ($Answer -notmatch '^(?i)y(es)?$') {
-        Write-Host 'Credential setup cancelled. Existing encrypted credential was not changed.'
+        Write-Host 'Credential setup cancelled. Existing encrypted API key was not changed.'
         exit 0
     }
 }
@@ -38,21 +38,23 @@ if ([string]::IsNullOrWhiteSpace($ApiKey)) {
     }
 }
 
-if ([string]::IsNullOrWhiteSpace($OrganizationId) -and -not [string]::IsNullOrWhiteSpace($env:CONTROL_PLANE_ORGANIZATION_ID)) {
-    $OrganizationId = [string]$env:CONTROL_PLANE_ORGANIZATION_ID
+if ([string]::IsNullOrWhiteSpace($ApiKey)) {
+    throw 'Runtime API key cannot be empty.'
 }
 
-if ([string]::IsNullOrWhiteSpace($OrganizationId)) {
-    $OrganizationId = Read-Host 'OpenAI Organization ID (org_... or org-...)'
+if (-not [string]::IsNullOrWhiteSpace($OrganizationId) -or
+    -not [string]::IsNullOrWhiteSpace($env:CONTROL_PLANE_ORGANIZATION_ID)) {
+    Write-Host 'Organization ID is managed by Setup-LConnect.cmd and is not stored in the encrypted credential.'
 }
 
 try {
-    $Result = Write-LConnectStoredCredential -Root $Root -RuntimeApiKey $ApiKey -OrganizationId $OrganizationId
-    Write-Host 'Encrypted LConnect credential saved.'
+    $Result = Write-LConnectStoredCredential -Root $Root -RuntimeApiKey $ApiKey
+    Write-Host 'Encrypted LConnect Runtime API key saved.'
     Write-Host "File: $($Result.path)"
     Write-Host "Protection: $($Result.provider) / $($Result.scope)"
     Write-Host "ACL hardened: $($Result.acl_hardened)"
     Write-Host 'The Runtime API key was not written to console or logs.'
+    Write-Host 'Use Setup-LConnect.cmd to configure Tunnel ID, Organization ID, and health port.'
 }
 finally {
     Remove-Variable ApiKey -ErrorAction SilentlyContinue
