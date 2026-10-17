@@ -13,7 +13,7 @@
 - Source version: **1.3.2**
 - MCP catalog on current `main`: **154 tools**
 - Tool-surface policy: [`docs/TOOL_SURFACE_POLICY.md`](docs/TOOL_SURFACE_POLICY.md)
-- Release target: **v1.3.2 — Connection Lifecycle & Context Efficiency**
+- Release: **[v1.3.2 — Connection Lifecycle & Context Efficiency](https://github.com/funggier/LConnect/releases/tag/v1.3.2)**
 - OpenAI tunnel-client minimum: **0.0.14**
 
 LConnect Core ผ่าน runtime acceptance บน Windows 10 แล้ว โดย current `main` แสดง 154 tools ครอบคลุม filesystem, shell, managed process/session, system/network/hardware, Git, GitHub Actions/Release, structured inspection, browser automation แบบ isolated, live browser control ผ่าน Windows UI Automation, runtime/delivery evidence, deployment verification และ turn-risk observation แบบไม่บล็อกการทำงาน

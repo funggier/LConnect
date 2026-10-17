@@ -4,7 +4,7 @@ Last updated: 2026-10-17
 
 ## Overall
 
-Current project state: **BASIC CORE STABLE / v1.3.1 PUBLISHED BASELINE / v1.3.2 RELEASE CANDIDATE / LCN-063 ACTIVE**
+Current project state: **BASIC CORE STABLE / v1.3.2 PUBLISHED / DEPLOYED / LIVE GREEN / NO ACTIVE TASK**
 
 Current published release: **v1.3.1 — Operational Hardening & Optional Autostart**
 
@@ -16,7 +16,7 @@ Current source version: **1.3.2**
 
 Current main/source MCP catalog: **154 tools**
 
-Current installed/running MCP catalog before v1.3.2 activation: **154 tools / 1.3.1**. Process IDs are volatile runtime evidence and must be read live from `runtime_catalog` rather than treated as durable documentation.
+Current installed/running MCP catalog: **154 tools / 1.3.2**. Process IDs are volatile runtime evidence and must be read live from `runtime_catalog` rather than treated as durable documentation.
 
 Current running catalog digest: `2ca33225b970dd70e1350d7b4e3d9290116448181031872d643111ae7ab4c374`
 
@@ -58,7 +58,7 @@ Agent Operations Reliability LCN-025–030 ปิดครบ, Delivery/Turn Rel
 | v1.3.1 Release | COMPLETE / PUBLISHED / DEPLOYED / LIVE GREEN | LCN-059 | patch release of LCN-057/058; exact commit `e12bb90...`; CI #180; runtime 1.3.1 / 154 tools; 12 assets verified |
 | Windows Long Path Compatibility | COMPLETE / DEPLOYED / LIVE GREEN | LCN-060 | process-scoped Windows Git `core.longpaths=true`; CI #184 SUCCESS; installed 347-char and live 387-char acceptance PASS; 264/264 exact; catalog remains 154 |
 | Context Efficiency | COMPLETE / DEPLOYED / RUNTIME GREEN | LCN-062 | `batch_inspect` SHA-256 conditional results + opt-in digest-only TTL cache; default freshness-first; no result-content retention; implementation `4b9f6bee...`; CI #189 SUCCESS; activation parity 267/267 exact; catalog remains 154; ChatGPT client schema refresh required for new input fields |
-| v1.3.2 Release | ACTIVE | LCN-063 | patch release for long-path compatibility, conditional read/cache, separated connection settings and API-key-only credential lifecycle; catalog remains 154 |
+| v1.3.2 Release | COMPLETE / PUBLISHED / DEPLOYED / LIVE GREEN | LCN-063 | patch release for long-path compatibility, conditional read/cache, separated connection settings and API-key-only credential lifecycle; catalog remains 154 |
 
 ### LCN-059 — v1.3.1 Operational Hardening Release
 **COMPLETE / PUBLISHED / DEPLOYED / LIVE GREEN**
@@ -638,6 +638,6 @@ Rewrote the Thai first-run installation guide as a detailed step-by-step walkthr
 - SHA-256: `A91DEADAB210C3B9E5D346D0A015407317042B747CDE43B2519612217BAC7C31`
 
 ### LCN-063 — v1.3.2 Connection Lifecycle & Context Efficiency Release
-**ACTIVE**
+**COMPLETE / PUBLISHED / DEPLOYED / LIVE GREEN**
 
-Release target is v1.3.2 with the public MCP catalog unchanged at 154 tools. Exact release-commit CI, production activation, cache requalification, immutable tagging and checksum-verified release assets are required before closure.
+Published release v1.3.2 retains the 154-tool public catalog. Exact release-commit CI #192 succeeded; production activation is live at 1.3.2; cache requalification passed; tagged assets were downloaded back with zero SHA-256 mismatches.

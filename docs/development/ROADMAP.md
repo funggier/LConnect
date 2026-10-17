@@ -699,8 +699,8 @@ Reduced repeated model-context payload without adding a new public tool. `batch_
 
 Closure: implementation `4b9f6beeeb12351f42bf44de1362bd2543024f5e`; exact-commit CI #189 / run `39020912202` SUCCESS; tracked-only deployment; installed-tree cache smoke PASS; secure restart to runtime 1.3.1 / PID 30876 / 154 tools; activation parity 267/267 exact; credential hash preserved. An already-open ChatGPT client must refresh/reload the LConnect connector/plugin to expose the new input fields after the schema change.
 
-# Phase 11 — v1.3.2 Connection Lifecycle & Context Efficiency Release — ACTIVE
+# Phase 11 — v1.3.2 Connection Lifecycle & Context Efficiency Release — DONE
 
-## LCN-063 v1.3.2 Connection Lifecycle & Context Efficiency Release
+## LCN-063 v1.3.2 Connection Lifecycle & Context Efficiency Release — COMPLETE / PUBLISHED / DEPLOYED / LIVE GREEN
 
-Publish the qualified post-v1.3.1 mainline as v1.3.2 while retaining the 154-tool public surface. Scope includes LCN-060 Windows Git long-path compatibility, LCN-062 conditional read/cache support, separated Tunnel/Organization/health-port settings and API-key-only DPAPI credential lifecycle. Exact release-commit CI, tracked deployment, live activation, immutable tag and checksum-verified assets are mandatory.
+Published the qualified post-v1.3.1 mainline as v1.3.2 while retaining the 154-tool public surface. Scope includes LCN-060 Windows Git long-path compatibility, LCN-062 conditional read/cache support, separated Tunnel/Organization/health-port settings and API-key-only DPAPI credential lifecycle. Exact release-commit CI, tracked deployment, live activation, immutable tag and checksum-verified assets are mandatory.

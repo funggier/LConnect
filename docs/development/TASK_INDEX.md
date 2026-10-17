@@ -63,4 +63,4 @@
 | [LCN-059](tasks/LCN-059-v1.3.1-operational-hardening-release.md) | COMPLETE | v1.3.1 Operational Hardening Release |
 | [LCN-060](tasks/LCN-060-windows-long-path-compatibility.md) | COMPLETE | Windows Long Path Compatibility Hardening |
 | [LCN-062](tasks/LCN-062-context-efficiency-conditional-read-cache.md) | COMPLETE | Context Efficiency & Conditional Read Cache |
-| [LCN-063](tasks/LCN-063-v1.3.2-connection-context-efficiency-release.md) | ACTIVE | v1.3.2 Connection Lifecycle & Context Efficiency Release |
+| [LCN-063](tasks/LCN-063-v1.3.2-connection-context-efficiency-release.md) | COMPLETE | v1.3.2 Connection Lifecycle & Context Efficiency Release |
