@@ -32,13 +32,15 @@ Last updated: 2026-10-17
 
 ## Active task
 
-[LCN-062 — Context Efficiency & Conditional Read Cache](tasks/LCN-062-context-efficiency-conditional-read-cache.md) — **ACTIVE / LOCAL QUALIFICATION GREEN / CI+DEPLOY PENDING**
+No active development task.
 
-Scope: extend the existing 154-tool `batch_inspect` contract with SHA-256 conditional results and an opt-in bounded digest-only cache. Default remains freshness-first (`cache_max_age_ms: 0`); unchanged fresh reads suppress duplicate result bodies, while positive TTL may skip execution only when the caller supplies a matching `known_digest`. No result content is retained by the cache.
+Latest completed task: [LCN-062 — Context Efficiency & Conditional Read Cache](tasks/LCN-062-context-efficiency-conditional-read-cache.md) — **COMPLETE / DEPLOYED / RUNTIME GREEN — CHATGPT SCHEMA REFRESH REQUIRED FOR NEW INPUT FIELDS**
 
-Local evidence: targeted conditional-cache smoke PASS; existing batch regression PASS; syntax 86 files PASS; full suite 41 Node + 2 PowerShell suites PASS; dependency audit 0 vulnerabilities; `git diff --check` PASS.
+LCN-062 extends the existing 154-tool `batch_inspect` contract with SHA-256 conditional results and an opt-in bounded digest-only cache. Default remains freshness-first (`cache_max_age_ms: 0`); unchanged fresh reads suppress duplicate result bodies, while positive TTL may skip execution only when the caller supplies a matching `known_digest`. Result content is never retained by this cache.
 
-Latest completed task: [LCN-060 — Windows Long Path Compatibility Hardening](tasks/LCN-060-windows-long-path-compatibility.md) — **COMPLETE / DEPLOYED / LIVE GREEN**
+Closure evidence: implementation `4b9f6beeeb12351f42bf44de1362bd2543024f5e`; exact-commit CI #189 / run `39020912202` SUCCESS; tracked-only deployment; installed cache smoke PASS; source/install parity 267/267 exact at activation; secure restart PID 26252 → 30876; runtime 1.3.1 / 154 tools / duplicate names none; encrypted credential hash preserved.
+
+The already-open ChatGPT client used for qualification still holds the pre-change `batch_inspect` input schema. Refresh/reload the LConnect connector/plugin before using `known_digest` and `cache_max_age_ms` from that client.
 
 Implementation `1f6bf8b721631bd7fefb1d74eb99c2ade02aea40`; CI #184 / run `38284363602` SUCCESS; Windows Git calls use process-scoped `core.longpaths=true`; installed regression PASS at 347 characters; live connector commit PASS at 387 characters; runtime 1.3.1 / 154 tools; deployed 264/264 exact. Report: [LCN-20261013-060-windows-long-path-compatibility.md](reports/LCN-20261013-060-windows-long-path-compatibility.md).
 
@@ -115,4 +117,4 @@ Previous report: [reports/LCN-20261002-021-browser-common-layer.md](reports/LCN-
 
 ## Next action
 
-Finish LCN-062 through implementation commit, exact-commit CI, tracked-only deployment, secure runtime restart, live conditional-cache acceptance and source/install parity. Preserve v1.3.1, v1.3.0 and v1.2.2 immutable release/tag evidence and do not reset/clean the worktree.
+LCN-062 is complete at the source/deployment/runtime boundary. No active development task. Refresh/reload the LConnect connector/plugin when a ChatGPT client needs the new `batch_inspect` input fields. Preserve v1.3.1, v1.3.0 and v1.2.2 immutable release/tag evidence and do not reset/clean the worktree.

@@ -1,6 +1,6 @@
 # LCN-062 — Context Efficiency & Conditional Read Cache
 
-Status: **ACTIVE**
+Status: **COMPLETE / DEPLOYED / RUNTIME GREEN — CHATGPT SCHEMA REFRESH REQUIRED FOR NEW INPUT FIELDS**
 
 Activated: 2026-10-17
 
@@ -80,20 +80,26 @@ Optional bounded cache behavior:
 - dependency audit: PASS — 0 vulnerabilities
 - `git diff --check`: PASS
 
-## Qualification required
+## Qualification result
 
-- targeted conditional-cache smoke test
-- unchanged-result fresh revalidation suppression
-- positive-TTL execution short circuit
-- changed-result invalidation
-- direct-tool compatibility and existing `batch_inspect` regression
-- `npm run check`
-- full `npm test`
-- `npm audit --audit-level=high`
-- `git diff --check`
-- exact-commit GitHub CI
-- tracked deployment preserving local secrets/state
-- secure runtime restart
-- live runtime remains 1.3.1 / 154 tools with no duplicate names
-- physical live conditional-cache acceptance
-- source/install parity
+- targeted conditional-cache smoke: **PASS**
+- unchanged-result fresh revalidation suppression: **PASS**
+- positive-TTL execution short circuit: **PASS**
+- changed-result invalidation: **PASS**
+- direct-tool compatibility and existing `batch_inspect` regression: **PASS**
+- `npm run check`: **PASS — 86 files**
+- full `npm test`: **PASS — 41 Node + 2 PowerShell suites**
+- `npm audit --audit-level=high`: **PASS — 0 vulnerabilities**
+- `git diff --check`: **PASS**
+- implementation commit: `4b9f6beeeb12351f42bf44de1362bd2543024f5e`
+- exact-commit GitHub CI: **#189 / run 39020912202 — SUCCESS**
+- tracked-only deployment: **PASS — 267 files; no mirror delete**
+- secure runtime restart: **PASS — PID 26252 → 30876**
+- live runtime: **1.3.1 / 154 tools / duplicate names none**
+- installed-tree conditional-cache physical smoke: **PASS**
+- source/install parity after activation: **267/267 exact**
+- local encrypted credential hash: **preserved**
+
+The restarted daemon emits the new result contract. The ChatGPT conversation used during qualification still holds the pre-LCN-062 input schema, so a connector/plugin schema refresh is required before that client can send `known_digest` or `cache_max_age_ms`. This does not block the deployed runtime implementation.
+
+Closure report: [LCN-20261017-062-context-efficiency-conditional-read-cache.md](../reports/LCN-20261017-062-context-efficiency-conditional-read-cache.md)
