@@ -1258,12 +1258,15 @@ tool นี้ **ไม่ copy/install/restart/refresh/release** และไ�
 - `stop_on_error: false`
 - `max_chars_per_result: 4000`
 - `max_total_chars: 20000`
+- `cache_max_age_ms: 0` — freshness-first; ค่า 0 จะไม่ข้าม underlying inspection
 
 แต่ละ operation ระบุ:
 
 - optional `id`
 - `tool`
 - `arguments`
+- optional `known_digest` — SHA-256 จากผลรอบก่อนเพื่อขอ conditional result
+- optional `cache_max_age_ms` — override TTL ต่อ operation สูงสุด 300000 ms
 
 เฉพาะ allowlisted **local read-only** tools เท่านั้น เช่น:
 
@@ -1302,7 +1305,20 @@ Network-backed read-only tools เช่น `github_commit_run_status` ตั้
 - `result_chars`
 - `returned_chars`
 - `truncated`
+- `result_digest_sha256`
+- `not_modified`
+- `result_suppressed`
+- `cache_hit`
+- `execution_skipped`
+- `cache_age_ms`
 - bounded `result_text`
+
+สำหรับงานที่อ่านข้อมูลเดิมซ้ำ ให้เก็บ `result_digest_sha256` จากรอบก่อนแล้วส่งกลับเป็น `known_digest` รอบถัดไป:
+
+- เมื่อ `cache_max_age_ms: 0` (ค่า default) LConnect จะอ่านข้อมูลสดอีกครั้ง แต่ถ้า SHA-256 ไม่เปลี่ยนจะคืน `not_modified: true` และไม่ส่ง `result_text` ซ้ำ
+- เมื่อ caller ระบุ TTL มากกว่า 0 และ digest-only cache ยัง fresh พร้อม digest ตรงกัน LConnect สามารถคืน `cache_hit: true`, `execution_skipped: true` โดยไม่ execute read ซ้ำ
+- cache เก็บเฉพาะ digest, ขนาด และ timestamp; **ไม่เก็บ result content**
+- cache จำกัด 256 entries และ TTL สูงสุด 5 นาที; error result ไม่ถูก cache
 
 ผลรวมถูกจำกัดทั้งต่อ operation และทั้ง batch เพื่อไม่ให้การลด round trips กลายเป็น response ขนาดใหญ่แบบ unbounded
 

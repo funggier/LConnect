@@ -690,3 +690,9 @@ Closure: initial implementation `5c82674a0907ba87980c48c9e3397bbbffda3a14` / CI 
 ## LCN-059 v1.3.1 Operational Hardening Release — COMPLETE / PUBLISHED / DEPLOYED / LIVE GREEN
 
 Packaged qualified LCN-057/058 work as patch release v1.3.1 with the public catalog unchanged at 154 tools. Closure: exact release commit `e12bb90b4246ea4bb487894e6f3b6ddb96210d14`; CI #180 SUCCESS; clean install + overlay PASS; production activation 1.3.1 / 154 tools with 261/261 exact parity; annotated tag `v1.3.1`; 12 assets published and downloaded-back with zero hash mismatch; v1.3.0 and v1.2.2 unchanged.
+
+# Phase 10 — Context Efficiency — ACTIVE
+
+## LCN-062 Context Efficiency & Conditional Read Cache — ACTIVE
+
+Reduce repeated model-context payload without adding a new public tool. Extend `batch_inspect` so successful read-only results expose SHA-256 digests; callers can supply a previous digest for conditional not-modified responses. Default TTL is zero and therefore revalidates against live state; unchanged results suppress duplicate bodies. An explicit positive TTL may short-circuit execution through a bounded digest-only metadata cache. The cache never retains result content, errors are not cached, and the public catalog remains 154 tools.

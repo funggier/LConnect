@@ -1,6 +1,6 @@
 # ACTIVE — LConnect Development
 
-Last updated: 2026-10-13
+Last updated: 2026-10-17
 
 ## Current state
 
@@ -32,7 +32,11 @@ Last updated: 2026-10-13
 
 ## Active task
 
-No active development task.
+[LCN-062 — Context Efficiency & Conditional Read Cache](tasks/LCN-062-context-efficiency-conditional-read-cache.md) — **ACTIVE / LOCAL QUALIFICATION GREEN / CI+DEPLOY PENDING**
+
+Scope: extend the existing 154-tool `batch_inspect` contract with SHA-256 conditional results and an opt-in bounded digest-only cache. Default remains freshness-first (`cache_max_age_ms: 0`); unchanged fresh reads suppress duplicate result bodies, while positive TTL may skip execution only when the caller supplies a matching `known_digest`. No result content is retained by the cache.
+
+Local evidence: targeted conditional-cache smoke PASS; existing batch regression PASS; syntax 86 files PASS; full suite 41 Node + 2 PowerShell suites PASS; dependency audit 0 vulnerabilities; `git diff --check` PASS.
 
 Latest completed task: [LCN-060 — Windows Long Path Compatibility Hardening](tasks/LCN-060-windows-long-path-compatibility.md) — **COMPLETE / DEPLOYED / LIVE GREEN**
 
@@ -111,4 +115,4 @@ Previous report: [reports/LCN-20261002-021-browser-common-layer.md](reports/LCN-
 
 ## Next action
 
-LCN-060 is COMPLETE / DEPLOYED / LIVE GREEN. No active development task. Preserve v1.3.1, v1.3.0 and v1.2.2 immutable release/tag evidence and do not reset/clean the worktree.
+Finish LCN-062 through implementation commit, exact-commit CI, tracked-only deployment, secure runtime restart, live conditional-cache acceptance and source/install parity. Preserve v1.3.1, v1.3.0 and v1.2.2 immutable release/tag evidence and do not reset/clean the worktree.
